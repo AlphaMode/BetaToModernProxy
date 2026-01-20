@@ -140,12 +140,12 @@ public interface ByteBufCodecs {
 
 			@Override
 			public T[] decode(final ByteBuf buf) {
-				final T[] values = (T[]) new Object[size];
+				final Object[] values = new Object[size];
 				for (int i = 0; i < size; ++i) {
 					values[i] = type.decode(buf);
 				}
 
-				return values;
+				return (T[]) values;
 			}
 		};
 	}
