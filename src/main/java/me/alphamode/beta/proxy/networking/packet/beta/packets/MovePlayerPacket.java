@@ -120,29 +120,29 @@ public class MovePlayerPacket implements RecordPacket {
 	}
 
 	public static class Rot extends MovePlayerPacket {
-		public Rot() {
+        public static final StreamCodec<ByteBuf, Rot> CODEC = RecordPacket.codec(Rot::write, Rot::new);
+
+		public Rot(ByteBuf buf) {
+            float yRot = buf.readFloat();
+            float xRot = buf.readFloat();
+            super(buf);
+            this.yRot = yRot;
+            this.xRot = xRot;
 			this.hasRot = true;
 		}
 
 		public Rot(float yRot, float xRot, boolean onGround) {
-			this.yRot = yRot;
+            super(onGround);
+            this.yRot = yRot;
 			this.xRot = xRot;
-			this.onGround = onGround;
 			this.hasRot = true;
 		}
 
 		@Override
-		public void read(final ByteBuf buf, final int protocolVersion) {
-			this.yRot = buf.readFloat();
-			this.xRot = buf.readFloat();
-			super.read(buf, protocolVersion);
-		}
-
-		@Override
-		public void write(final ByteBuf buf, final int protocolVersion) {
+		public void write(final ByteBuf buf) {
 			buf.writeFloat(this.yRot);
 			buf.writeFloat(this.xRot);
-			super.write(buf, protocolVersion);
+			super.write(buf);
 		}
 	}
 }
