@@ -76,7 +76,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.SET_ENTITY_DATA, SetEntityDataPacket.CODEC);
 		this.registerPacket(BetaPackets.CHUNK_VISIBILITY, ChunkVisibilityPacket.CODEC);
 		this.registerPacket(BetaPackets.BLOCK_REGION_UPDATE, BlockRegionUpdatePacket.CODEC);
-//		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket.CODEC);
+		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket.CODEC);
 		this.registerPacket(BetaPackets.TILE_UPDATE, TileUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.TILE_EVENT, TileEventPacket.CODEC);
 //		this.registerPacket(BetaPackets.EXPLODE, ExplodePacket.CODEC);
