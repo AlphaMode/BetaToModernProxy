@@ -53,9 +53,9 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.MOVE_PLAYER_ROT, MovePlayerPacket.Rot.CODEC);
 		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot.CODEC);
 		this.registerPacket(BetaPackets.PLAYER_ACTION, PlayerActionPacket.CODEC);
-//		this.registerPacket(BetaPackets.USE_ITEM, UseItemPacket.CODEC);
-//		this.registerPacket(BetaPackets.SET_CARRIED_ITEM, SetCarriedItemPacket.CODEC);
-//		this.registerPacket(BetaPackets.INTERACTION, InteractionPacket.CODEC);
+		this.registerPacket(BetaPackets.USE_ITEM, UseItemPacket.CODEC);
+		this.registerPacket(BetaPackets.SET_CARRIED_ITEM, SetCarriedItemPacket.CODEC);
+		this.registerPacket(BetaPackets.INTERACTION, InteractionPacket.CODEC);
 		this.registerPacket(BetaPackets.ANIMATE, AnimatePacket.CODEC);
 //		this.registerPacket(BetaPackets.PLAYER_COMMAND, PlayerCommandPacket.CODEC);
 //		this.registerPacket(BetaPackets.ADD_PLAYER, AddPlayerPacket.CODEC);

@@ -1,42 +1,25 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public class UseItemPacket implements Packet {
-    public int x;
-    public int y;
-    public int z;
-    public int face;
-    public BetaItemStack item;
+public record UseItemPacket(Vec3i position, byte face, BetaItemStack item) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, UseItemPacket> CODEC = StreamCodec.composite(
+			Vec3i.TINY_CODEC,
+			UseItemPacket::position,
+			ByteBufCodecs.BYTE,
+			UseItemPacket::face,
+			BetaItemStack.OPTIONAL_CODEC,
+			UseItemPacket::item,
+			UseItemPacket::new
+	);
 
-    public UseItemPacket() {
-    }
-
-    public UseItemPacket(int x, int y, int z, int face, BetaItemStack itemStack) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.face = face;
-        this.item = itemStack;
-    }
-
-    @Override
-    public void read(final ByteBuf buf, final int protocolVersion) {
-        this.x = buf.readInt();
-        this.y = buf.readByte();
-        this.z = buf.readInt();
-        this.face = buf.readByte();
-        this.item = BetaItemStack.OPTIONAL_CODEC.decode(buf);
-    }
-
-    @Override
-    public void write(final ByteBuf buf, final int protocolVersion) {
-        buf.writeInt(this.x);
-        buf.writeByte(this.y);
-        buf.writeInt(this.z);
-        buf.writeByte(this.face);
-        BetaItemStack.OPTIONAL_CODEC.encode(buf, this.item);
-    }
+	@Override
+	public BetaPackets getType() {
+		return BetaPackets.USE_ITEM;
+	}
 }
