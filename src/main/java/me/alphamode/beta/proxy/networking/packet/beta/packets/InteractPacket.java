@@ -1,33 +1,23 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class InteractPacket implements Packet {
-	public int source;
-	public int target;
-	public int action;
-
-	public InteractPacket() {
-	}
-
-	public InteractPacket(final int playerId, final int entityId, final int action) {
-		this.source = playerId;
-		this.target = entityId;
-		this.action = action;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.source = buf.readInt();
-		this.target = buf.readInt();
-		this.action = buf.readByte();
-	}
+public record InteractPacket(int source, int target, byte action) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, InteractPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			InteractPacket::source,
+			ByteBufCodecs.INT,
+			InteractPacket::target,
+			ByteBufCodecs.BYTE,
+			InteractPacket::action,
+			InteractPacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.source);
-		buf.writeInt(this.target);
-		buf.writeByte(this.action);
+	public BetaPackets getType() {
+		return BetaPackets.INTERACT;
 	}
 }
