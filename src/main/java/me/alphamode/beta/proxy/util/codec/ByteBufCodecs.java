@@ -3,15 +3,15 @@ package me.alphamode.beta.proxy.util.codec;
 import io.netty.buffer.ByteBuf;
 
 public interface ByteBufCodecs {
-    StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
-        public Boolean decode(final ByteBuf input) {
-            return input.readBoolean();
-        }
+	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
+		public Boolean decode(final ByteBuf input) {
+			return input.readBoolean();
+		}
 
-        public void encode(final ByteBuf output, final Boolean value) {
-            output.writeBoolean(value);
-        }
-    };
+		public void encode(final ByteBuf output, final Boolean value) {
+			output.writeBoolean(value);
+		}
+	};
 
 	StreamCodec<ByteBuf, Byte> BYTE = new StreamCodec<>() {
 		public Byte decode(final ByteBuf input) {
@@ -19,6 +19,16 @@ public interface ByteBufCodecs {
 		}
 
 		public void encode(final ByteBuf output, final Byte value) {
+			output.writeByte(value);
+		}
+	};
+
+	StreamCodec<ByteBuf, Short> UNSIGNED_BYTE = new StreamCodec<>() {
+		public Short decode(final ByteBuf input) {
+			return input.readUnsignedByte();
+		}
+
+		public void encode(final ByteBuf output, final Short value) {
 			output.writeByte(value);
 		}
 	};
@@ -63,21 +73,21 @@ public interface ByteBufCodecs {
 		}
 	};
 
-    StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
-        @Override
-        public byte[] decode(ByteBuf input) {
-            int size = input.readInt();
-            byte[] bytes = new byte[size];
-            input.readBytes(bytes);
-            return bytes;
-        }
+	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
+		@Override
+		public byte[] decode(ByteBuf input) {
+			int size = input.readInt();
+			byte[] bytes = new byte[size];
+			input.readBytes(bytes);
+			return bytes;
+		}
 
-        @Override
-        public void encode(ByteBuf output, byte[] value) {
-            output.writeInt(value.length);
-            output.writeBytes(value);
-        }
-    };
+		@Override
+		public void encode(ByteBuf output, byte[] value) {
+			output.writeInt(value.length);
+			output.writeBytes(value);
+		}
+	};
 
 	int MAX_STRING_LENGTH = 32767;
 

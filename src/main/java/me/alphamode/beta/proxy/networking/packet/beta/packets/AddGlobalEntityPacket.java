@@ -1,38 +1,24 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import net.raphimc.netminecraft.packet.Packet;
 
-public class AddGlobalEntityPacket implements Packet {
-	public int id;
-	public Vec3i position;
-	public int type;
-
-	public AddGlobalEntityPacket() {
-	}
-
-//    public AddGlobalEntityPacket(final Entity entitu) {
-//        this.id = entitu.id;
-//        this.x = Mth.floor(entitu.x * 32.0);
-//        this.y = Mth.floor(entitu.y * 32.0);
-//        this.z = Mth.floor(entitu.z * 32.0);
-//        if (entitu instanceof LightningBolt) {
-//            this.type = 1;
-//        }
-//    }
+public record AddGlobalEntityPacket(int id, byte type, Vec3i positon) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, AddGlobalEntityPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			AddGlobalEntityPacket::id,
+			ByteBufCodecs.BYTE,
+			AddGlobalEntityPacket::type,
+			Vec3i.CODEC,
+			AddGlobalEntityPacket::positon,
+			AddGlobalEntityPacket::new
+	);
 
 	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.id = buf.readInt();
-		this.type = buf.readByte();
-		this.position = Vec3i.CODEC.decode(buf);
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.id);
-		buf.writeByte(this.type);
-		Vec3i.CODEC.encode(buf, this.position);
+	public BetaPackets getType() {
+		return BetaPackets.ADD_GLOBAL_ENTITY;
 	}
 }

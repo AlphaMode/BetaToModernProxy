@@ -1,34 +1,24 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
-import net.raphimc.netminecraft.packet.Packet;
 
-public class ContainerSetSlotPacket implements Packet {
-	public int containerId;
-	public int slot;
-	public BetaItemStack item;
-
-	public ContainerSetSlotPacket() {
-	}
-
-	public ContainerSetSlotPacket(int containerId, int slot, BetaItemStack item) {
-		this.containerId = containerId;
-		this.slot = slot;
-		this.item = item;
-	}
+public record ContainerSetSlotPacket(byte containerId, short slot, BetaItemStack item) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, ContainerSetSlotPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.BYTE,
+			ContainerSetSlotPacket::containerId,
+			ByteBufCodecs.SHORT,
+			ContainerSetSlotPacket::slot,
+			BetaItemStack.OPTIONAL_CODEC,
+			ContainerSetSlotPacket::item,
+			ContainerSetSlotPacket::new
+	);
 
 	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.containerId = buf.readByte();
-		this.slot = buf.readShort();
-		this.item = BetaItemStack.OPTIONAL_CODEC.decode(buf);
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeByte(this.containerId);
-		buf.writeShort(this.slot);
-		BetaItemStack.OPTIONAL_CODEC.encode(buf, this.item);
+	public BetaPackets getType() {
+		return BetaPackets.CONTAINER_SET_SLOT;
 	}
 }

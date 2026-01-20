@@ -1,33 +1,23 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class ContainerSetDataPacket implements Packet {
-	public int containerId;
-	public int id;
-	public int value;
-
-	public ContainerSetDataPacket() {
-	}
-
-	public ContainerSetDataPacket(final int containerId, final int id, final int value) {
-		this.containerId = containerId;
-		this.id = id;
-		this.value = value;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.containerId = buf.readUnsignedByte();
-		this.id = buf.readShort();
-		this.value = buf.readShort();
-	}
+public record ContainerSetDataPacket(short containerId, short id, short value) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, ContainerSetDataPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.UNSIGNED_BYTE,
+			ContainerSetDataPacket::containerId,
+			ByteBufCodecs.SHORT,
+			ContainerSetDataPacket::id,
+			ByteBufCodecs.SHORT,
+			ContainerSetDataPacket::value,
+			ContainerSetDataPacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeByte(this.containerId);
-		buf.writeShort(this.id);
-		buf.writeShort(this.value);
+	public BetaPackets getType() {
+		return BetaPackets.CONTAINER_SET_DATA;
 	}
 }

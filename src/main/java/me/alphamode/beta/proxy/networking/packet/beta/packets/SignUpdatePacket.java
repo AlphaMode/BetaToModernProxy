@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.raphimc.netminecraft.packet.Packet;
 
-public class SignUpdatePacket implements Packet {
+public record SignUpdatePacket(int x, short y, int z, String[] lines) implements Packet {
 	public static final int MAX_SIGN_STRING_LENGTH = 15;
 	public static final StreamCodec<ByteBuf, String> SIGN_STRING_CODEC = ByteBufCodecs.stringUtf8(MAX_SIGN_STRING_LENGTH);
 
