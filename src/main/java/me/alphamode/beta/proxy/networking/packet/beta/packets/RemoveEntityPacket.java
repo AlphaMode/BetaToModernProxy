@@ -1,25 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class RemoveEntityPacket implements Packet {
-	public int id;
+public record RemoveEntityPacket(int id) implements RecordPacket {
+    public static final StreamCodec<ByteBuf, RemoveEntityPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            RemoveEntityPacket::id,
+            RemoveEntityPacket::new
+    );
 
-	public RemoveEntityPacket() {
-	}
-
-	public RemoveEntityPacket(int entityId) {
-		this.id = entityId;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.id = buf.readInt();
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.id);
-	}
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.REMOVE_ENTITY;
+    }
 }
