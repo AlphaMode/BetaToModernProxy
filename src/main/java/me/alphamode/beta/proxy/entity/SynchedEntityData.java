@@ -6,8 +6,6 @@ import me.alphamode.beta.proxy.StreamCodec;
 import me.alphamode.beta.proxy.data.BetaItemStack;
 import me.alphamode.beta.proxy.data.Vec3i;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class SynchedEntityData {
         return items;
     }
 
-    public static void packAll(ByteBuf data, List<DataItem<?>> dataItems) {
+    public static void pack(ByteBuf data, List<DataItem<?>> dataItems) {
         for (DataItem<?> dataItem : dataItems) {
             writeDataItem(data, dataItem);
         }

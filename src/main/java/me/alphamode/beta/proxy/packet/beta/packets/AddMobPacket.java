@@ -51,6 +51,6 @@ public class AddMobPacket implements Packet {
         data.writeInt(this.z);
         data.writeByte(this.yRot);
         data.writeByte(this.xRot);
-        SynchedEntityData.packAll(data, this.dataItems);
+        SynchedEntityData.pack(data, this.dataItems);
     }
 }
