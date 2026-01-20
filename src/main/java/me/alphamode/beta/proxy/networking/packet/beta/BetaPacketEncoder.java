@@ -1,7 +1,6 @@
 package me.alphamode.beta.proxy.networking.packet.beta;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.Proxy;
@@ -23,14 +22,7 @@ public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket> 
 			try {
 				packetRegistry.getCodec(type).encode(buf, packet);
 			} catch (Exception exception) {
-				final ByteBuf writeBuf = Unpooled.buffer();
-				final DisconnectPacket disconnectPacket = new DisconnectPacket(exception.getMessage());
-				try {
-					packetRegistry.getCodec(BetaPackets.DISCONNECT).encode(writeBuf, disconnectPacket);
-				} catch (Exception ignored) {
-				}
-
-				context.channel().writeAndFlush(disconnectPacket);
+				context.channel().writeAndFlush(new DisconnectPacket(exception.getMessage()));
 				context.channel().close();
 			}
 		}

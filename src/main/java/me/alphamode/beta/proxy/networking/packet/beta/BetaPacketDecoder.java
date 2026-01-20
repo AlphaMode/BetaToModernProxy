@@ -24,14 +24,7 @@ public final class BetaPacketDecoder extends ReplayingDecoder<Void> {
 				IO.println("Decoding packet: " + packet);
 				out.add(packet);
 			} catch (Exception exception) {
-				final ByteBuf writeBuf = Unpooled.buffer();
-				final DisconnectPacket disconnectPacket = new DisconnectPacket(exception.getMessage());
-				try {
-					packetRegistry.getCodec(BetaPackets.DISCONNECT).encode(writeBuf, disconnectPacket);
-				} catch (Exception ignored) {
-				}
-
-				context.channel().writeAndFlush(disconnectPacket);
+				context.channel().writeAndFlush(new DisconnectPacket(exception.getMessage()));
 				context.channel().close();
 			}
 		}
