@@ -19,10 +19,26 @@ public class BetaPacketCodec extends ByteToMessageCodec<Packet> {
             return;
         }
 
-        if (in.readableBytes() != 0) {
+        int packetsRead = 0;
+        while (in.readableBytes() != 0) {
+            packetsRead++;
+            if (packetsRead > 1) {
+                in.markReaderIndex();
+                printBuf(in);
+                in.resetReaderIndex();
+            }
             final int packetId = in.readByte();
             final Packet packet = packetRegistry.createPacket(packetId, in);
             out.add(packet);
+        }
+        if (packetsRead > 1) {
+            StringBuilder packets = new StringBuilder();
+            for (Object obj : out) {
+                if (obj instanceof Packet packet) {
+                    packets.append(packet.getClass().getSimpleName()).append(" ");
+                }
+            }
+            IO.println(packetsRead + " packets read " + packets);
         }
     }
 
@@ -35,5 +51,20 @@ public class BetaPacketCodec extends ByteToMessageCodec<Packet> {
 
         out.writeByte(packetRegistry.getPacketId(in));
         in.write(out, packetRegistry.getProtocolVersion());
+    }
+
+    private static void printBuf(final ByteBuf byteBuffer) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append('[');
+
+        for (int i = 0; i < byteBuffer.capacity(); ++i) {
+            builder.append(byteBuffer.getByte(i));
+            if (i < byteBuffer.capacity() - 1) {
+                builder.append(", ");
+            }
+        }
+
+        builder.append(']');
+        IO.println(builder.toString());
     }
 }
