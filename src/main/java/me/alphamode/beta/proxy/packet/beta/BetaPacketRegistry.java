@@ -126,19 +126,19 @@ public class BetaPacketRegistry implements PacketRegistry {
         registerPacket(53, true, false, TileUpdatePacket::new);
         registerPacket(54, true, false, TileEventPacket::new);
         registerPacket(60, true, false, ExplodePacket::new);
-//        registerPacket(61, true, false, LevelEventPacket::new);
-//        registerPacket(70, true, false, GameEventPacket::new);
-//        registerPacket(71, true, false, AddGlobalEntityPacket::new);
+        registerPacket(61, true, false, LevelEventPacket::new);
+        registerPacket(70, true, false, GameEventPacket::new);
+        registerPacket(71, true, false, AddGlobalEntityPacket::new);
 //        registerPacket(100, true, false, ContainerOpenPacket::new);
-//        registerPacket(101, true, true, ContainerClosePacket::new);
-//        registerPacket(102, false, true, ContainerClickPacket::new);
-//        registerPacket(103, true, false, ContainerSetSlotPacket::new);
-//        registerPacket(104, true, false, ContainerSetContentPacket::new);
-//        registerPacket(105, true, false, ContainerSetDataPacket::new);
-//        registerPacket(106, true, true, ContainerAckPacket::new);
-//        registerPacket(130, true, true, SignUpdatePacket::new);
-//        registerPacket(131, true, false, MapItemDataPacket::new);
-//        registerPacket(200, true, false, UpdateStatPacket::new);
-//        registerPacket(255, true, true, DisconnectPacket::new);
+        registerPacket(101, true, true, ContainerClosePacket::new);
+        registerPacket(102, false, true, ContainerClickPacket::new);
+        registerPacket(103, true, false, ContainerSetSlotPacket::new);
+        registerPacket(104, true, false, ContainerSetContentPacket::new);
+        registerPacket(105, true, false, ContainerSetDataPacket::new);
+        registerPacket(106, true, true, ContainerAckPacket::new);
+        registerPacket(130, true, true, SignUpdatePacket::new);
+        registerPacket(131, true, false, MapItemDataPacket::new);
+        registerPacket(200, true, false, UpdateStatPacket::new);
+        registerPacket(255, true, true, DisconnectPacket::new);
     }
 }
