@@ -2,6 +2,8 @@ package me.alphamode.beta.proxy.networking.packet.beta;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.*;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
+import me.alphamode.beta.proxy.util.StreamCodec;
 import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.packet.Packet;
 import net.raphimc.netminecraft.packet.UnknownPacket;
@@ -12,11 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class BetaPacketRegistry implements PacketRegistry {
+public class BetaPacketRegistry {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry(14);
-	private final Map<BetaPackets, Supplier<Packet>> registry = new EnumMap<>(BetaPackets.class);
+	private final Map<BetaPackets, StreamCodec<ByteBuf, ? extends RecordPacket>> registry = new EnumMap<>(BetaPackets.class);
 	private final Map<Class<?>, BetaPackets> reverseRegistry = new HashMap<>();
-	private ConnectionState connectionState = ConnectionState.HANDSHAKING;
 	private final int protocolVersion;
 
 	public BetaPacketRegistry(final int protocolVersion) {
@@ -24,7 +25,6 @@ public class BetaPacketRegistry implements PacketRegistry {
 		this.registerVanillaPackets();
 	}
 
-	@Override
 	public Packet createPacket(final int packetId, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		final Packet packet = this.registry.getOrDefault(packetType, () -> new UnknownPacket(packetId)).get();
@@ -32,7 +32,6 @@ public class BetaPacketRegistry implements PacketRegistry {
 		return packet;
 	}
 
-	@Override
 	public int getPacketId(final Packet packet) {
 		if (packet instanceof UnknownPacket unknownPacket) {
 			return unknownPacket.packetId;
@@ -51,28 +50,11 @@ public class BetaPacketRegistry implements PacketRegistry {
 		}
 	}
 
-	public Packet getPacket(final int packetId) {
-		final BetaPackets packetType = BetaPackets.getPacket(packetId);
-		return this.registry.getOrDefault(packetType, () -> new UnknownPacket(packetId)).get();
-	}
-
-	@Override
 	public int getProtocolVersion() {
 		return this.protocolVersion;
 	}
 
-	@Override
-	public ConnectionState getConnectionState() {
-		return connectionState;
-	}
-
-	@Override
-	public void setConnectionState(ConnectionState connectionState) {
-		this.connectionState = connectionState;
-	}
-
-	protected final void registerPacket(final BetaPackets packetType, final Supplier<Packet> packetCreator) {
-		this.unregisterPacket(packetType);
+	protected final void registerPacket(final BetaPackets packetType, final StreamCodec<ByteBuf, ? extends RecordPacket> packetCreator) {
 		final Class<?> packetClass = packetCreator.get().getClass();
 		this.registry.put(packetType, packetCreator);
 		if (this.reverseRegistry.put(packetClass, packetType) != null) {
@@ -80,14 +62,9 @@ public class BetaPacketRegistry implements PacketRegistry {
 		}
 	}
 
-	protected final void unregisterPacket(final BetaPackets packetType) {
-		this.registry.remove(packetType);
-		this.reverseRegistry.values().removeIf(packetType::equals);
-	}
-
 	public void registerVanillaPackets() {
 		this.registerPacket(BetaPackets.KEEP_ALIVE, KeepAlivePacket::new);
-		this.registerPacket(BetaPackets.LOGIN, LoginPacket::new);
+		this.registerPacket(BetaPackets.LOGIN, LoginPacket.CODEC);
 		this.registerPacket(BetaPackets.HANDSHAKE, HandshakePacket::new);
 		this.registerPacket(BetaPackets.CHAT, ChatPacket::new);
 		this.registerPacket(BetaPackets.SET_TIME, SetTimePacket::new);

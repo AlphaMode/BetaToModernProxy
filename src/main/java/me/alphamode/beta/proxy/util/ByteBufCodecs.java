@@ -33,6 +33,16 @@ public interface ByteBufCodecs {
 		}
 	};
 
+    StreamCodec<ByteBuf, Long> LONG = new StreamCodec<>() {
+        public Long decode(final ByteBuf input) {
+            return input.readLong();
+        }
+
+        public void encode(final ByteBuf output, final Long value) {
+            output.writeLong(value);
+        }
+    };
+
 	StreamCodec<ByteBuf, Float> FLOAT = new StreamCodec<>() {
 		public Float decode(final ByteBuf input) {
 			return input.readFloat();
