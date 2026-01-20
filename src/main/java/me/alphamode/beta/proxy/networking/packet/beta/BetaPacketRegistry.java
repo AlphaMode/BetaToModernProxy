@@ -2,37 +2,30 @@ package me.alphamode.beta.proxy.networking.packet.beta;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.*;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 public class BetaPacketRegistry {
-	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry(14);
+	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
 	private final Map<BetaPackets, StreamCodec<ByteBuf, ? extends RecordPacket>> registry = new EnumMap<>(BetaPackets.class);
-	private final int protocolVersion;
 
-	public BetaPacketRegistry(final int protocolVersion) {
-		this.protocolVersion = protocolVersion;
+	public BetaPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
 	public RecordPacket createPacket(final int packetId, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
-        if (packetType == null) {
-            throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
-        } else {
-            return getCodec(packetType).decode(byteBuf);
-        }
+		if (packetType == null) {
+			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
+		} else {
+			return getCodec(packetType).decode(byteBuf);
+		}
 	}
 
-    public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
-        return (StreamCodec<ByteBuf, T>) this.registry.get(type);
-    }
-
-	public int getProtocolVersion() {
-		return this.protocolVersion;
+	public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
+		return (StreamCodec<ByteBuf, T>) this.registry.get(type);
 	}
 
 	protected final void registerPacket(final BetaPackets packetType, final StreamCodec<ByteBuf, ? extends RecordPacket> packetCreator) {
@@ -43,9 +36,9 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.KEEP_ALIVE, KeepAlivePacket.CODEC);
 		this.registerPacket(BetaPackets.LOGIN, LoginPacket.CODEC);
 		this.registerPacket(BetaPackets.HANDSHAKE, HandshakePacket.CODEC);
-//		this.registerPacket(BetaPackets.CHAT, ChatPacket::new);
-//		this.registerPacket(BetaPackets.SET_TIME, SetTimePacket::new);
-//		this.registerPacket(BetaPackets.SET_EQUIPPED_ITEM, SetEquippedItemPacket::new);
+		this.registerPacket(BetaPackets.CHAT, ChatPacket.CODEC);
+		this.registerPacket(BetaPackets.SET_TIME, SetTimePacket.CODEC);
+		this.registerPacket(BetaPackets.SET_EQUIPPED_ITEM, SetEquippedItemPacket.CODEC);
 //		this.registerPacket(BetaPackets.SET_SPAWN_POSITION, SetSpawnPositionPacket::new);
 //		this.registerPacket(BetaPackets.INTERACT, InteractPacket::new);
 //		this.registerPacket(BetaPackets.SET_HEALTH, SetHealthPacket::new);

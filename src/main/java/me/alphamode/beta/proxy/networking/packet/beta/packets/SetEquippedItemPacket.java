@@ -1,43 +1,37 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
-import net.raphimc.netminecraft.packet.Packet;
 
-public class SetEquippedItemPacket implements Packet {
-	public int entityId;
-	public int slot;
-	public int item;
-	public int auxValue;
-
-	public SetEquippedItemPacket() {
-	}
-
-	public SetEquippedItemPacket(final int entityId, final int slot, final BetaItemStack item) {
-		this.entityId = entityId;
-		this.slot = slot;
-		if (item == null) {
-			this.item = -1;
-			this.auxValue = 0;
-		} else {
-			this.item = item.id();
-			this.auxValue = item.aux();
+public record SetEquippedItemPacket(int entityId, short slot, BetaItemStack item) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, BetaItemStack> EQUIPPED_ITEM_CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final BetaItemStack item) {
+			buf.writeShort(item.id());
+			buf.writeShort(item.aux());
 		}
-	}
+
+		@Override
+		public BetaItemStack decode(final ByteBuf buf) {
+			return new BetaItemStack(buf.readShort(), 1, buf.readShort());
+		}
+	};
+
+	public static final StreamCodec<ByteBuf, SetEquippedItemPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			SetEquippedItemPacket::entityId,
+			ByteBufCodecs.SHORT,
+			SetEquippedItemPacket::slot,
+			EQUIPPED_ITEM_CODEC,
+			SetEquippedItemPacket::item,
+			SetEquippedItemPacket::new
+	);
 
 	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.entityId = buf.readInt();
-		this.slot = buf.readShort();
-		this.item = buf.readShort();
-		this.auxValue = buf.readShort();
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.entityId);
-		buf.writeShort(this.slot);
-		buf.writeShort(this.item);
-		buf.writeShort(this.auxValue);
+	public BetaPackets getType() {
+		return BetaPackets.SET_EQUIPPED_ITEM;
 	}
 }
