@@ -27,9 +27,10 @@ public class BetaPacketRegistry {
 
 	public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
 		if (!registry.containsKey(type)) {
-			throw new IllegalArgumentException("Packet type" + type + " is not registered in the packet registry");
+			throw new IllegalArgumentException("Packet type " + type + " is not registered in the packet registry");
+		} else {
+			return (StreamCodec<ByteBuf, T>) this.registry.get(type);
 		}
-		return (StreamCodec<ByteBuf, T>) this.registry.get(type);
 	}
 
 	protected final void registerPacket(final BetaPackets packetType, final StreamCodec<ByteBuf, ? extends RecordPacket> packetCreator) {
@@ -48,9 +49,9 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.SET_HEALTH, SetHealthPacket.CODEC);
 		this.registerPacket(BetaPackets.PLAYER_CHANGE_DIMENSION, PlayerChangeDimensionPacket.CODEC);
 //		this.registerPacket(BetaPackets.MOVE_PLAYER, MovePlayerPacket.CODEC);
-		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos.CODEC);
+//		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos.CODEC);
 //		this.registerPacket(BetaPackets.MOVE_PLAYER_ROT, MovePlayerPacket.Rot.CODEC);
-		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot.CODEC);
+//		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot.CODEC);
 //		this.registerPacket(BetaPackets.PLAYER_ACTION, PlayerActionPacket.CODEC);
 //		this.registerPacket(BetaPackets.USE_ITEM, UseItemPacket.CODEC);
 //		this.registerPacket(BetaPackets.SET_CARRIED_ITEM, SetCarriedItemPacket.CODEC);
@@ -66,10 +67,10 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.PLAYER_INPUT, PlayerInputPacket.CODEC);
 		this.registerPacket(BetaPackets.SET_ENTITY_MOTION, SetEntityMotionPacket.CODEC);
 		this.registerPacket(BetaPackets.REMOVE_ENTITY, RemoveEntityPacket.CODEC);
-		this.registerPacket(BetaPackets.MOVE_ENTITY, MoveEntityPacket.CODEC);
-		this.registerPacket(BetaPackets.MOVE_ENTITY_POS, MoveEntityPacket.Pos.CODEC);
-		this.registerPacket(BetaPackets.MOVE_ENTITY_ROT, MoveEntityPacket.Rot.CODEC);
-		this.registerPacket(BetaPackets.MOVE_ENTITY_POS_ROT, MoveEntityPacket.PosRot.CODEC);
+//		this.registerPacket(BetaPackets.MOVE_ENTITY, MoveEntityPacket.CODEC);
+//		this.registerPacket(BetaPackets.MOVE_ENTITY_POS, MoveEntityPacket.Pos.CODEC);
+//		this.registerPacket(BetaPackets.MOVE_ENTITY_ROT, MoveEntityPacket.Rot.CODEC);
+//		this.registerPacket(BetaPackets.MOVE_ENTITY_POS_ROT, MoveEntityPacket.PosRot.CODEC);
 		this.registerPacket(BetaPackets.TELEPORT_ENTITY, TeleportEntityPacket.CODEC);
 		this.registerPacket(BetaPackets.ENTITY_EVENT, EntityEventPacket.CODEC);
 //		this.registerPacket(BetaPackets.SET_RIDING, SetRidingPacket.CODEC);
