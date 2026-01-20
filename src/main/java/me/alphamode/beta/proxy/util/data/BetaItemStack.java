@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.StreamCodec;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record BetaItemStack(int id, int count, int aux) {
 	public static final StreamCodec<ByteBuf, BetaItemStack> CODEC = new StreamCodec<>() {

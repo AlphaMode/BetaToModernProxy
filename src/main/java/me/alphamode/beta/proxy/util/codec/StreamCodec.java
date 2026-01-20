@@ -1,6 +1,4 @@
-package me.alphamode.beta.proxy.util;
-
-import me.alphamode.beta.proxy.util.codec.*;
+package me.alphamode.beta.proxy.util.codec;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

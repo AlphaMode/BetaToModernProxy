@@ -3,16 +3,13 @@ package me.alphamode.beta.proxy.networking.packet.beta;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
-import me.alphamode.beta.proxy.util.StreamCodec;
-import net.raphimc.netminecraft.constants.ConnectionState;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.raphimc.netminecraft.packet.Packet;
 import net.raphimc.netminecraft.packet.UnknownPacket;
-import net.raphimc.netminecraft.packet.registry.PacketRegistry;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class BetaPacketRegistry {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry(14);

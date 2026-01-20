@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.util.entity;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.ByteBufCodecs;
-import me.alphamode.beta.proxy.util.StreamCodec;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 

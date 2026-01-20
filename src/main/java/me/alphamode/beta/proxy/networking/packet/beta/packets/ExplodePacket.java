@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.StreamCodec;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import net.raphimc.netminecraft.packet.Packet;
 
