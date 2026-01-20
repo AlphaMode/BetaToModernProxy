@@ -15,12 +15,8 @@ public final class BetaPacketEncoder extends MessageToByteEncoder<Packet> {
 		if (packetRegistry == null) {
 			throw new IllegalStateException("Can't write Packet without a packet registry");
 		} else {
-			final int packetId = packetRegistry.getPacketId(packet);
-			buf.writeByte(packetId);
+			buf.writeByte(packetRegistry.getPacketId(packet));
 			packet.write(buf, packetRegistry.getProtocolVersion());
-
-			final BetaPackets packetType = BetaPackets.getPacket(packetId);
-			IO.println("Writing packet " + (packetType == null ? "Unknown" : packetType));
 		}
 	}
 }

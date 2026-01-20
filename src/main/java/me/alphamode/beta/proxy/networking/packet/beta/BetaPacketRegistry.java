@@ -28,11 +28,7 @@ public class BetaPacketRegistry implements PacketRegistry {
 	public Packet createPacket(final int packetId, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		final Packet packet = this.registry.getOrDefault(packetType, () -> new UnknownPacket(packetId)).get();
-
-		final int idx = byteBuf.readerIndex();
 		packet.read(byteBuf, this.protocolVersion);
-		IO.println("Reading packet " + (packetType == null ? "Unknown (" + packetId + ")" : packetType) + " of size " + (idx + byteBuf.readerIndex())); // Don't know if size is correct here
-
 		return packet;
 	}
 
