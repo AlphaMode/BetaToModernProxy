@@ -20,6 +20,7 @@ public class BetaPacketRegistry {
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
+			IO.println(packetType);
 			return getCodec(packetType).decode(byteBuf);
 		}
 	}
@@ -39,7 +40,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.CHAT, ChatPacket.CODEC);
 		this.registerPacket(BetaPackets.SET_TIME, SetTimePacket.CODEC);
 		this.registerPacket(BetaPackets.SET_EQUIPPED_ITEM, SetEquippedItemPacket.CODEC);
-//		this.registerPacket(BetaPackets.SET_SPAWN_POSITION, SetSpawnPositionPacket::new);
+		this.registerPacket(BetaPackets.SET_SPAWN_POSITION, SetSpawnPositionPacket.CODEC);
 //		this.registerPacket(BetaPackets.INTERACT, InteractPacket::new);
 //		this.registerPacket(BetaPackets.SET_HEALTH, SetHealthPacket::new);
 //		this.registerPacket(BetaPackets.PLAYER_CHANGE_DIMENSION, PlayerChangeDimensionPacket::new);
