@@ -1,25 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class PlayerChangeDimensionPacket implements Packet {
-	public byte dimension;
-
-	public PlayerChangeDimensionPacket() {
-	}
-
-	public PlayerChangeDimensionPacket(final byte dimension) {
-		this.dimension = dimension;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.dimension = buf.readByte();
-	}
+public record PlayerChangeDimensionPacket(byte dimension) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, PlayerChangeDimensionPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.BYTE,
+			PlayerChangeDimensionPacket::dimension,
+			PlayerChangeDimensionPacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeByte(this.dimension);
+	public BetaPackets getType() {
+		return BetaPackets.PLAYER_CHANGE_DIMENSION;
 	}
 }
