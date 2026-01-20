@@ -33,15 +33,15 @@ public interface ByteBufCodecs {
 		}
 	};
 
-    StreamCodec<ByteBuf, Long> LONG = new StreamCodec<>() {
-        public Long decode(final ByteBuf input) {
-            return input.readLong();
-        }
+	StreamCodec<ByteBuf, Long> LONG = new StreamCodec<>() {
+		public Long decode(final ByteBuf input) {
+			return input.readLong();
+		}
 
-        public void encode(final ByteBuf output, final Long value) {
-            output.writeLong(value);
-        }
-    };
+		public void encode(final ByteBuf output, final Long value) {
+			output.writeLong(value);
+		}
+	};
 
 	StreamCodec<ByteBuf, Float> FLOAT = new StreamCodec<>() {
 		public Float decode(final ByteBuf input) {
@@ -92,5 +92,4 @@ public interface ByteBufCodecs {
 	static StreamCodec<ByteBuf, String> stringUtf8() {
 		return stringUtf8(MAX_STRING_LENGTH);
 	}
-
 }
