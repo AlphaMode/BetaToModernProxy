@@ -18,7 +18,7 @@ public class MovePlayerPacket implements RecordPacket {
 	public boolean hasRot;
 
 	public MovePlayerPacket(ByteBuf buf) {
-        this.onGround = buf.readByte() != 0;
+        this.onGround = buf.readBoolean();
 	}
 
 	public MovePlayerPacket(final boolean onGround) {
@@ -26,7 +26,8 @@ public class MovePlayerPacket implements RecordPacket {
 	}
 
 	public void write(final ByteBuf buf) {
-		buf.writeByte(this.onGround ? 1 : 0);
+        buf.writeBoolean(this.onGround);
+//		buf.writeByte(this.onGround ? 1 : 0);
 	}
 
     @Override
@@ -117,7 +118,12 @@ public class MovePlayerPacket implements RecordPacket {
 			buf.writeFloat(this.xRot);
 			super.write(buf);
 		}
-	}
+
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER_POS_ROT;
+        }
+    }
 
 	public static class Rot extends MovePlayerPacket {
         public static final StreamCodec<ByteBuf, Rot> CODEC = RecordPacket.codec(Rot::write, Rot::new);
@@ -144,5 +150,10 @@ public class MovePlayerPacket implements RecordPacket {
 			buf.writeFloat(this.xRot);
 			super.write(buf);
 		}
-	}
+
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER_ROT;
+        }
+    }
 }
