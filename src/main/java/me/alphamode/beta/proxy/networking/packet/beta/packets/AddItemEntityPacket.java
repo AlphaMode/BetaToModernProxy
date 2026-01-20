@@ -1,22 +1,35 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import net.raphimc.netminecraft.packet.Packet;
 
-public class AddItemEntityPacket implements Packet {
-	public int entity;
-	public Vec3i position;
-	public byte xa;
-	public byte ya;
-	public byte za;
-	public BetaItemStack item;
+public record AddItemEntityPacket(int entityId, BetaItemStack item, Vec3i position, byte xa, byte ya, byte za) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, AddItemEntityPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            AddItemEntityPacket::entityId,
+            BetaItemStack.CODEC,
+            AddItemEntityPacket::item,
+            Vec3i.CODEC,
+            AddItemEntityPacket::position,
+            ByteBufCodecs.BYTE,
+            AddItemEntityPacket::xa,
+            ByteBufCodecs.BYTE,
+            AddItemEntityPacket::ya,
+            ByteBufCodecs.BYTE,
+            AddItemEntityPacket::za,
+            AddItemEntityPacket::new
+    );
 
-	public AddItemEntityPacket() {
-	}
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.ADD_ITEM_ENTITY;
+    }
 
-//    public AddItemEntityPacket(ItemEntity item) {
+    //    public AddItemEntityPacket(ItemEntity item) {
 //        this.entity = item.id;
 //        this.item = item.item.id;
 //        this.count = item.item.count;
@@ -28,24 +41,4 @@ public class AddItemEntityPacket implements Packet {
 //        this.ya = (byte)(item.yd * 128.0);
 //        this.za = (byte)(item.zd * 128.0);
 //    }
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.entity = buf.readInt();
-		this.item = BetaItemStack.CODEC.decode(buf);
-		this.position = Vec3i.CODEC.decode(buf);
-		this.xa = buf.readByte();
-		this.ya = buf.readByte();
-		this.za = buf.readByte();
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.entity);
-		BetaItemStack.CODEC.encode(buf, this.item);
-		Vec3i.CODEC.encode(buf, this.position);
-		buf.writeByte(this.xa);
-		buf.writeByte(this.ya);
-		buf.writeByte(this.za);
-	}
 }
