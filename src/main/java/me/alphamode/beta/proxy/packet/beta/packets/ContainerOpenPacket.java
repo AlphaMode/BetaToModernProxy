@@ -23,7 +23,7 @@ public class ContainerOpenPacket implements Packet {
     public void read(ByteBuf data, int protocolVersion) {
         this.containerId = data.readUnsignedByte();
         this.type = data.readUnsignedByte();
-//        this.title = data.readUTF();
+        this.title = data.readUTF();
         this.size = data.readUnsignedByte();
     }
 
@@ -31,7 +31,7 @@ public class ContainerOpenPacket implements Packet {
     public void write(ByteBuf data, int protocolVersion) {
         data.writeByte(this.containerId);
         data.writeByte(this.type);
-//        data.writeUTF(this.title);
+        data.writeUTF(this.title);
         data.writeByte(this.size);
     }
 }

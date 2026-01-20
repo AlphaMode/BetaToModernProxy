@@ -129,7 +129,7 @@ public class BetaPacketRegistry implements PacketRegistry {
         registerPacket(61, true, false, LevelEventPacket::new);
         registerPacket(70, true, false, GameEventPacket::new);
         registerPacket(71, true, false, AddGlobalEntityPacket::new);
-//        registerPacket(100, true, false, ContainerOpenPacket::new);
+        registerPacket(100, true, false, ContainerOpenPacket::new);
         registerPacket(101, true, true, ContainerClosePacket::new);
         registerPacket(102, false, true, ContainerClickPacket::new);
         registerPacket(103, true, false, ContainerSetSlotPacket::new);
