@@ -1,8 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.ByteBufCodecs;
-import me.alphamode.beta.proxy.util.StreamCodec;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record LoginPacket(int clientVersion, String username, long seed, byte dimension) implements RecordPacket {
 	public static final int MAX_USERNAME_LENGTH = 16;
@@ -24,7 +25,7 @@ public record LoginPacket(int clientVersion, String username, long seed, byte di
 	}
 
     @Override
-    public StreamCodec<ByteBuf, ? extends RecordPacket> codec() {
-        return CODEC;
+    public BetaPackets getType() {
+        return BetaPackets.LOGIN;
     }
 }

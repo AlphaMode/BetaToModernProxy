@@ -8,6 +8,25 @@ public interface StreamCodec<B, V> {
 
     V decode(B input);
 
+    static <B, C, T1> StreamCodec<B, C> composite(
+            final StreamCodec<? super B, T1> codec1,
+            final Function<C, T1> getter1,
+            final Function<T1, C> constructor
+    ) {
+        return new StreamCodec<B, C>() {
+            @Override
+            public C decode(final B input) {
+                T1 v1 = codec1.decode(input);
+                return constructor.apply(v1);
+            }
+
+            @Override
+            public void encode(final B output, final C value) {
+                codec1.encode(output, getter1.apply(value));
+            }
+        };
+    }
+
     static <B, C, T1, T2> StreamCodec<B, C> composite(
             final StreamCodec<? super B, T1> codec1,
             final Function<C, T1> getter1,

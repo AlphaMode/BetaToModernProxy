@@ -3,20 +3,21 @@ package me.alphamode.beta.proxy.networking.packet.beta;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import net.raphimc.netminecraft.constants.MCPipeline;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.Proxy;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
 
-public final class BetaPacketEncoder extends MessageToByteEncoder<Packet> {
+public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket> {
 	public static final String KEY = "beta-encoder";
 
 	@Override
-	protected void encode(final ChannelHandlerContext context, final Packet packet, final ByteBuf buf) {
-		final BetaPacketRegistry packetRegistry = (BetaPacketRegistry) context.channel().attr(MCPipeline.PACKET_REGISTRY_ATTRIBUTE_KEY).get();
+	protected void encode(final ChannelHandlerContext context, final RecordPacket packet, final ByteBuf buf) {
+		final BetaPacketRegistry packetRegistry = context.channel().attr(Proxy.PACKET_REGISTRY_ATTRIBUTE_KEY).get();
 		if (packetRegistry == null) {
 			throw new IllegalStateException("Can't write Packet without a packet registry");
 		} else {
-			buf.writeByte(packetRegistry.getPacketId(packet));
-			packet.write(buf, packetRegistry.getProtocolVersion());
+            BetaPackets type = packet.getType();
+			buf.writeByte(type.getId());
+            packetRegistry.getCodec(type).encode(buf, packet);
 		}
 	}
 }
