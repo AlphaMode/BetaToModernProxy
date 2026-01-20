@@ -84,9 +84,9 @@ public class BetaPacketRegistry {
 //		this.registerPacket(BetaPackets.LEVEL_EVENT, LevelEventPacket.CODEC);
 		this.registerPacket(BetaPackets.GAME_EVENT, GameEventPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_GLOBAL_ENTITY, AddGlobalEntityPacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_OPEN, ContainerOpenPacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_CLOSE, ContainerClosePacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_CLICK, ContainerClickPacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_OPEN, ContainerOpenPacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_CLOSE, ContainerClosePacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_CLICK, ContainerClickPacket.CODEC);
 		this.registerPacket(BetaPackets.CONTAINER_SET_SLOT, ContainerSetSlotPacket.CODEC);
 		this.registerPacket(BetaPackets.CONTAINER_SET_CONTENT, ContainerSetContentPacket.CODEC);
 		this.registerPacket(BetaPackets.CONTAINER_SET_DATA, ContainerSetDataPacket.CODEC);

@@ -1,25 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class ContainerClosePacket implements Packet {
-	public int containerId;
-
-	public ContainerClosePacket() {
-	}
-
-	public ContainerClosePacket(final int containerId) {
-		this.containerId = containerId;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.containerId = buf.readByte();
-	}
+public record ContainerClosePacket(byte containerId) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, ContainerClosePacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.BYTE,
+			ContainerClosePacket::containerId,
+			ContainerClosePacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeByte(this.containerId);
+	public BetaPackets getType() {
+		return BetaPackets.CONTAINER_CLOSE;
 	}
 }
