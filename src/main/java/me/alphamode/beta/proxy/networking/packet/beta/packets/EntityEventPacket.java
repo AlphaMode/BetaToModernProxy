@@ -1,29 +1,21 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class EntityEventPacket implements Packet {
-	public int entityId;
-	public byte eventId;
+public record EntityEventPacket(int entityId, byte eventId) implements RecordPacket {
+    public static final StreamCodec<ByteBuf, EntityEventPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            EntityEventPacket::entityId,
+            ByteBufCodecs.BYTE,
+            EntityEventPacket::eventId,
+            EntityEventPacket::new
+    );
 
-	public EntityEventPacket() {
-	}
-
-	public EntityEventPacket(final int entityId, final byte eventId) {
-		this.entityId = entityId;
-		this.eventId = eventId;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.entityId = buf.readInt();
-		this.eventId = buf.readByte();
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.entityId);
-		buf.writeByte(this.eventId);
-	}
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.ENTITY_EVENT;
+    }
 }

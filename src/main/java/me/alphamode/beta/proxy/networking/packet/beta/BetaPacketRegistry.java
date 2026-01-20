@@ -48,7 +48,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.SET_HEALTH, SetHealthPacket.CODEC);
 		this.registerPacket(BetaPackets.PLAYER_CHANGE_DIMENSION, PlayerChangeDimensionPacket.CODEC);
 //		this.registerPacket(BetaPackets.MOVE_PLAYER, MovePlayerPacket.CODEC);
-//		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos.CODEC);
+		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos.CODEC);
 //		this.registerPacket(BetaPackets.MOVE_PLAYER_ROT, MovePlayerPacket.Rot.CODEC);
 		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot.CODEC);
 //		this.registerPacket(BetaPackets.PLAYER_ACTION, PlayerActionPacket.CODEC);
@@ -65,15 +65,15 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.ADD_PAINTING, AddPaintingPacket.CODEC);
 //		this.registerPacket(BetaPackets.PLAYER_INPUT, PlayerInputPacket.CODEC);
 		this.registerPacket(BetaPackets.SET_ENTITY_MOTION, SetEntityMotionPacket.CODEC);
-//		this.registerPacket(BetaPackets.REMOVE_ENTITY, RemoveEntityPacket.CODEC);
+		this.registerPacket(BetaPackets.REMOVE_ENTITY, RemoveEntityPacket.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY, MoveEntityPacket.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY_POS, MoveEntityPacket.Pos.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY_ROT, MoveEntityPacket.Rot.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY_POS_ROT, MoveEntityPacket.PosRot.CODEC);
 //		this.registerPacket(BetaPackets.TELEPORT_ENTITY, TeleportEntityPacket.CODEC);
-//		this.registerPacket(BetaPackets.ENTITY_EVENT, EntityEventPacket.CODEC);
+		this.registerPacket(BetaPackets.ENTITY_EVENT, EntityEventPacket.CODEC);
 //		this.registerPacket(BetaPackets.SET_RIDING, SetRidingPacket.CODEC);
-//		this.registerPacket(BetaPackets.SET_ENTITY_DATA, SetEntityDataPacket.CODEC);
+		this.registerPacket(BetaPackets.SET_ENTITY_DATA, SetEntityDataPacket.CODEC);
 		this.registerPacket(BetaPackets.CHUNK_VISIBILITY, ChunkVisibilityPacket.CODEC);
 		this.registerPacket(BetaPackets.BLOCK_REGION_UPDATE, BlockRegionUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket.CODEC);
