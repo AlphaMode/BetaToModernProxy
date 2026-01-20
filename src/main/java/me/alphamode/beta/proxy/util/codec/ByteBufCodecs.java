@@ -128,4 +128,25 @@ public interface ByteBufCodecs {
 	static StreamCodec<ByteBuf, String> stringUtf8() {
 		return stringUtf8(MAX_STRING_LENGTH);
 	}
+
+	static <T> StreamCodec<ByteBuf, T[]> array(final StreamCodec<ByteBuf, T> type, final int size) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final T[] values) {
+				for (int i = 0; i < size; ++i) {
+					type.encode(buf, values[i]);
+				}
+			}
+
+			@Override
+			public T[] decode(final ByteBuf buf) {
+				final T[] values = (T[]) new Object[size];
+				for (int i = 0; i < size; ++i) {
+					values[i] = type.decode(buf);
+				}
+
+				return values;
+			}
+		};
+	}
 }

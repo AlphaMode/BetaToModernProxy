@@ -1,49 +1,28 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import net.raphimc.netminecraft.packet.Packet;
 
-public record SignUpdatePacket(int x, short y, int z, String[] lines) implements Packet {
+public record SignUpdatePacket(int x, short y, int z, String[] lines) implements RecordPacket {
 	public static final int MAX_SIGN_STRING_LENGTH = 15;
 	public static final StreamCodec<ByteBuf, String> SIGN_STRING_CODEC = ByteBufCodecs.stringUtf8(MAX_SIGN_STRING_LENGTH);
+	public static final StreamCodec<ByteBuf, SignUpdatePacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			SignUpdatePacket::x,
+			ByteBufCodecs.SHORT,
+			SignUpdatePacket::y,
+			ByteBufCodecs.INT,
+			SignUpdatePacket::z,
+			ByteBufCodecs.array(SIGN_STRING_CODEC, 4),
+			SignUpdatePacket::lines,
+			SignUpdatePacket::new
+	);
 
-	public int x;
-	public int y;
-	public int z;
-	public String[] lines;
-
-	public SignUpdatePacket() {
-//        this.shouldDelay = true;
-	}
-
-	public SignUpdatePacket(int x, int y, int z, String[] lines) {
-//        this.shouldDelay = true;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.lines = lines;
-	}
 
 	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.x = buf.readInt();
-		this.y = buf.readShort();
-		this.z = buf.readInt();
-		this.lines = new String[4];
-		for (int i = 0; i < 4; i++) {
-			this.lines[i] = SIGN_STRING_CODEC.decode(buf);
-		}
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.x);
-		buf.writeShort(this.y);
-		buf.writeInt(this.z);
-		for (int i = 0; i < 4; i++) {
-			SIGN_STRING_CODEC.encode(buf, this.lines[i]);
-		}
+	public BetaPackets getType() {
+		return BetaPackets.SIGN_UPDATE;
 	}
 }
