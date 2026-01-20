@@ -1,14 +1,16 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.raphimc.netminecraft.packet.Packet;
 
-public class KeepAlivePacket implements Packet {
-	@Override
-	public void read(final ByteBuf byteBuf, final int protocolVersion) {
-	}
+public class KeepAlivePacket implements RecordPacket {
+    public static final KeepAlivePacket INSTANCE = new KeepAlivePacket();
+    public static final StreamCodec<ByteBuf, KeepAlivePacket> CODEC = StreamCodec.unit(INSTANCE);
 
-	@Override
-	public void write(final ByteBuf byteBuf, final int protocolVersion) {
-	}
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.KEEP_ALIVE;
+    }
 }

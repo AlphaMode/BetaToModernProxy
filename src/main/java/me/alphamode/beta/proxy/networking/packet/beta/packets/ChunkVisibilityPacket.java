@@ -1,35 +1,23 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class ChunkVisibilityPacket implements Packet {
-	public int x;
-	public int z;
-	public boolean visible;
+public record ChunkVisibilityPacket(int x, int z, boolean visible) implements RecordPacket {
+    public static final StreamCodec<ByteBuf, ChunkVisibilityPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            ChunkVisibilityPacket::x,
+            ByteBufCodecs.INT,
+            ChunkVisibilityPacket::z,
+            ByteBufCodecs.BOOL,
+            ChunkVisibilityPacket::visible,
+            ChunkVisibilityPacket::new
+    );
 
-	public ChunkVisibilityPacket() {
-//        this.shouldDelay = false;
-	}
-
-	public ChunkVisibilityPacket(final int x, final int z, final boolean visible) {
-//        this.shouldDelay = false;
-		this.x = x;
-		this.z = z;
-		this.visible = visible;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.x = buf.readInt();
-		this.z = buf.readInt();
-		this.visible = buf.readByte() != 0;
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.x);
-		buf.writeInt(this.z);
-		buf.writeByte(this.visible ? 1 : 0);
-	}
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.CHUNK_VISIBILITY;
+    }
 }

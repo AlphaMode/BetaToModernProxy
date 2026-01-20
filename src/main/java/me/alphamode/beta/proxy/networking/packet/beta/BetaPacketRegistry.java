@@ -40,9 +40,9 @@ public class BetaPacketRegistry {
 	}
 
 	public void registerVanillaPackets() {
-//		this.registerPacket(BetaPackets.KEEP_ALIVE, KeepAlivePacket::new);
+		this.registerPacket(BetaPackets.KEEP_ALIVE, KeepAlivePacket.CODEC);
 		this.registerPacket(BetaPackets.LOGIN, LoginPacket.CODEC);
-		this.registerPacket(BetaPackets.HANDSHAKE, HandshakePacket::new);
+		this.registerPacket(BetaPackets.HANDSHAKE, HandshakePacket.CODEC);
 //		this.registerPacket(BetaPackets.CHAT, ChatPacket::new);
 //		this.registerPacket(BetaPackets.SET_TIME, SetTimePacket::new);
 //		this.registerPacket(BetaPackets.SET_EQUIPPED_ITEM, SetEquippedItemPacket::new);
@@ -77,8 +77,8 @@ public class BetaPacketRegistry {
 //		this.registerPacket(BetaPackets.ENTITY_EVENT, EntityEventPacket::new);
 //		this.registerPacket(BetaPackets.SET_RIDING, SetRidingPacket::new);
 //		this.registerPacket(BetaPackets.SET_ENTITY_DATA, SetEntityDataPacket::new);
-//		this.registerPacket(BetaPackets.CHUNK_VISIBILITY, ChunkVisibilityPacket::new);
-//		this.registerPacket(BetaPackets.BLOCK_REGION_UPDATE, BlockRegionUpdatePacket::new);
+		this.registerPacket(BetaPackets.CHUNK_VISIBILITY, ChunkVisibilityPacket.CODEC);
+		this.registerPacket(BetaPackets.BLOCK_REGION_UPDATE, BlockRegionUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket::new);
 //		this.registerPacket(BetaPackets.TILE_UPDATE, TileUpdatePacket::new);
 //		this.registerPacket(BetaPackets.TILE_EVENT, TileEventPacket::new);
