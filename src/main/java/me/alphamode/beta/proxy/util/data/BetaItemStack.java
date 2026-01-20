@@ -3,13 +3,13 @@ package me.alphamode.beta.proxy.util.data;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.StreamCodec;
 
-public record BetaItemStack(int id, int count, int auxValue) {
+public record BetaItemStack(int id, int count, int aux) {
 	public static final StreamCodec<ByteBuf, BetaItemStack> CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack value) {
 			buf.writeShort(value.id);
 			buf.writeByte(value.count);
-			buf.writeShort(value.auxValue);
+			buf.writeShort(value.aux);
 		}
 
 		@Override
@@ -26,7 +26,7 @@ public record BetaItemStack(int id, int count, int auxValue) {
 			} else {
 				buf.writeShort(value.id);
 				buf.writeByte(value.count);
-				buf.writeShort(value.auxValue);
+				buf.writeShort(value.aux);
 			}
 		}
 

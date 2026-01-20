@@ -21,7 +21,7 @@ public class SetEquippedItemPacket implements Packet {
 			this.auxValue = 0;
 		} else {
 			this.item = item.id();
-			this.auxValue = item.auxValue();
+			this.auxValue = item.aux();
 		}
 	}
 

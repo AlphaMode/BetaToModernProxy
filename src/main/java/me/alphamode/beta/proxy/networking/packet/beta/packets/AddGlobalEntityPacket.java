@@ -1,13 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.data.Vec3i;
 import net.raphimc.netminecraft.packet.Packet;
 
 public class AddGlobalEntityPacket implements Packet {
 	public int id;
-	public int x;
-	public int y;
-	public int z;
+	public Vec3i position;
 	public int type;
 
 	public AddGlobalEntityPacket() {
@@ -27,17 +26,13 @@ public class AddGlobalEntityPacket implements Packet {
 	public void read(final ByteBuf buf, final int protocolVersion) {
 		this.id = buf.readInt();
 		this.type = buf.readByte();
-		this.x = buf.readInt();
-		this.y = buf.readInt();
-		this.z = buf.readInt();
+		this.position = Vec3i.CODEC.decode(buf);
 	}
 
 	@Override
 	public void write(final ByteBuf buf, final int protocolVersion) {
 		buf.writeInt(this.id);
 		buf.writeByte(this.type);
-		buf.writeInt(this.x);
-		buf.writeInt(this.y);
-		buf.writeInt(this.z);
+		Vec3i.CODEC.encode(buf, this.position);
 	}
 }

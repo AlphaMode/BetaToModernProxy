@@ -33,9 +33,9 @@ public class BlockRegionUpdatePacket implements Packet {
 		this.x = buf.readInt();
 		this.y = buf.readShort();
 		this.z = buf.readInt();
-		this.xs = buf.readByte() + 1;
-		this.ys = buf.readByte() + 1;
-		this.zs = buf.readByte() + 1;
+		this.xs = buf.readByte();
+		this.ys = buf.readByte();
+		this.zs = buf.readByte();
 		this.size = buf.readInt();
 		final byte[] data = new byte[this.size];
 		buf.readBytes(data);
@@ -47,9 +47,9 @@ public class BlockRegionUpdatePacket implements Packet {
 		buf.writeInt(this.x);
 		buf.writeShort(this.y);
 		buf.writeInt(this.z);
-		buf.writeByte(this.xs - 1);
-		buf.writeByte(this.ys - 1);
-		buf.writeByte(this.zs - 1);
+		buf.writeByte(this.xs);
+		buf.writeByte(this.ys);
+		buf.writeByte(this.zs);
 		buf.writeInt(this.size);
 		buf.writeBytes(this.buffer);
 	}
