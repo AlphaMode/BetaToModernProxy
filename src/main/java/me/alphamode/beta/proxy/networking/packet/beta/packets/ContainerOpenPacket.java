@@ -1,52 +1,25 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
-public class ContainerOpenPacket implements Packet {
-	public int containerId;
-	public int type;
-	public String title;
-	public int size;
-
-	public ContainerOpenPacket() {
-	}
-
-	public ContainerOpenPacket(final int containerId, final int id, final String name, final int size) {
-		this.containerId = containerId;
-		this.type = id;
-		this.title = name;
-		this.size = size;
-	}
+public record ContainerOpenPacket(short containerId, short type, String title, short size) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, ContainerOpenPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.UNSIGNED_BYTE,
+			ContainerOpenPacket::containerId,
+			ByteBufCodecs.UNSIGNED_BYTE,
+			ContainerOpenPacket::type,
+			ByteBufCodecs.stringUtf8(), // todo/check if readUTF is needed
+			ContainerOpenPacket::title,
+			ByteBufCodecs.UNSIGNED_BYTE,
+			ContainerOpenPacket::size,
+			ContainerOpenPacket::new
+	);
 
 	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.containerId = buf.readUnsignedByte();
-		this.type = buf.readUnsignedByte();
-		try (final DataInputStream out = new DataInputStream(new ByteBufInputStream(buf))) {
-			this.title = out.readUTF();
-		} catch (Exception exception) {
-			throw new RuntimeException(exception);
-		}
-
-		this.size = buf.readUnsignedByte();
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeByte(this.containerId);
-		buf.writeByte(this.type);
-		try (final DataOutputStream out = new DataOutputStream(new ByteBufOutputStream(buf))) {
-			out.writeUTF(this.title);
-		} catch (Exception exception) {
-			throw new RuntimeException(exception);
-		}
-
-		buf.writeByte(this.size);
+	public BetaPackets getType() {
+		return BetaPackets.CONTAINER_OPEN;
 	}
 }
