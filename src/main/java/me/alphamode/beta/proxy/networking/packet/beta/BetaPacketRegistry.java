@@ -70,7 +70,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.MOVE_ENTITY_POS, MoveEntityPacket.Pos.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY_ROT, MoveEntityPacket.Rot.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY_POS_ROT, MoveEntityPacket.PosRot.CODEC);
-//		this.registerPacket(BetaPackets.TELEPORT_ENTITY, TeleportEntityPacket.CODEC);
+		this.registerPacket(BetaPackets.TELEPORT_ENTITY, TeleportEntityPacket.CODEC);
 		this.registerPacket(BetaPackets.ENTITY_EVENT, EntityEventPacket.CODEC);
 //		this.registerPacket(BetaPackets.SET_RIDING, SetRidingPacket.CODEC);
 		this.registerPacket(BetaPackets.SET_ENTITY_DATA, SetEntityDataPacket.CODEC);
