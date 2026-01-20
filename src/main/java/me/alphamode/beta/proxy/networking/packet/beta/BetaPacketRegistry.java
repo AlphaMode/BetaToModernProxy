@@ -25,6 +25,9 @@ public class BetaPacketRegistry {
 	}
 
 	public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
+        if (!registry.containsKey(type)) {
+            throw new IllegalArgumentException("Packet type" + type + " is not registered in the packet registry");
+        }
 		return (StreamCodec<ByteBuf, T>) this.registry.get(type);
 	}
 
@@ -43,10 +46,10 @@ public class BetaPacketRegistry {
 //		this.registerPacket(BetaPackets.INTERACT, InteractPacket::new);
 //		this.registerPacket(BetaPackets.SET_HEALTH, SetHealthPacket::new);
 //		this.registerPacket(BetaPackets.PLAYER_CHANGE_DIMENSION, PlayerChangeDimensionPacket::new);
-//		this.registerPacket(BetaPackets.MOVE_PLAYER, MovePlayerPacket::new);
-//		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos::new);
-//		this.registerPacket(BetaPackets.MOVE_PLAYER_ROT, MovePlayerPacket.Rot::new);
-//		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot::new);
+		this.registerPacket(BetaPackets.MOVE_PLAYER, MovePlayerPacket.CODEC);
+		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos.CODEC);
+		this.registerPacket(BetaPackets.MOVE_PLAYER_ROT, MovePlayerPacket.Rot::new);
+		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot.CODEC);
 //		this.registerPacket(BetaPackets.PLAYER_ACTION, PlayerActionPacket::new);
 //		this.registerPacket(BetaPackets.USE_ITEM, UseItemPacket::new);
 //		this.registerPacket(BetaPackets.SET_CARRIED_ITEM, SetCarriedItemPacket::new);

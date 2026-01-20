@@ -1,9 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.raphimc.netminecraft.packet.Packet;
 
-public class MovePlayerPacket implements Packet {
+public class MovePlayerPacket implements RecordPacket {
+    public static final StreamCodec<ByteBuf, MovePlayerPacket> CODEC = RecordPacket.codec(MovePlayerPacket::write, MovePlayerPacket::new);
 	public double x;
 	public double y;
 	public double z;
@@ -14,64 +17,86 @@ public class MovePlayerPacket implements Packet {
 	public boolean hasPos;
 	public boolean hasRot;
 
-	public MovePlayerPacket() {
+	public MovePlayerPacket(ByteBuf buf) {
+        this.onGround = buf.readByte() != 0;
 	}
 
 	public MovePlayerPacket(final boolean onGround) {
 		this.onGround = onGround;
 	}
 
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.onGround = buf.readByte() != 0;
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
+	public void write(final ByteBuf buf) {
 		buf.writeByte(this.onGround ? 1 : 0);
 	}
 
-	public static class Pos extends MovePlayerPacket {
-		public Pos() {
-			this.hasPos = true;
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.MOVE_PLAYER;
+    }
+
+    public static class Pos extends MovePlayerPacket {
+        public static final StreamCodec<ByteBuf, Pos> CODEC = RecordPacket.codec(Pos::write,  Pos::new);
+		public Pos(final ByteBuf buf) {
+            double x = buf.readDouble();
+            double y = buf.readDouble();
+            double yView = buf.readDouble();
+            double z = buf.readDouble();
+            super(buf);
+            this.x = x;
+            this.y = y;
+            this.yView = yView;
+            this.z = z;
+            this.hasPos = true;
 		}
 
 		public Pos(double x, double y, double yView, double z, boolean onGround) {
-			this.x = x;
+            super(onGround);
+            this.x = x;
 			this.y = y;
 			this.yView = yView;
 			this.z = z;
-			this.onGround = onGround;
 			this.hasPos = true;
 		}
 
 		@Override
-		public void read(final ByteBuf buf, final int protocolVersion) {
-			this.x = buf.readDouble();
-			this.y = buf.readDouble();
-			this.yView = buf.readDouble();
-			this.z = buf.readDouble();
-			super.read(buf, protocolVersion);
-		}
-
-		@Override
-		public void write(final ByteBuf buf, final int protocolVersion) {
+		public void write(final ByteBuf buf) {
 			buf.writeDouble(this.x);
 			buf.writeDouble(this.y);
 			buf.writeDouble(this.yView);
 			buf.writeDouble(this.z);
-			super.write(buf, protocolVersion);
+			super.write(buf);
 		}
-	}
+
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER_POS;
+        }
+    }
 
 	public static class PosRot extends MovePlayerPacket {
-		public PosRot() {
+        public static final StreamCodec<ByteBuf, PosRot> CODEC = RecordPacket.codec(PosRot::write, PosRot::new);
+
+		public PosRot(ByteBuf buf) {
+            double x = buf.readDouble();
+            double y = buf.readDouble();
+            double yView = buf.readDouble();
+            double z = buf.readDouble();
+            float yRot = buf.readFloat();
+            float xRot = buf.readFloat();
+            super(buf);
+            this.x = x;
+            this.y = y;
+            this.yView = yView;
+            this.z = z;
+            this.yRot = yRot;
+            this.xRot = xRot;
 			this.hasRot = true;
 			this.hasPos = true;
 		}
 
 		public PosRot(double x, double y, double yView, double z, float yRot, float xRot, boolean onGround) {
-			this.x = x;
+            super(onGround);
+            this.x = x;
 			this.y = y;
 			this.yView = yView;
 			this.z = z;
@@ -83,25 +108,14 @@ public class MovePlayerPacket implements Packet {
 		}
 
 		@Override
-		public void read(final ByteBuf buf, final int protocolVersion) {
-			this.x = buf.readDouble();
-			this.y = buf.readDouble();
-			this.yView = buf.readDouble();
-			this.z = buf.readDouble();
-			this.yRot = buf.readFloat();
-			this.xRot = buf.readFloat();
-			super.read(buf, protocolVersion);
-		}
-
-		@Override
-		public void write(final ByteBuf buf, final int protocolVersion) {
+		public void write(final ByteBuf buf) {
 			buf.writeDouble(this.x);
 			buf.writeDouble(this.y);
 			buf.writeDouble(this.yView);
 			buf.writeDouble(this.z);
 			buf.writeFloat(this.yRot);
 			buf.writeFloat(this.xRot);
-			super.write(buf, protocolVersion);
+			super.write(buf);
 		}
 	}
 
