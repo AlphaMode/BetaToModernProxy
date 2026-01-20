@@ -10,6 +10,20 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
     @Override
     V decode(B input);
 
+    static <B, V> StreamCodec<B, V> of(final StreamEncoder<B, V> encoder, final StreamDecoder<B, V> decoder) {
+        return new StreamCodec<>() {
+            @Override
+            public V decode(final B input) {
+                return decoder.decode(input);
+            }
+
+            @Override
+            public void encode(final B output, final V value) {
+                encoder.encode(output, value);
+            }
+        };
+    }
+
     static <B, V> StreamCodec<B, V> ofMember(final StreamMemberEncoder<B, V> encoder, final StreamDecoder<B, V> decoder) {
         return new StreamCodec<>() {
             @Override

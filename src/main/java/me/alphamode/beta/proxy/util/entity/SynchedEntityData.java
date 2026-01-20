@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SynchedEntityData {
+    public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = StreamCodec.of(SynchedEntityData::pack, SynchedEntityData::unpack);
+
 	private static void writeDataItem(final ByteBuf buf, final DataItem<?> dataHolder) {
 		buf.writeByte((dataHolder.getType().getId() << 5 | dataHolder.getId() & 31) & 0xFF);
 		dataHolder.getType().getCodec().encode(buf, dataHolder.getData());
