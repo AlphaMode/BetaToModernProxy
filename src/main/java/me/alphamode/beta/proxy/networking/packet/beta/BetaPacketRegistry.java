@@ -63,7 +63,7 @@ public class BetaPacketRegistry {
 //		this.registerPacket(BetaPackets.ADD_ENTITY, AddEntityPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_MOB, AddMobPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_PAINTING, AddPaintingPacket.CODEC);
-//		this.registerPacket(BetaPackets.PLAYER_INPUT, PlayerInputPacket.CODEC);
+		this.registerPacket(BetaPackets.PLAYER_INPUT, PlayerInputPacket.CODEC);
 		this.registerPacket(BetaPackets.SET_ENTITY_MOTION, SetEntityMotionPacket.CODEC);
 		this.registerPacket(BetaPackets.REMOVE_ENTITY, RemoveEntityPacket.CODEC);
 		this.registerPacket(BetaPackets.MOVE_ENTITY, MoveEntityPacket.CODEC);
