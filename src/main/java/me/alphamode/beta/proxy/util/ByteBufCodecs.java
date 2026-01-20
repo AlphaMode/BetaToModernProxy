@@ -2,8 +2,6 @@ package me.alphamode.beta.proxy.util;
 
 import io.netty.buffer.ByteBuf;
 
-import java.nio.charset.StandardCharsets;
-
 public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, Byte> BYTE = new StreamCodec<>() {
 		public Byte decode(final ByteBuf input) {
@@ -54,8 +52,11 @@ public interface ByteBufCodecs {
 				if (msg.length() > maxLength) {
 					throw new RuntimeException("String too big");
 				} else {
-					buf.writeShort(msg.length());
-					buf.writeCharSequence(msg, StandardCharsets.UTF_16BE);
+					final int len = msg.length();
+					buf.writeShort(len);
+					for (int i = 0; i < len; ++i) {
+						buf.writeChar(msg.charAt(i));
+					}
 				}
 			}
 
@@ -67,7 +68,12 @@ public interface ByteBufCodecs {
 				} else if (size < 0) {
 					throw new RuntimeException("Received string length is less than zero! Weird string!");
 				} else {
-					return buf.readCharSequence(size, StandardCharsets.UTF_16BE).toString();
+					final StringBuilder builder = new StringBuilder();
+					for (int i = 0; i < size; i++) {
+						builder.append(buf.readChar());
+					}
+
+					return builder.toString();
 				}
 			}
 		};

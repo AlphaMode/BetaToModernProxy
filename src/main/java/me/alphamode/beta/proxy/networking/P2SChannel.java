@@ -21,13 +21,13 @@ public final class P2SChannel extends ChannelInitializer<Channel> {
 	}
 
 	@Override
-	protected void initChannel(Channel channel) {
+	protected void initChannel(final Channel channel) {
 		channel.attr(MCPipeline.PACKET_REGISTRY_ATTRIBUTE_KEY).set(BetaPacketRegistry.INSTANCE);
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<Packet>() {
 			@Override
-			protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) {
+			protected void channelRead0(final ChannelHandlerContext context, final Packet packet) {
 				otherChannel.writeAndFlush(packet);
 			}
 		});

@@ -12,7 +12,7 @@ import net.raphimc.netminecraft.netty.connection.NetServer;
 import java.net.InetSocketAddress;
 
 public final class Proxy extends ChannelInitializer<Channel> {
-	private String serverIp;
+	private final String serverIp;
 
 	public Proxy(final String ip) {
 		this.serverIp = ip;
