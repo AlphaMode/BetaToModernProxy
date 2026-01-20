@@ -26,9 +26,9 @@ public class BetaPacketRegistry {
 	}
 
 	public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
-        if (!registry.containsKey(type)) {
-            throw new IllegalArgumentException("Packet type" + type + " is not registered in the packet registry");
-        }
+		if (!registry.containsKey(type)) {
+			throw new IllegalArgumentException("Packet type" + type + " is not registered in the packet registry");
+		}
 		return (StreamCodec<ByteBuf, T>) this.registry.get(type);
 	}
 
@@ -77,19 +77,19 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.CHUNK_VISIBILITY, ChunkVisibilityPacket.CODEC);
 		this.registerPacket(BetaPackets.BLOCK_REGION_UPDATE, BlockRegionUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket.CODEC);
-//		this.registerPacket(BetaPackets.TILE_UPDATE, TileUpdatePacket.CODEC);
+		this.registerPacket(BetaPackets.TILE_UPDATE, TileUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.TILE_EVENT, TileEventPacket.CODEC);
 //		this.registerPacket(BetaPackets.EXPLODE, ExplodePacket.CODEC);
 //		this.registerPacket(BetaPackets.LEVEL_EVENT, LevelEventPacket.CODEC);
-//		this.registerPacket(BetaPackets.GAME_EVENT, GameEventPacket.CODEC);
-//		this.registerPacket(BetaPackets.ADD_GLOBAL_ENTITY, AddGlobalEntityPacket.CODEC);
+		this.registerPacket(BetaPackets.GAME_EVENT, GameEventPacket.CODEC);
+		this.registerPacket(BetaPackets.ADD_GLOBAL_ENTITY, AddGlobalEntityPacket.CODEC);
 //		this.registerPacket(BetaPackets.CONTAINER_OPEN, ContainerOpenPacket.CODEC);
 //		this.registerPacket(BetaPackets.CONTAINER_CLOSE, ContainerClosePacket.CODEC);
 //		this.registerPacket(BetaPackets.CONTAINER_CLICK, ContainerClickPacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_SET_SLOT, ContainerSetSlotPacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_SET_CONTENT, ContainerSetContentPacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_SET_DATA, ContainerSetDataPacket.CODEC);
-//		this.registerPacket(BetaPackets.CONTAINER_ACK, ContainerAckPacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_SET_SLOT, ContainerSetSlotPacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_SET_CONTENT, ContainerSetContentPacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_SET_DATA, ContainerSetDataPacket.CODEC);
+		this.registerPacket(BetaPackets.CONTAINER_ACK, ContainerAckPacket.CODEC);
 //		this.registerPacket(BetaPackets.SIGN_UPDATE, SignUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.MAP_ITEM_DATA, MapItemDataPacket.CODEC);
 		this.registerPacket(BetaPackets.UPDATE_STAT, UpdateStatPacket.CODEC);
