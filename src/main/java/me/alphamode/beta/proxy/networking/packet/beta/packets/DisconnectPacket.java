@@ -1,26 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class DisconnectPacket implements Packet {
-	public String reason;
-
-	public DisconnectPacket() {
-	}
-
-	public DisconnectPacket(String reason) {
-		this.reason = reason;
-	}
+public record DisconnectPacket(String reason) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, DisconnectPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.stringUtf8(100),
+			DisconnectPacket::reason,
+			DisconnectPacket::new
+	);
 
 	@Override
-	public void read(final ByteBuf data, final int protocolVersion) {
-		ByteBufCodecs.stringUtf8(100).decode(data);
-	}
-
-	@Override
-	public void write(final ByteBuf data, final int protocolVersion) {
-		ByteBufCodecs.stringUtf8(100).encode(data, this.reason);
+	public BetaPackets getType() {
+		return BetaPackets.DISCONNECT;
 	}
 }

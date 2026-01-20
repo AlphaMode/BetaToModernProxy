@@ -89,7 +89,7 @@ public class BetaPacketRegistry {
 //		this.registerPacket(BetaPackets.CONTAINER_ACK, ContainerAckPacket.CODEC);
 //		this.registerPacket(BetaPackets.SIGN_UPDATE, SignUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.MAP_ITEM_DATA, MapItemDataPacket.CODEC);
-//		this.registerPacket(BetaPackets.UPDATE_STAT, UpdateStatPacket.CODEC);
-//		this.registerPacket(BetaPackets.DISCONNECT, DisconnectPacket.CODEC);
+		this.registerPacket(BetaPackets.UPDATE_STAT, UpdateStatPacket.CODEC);
+		this.registerPacket(BetaPackets.DISCONNECT, DisconnectPacket.CODEC);
 	}
 }

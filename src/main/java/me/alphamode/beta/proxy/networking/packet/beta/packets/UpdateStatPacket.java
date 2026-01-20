@@ -1,29 +1,21 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class UpdateStatPacket implements Packet {
-	public int id;
-	public int amount;
-
-	public UpdateStatPacket() {
-	}
-
-	public UpdateStatPacket(final int id, final int amount) {
-		this.id = id;
-		this.amount = amount;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.id = buf.readInt();
-		this.amount = buf.readUnsignedByte();
-	}
+public record UpdateStatPacket(int id, byte amount) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, UpdateStatPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			UpdateStatPacket::id,
+			ByteBufCodecs.BYTE,
+			UpdateStatPacket::amount,
+			UpdateStatPacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.id);
-		buf.writeByte(this.amount);
+	public BetaPackets getType() {
+		return BetaPackets.UPDATE_STAT;
 	}
 }
