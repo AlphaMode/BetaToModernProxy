@@ -2,6 +2,9 @@ package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
 		public Boolean decode(final ByteBuf input) {
@@ -96,7 +99,7 @@ public interface ByteBufCodecs {
 			@Override
 			public void encode(final ByteBuf buf, final String msg) {
 				if (msg.length() > maxLength) {
-					throw new RuntimeException("String too big");
+					throw new RuntimeException("Your mum too big");
 				} else {
 					final int len = msg.length();
 					buf.writeShort(len);
@@ -140,12 +143,12 @@ public interface ByteBufCodecs {
 
 			@Override
 			public T[] decode(final ByteBuf buf) {
-				final Object[] values = new Object[size];
+				final List<T> values = new ArrayList<>(size);
 				for (int i = 0; i < size; ++i) {
-					values[i] = type.decode(buf);
+					values.set(i, type.decode(buf));
 				}
 
-				return (T[]) values;
+				return (T[]) values.toArray();
 			}
 		};
 	}

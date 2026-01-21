@@ -22,8 +22,7 @@ public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket> 
 			try {
 				packetRegistry.getCodec(type).encode(buf, packet);
 			} catch (Exception exception) {
-				context.channel().writeAndFlush(new DisconnectPacket(exception.getMessage()));
-				context.channel().close();
+				exception.printStackTrace();
 			}
 		}
 	}

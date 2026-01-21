@@ -20,7 +20,6 @@ public record SignUpdatePacket(int x, short y, int z, String[] lines) implements
 			SignUpdatePacket::new
 	);
 
-
 	@Override
 	public BetaPackets getType() {
 		return BetaPackets.SIGN_UPDATE;

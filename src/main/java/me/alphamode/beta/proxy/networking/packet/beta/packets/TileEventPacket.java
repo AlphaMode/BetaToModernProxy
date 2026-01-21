@@ -13,7 +13,7 @@ public record TileEventPacket(Vec3i position, byte b0, byte b1) implements Recor
 			ByteBufCodecs.BYTE,
 			TileEventPacket::b0,
 			ByteBufCodecs.BYTE,
-			TileEventPacket::b0,
+			TileEventPacket::b1,
 			TileEventPacket::new
 	);
 

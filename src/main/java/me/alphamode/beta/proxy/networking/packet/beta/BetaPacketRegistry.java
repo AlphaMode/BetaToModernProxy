@@ -20,7 +20,6 @@ public class BetaPacketRegistry {
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
-			IO.println(packetType);
 			return getCodec(packetType).decode(byteBuf);
 		}
 	}
