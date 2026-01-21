@@ -1,29 +1,21 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class PlayerCommandPacket implements Packet {
-	public int id;
-	public int action;
-
-	public PlayerCommandPacket() {
-	}
-
-	public PlayerCommandPacket(final int entityId, final int action) {
-		this.id = entityId;
-		this.action = action;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.id = buf.readInt();
-		this.action = buf.readByte();
-	}
+public record PlayerCommandPacket(int id, byte action) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, PlayerCommandPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			PlayerCommandPacket::id,
+			ByteBufCodecs.BYTE,
+			PlayerCommandPacket::action,
+			PlayerCommandPacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.id);
-		buf.writeByte(this.action);
+	public BetaPackets getType() {
+		return BetaPackets.PLAYER_COMMAND;
 	}
 }

@@ -57,7 +57,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.SET_CARRIED_ITEM, SetCarriedItemPacket.CODEC);
 		this.registerPacket(BetaPackets.INTERACTION, InteractionPacket.CODEC);
 		this.registerPacket(BetaPackets.ANIMATE, AnimatePacket.CODEC);
-//		this.registerPacket(BetaPackets.PLAYER_COMMAND, PlayerCommandPacket.CODEC);
+		this.registerPacket(BetaPackets.PLAYER_COMMAND, PlayerCommandPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_PLAYER, AddPlayerPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_ITEM_ENTITY, AddItemEntityPacket.CODEC);
 //		this.registerPacket(BetaPackets.TAKE_ITEM_ENTITY, TakeItemEntityPacket.CODEC);
