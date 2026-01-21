@@ -1,9 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.modern;
 
-import me.alphamode.beta.proxy.networking.packet.Packets;
 import me.alphamode.beta.proxy.util.Identifier;
 
-public enum ModernServerboundPackets implements Packets {
+public enum ModernServerboundPackets implements ModernPackets {
 	// Handshaking
 	INTENTION(0x00, Identifier.vanilla("intention"), PacketState.HANDSHAKING),
 
@@ -32,10 +31,12 @@ public enum ModernServerboundPackets implements Packets {
 		return this.id;
 	}
 
+	@Override
 	public Identifier getIdentifier() {
 		return this.identifier;
 	}
 
+	@Override
 	public PacketState getState() {
 		return this.state;
 	}
