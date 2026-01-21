@@ -7,9 +7,6 @@ import io.netty.buffer.ByteBufOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.lang.reflect.Array;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
@@ -107,36 +104,6 @@ public interface ByteBufCodecs {
 		public void encode(ByteBuf buf, byte[] value) {
 			buf.writeInt(value.length);
 			buf.writeBytes(value);
-		}
-	};
-
-	StreamCodec<ByteBuf, byte[]> COMPRESSED_BYTE_ARRAY = new StreamCodec<>() {
-		@Override
-		public byte[] decode(final ByteBuf buf) {
-			final int size = buf.readInt();
-			final byte[] data = new byte[size];
-			buf.readBytes(data);
-
-			final byte[] decompressedData = new byte[]{};
-			try (final Inflater inflater = new Inflater()) {
-				inflater.setInput(data);
-				inflater.inflate(decompressedData);
-				return decompressedData;
-			} catch (final DataFormatException exception) {
-				throw new RuntimeException("Bad compressed data format");
-			}
-		}
-
-		@Override
-		public void encode(final ByteBuf buf, final byte[] data) {
-			try (final Deflater deflater = new Deflater()) {
-				deflater.setInput(data);
-				final byte[] decompressedData = new byte[512];
-				buf.writeInt(deflater.deflate(decompressedData));
-				buf.writeBytes(decompressedData);
-			} catch (final Exception exception) {
-				throw new RuntimeException(exception);
-			}
 		}
 	};
 

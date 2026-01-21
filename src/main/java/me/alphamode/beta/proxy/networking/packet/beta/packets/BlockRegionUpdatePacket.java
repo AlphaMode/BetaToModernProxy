@@ -5,10 +5,9 @@ import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.NibbleArray;
 
 public record BlockRegionUpdatePacket(int x, short y, int z, byte xs, byte ys, byte zs,
-									  NibbleArray array) implements RecordPacket<BetaPackets> {
+									  byte[] data) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, BlockRegionUpdatePacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			BlockRegionUpdatePacket::x,
@@ -22,8 +21,8 @@ public record BlockRegionUpdatePacket(int x, short y, int z, byte xs, byte ys, b
 			BlockRegionUpdatePacket::ys,
 			ByteBufCodecs.BYTE,
 			BlockRegionUpdatePacket::zs,
-			NibbleArray.COMPRESSED_CODEC,
-			BlockRegionUpdatePacket::array,
+			ByteBufCodecs.BYTE_ARRAY,
+			BlockRegionUpdatePacket::data,
 			BlockRegionUpdatePacket::new
 	);
 
