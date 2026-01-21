@@ -10,30 +10,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SynchedEntityData {
-	public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = StreamCodec.of(SynchedEntityData::pack, SynchedEntityData::unpack);
+	public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final List<DataItem<?>> dataItems) {
+			for (final DataItem<?> dataItem : dataItems) {
+				dataItem.write(buf);
+			}
 
-	private static void writeDataItem(final ByteBuf buf, final DataItem<?> dataHolder) {
-		buf.writeByte((dataHolder.getType().getId() << 5 | dataHolder.getId() & 31) & 0xFF);
-		dataHolder.getType().getCodec().encode(buf, dataHolder.getData());
-	}
-
-	public static List<DataItem<?>> unpack(final ByteBuf buf) {
-		final List<DataItem<?>> items = new ArrayList<>();
-		for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
-			final DataType type = DataType.values()[(i & 224) >> 5];
-			items.add(new DataItem<>(type, i & 31, type.getCodec().decode(buf)));
+			buf.writeByte(127);
 		}
 
-		return items;
-	}
+		@Override
+		public List<DataItem<?>> decode(final ByteBuf buf) {
+			final List<DataItem<?>> items = new ArrayList<>();
+			for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
+				final DataType type = DataType.values()[(i & 224) >> 5];
+				items.add(new DataItem<>(type, i & 31, type.getCodec().decode(buf)));
+			}
 
-	public static void pack(final ByteBuf buf, final List<DataItem<?>> dataItems) {
-		for (final DataItem<?> dataItem : dataItems) {
-			writeDataItem(buf, dataItem);
+			return items;
 		}
-
-		buf.writeByte(127);
-	}
+	};
 
 	public enum DataType {
 		BYTE(0, ByteBufCodecs.BYTE),
@@ -86,6 +83,11 @@ public class SynchedEntityData {
 
 		public DataType getType() {
 			return this.type;
+		}
+
+		public void write(final ByteBuf buf) {
+			buf.writeByte((this.type.getId() << 5 | this.id & 31) & 0xFF);
+			this.type.getCodec().encode(buf, this.data);
 		}
 	}
 }
