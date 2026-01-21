@@ -3,11 +3,11 @@ package me.alphamode.beta.proxy.networking.packet;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class PacketRegistry<V extends Packets> {
-	protected final Map<V, StreamCodec<ByteBuf, ? extends RecordPacket<V>>> registry = new HashMap<>();
+	protected final Map<V, StreamCodec<ByteBuf, ? extends RecordPacket<V>>> registry = new ConcurrentHashMap<>();
 
 	public abstract RecordPacket<V> createPacket(V packetType, final ByteBuf byteBuf);
 
