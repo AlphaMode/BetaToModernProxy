@@ -6,8 +6,6 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
@@ -161,20 +159,20 @@ public interface ByteBufCodecs {
 		};
 	}
 
-	static <T> StreamCodec<ByteBuf, List<T>> array(final StreamCodec<ByteBuf, T> type, final int size) {
+	static <T> StreamCodec<ByteBuf, T[]> array(final StreamCodec<ByteBuf, T> type, final int size) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteBuf buf, final List<T> values) {
-				for (final T value : values) {
-					type.encode(buf, value);
+			public void encode(final ByteBuf buf, final T[] values) {
+				for (int i = 0; i < size; ++i) {
+					type.encode(buf, values[i]);
 				}
 			}
 
 			@Override
-			public List<T> decode(final ByteBuf buf) {
-				final List<T> values = new ArrayList<>();
+			public T[] decode(final ByteBuf buf) {
+				final T[] values = (T[]) new Object[size];
 				for (int i = 0; i < size; ++i) {
-					values.set(i, type.decode(buf));
+					values[i] = type.decode(buf);
 				}
 
 				return values;
