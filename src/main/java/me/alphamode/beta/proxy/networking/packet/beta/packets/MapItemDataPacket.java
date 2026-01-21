@@ -18,7 +18,7 @@ public record MapItemDataPacket(short item, short mapId, Byte[] colors) implemen
 		buf.writeShort(this.item);
 		buf.writeShort(this.mapId);
 		buf.writeByte(this.colors.length);
-		buf.writeBytes(this.colors);
+		buf.writeBytes((byte[]) (Object) this.colors);
 	}
 
 	@Override
