@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 
-public record ContainerSetSlotPacket(byte containerId, short slot, BetaItemStack item) implements RecordPacket {
+public record ContainerSetSlotPacket(byte containerId, short slot, BetaItemStack item) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, ContainerSetSlotPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.BYTE,
 			ContainerSetSlotPacket::containerId,

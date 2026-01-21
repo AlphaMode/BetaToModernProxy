@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record AddPaintingPacket(int id, String motive, Vec3i position, int direction) implements RecordPacket {
+public record AddPaintingPacket(int id, String motive, Vec3i position, int direction) implements RecordPacket<BetaPackets> {
 	public static final int MAX_PAINTING_MOTIVE = 13; // 13 is Painting.Motive.length
 	public static final StreamCodec<ByteBuf, String> MOTIVE_CODEC = ByteBufCodecs.stringUtf8(MAX_PAINTING_MOTIVE);
 	public static final StreamCodec<ByteBuf, AddPaintingPacket> CODEC = StreamCodec.composite(

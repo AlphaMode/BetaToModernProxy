@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record AddGlobalEntityPacket(int id, byte type, Vec3i positon) implements RecordPacket {
+public record AddGlobalEntityPacket(int id, byte type, Vec3i positon) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, AddGlobalEntityPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			AddGlobalEntityPacket::id,

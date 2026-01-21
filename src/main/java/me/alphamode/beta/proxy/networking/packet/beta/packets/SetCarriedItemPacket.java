@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record SetCarriedItemPacket(short slot) implements RecordPacket {
+public record SetCarriedItemPacket(short slot) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, SetCarriedItemPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.SHORT,
 			SetCarriedItemPacket::slot,

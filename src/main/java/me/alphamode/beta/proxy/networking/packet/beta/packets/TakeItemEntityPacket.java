@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record TakeItemEntityPacket(int itemId, int playerId) implements RecordPacket {
+public record TakeItemEntityPacket(int itemId, int playerId) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, TakeItemEntityPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			TakeItemEntityPacket::itemId,

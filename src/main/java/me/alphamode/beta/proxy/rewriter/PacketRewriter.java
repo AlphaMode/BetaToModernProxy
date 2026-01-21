@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
 
 import java.util.List;
 
-public final class PacketRewriter extends MessageToMessageCodec<RecordPacket, RecordPacket> {
+public final class PacketRewriter extends MessageToMessageCodec<RecordPacket<?>, RecordPacket<?>> {
 	private final Direction direction;
 
 	public PacketRewriter(final Direction direction) {
@@ -16,14 +16,14 @@ public final class PacketRewriter extends MessageToMessageCodec<RecordPacket, Re
 	// P -> S
 	// P -> C
 	@Override
-	protected void encode(final ChannelHandlerContext ctx, final RecordPacket packet, final List<Object> out) throws Exception {
+	protected void encode(final ChannelHandlerContext ctx, final RecordPacket<?> packet, final List<Object> out) throws Exception {
 		out.add(packet);
 	}
 
 	// S -> P
 	// C -> P
 	@Override
-	protected void decode(final ChannelHandlerContext ctx, final RecordPacket packet, final List<Object> out) throws Exception {
+	protected void decode(final ChannelHandlerContext ctx, final RecordPacket<?> packet, final List<Object> out) throws Exception {
 		out.add(packet);
 	}
 

@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record TileEventPacket(Vec3i position, byte b0, byte b1) implements RecordPacket {
+public record TileEventPacket(Vec3i position, byte b0, byte b1) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, TileEventPacket> CODEC = StreamCodec.composite(
 			Vec3i.SEMI_TINY_CODEC,
 			TileEventPacket::position,

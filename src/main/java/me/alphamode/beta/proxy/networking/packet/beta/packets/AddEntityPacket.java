@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddEntityPacket(int entityId, byte type, Vec3i position, int data, short xd, short yd,
-							  short zd) implements RecordPacket {
+							  short zd) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, AddEntityPacket> CODEC = RecordPacket.codec(AddEntityPacket::write, AddEntityPacket::new);
 
 	public AddEntityPacket(final ByteBuf buf) {

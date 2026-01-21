@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements RecordPacket {
+public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, ExplodePacket> CODEC = RecordPacket.codec(ExplodePacket::write, ExplodePacket::new);
 
 	public ExplodePacket(final ByteBuf buf) {

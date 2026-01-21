@@ -2,11 +2,12 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
-public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket> {
+public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket<BetaPackets>> {
 	private final String realServerIp;
 	private NetClient realServer;
 
@@ -23,7 +24,7 @@ public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket> 
 	}
 
 	@Override
-	protected void channelRead0(final ChannelHandlerContext context, final RecordPacket byteBuf) {
+	protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<BetaPackets> byteBuf) {
 		this.realServer.getChannel().writeAndFlush(byteBuf);
 	}
 

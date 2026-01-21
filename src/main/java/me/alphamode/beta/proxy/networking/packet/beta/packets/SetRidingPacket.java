@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record SetRidingPacket(int riderId, int riddenId) implements RecordPacket {
+public record SetRidingPacket(int riderId, int riddenId) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, SetRidingPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			SetRidingPacket::riderId,

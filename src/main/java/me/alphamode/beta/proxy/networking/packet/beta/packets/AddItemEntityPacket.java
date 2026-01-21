@@ -8,7 +8,7 @@ import me.alphamode.beta.proxy.util.data.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddItemEntityPacket(int entityId, BetaItemStack item, Vec3i position, byte xa, byte ya,
-								  byte za) implements RecordPacket {
+								  byte za) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, AddItemEntityPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			AddItemEntityPacket::entityId,

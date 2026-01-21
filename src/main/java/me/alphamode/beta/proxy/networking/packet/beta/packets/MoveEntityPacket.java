@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class MoveEntityPacket implements RecordPacket {
+public class MoveEntityPacket implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = RecordPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
 	public int id;
 	public byte xa;

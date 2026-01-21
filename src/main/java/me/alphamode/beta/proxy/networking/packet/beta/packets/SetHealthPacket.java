@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record SetHealthPacket(short health) implements RecordPacket {
+public record SetHealthPacket(short health) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, SetHealthPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.SHORT,
 			SetHealthPacket::health,

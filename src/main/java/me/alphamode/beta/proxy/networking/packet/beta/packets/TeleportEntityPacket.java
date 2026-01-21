@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record TeleportEntityPacket(int id, Vec3i position, byte yRot, byte xRot) implements RecordPacket {
+public record TeleportEntityPacket(int id, Vec3i position, byte yRot, byte xRot) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, TeleportEntityPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			TeleportEntityPacket::id,

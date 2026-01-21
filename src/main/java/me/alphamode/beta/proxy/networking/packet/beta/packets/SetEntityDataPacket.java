@@ -8,7 +8,7 @@ import me.alphamode.beta.proxy.util.entity.SynchedEntityData;
 
 import java.util.List;
 
-public record SetEntityDataPacket(int id, List<SynchedEntityData.DataItem<?>> packedItems) implements RecordPacket {
+public record SetEntityDataPacket(int id, List<SynchedEntityData.DataItem<?>> packedItems) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, SetEntityDataPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			SetEntityDataPacket::id,

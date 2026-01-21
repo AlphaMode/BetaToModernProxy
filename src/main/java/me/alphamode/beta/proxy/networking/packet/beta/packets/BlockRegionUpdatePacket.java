@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record BlockRegionUpdatePacket(int x, short y, int z, byte xs, byte ys, byte zs,
-									  byte[] buffer) implements RecordPacket {
+									  byte[] buffer) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, BlockRegionUpdatePacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			BlockRegionUpdatePacket::x,

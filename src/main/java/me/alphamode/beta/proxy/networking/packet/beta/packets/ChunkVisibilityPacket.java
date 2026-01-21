@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record ChunkVisibilityPacket(int x, int z, boolean visible) implements RecordPacket {
+public record ChunkVisibilityPacket(int x, int z, boolean visible) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, ChunkVisibilityPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,
 			ChunkVisibilityPacket::x,

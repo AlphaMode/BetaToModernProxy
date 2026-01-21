@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record PlayerActionPacket(byte action, Vec3i pos, byte face) implements RecordPacket {
+public record PlayerActionPacket(byte action, Vec3i pos, byte face) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, PlayerActionPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.BYTE,
 			PlayerActionPacket::action,

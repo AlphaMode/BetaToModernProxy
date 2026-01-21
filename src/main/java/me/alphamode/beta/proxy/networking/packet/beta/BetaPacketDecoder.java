@@ -18,7 +18,7 @@ public final class BetaPacketDecoder extends ReplayingDecoder<Void> {
 			throw new RuntimeException("Cannot decode beta packet as packet-registry is null!");
 		} else {
 			try {
-				final RecordPacket packet = packetRegistry.createPacket(buf.readUnsignedByte(), buf);
+				final RecordPacket<BetaPackets> packet = packetRegistry.createPacket(buf.readUnsignedByte(), buf);
 				IO.println("Decoding packet: " + packet);
 				out.add(packet);
 			} catch (Exception exception) {

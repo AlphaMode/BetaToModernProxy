@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record ContainerOpenPacket(short containerId, short type, String title, short size) implements RecordPacket {
+public record ContainerOpenPacket(short containerId, short type, String title, short size) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, ContainerOpenPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.UNSIGNED_BYTE,
 			ContainerOpenPacket::containerId,

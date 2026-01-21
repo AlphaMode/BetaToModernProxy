@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record GameEventPacket(byte event) implements RecordPacket {
+public record GameEventPacket(byte event) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, GameEventPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.BYTE,
 			GameEventPacket::event,

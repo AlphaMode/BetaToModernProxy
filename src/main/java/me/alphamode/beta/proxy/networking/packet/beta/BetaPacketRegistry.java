@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class BetaPacketRegistry {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
-	private final Map<BetaPackets, StreamCodec<ByteBuf, ? extends RecordPacket>> registry = new EnumMap<>(BetaPackets.class);
+	private final Map<BetaPackets, StreamCodec<ByteBuf, ? extends RecordPacket<BetaPackets>>> registry = new EnumMap<>(BetaPackets.class);
 
 	public BetaPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
-	public RecordPacket createPacket(final int packetId, final ByteBuf byteBuf) {
+	public RecordPacket<BetaPackets> createPacket(final int packetId, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
@@ -24,7 +24,7 @@ public class BetaPacketRegistry {
 		}
 	}
 
-	public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
+	public <T extends RecordPacket<BetaPackets>> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
 		if (!registry.containsKey(type)) {
 			throw new IllegalArgumentException("Packet type " + type + " is not registered in the packet registry");
 		} else {
@@ -32,7 +32,7 @@ public class BetaPacketRegistry {
 		}
 	}
 
-	protected final void registerPacket(final BetaPackets packetType, final StreamCodec<ByteBuf, ? extends RecordPacket> packetCreator) {
+	protected final void registerPacket(final BetaPackets packetType, final StreamCodec<ByteBuf, ? extends RecordPacket<BetaPackets>> packetCreator) {
 		this.registry.put(packetType, packetCreator);
 	}
 
