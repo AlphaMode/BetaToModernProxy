@@ -73,4 +73,8 @@ public record Vec3i(int x, int y, int z) {
 	public static Vec3i ofZ(final int z) {
 		return new Vec3i(0, 0, z);
 	}
+
+	public static int packNibble(int x, int y, int z) {
+		return x << 11 | z << 7 | y;
+	}
 }
