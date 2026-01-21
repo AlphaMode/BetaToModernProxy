@@ -3,15 +3,11 @@ package me.alphamode.beta.proxy.networking.packet;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
-public abstract class PacketRegistry<V extends Enum<V>> {
-	protected final Map<V, StreamCodec<ByteBuf, ? extends RecordPacket<V>>> registry;
-
-	public PacketRegistry(final Class<V> clazz) {
-		registry = new EnumMap<>(clazz);
-	}
+public abstract class PacketRegistry<V extends Packets> {
+	protected final Map<V, StreamCodec<ByteBuf, ? extends RecordPacket<V>>> registry = new HashMap<>();
 
 	public abstract RecordPacket<V> createPacket(V packetType, final ByteBuf byteBuf);
 

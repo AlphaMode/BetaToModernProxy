@@ -9,7 +9,6 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
 
 	public BetaPacketRegistry() {
-		super(BetaPackets.class);
 		this.registerVanillaPackets();
 	}
 
