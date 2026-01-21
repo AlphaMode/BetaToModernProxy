@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.beta;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.*;
 
 public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {

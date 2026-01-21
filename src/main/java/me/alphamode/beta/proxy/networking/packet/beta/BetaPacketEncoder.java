@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.Proxy;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 
 public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket<BetaPackets>> {
 	public static final String KEY = "beta-encoder";

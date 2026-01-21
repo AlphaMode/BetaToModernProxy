@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.rewriter;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 
 import java.util.List;

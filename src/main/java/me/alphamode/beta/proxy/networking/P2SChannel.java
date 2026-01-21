@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.rewriter.PacketRewriter;
 

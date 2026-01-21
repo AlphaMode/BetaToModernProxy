@@ -1,7 +1,6 @@
-package me.alphamode.beta.proxy.networking.packet.beta.packets;
+package me.alphamode.beta.proxy.networking.packet;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.codec.StreamDecoder;
 import me.alphamode.beta.proxy.util.codec.StreamMemberEncoder;
