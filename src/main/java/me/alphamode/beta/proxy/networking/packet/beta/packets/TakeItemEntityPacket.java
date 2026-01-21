@@ -1,29 +1,21 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class TakeItemEntityPacket implements Packet {
-	public int itemId;
-	public int playerId;
-
-	public TakeItemEntityPacket() {
-	}
-
-	public TakeItemEntityPacket(final int itemId, final int playerId) {
-		this.itemId = itemId;
-		this.playerId = playerId;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.itemId = buf.readInt();
-		this.playerId = buf.readInt();
-	}
+public record TakeItemEntityPacket(int itemId, int playerId) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, TakeItemEntityPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.INT,
+			TakeItemEntityPacket::itemId,
+			ByteBufCodecs.INT,
+			TakeItemEntityPacket::playerId,
+			TakeItemEntityPacket::new
+	);
 
 	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.itemId);
-		buf.writeInt(this.playerId);
+	public BetaPackets getType() {
+		return BetaPackets.TAKE_ITEM_ENTITY;
 	}
 }
