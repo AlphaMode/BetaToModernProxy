@@ -4,12 +4,11 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.Proxy;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.rewriter.PacketRewriter;
 
@@ -25,15 +24,18 @@ public final class P2SChannel extends ChannelInitializer<Channel> {
 
 	@Override
 	protected void initChannel(final Channel channel) {
-		channel.attr(Proxy.PACKET_REGISTRY_ATTRIBUTE_KEY).set(BetaPacketRegistry.INSTANCE);
+		channel.attr(ProxyChannel.PACKET_REGISTRY_ATTRIBUTE_KEY).set(BetaPacketRegistry.INSTANCE);
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
-		channel.pipeline().addLast(new PacketRewriter(PacketDirection.SERVERBOUND)); // e
+
+		// What this do again?
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<RecordPacket<BetaPackets>>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<BetaPackets> packet) {
 				otherChannel.writeAndFlush(packet);
 			}
 		});
+
+		channel.pipeline().addLast(new PacketRewriter(PacketDirection.SERVERBOUND));
 	}
 }
