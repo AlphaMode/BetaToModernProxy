@@ -20,8 +20,8 @@ public class SynchedEntityData {
 	public static List<DataItem<?>> unpack(final ByteBuf buf) {
 		final List<DataItem<?>> items = new ArrayList<>();
 		for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
-			DataType dataType = DataType.values()[(i & 224) >> 5];
-			items.add(new DataItem<>(dataType, i & 31, dataType.getCodec().decode(buf)));
+			final DataType type = DataType.values()[(i & 224) >> 5];
+			items.add(new DataItem<>(type, i & 31, type.getCodec().decode(buf)));
 		}
 
 		return items;
@@ -53,23 +53,23 @@ public class SynchedEntityData {
 		}
 
 		public int getId() {
-			return id;
+			return this.id;
 		}
 
 		public <T> StreamCodec<ByteBuf, T> getCodec() {
-			return (StreamCodec<ByteBuf, T>) codec;
+			return (StreamCodec<ByteBuf, T>) this.codec;
 		}
 	}
 
 	public static class DataItem<T> {
-		private final DataType dataType;
+		private final DataType type;
 		private final int id;
 		private T data;
 
-		public DataItem(final DataType dataType, final int id, final T data) {
+		public DataItem(final DataType type, final int id, final T data) {
 			this.id = id;
 			this.data = data;
-			this.dataType = dataType;
+			this.type = type;
 		}
 
 		public int getId() {
@@ -85,7 +85,7 @@ public class SynchedEntityData {
 		}
 
 		public DataType getType() {
-			return this.dataType;
+			return this.type;
 		}
 	}
 }

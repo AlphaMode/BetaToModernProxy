@@ -155,7 +155,7 @@ public interface ByteBufCodecs {
 				try {
 					dos.writeUTF(msg);
 				} catch (Exception exception) {
-					exception.printStackTrace();
+					throw new RuntimeException(exception);
 				}
 			}
 
@@ -165,8 +165,7 @@ public interface ByteBufCodecs {
 				try {
 					return dis.readUTF();
 				} catch (Exception exception) {
-					exception.printStackTrace();
-					return "";
+					throw new RuntimeException(exception);
 				}
 			}
 		};
