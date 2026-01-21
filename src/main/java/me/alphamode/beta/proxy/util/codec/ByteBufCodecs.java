@@ -28,7 +28,7 @@ public interface ByteBufCodecs {
 		}
 	};
 
-	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
+	StreamCodec<ByteBuf, byte[]> TINY_BYTE_ARRAY = new StreamCodec<>() {
 		public byte[] decode(final ByteBuf buf) {
 			final byte[] data = new byte[buf.readByte() & 255];
 			buf.readBytes(data);
@@ -94,10 +94,9 @@ public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
 		public byte[] decode(ByteBuf buf) {
-			int size = buf.readInt();
-			byte[] bytes = new byte[size];
-			buf.readBytes(bytes);
-			return bytes;
+			final byte[] data = new byte[buf.readInt()];
+			buf.readBytes(data);
+			return data;
 		}
 
 		@Override

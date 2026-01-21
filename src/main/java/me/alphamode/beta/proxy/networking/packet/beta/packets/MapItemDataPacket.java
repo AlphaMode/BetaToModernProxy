@@ -11,7 +11,7 @@ public record MapItemDataPacket(short item, short mapId, byte[] colors) implemen
 			MapItemDataPacket::item,
 			ByteBufCodecs.SHORT,
 			MapItemDataPacket::mapId,
-			ByteBufCodecs.BYTE_ARRAY,
+			ByteBufCodecs.TINY_BYTE_ARRAY,
 			MapItemDataPacket::colors,
 			MapItemDataPacket::new
 	);
