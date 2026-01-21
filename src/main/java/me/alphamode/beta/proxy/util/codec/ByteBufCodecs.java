@@ -9,88 +9,101 @@ import java.io.DataOutputStream;
 
 public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
-		public Boolean decode(final ByteBuf input) {
-			return input.readBoolean();
+		public Boolean decode(final ByteBuf buf) {
+			return buf.readBoolean();
 		}
 
-		public void encode(final ByteBuf output, final Boolean value) {
-			output.writeBoolean(value);
+		public void encode(final ByteBuf buf, final Boolean value) {
+			buf.writeBoolean(value);
 		}
 	};
 
 	StreamCodec<ByteBuf, Byte> BYTE = new StreamCodec<>() {
-		public Byte decode(final ByteBuf input) {
-			return input.readByte();
+		public Byte decode(final ByteBuf buf) {
+			return buf.readByte();
 		}
 
-		public void encode(final ByteBuf output, final Byte value) {
-			output.writeByte(value);
+		public void encode(final ByteBuf buf, final Byte value) {
+			buf.writeByte(value);
+		}
+	};
+
+	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
+		public byte[] decode(final ByteBuf buf) {
+			final byte[] data = new byte[buf.readByte() & 255];
+			buf.readBytes(data);
+			return data;
+		}
+
+		public void encode(final ByteBuf buf, final byte[] data) {
+			buf.writeByte(data.length);
+			buf.writeBytes(data);
 		}
 	};
 
 	StreamCodec<ByteBuf, Short> UNSIGNED_BYTE = new StreamCodec<>() {
-		public Short decode(final ByteBuf input) {
-			return input.readUnsignedByte();
+		public Short decode(final ByteBuf buf) {
+			return buf.readUnsignedByte();
 		}
 
-		public void encode(final ByteBuf output, final Short value) {
-			output.writeByte(value);
+		public void encode(final ByteBuf buf, final Short value) {
+			buf.writeByte(value);
 		}
 	};
 
 	StreamCodec<ByteBuf, Short> SHORT = new StreamCodec<>() {
-		public Short decode(final ByteBuf input) {
-			return input.readShort();
+		public Short decode(final ByteBuf buf) {
+			return buf.readShort();
 		}
 
-		public void encode(final ByteBuf output, final Short value) {
-			output.writeShort(value);
+		public void encode(final ByteBuf buf, final Short value) {
+			buf.writeShort(value);
 		}
 	};
 
 	StreamCodec<ByteBuf, Integer> INT = new StreamCodec<>() {
-		public Integer decode(final ByteBuf input) {
-			return input.readInt();
+		public Integer decode(final ByteBuf buf) {
+			return buf.readInt();
 		}
 
-		public void encode(final ByteBuf output, final Integer value) {
-			output.writeInt(value);
+		public void encode(final ByteBuf buf, final Integer value) {
+			buf.writeInt(value);
 		}
 	};
 
 	StreamCodec<ByteBuf, Long> LONG = new StreamCodec<>() {
-		public Long decode(final ByteBuf input) {
-			return input.readLong();
+		public Long decode(final ByteBuf buf) {
+			return buf.readLong();
 		}
 
-		public void encode(final ByteBuf output, final Long value) {
-			output.writeLong(value);
+		public void encode(final ByteBuf buf, final Long value) {
+			buf.writeLong(value);
 		}
 	};
 
 	StreamCodec<ByteBuf, Float> FLOAT = new StreamCodec<>() {
-		public Float decode(final ByteBuf input) {
-			return input.readFloat();
+		public Float decode(final ByteBuf buf) {
+			return buf.readFloat();
 		}
 
-		public void encode(final ByteBuf output, final Float value) {
-			output.writeFloat(value);
+		public void encode(final ByteBuf buf, final Float value) {
+			buf.writeFloat(value);
 		}
 	};
 
 	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
-		public byte[] decode(ByteBuf input) {
-			int size = input.readInt();
+		public byte[] decode(ByteBuf buf) {
+			int size = buf.readInt();
 			byte[] bytes = new byte[size];
-			input.readBytes(bytes);
+			buf.readBytes(bytes);
 			return bytes;
 		}
 
 		@Override
-		public void encode(ByteBuf output, byte[] value) {
-			output.writeInt(value.length);
-			output.writeBytes(value);
+		public void encode(ByteBuf buf, byte[] value) {
+			buf.writeInt(value.length);
+			buf.writeBytes(value);
 		}
 	};
 
