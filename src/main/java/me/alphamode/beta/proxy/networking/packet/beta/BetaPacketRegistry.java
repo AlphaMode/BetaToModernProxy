@@ -80,7 +80,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket.CODEC);
 		this.registerPacket(BetaPackets.TILE_UPDATE, TileUpdatePacket.CODEC);
 //		this.registerPacket(BetaPackets.TILE_EVENT, TileEventPacket.CODEC);
-//		this.registerPacket(BetaPackets.EXPLODE, ExplodePacket.CODEC);
+		this.registerPacket(BetaPackets.EXPLODE, ExplodePacket.CODEC);
 		this.registerPacket(BetaPackets.LEVEL_EVENT, LevelEventPacket.CODEC);
 		this.registerPacket(BetaPackets.GAME_EVENT, GameEventPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_GLOBAL_ENTITY, AddGlobalEntityPacket.CODEC);

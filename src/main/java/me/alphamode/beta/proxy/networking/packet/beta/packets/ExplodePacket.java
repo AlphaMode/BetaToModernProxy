@@ -1,58 +1,41 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import net.raphimc.netminecraft.packet.Packet;
 
-import java.util.HashSet;
-import java.util.Set;
+public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements RecordPacket {
+    public static final StreamCodec<ByteBuf, ExplodePacket> CODEC = RecordPacket.codec(ExplodePacket::write, ExplodePacket::new);
 
-public class ExplodePacket implements Packet {
-	public double x;
-	public double y;
-	public double z;
-	public float radius;
-	public Set<Vec3i> toBlow;
+	public ExplodePacket(final ByteBuf buf) {
+        Vec3d pos = Vec3d.CODEC.decode(buf);
+        float radius = buf.readFloat();
 
-	public ExplodePacket() {
+        final int size = buf.readInt();
+        Vec3i[] toBlow = new Vec3i[size];
+
+        final Vec3i origin = pos.toVec3i();
+        for (int i = 0; i < size; i++) {
+            toBlow[i] = Vec3i.relative(origin).decode(buf);
+        }
+        this(pos, radius, toBlow);
 	}
 
-	public ExplodePacket(final double x, final double y, final double z, final float radius, Set<Vec3i> toBlow) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.radius = radius;
-		this.toBlow = new HashSet<>(toBlow);
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.x = buf.readDouble();
-		this.y = buf.readDouble();
-		this.z = buf.readDouble();
-		this.radius = buf.readFloat();
-
-		final int size = buf.readInt();
-		this.toBlow = new HashSet<>();
-
-		final Vec3i origin = new Vec3i((int) this.x, (int) this.y, (int) this.z);
-		for (int i = 0; i < size; i++) {
-			this.toBlow.add(Vec3i.relative(origin).decode(buf));
-		}
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeDouble(this.x);
-		buf.writeDouble(this.y);
-		buf.writeDouble(this.z);
+	public void write(final ByteBuf buf) {
+		Vec3d.CODEC.encode(buf, this.pos);
 		buf.writeFloat(this.radius);
-		buf.writeInt(this.toBlow.size());
+		buf.writeInt(this.toBlow.length);
 
-		final StreamCodec<ByteBuf, Vec3i> codec = Vec3i.relative(new Vec3i((int) this.x, (int) this.y, (int) this.z));
+		final StreamCodec<ByteBuf, Vec3i> codec = Vec3i.relative(this.pos.toVec3i());
 		for (final Vec3i tilePos : this.toBlow) {
 			codec.encode(buf, tilePos);
 		}
 	}
+
+    @Override
+    public BetaPackets getType() {
+        return BetaPackets.EXPLODE;
+    }
 }
