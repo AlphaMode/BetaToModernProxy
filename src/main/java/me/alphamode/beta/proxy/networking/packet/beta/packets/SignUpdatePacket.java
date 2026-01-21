@@ -15,7 +15,7 @@ public record SignUpdatePacket(int x, short y, int z, String[] lines) implements
 			SignUpdatePacket::y,
 			ByteBufCodecs.INT,
 			SignUpdatePacket::z,
-			ByteBufCodecs.array(SIGN_STRING_CODEC, 4),
+			ByteBufCodecs.array(SIGN_STRING_CODEC, 4, String.class),
 			SignUpdatePacket::lines,
 			SignUpdatePacket::new
 	);

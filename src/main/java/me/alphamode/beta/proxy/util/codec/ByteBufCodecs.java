@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.lang.reflect.Array;
 
 public interface ByteBufCodecs {
 	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
@@ -171,7 +172,7 @@ public interface ByteBufCodecs {
 		};
 	}
 
-	static <T> StreamCodec<ByteBuf, T[]> array(final StreamCodec<ByteBuf, T> type, final int size) {
+	static <T> StreamCodec<ByteBuf, T[]> array(final StreamCodec<ByteBuf, T> type, final int size, final Class<T> clazz) {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteBuf buf, final T[] values) {
@@ -182,7 +183,7 @@ public interface ByteBufCodecs {
 
 			@Override
 			public T[] decode(final ByteBuf buf) {
-				final T[] values = (T[]) new Object[size];
+				final T[] values = (T[]) Array.newInstance(clazz, size);
 				for (int i = 0; i < size; ++i) {
 					values[i] = type.decode(buf);
 				}
