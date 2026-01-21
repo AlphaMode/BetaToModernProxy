@@ -18,19 +18,33 @@ public record Vec3i(int x, int y, int z) {
 		}
 	};
 
-    public static final StreamCodec<ByteBuf, Vec3i> TINY_CODEC = new StreamCodec<>() {
-        @Override
-        public void encode(final ByteBuf buf, final Vec3i value) {
-            buf.writeInt(value.x);
-            buf.writeByte(value.y);
-            buf.writeInt(value.z);
-        }
+	public static final StreamCodec<ByteBuf, Vec3i> TINY_CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final Vec3i value) {
+			buf.writeInt(value.x);
+			buf.writeByte(value.y);
+			buf.writeInt(value.z);
+		}
 
-        @Override
-        public Vec3i decode(final ByteBuf buf) {
-            return new Vec3i(buf.readInt(), buf.readUnsignedByte(), buf.readInt());
-        }
-    };
+		@Override
+		public Vec3i decode(final ByteBuf buf) {
+			return new Vec3i(buf.readInt(), buf.readUnsignedByte(), buf.readInt());
+		}
+	};
+
+	public static final StreamCodec<ByteBuf, Vec3i> SEMI_TINY_CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final Vec3i value) {
+			buf.writeInt(value.x);
+			buf.writeShort(value.y);
+			buf.writeInt(value.z);
+		}
+
+		@Override
+		public Vec3i decode(final ByteBuf buf) {
+			return new Vec3i(buf.readInt(), buf.readShort(), buf.readInt());
+		}
+	};
 
 	public static StreamCodec<ByteBuf, Vec3i> relative(final Vec3i origin) {
 		return new StreamCodec<>() {

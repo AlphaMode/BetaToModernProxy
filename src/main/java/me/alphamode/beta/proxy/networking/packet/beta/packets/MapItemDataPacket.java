@@ -11,7 +11,7 @@ public record MapItemDataPacket(short item, short mapId, Byte[] colors) implemen
 	public MapItemDataPacket(final ByteBuf buf) {
 		final short item = buf.readShort();
 		final short mapId = buf.readShort();
-		this(item, mapId, ByteBufCodecs.array(ByteBufCodecs.BYTE, buf.readUnsignedByte() & 255).decode(buf));
+		this(item, mapId, ByteBufCodecs.array(ByteBufCodecs.BYTE, buf.readByte()).decode(buf));
 	}
 
 	public void write(final ByteBuf buf) {

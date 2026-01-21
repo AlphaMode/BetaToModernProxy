@@ -58,7 +58,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.INTERACTION, InteractionPacket.CODEC);
 		this.registerPacket(BetaPackets.ANIMATE, AnimatePacket.CODEC);
 //		this.registerPacket(BetaPackets.PLAYER_COMMAND, PlayerCommandPacket.CODEC);
-//		this.registerPacket(BetaPackets.ADD_PLAYER, AddPlayerPacket.CODEC);
+		this.registerPacket(BetaPackets.ADD_PLAYER, AddPlayerPacket.CODEC);
 		this.registerPacket(BetaPackets.ADD_ITEM_ENTITY, AddItemEntityPacket.CODEC);
 //		this.registerPacket(BetaPackets.TAKE_ITEM_ENTITY, TakeItemEntityPacket.CODEC);
 //		this.registerPacket(BetaPackets.ADD_ENTITY, AddEntityPacket.CODEC);
@@ -79,7 +79,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.BLOCK_REGION_UPDATE, BlockRegionUpdatePacket.CODEC);
 		this.registerPacket(BetaPackets.CHUNK_TILES_UPDATE, ChunkTilesUpdatePacket.CODEC);
 		this.registerPacket(BetaPackets.TILE_UPDATE, TileUpdatePacket.CODEC);
-//		this.registerPacket(BetaPackets.TILE_EVENT, TileEventPacket.CODEC);
+		this.registerPacket(BetaPackets.TILE_EVENT, TileEventPacket.CODEC);
 //		this.registerPacket(BetaPackets.EXPLODE, ExplodePacket.CODEC);
 		this.registerPacket(BetaPackets.LEVEL_EVENT, LevelEventPacket.CODEC);
 		this.registerPacket(BetaPackets.GAME_EVENT, GameEventPacket.CODEC);
