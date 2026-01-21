@@ -61,19 +61,19 @@ public enum BetaPackets implements Packets {
 	UPDATE_STAT(200),
 	DISCONNECT(255);
 
-	private final int packetId;
+	private final int id;
 
 	BetaPackets(int id) {
-		this.packetId = id;
+		this.id = id;
 	}
 
 	public int getId() {
-		return packetId;
+		return id;
 	}
 
-	public static BetaPackets getPacket(final int packetId) {
+	public static BetaPackets getPacket(final int id) {
 		for (final BetaPackets packet : BetaPackets.values()) {
-			if (packet.getId() == packetId) {
+			if (packet.getId() == id) {
 				return packet;
 			}
 		}
