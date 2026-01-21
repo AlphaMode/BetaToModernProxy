@@ -9,7 +9,7 @@ import java.util.Map;
 
 public enum ModernPackets implements Packets {
 	HANDSHAKING(Map.of(
-			PacketDirection.SERVERBOUND, List.of(),
+			PacketDirection.SERVERBOUND, List.of(new Tuple<>(0x00, Identifier.vanilla("intention"))),
 			PacketDirection.CLIENTBOUND, List.of()
 	)),
 
@@ -19,8 +19,14 @@ public enum ModernPackets implements Packets {
 	)),
 
 	STATUS(Map.of(
-			PacketDirection.SERVERBOUND, List.of(),
-			PacketDirection.CLIENTBOUND, List.of()
+			PacketDirection.SERVERBOUND, List.of(
+					new Tuple<>(0x00, Identifier.vanilla("status_request")),
+					new Tuple<>(0x01, Identifier.vanilla("ping_request"))
+			),
+			PacketDirection.CLIENTBOUND, List.of(
+					new Tuple<>(0x00, Identifier.vanilla("status_response")),
+					new Tuple<>(0x01, Identifier.vanilla("pong_response"))
+			)
 	)),
 
 	LOGIN(Map.of(
@@ -35,7 +41,7 @@ public enum ModernPackets implements Packets {
 
 	private final Map<PacketDirection, List<Tuple<Integer, Identifier>>> packets;
 
-	ModernPackets(final Map<PacketDirection, List<Tuple<Integer, Identifier>>> packetMap) {
-		this.packets = packetMap;
+	ModernPackets(final Map<PacketDirection, List<Tuple<Integer, Identifier>>> packets) {
+		this.packets = packets;
 	}
 }
