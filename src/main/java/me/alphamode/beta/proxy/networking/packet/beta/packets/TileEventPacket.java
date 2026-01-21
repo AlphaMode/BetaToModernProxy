@@ -1,41 +1,24 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public class TileEventPacket implements Packet {
-	public int x;
-	public int y;
-	public int z;
-	public int b0;
-	public int b1;
-
-	public TileEventPacket() {
-	}
-
-	public TileEventPacket(final int x, final int y, final int z, final int b0, final int b1) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.b0 = b0;
-		this.b1 = b1;
-	}
+public record TileEventPacket(Vec3i position, byte b0, byte b1) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, TileEventPacket> CODEC = StreamCodec.composite(
+			Vec3i.SEMI_TINY_CODEC,
+			TileEventPacket::position,
+			ByteBufCodecs.BYTE,
+			TileEventPacket::b0,
+			ByteBufCodecs.BYTE,
+			TileEventPacket::b0,
+			TileEventPacket::new
+	);
 
 	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.x = buf.readInt();
-		this.y = buf.readShort();
-		this.z = buf.readInt();
-		this.b0 = buf.readByte();
-		this.b1 = buf.readByte();
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
-		buf.writeInt(this.x);
-		buf.writeShort(this.y);
-		buf.writeInt(this.z);
-		buf.writeByte(this.b0);
-		buf.writeByte(this.b1);
+	public BetaPackets getType() {
+		return BetaPackets.TILE_EVENT;
 	}
 }

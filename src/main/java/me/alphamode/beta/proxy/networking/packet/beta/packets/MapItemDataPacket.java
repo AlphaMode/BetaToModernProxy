@@ -1,37 +1,28 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import net.raphimc.netminecraft.packet.Packet;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class MapItemDataPacket implements Packet {
-	public short item;
-	public short mapId;
-	public byte[] mapColors;
+public record MapItemDataPacket(short item, short mapId, Byte[] colors) implements RecordPacket {
+	public static final StreamCodec<ByteBuf, MapItemDataPacket> CODEC = RecordPacket.codec(MapItemDataPacket::write, MapItemDataPacket::new);
 
-	public MapItemDataPacket() {
-//        this.shouldDelay = true;
+	public MapItemDataPacket(final ByteBuf buf) {
+		final short item = buf.readShort();
+		final short mapId = buf.readShort();
+		this(item, mapId, ByteBufCodecs.array(ByteBufCodecs.BYTE, buf.readByte()).decode(buf));
 	}
 
-	public MapItemDataPacket(final short item, final short mapId, final byte[] colors) {
-//        this.shouldDelay = true;
-		this.item = item;
-		this.mapId = mapId;
-		this.mapColors = colors;
-	}
-
-	@Override
-	public void read(final ByteBuf buf, final int protocolVersion) {
-		this.item = buf.readShort();
-		this.mapId = buf.readShort();
-		this.mapColors = new byte[buf.readUnsignedByte() & 255];
-		buf.readBytes(this.mapColors);
-	}
-
-	@Override
-	public void write(final ByteBuf buf, final int protocolVersion) {
+	public void write(final ByteBuf buf) {
 		buf.writeShort(this.item);
 		buf.writeShort(this.mapId);
-		buf.writeByte(this.mapColors.length);
-		buf.writeBytes(this.mapColors);
+		buf.writeByte(this.colors.length);
+		buf.writeBytes(this.colors);
+	}
+
+	@Override
+	public BetaPackets getType() {
+		return BetaPackets.MAP_ITEM_DATA;
 	}
 }
