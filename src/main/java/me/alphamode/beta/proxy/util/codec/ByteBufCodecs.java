@@ -161,23 +161,23 @@ public interface ByteBufCodecs {
 		};
 	}
 
-	static <T> StreamCodec<ByteBuf, T[]> array(final StreamCodec<ByteBuf, T> type, final int size) {
+	static <T> StreamCodec<ByteBuf, List<T>> array(final StreamCodec<ByteBuf, T> type, final int size) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteBuf buf, final T[] values) {
-				for (int i = 0; i < size; ++i) {
-					type.encode(buf, values[i]);
+			public void encode(final ByteBuf buf, final List<T> values) {
+				for (final T value : values) {
+					type.encode(buf, value);
 				}
 			}
 
 			@Override
-			public T[] decode(final ByteBuf buf) {
+			public List<T> decode(final ByteBuf buf) {
 				final List<T> values = new ArrayList<>();
 				for (int i = 0; i < size; ++i) {
-					values.add(type.decode(buf));
+					values.set(i, type.decode(buf));
 				}
 
-				return (T[]) values.toArray();
+				return values;
 			}
 		};
 	}
