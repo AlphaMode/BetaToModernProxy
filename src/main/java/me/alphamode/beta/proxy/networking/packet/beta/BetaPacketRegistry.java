@@ -78,6 +78,7 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 		this.registerPacket(BetaPackets.SIGN_UPDATE, SignUpdatePacket.CODEC);
 		this.registerPacket(BetaPackets.MAP_ITEM_DATA, MapItemDataPacket.CODEC);
 		this.registerPacket(BetaPackets.UPDATE_STAT, UpdateStatPacket.CODEC);
+		this.registerPacket(BetaPackets.SERVER_LIST_PING, ServerListPingPacket.CODEC);
 		this.registerPacket(BetaPackets.DISCONNECT, DisconnectPacket.CODEC);
 	}
 }

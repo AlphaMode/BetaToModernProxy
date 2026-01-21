@@ -59,6 +59,7 @@ public enum BetaPackets implements Packets {
 	SIGN_UPDATE(130),
 	MAP_ITEM_DATA(131),
 	UPDATE_STAT(200),
+	SERVER_LIST_PING(254),
 	DISCONNECT(255);
 
 	private final int id;

@@ -14,15 +14,13 @@ public final class PacketRewriter extends MessageToMessageCodec<RecordPacket<?>,
 		this.direction = direction;
 	}
 
-	// P -> S
-	// P -> C
+	// C -> P
 	@Override
 	protected void encode(final ChannelHandlerContext ctx, final RecordPacket<?> packet, final List<Object> out) throws Exception {
 		out.add(packet);
 	}
 
-	// S -> P
-	// C -> P
+	// P -> C
 	@Override
 	protected void decode(final ChannelHandlerContext ctx, final RecordPacket<?> packet, final List<Object> out) throws Exception {
 		out.add(packet);

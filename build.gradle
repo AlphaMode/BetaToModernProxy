@@ -2,25 +2,22 @@ plugins {
     id 'java'
 }
 
-group = 'org.xrcraft.xrk'
-version = '1.0-SNAPSHOT'
+group = "me.alphamode.beta.proxy"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
     maven {
-        url 'https://maven.lenni0451.net/releases'
+        url "https://maven.lenni0451.net/releases"
     }
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation("io.netty:netty-all:4.2.9.Final")
-
-    implementation "net.raphimc.netminecraft:all:3.1.4"
+    implementation("net.raphimc.netminecraft:all:3.1.4")
 }
 
-test {
-    useJUnitPlatform()
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 25
 }

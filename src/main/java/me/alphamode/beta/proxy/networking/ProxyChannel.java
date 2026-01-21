@@ -24,6 +24,6 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
 		channel.pipeline().addLast(new C2PChannel(this.serverIp));
 
-		channel.pipeline().addLast(new PacketRewriter(PacketDirection.SERVERBOUND));
+		channel.pipeline().addLast(new PacketRewriter(PacketDirection.CLIENTBOUND));
 	}
 }
