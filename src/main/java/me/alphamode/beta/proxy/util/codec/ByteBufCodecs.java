@@ -1,7 +1,11 @@
 package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,6 +134,31 @@ public interface ByteBufCodecs {
 
 	static StreamCodec<ByteBuf, String> stringUtf8() {
 		return stringUtf8(MAX_STRING_LENGTH);
+	}
+
+	static StreamCodec<ByteBuf, String> stringJava() {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final String msg) {
+				final DataOutputStream dos = new DataOutputStream(new ByteBufOutputStream(buf));
+				try {
+					dos.writeUTF(msg);
+				} catch (Exception exception) {
+					exception.printStackTrace();
+				}
+			}
+
+			@Override
+			public String decode(final ByteBuf buf) {
+				final DataInputStream dis = new DataInputStream(new ByteBufInputStream(buf));
+				try {
+					return dis.readUTF();
+				} catch (Exception exception) {
+					exception.printStackTrace();
+					return "";
+				}
+			}
+		};
 	}
 
 	static <T> StreamCodec<ByteBuf, T[]> array(final StreamCodec<ByteBuf, T> type, final int size) {

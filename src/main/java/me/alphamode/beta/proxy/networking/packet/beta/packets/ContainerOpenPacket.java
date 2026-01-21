@@ -11,7 +11,7 @@ public record ContainerOpenPacket(short containerId, short type, String title, s
 			ContainerOpenPacket::containerId,
 			ByteBufCodecs.UNSIGNED_BYTE,
 			ContainerOpenPacket::type,
-			ByteBufCodecs.stringUtf8(), // todo/check if readUTF is needed
+			ByteBufCodecs.stringJava(),
 			ContainerOpenPacket::title,
 			ByteBufCodecs.UNSIGNED_BYTE,
 			ContainerOpenPacket::size,
