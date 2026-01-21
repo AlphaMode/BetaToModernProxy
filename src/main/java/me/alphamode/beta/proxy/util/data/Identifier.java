@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.util;
+package me.alphamode.beta.proxy.util.data;
 
 public record Identifier(String namespace, String path) {
 	public Identifier(String input) throws Exception {

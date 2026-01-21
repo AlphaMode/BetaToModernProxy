@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.networking.packet.modern;
 
-import me.alphamode.beta.proxy.util.Identifier;
+import me.alphamode.beta.proxy.util.data.Identifier;
 
 public enum ModernClientboundPackets implements ModernPackets {
 	// Handshaking

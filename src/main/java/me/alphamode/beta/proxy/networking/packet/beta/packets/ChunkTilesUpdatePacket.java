@@ -5,7 +5,11 @@ import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record ChunkTilesUpdatePacket(int x, int z, int changes, short[] positions, byte[] blocks,
+public record ChunkTilesUpdatePacket(int x,
+									 int z,
+									 int changes,
+									 short[] positions,
+									 byte[] blocks,
 									 byte[] data) implements RecordPacket<BetaPackets> {
 	public static final StreamCodec<ByteBuf, ChunkTilesUpdatePacket> CODEC = RecordPacket.codec(ChunkTilesUpdatePacket::write, ChunkTilesUpdatePacket::new);
 
