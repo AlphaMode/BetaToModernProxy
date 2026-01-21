@@ -143,9 +143,9 @@ public interface ByteBufCodecs {
 
 			@Override
 			public T[] decode(final ByteBuf buf) {
-				final List<T> values = new ArrayList<>(size);
+				final List<T> values = new ArrayList<>();
 				for (int i = 0; i < size; ++i) {
-					values.set(i, type.decode(buf));
+					values.add(type.decode(buf));
 				}
 
 				return (T[]) values.toArray();
