@@ -61,4 +61,16 @@ public record Vec3i(int x, int y, int z) {
 			}
 		};
 	}
+
+	public static Vec3i ofX(final int x) {
+		return new Vec3i(x, 0, 0);
+	}
+
+	public static Vec3i ofY(final int y) {
+		return new Vec3i(0, y, 0);
+	}
+
+	public static Vec3i ofZ(final int z) {
+		return new Vec3i(0, 0, z);
+	}
 }

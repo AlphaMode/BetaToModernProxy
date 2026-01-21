@@ -11,8 +11,8 @@ public record NibbleArray(byte[] data) {
 		Arrays.fill(this.data, offset, offset + length, (byte) value);
 	}
 
-	public byte get(int x, int y, int z) {
-		return 0; // TODO
+	public int get(int x, int y, int z) {
+		return 0;
 	}
 
 	public void set(int x, int y, int z, int value) {
