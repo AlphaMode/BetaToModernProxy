@@ -14,7 +14,9 @@ public record NibbleArray(byte[] data) {
 	public int get(int x, int y, int z) {
 		final int packedPos = Vec3i.packNibble(x, y, z);
 		final int dataIndex = packedPos >> 1;
-		return (packedPos & 1) == 0 ? this.data[dataIndex] & 15 : this.data[dataIndex] >> 4 & 15;
+		return (packedPos & 1) == 0
+				? this.data[dataIndex] & 15
+				: this.data[dataIndex] >> 4 & 15;
 	}
 
 	public void set(int x, int y, int z, int value) {
