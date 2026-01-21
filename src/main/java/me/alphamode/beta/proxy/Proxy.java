@@ -7,14 +7,13 @@ import me.alphamode.beta.proxy.networking.C2PChannel;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
-import net.raphimc.netminecraft.constants.MCPipeline;
+import me.alphamode.beta.proxy.rewriter.PacketRewriter;
 import net.raphimc.netminecraft.netty.connection.NetServer;
-import net.raphimc.netminecraft.packet.registry.PacketRegistry;
 
 import java.net.InetSocketAddress;
 
 public final class Proxy extends ChannelInitializer<Channel> {
-    public static final AttributeKey<BetaPacketRegistry> PACKET_REGISTRY_ATTRIBUTE_KEY = AttributeKey.valueOf("beta_packet_registry");
+	public static final AttributeKey<BetaPacketRegistry> PACKET_REGISTRY_ATTRIBUTE_KEY = AttributeKey.valueOf("beta_packet_registry");
 	private final String serverIp;
 
 	public Proxy(final String ip) {
@@ -36,5 +35,6 @@ public final class Proxy extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
 		channel.pipeline().addLast(new C2PChannel(this.serverIp));
+		channel.pipeline().addLast(new PacketRewriter(PacketRewriter.Direction.SERVERBOUND));
 	}
 }

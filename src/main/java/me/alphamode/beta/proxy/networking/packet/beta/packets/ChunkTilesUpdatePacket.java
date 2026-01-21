@@ -4,7 +4,8 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record ChunkTilesUpdatePacket(int x, int z, int changes, short[] positions, byte[] blocks, byte[] data) implements RecordPacket {
+public record ChunkTilesUpdatePacket(int x, int z, int changes, short[] positions, byte[] blocks,
+									 byte[] data) implements RecordPacket {
 	public static final StreamCodec<ByteBuf, ChunkTilesUpdatePacket> CODEC = RecordPacket.codec(ChunkTilesUpdatePacket::write, ChunkTilesUpdatePacket::new);
 
 	public ChunkTilesUpdatePacket(final ByteBuf buf) {

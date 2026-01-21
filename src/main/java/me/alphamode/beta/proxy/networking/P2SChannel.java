@@ -9,6 +9,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
+import me.alphamode.beta.proxy.rewriter.PacketRewriter;
 
 public final class P2SChannel extends ChannelInitializer<Channel> {
 	private final Channel otherChannel;
@@ -25,6 +26,7 @@ public final class P2SChannel extends ChannelInitializer<Channel> {
 		channel.attr(Proxy.PACKET_REGISTRY_ATTRIBUTE_KEY).set(BetaPacketRegistry.INSTANCE);
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
+		channel.pipeline().addLast(new PacketRewriter(PacketRewriter.Direction.SERVERBOUND)); // e
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<RecordPacket>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket packet) {

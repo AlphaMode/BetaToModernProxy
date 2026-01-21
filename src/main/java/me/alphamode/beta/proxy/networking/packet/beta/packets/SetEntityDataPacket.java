@@ -10,15 +10,15 @@ import java.util.List;
 
 public record SetEntityDataPacket(int id, List<SynchedEntityData.DataItem<?>> packedItems) implements RecordPacket {
 	public static final StreamCodec<ByteBuf, SetEntityDataPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT,
-            SetEntityDataPacket::id,
-            SynchedEntityData.DATA_ITEMS_CODEC,
-            SetEntityDataPacket::packedItems,
-            SetEntityDataPacket::new
-    );
+			ByteBufCodecs.INT,
+			SetEntityDataPacket::id,
+			SynchedEntityData.DATA_ITEMS_CODEC,
+			SetEntityDataPacket::packedItems,
+			SetEntityDataPacket::new
+	);
 
-    @Override
-    public BetaPackets getType() {
-        return BetaPackets.SET_ENTITY_DATA;
-    }
+	@Override
+	public BetaPackets getType() {
+		return BetaPackets.SET_ENTITY_DATA;
+	}
 }

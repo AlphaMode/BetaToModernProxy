@@ -6,7 +6,8 @@ import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record AddPlayerPacket(int id, String name, Vec3i position, byte yaw, byte pitch, short carriedItem) implements RecordPacket {
+public record AddPlayerPacket(int id, String name, Vec3i position, byte yaw, byte pitch,
+							  short carriedItem) implements RecordPacket {
 	public static final int MAX_NAME_LENGTH = 16;
 	public static final StreamCodec<ByteBuf, String> NAME_CODEC = ByteBufCodecs.stringUtf8(MAX_NAME_LENGTH);
 	public static final StreamCodec<ByteBuf, AddPlayerPacket> CODEC = StreamCodec.composite(

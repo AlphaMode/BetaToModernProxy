@@ -8,24 +8,24 @@ import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record TeleportEntityPacket(int id, Vec3i position, byte yRot, byte xRot) implements RecordPacket {
 	public static final StreamCodec<ByteBuf, TeleportEntityPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT,
-            TeleportEntityPacket::id,
-            Vec3i.CODEC,
-            TeleportEntityPacket::position,
-            ByteBufCodecs.BYTE,
-            TeleportEntityPacket::yRot,
-            ByteBufCodecs.BYTE,
-            TeleportEntityPacket::xRot,
-            TeleportEntityPacket::new
-    );
+			ByteBufCodecs.INT,
+			TeleportEntityPacket::id,
+			Vec3i.CODEC,
+			TeleportEntityPacket::position,
+			ByteBufCodecs.BYTE,
+			TeleportEntityPacket::yRot,
+			ByteBufCodecs.BYTE,
+			TeleportEntityPacket::xRot,
+			TeleportEntityPacket::new
+	);
 
-    @Override
-    public BetaPackets getType() {
-        return BetaPackets.TELEPORT_ENTITY;
-    }
+	@Override
+	public BetaPackets getType() {
+		return BetaPackets.TELEPORT_ENTITY;
+	}
 
 //    public TeleportEntityPacket(Entity entity) {
-//        this.id = entity.id;
+//        this.entityId = entity.entityId;
 //        this.x = Mth.floor(entity.x * 32.0);
 //        this.y = Mth.floor(entity.y * 32.0);
 //        this.z = Mth.floor(entity.z * 32.0);
