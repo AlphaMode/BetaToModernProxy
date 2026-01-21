@@ -3,13 +3,14 @@ package me.alphamode.beta.proxy.rewriter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 
 import java.util.List;
 
 public final class PacketRewriter extends MessageToMessageCodec<RecordPacket<?>, RecordPacket<?>> {
-	private final Direction direction;
+	private final PacketDirection direction;
 
-	public PacketRewriter(final Direction direction) {
+	public PacketRewriter(final PacketDirection direction) {
 		this.direction = direction;
 	}
 
@@ -27,12 +28,7 @@ public final class PacketRewriter extends MessageToMessageCodec<RecordPacket<?>,
 		out.add(packet);
 	}
 
-	public Direction getDirection() {
+	public PacketDirection getDirection() {
 		return direction;
-	}
-
-	public enum Direction {
-		SERVERBOUND,
-		CLIENTBOUND
 	}
 }

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import me.alphamode.beta.proxy.Proxy;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.RecordPacket;
 
 import java.util.List;
 
@@ -18,9 +17,7 @@ public final class BetaPacketDecoder extends ReplayingDecoder<Void> {
 			throw new RuntimeException("Cannot decode beta packet as packet-registry is null!");
 		} else {
 			try {
-				final RecordPacket<BetaPackets> packet = packetRegistry.createPacket(buf.readUnsignedByte(), buf);
-				IO.println("Decoding packet: " + packet);
-				out.add(packet);
+				out.add(packetRegistry.createPacket(BetaPackets.getPacket(buf.readUnsignedByte()), buf));
 			} catch (Exception exception) {
 				exception.printStackTrace();
 			}

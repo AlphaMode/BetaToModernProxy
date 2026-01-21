@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.beta;
 
-public enum BetaPackets {
+import me.alphamode.beta.proxy.networking.packet.Packets;
+
+public enum BetaPackets implements Packets {
 	KEEP_ALIVE(0),
 	LOGIN(1),
 	HANDSHAKE(2),

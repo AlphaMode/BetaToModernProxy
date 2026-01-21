@@ -7,6 +7,7 @@ import me.alphamode.beta.proxy.networking.C2PChannel;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
+import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.rewriter.PacketRewriter;
 import net.raphimc.netminecraft.netty.connection.NetServer;
 
@@ -35,6 +36,6 @@ public final class Proxy extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
 		channel.pipeline().addLast(new C2PChannel(this.serverIp));
-		channel.pipeline().addLast(new PacketRewriter(PacketRewriter.Direction.SERVERBOUND));
+		channel.pipeline().addLast(new PacketRewriter(PacketDirection.SERVERBOUND));
 	}
 }

@@ -16,7 +16,6 @@ public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket<B
 			throw new IllegalStateException("Can't write Packet without a packet registry");
 		} else {
 			final BetaPackets type = packet.getType();
-			IO.println("Encoding packet: " + type + " " + packet);
 			buf.writeByte(type.getId());
 			try {
 				packetRegistry.getCodec(type).encode(buf, packet);
