@@ -33,11 +33,7 @@ public record BetaItemStack(int id, int count, int aux) {
 		@Override
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
-			if (id >= 0) {
-				return new BetaItemStack(id, buf.readByte(), buf.readShort());
-			} else {
-				return null;
-			}
+			return id < 0 ? null : new BetaItemStack(id, buf.readByte(), buf.readShort());
 		}
 	};
 }

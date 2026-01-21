@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SynchedEntityData {
-    public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = StreamCodec.of(SynchedEntityData::pack, SynchedEntityData::unpack);
+	public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = StreamCodec.of(SynchedEntityData::pack, SynchedEntityData::unpack);
 
 	private static void writeDataItem(final ByteBuf buf, final DataItem<?> dataHolder) {
 		buf.writeByte((dataHolder.getType().getId() << 5 | dataHolder.getId() & 31) & 0xFF);
@@ -20,10 +20,8 @@ public class SynchedEntityData {
 	public static List<DataItem<?>> unpack(final ByteBuf buf) {
 		final List<DataItem<?>> items = new ArrayList<>();
 		for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
-			int type = (i & 224) >> 5;
-			int id = i & 31;
-			DataType dataType = DataType.values()[type];
-			items.add(new DataItem<>(dataType, id, dataType.getCodec().decode(buf)));
+			DataType dataType = DataType.values()[(i & 224) >> 5];
+			items.add(new DataItem<>(dataType, i & 31, dataType.getCodec().decode(buf)));
 		}
 
 		return items;
