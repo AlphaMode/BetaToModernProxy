@@ -8,6 +8,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
+import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
@@ -43,6 +45,24 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
 		}
+	}
+
+	public void kick(final TextComponent message) {
+		switch (this.state) {
+			case HANDSHAKING -> throw new RuntimeException("Cannot send disconnect packet during HANDSHAKING state");
+			case PLAY -> this.send(new S2CDisconnectPacket(message));
+			case STATUS -> throw new RuntimeException("Cannot send disconnect packet during STATUS state");
+			case LOGIN -> throw new RuntimeException("TODO");
+			case CONFIGURATION -> throw new RuntimeException("TODO");
+		}
+
+		if (this.channel.isActive()) {
+			this.disconnect();
+		}
+	}
+
+	public void kick(final String message) {
+		this.kick(TextComponent.of(message));
 	}
 
 	public void disconnect() {
