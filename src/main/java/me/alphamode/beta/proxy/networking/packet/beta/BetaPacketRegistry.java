@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
 
-	public BetaPacketRegistry() {
+	private BetaPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 

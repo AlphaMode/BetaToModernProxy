@@ -10,7 +10,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 	private PacketState state = PacketState.HANDSHAKING;
 
-	public ModernPacketRegistry() {
+	private ModernPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
