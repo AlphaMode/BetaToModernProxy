@@ -36,4 +36,14 @@ public enum ClientboundLoginPackets implements ModernClientboundPackets {
 	public PacketState getState() {
 		return this.state;
 	}
+
+	public static ClientboundLoginPackets getPacket(final int id) {
+		for (final ClientboundLoginPackets packet : ClientboundLoginPackets.values()) {
+			if (packet.getId() == id) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }
