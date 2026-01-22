@@ -5,5 +5,9 @@ public enum PacketState {
 	PLAY,
 	STATUS,
 	LOGIN,
-	CONFIGURATION
+	CONFIGURATION;
+
+	public static PacketState fromId(final int id) {
+		return values()[id];
+	}
 }

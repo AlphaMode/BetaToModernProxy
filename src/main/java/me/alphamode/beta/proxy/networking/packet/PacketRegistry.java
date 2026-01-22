@@ -21,6 +21,8 @@ public abstract class PacketRegistry<V extends Packets> {
 	}
 
 	protected final void registerPacket(final V packetType, final StreamCodec<ByteBuf, ? extends RecordPacket<?>> packetCreator) {
-		this.registry.put(packetType, packetCreator);
+		if (packetCreator != null) {
+			this.registry.put(packetType, packetCreator);
+		}
 	}
 }
