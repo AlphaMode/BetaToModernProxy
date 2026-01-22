@@ -6,10 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundHandshakingPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SAcceptTeleportationRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SBlockEntityTagQueryPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChangeDifficultyPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SSelectBundleItemPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
@@ -55,7 +52,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
         this.registerPacket(ServerboundPlayPackets.BLOCK_ENTITY_TAG_QUERY, C2SBlockEntityTagQueryPacket.CODEC);
         this.registerPacket(ServerboundPlayPackets.BUNDLE_ITEM_SELECTED, C2SSelectBundleItemPacket.CODEC);
         this.registerPacket(ServerboundPlayPackets.CHANGE_DIFFICULTY, C2SChangeDifficultyPacket.CODEC);
-        this.registerPacket(ServerboundPlayPackets.CHANGE_GAME_MODE, null);
+        this.registerPacket(ServerboundPlayPackets.CHANGE_GAME_MODE, C2SChangeGameModePacket.CODEC);
         this.registerPacket(ServerboundPlayPackets.CHAT_ACK, null);
         this.registerPacket(ServerboundPlayPackets.CHAT_COMMAND, null);
         this.registerPacket(ServerboundPlayPackets.CHAT_COMMAND_SIGNED, null);
