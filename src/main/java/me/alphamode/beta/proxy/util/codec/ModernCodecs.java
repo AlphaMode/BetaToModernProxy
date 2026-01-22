@@ -138,36 +138,36 @@ public interface ModernCodecs {
 
 	StreamCodec<ByteBuf, NbtTag> TAG = new StreamCodec<>() {
 		@Override
-		public void encode(ByteBuf buf, NbtTag value) {
+		public void encode(final ByteBuf buf, final NbtTag value) {
 			PacketTypes.writeUnnamedTag(buf, value);
 		}
 
 		@Override
-		public NbtTag decode(ByteBuf buf) {
+		public NbtTag decode(final ByteBuf buf) {
 			return PacketTypes.readUnnamedTag(buf);
 		}
 	};
 
 	StreamCodec<ByteBuf, NbtTag> NAMED_TAG = new StreamCodec<>() {
 		@Override
-		public void encode(ByteBuf buf, NbtTag value) {
+		public void encode(final ByteBuf buf, final NbtTag value) {
 			PacketTypes.writeNamedTag(buf, value);
 		}
 
 		@Override
-		public NbtTag decode(ByteBuf buf) {
+		public NbtTag decode(final ByteBuf buf) {
 			return PacketTypes.readNamedTag(buf);
 		}
 	};
 
 	StreamCodec<ByteBuf, TextComponent> COMPONENT = new StreamCodec<>() {
 		@Override
-		public void encode(ByteBuf buf, TextComponent value) {
+		public void encode(final ByteBuf buf, final TextComponent value) {
 			PacketTypes.writeUnnamedTag(buf, TextComponentCodec.LATEST.serializeNbtTree(value));
 		}
 
 		@Override
-		public TextComponent decode(ByteBuf buf) {
+		public TextComponent decode(final ByteBuf buf) {
 			return TextComponentCodec.LATEST.deserialize(PacketTypes.readUnnamedTag(buf));
 		}
 	};

@@ -13,7 +13,7 @@ public class RegistrySynchronization {
 		public static final StreamCodec<ByteBuf, PackedRegistryEntry> CODEC = StreamCodec.composite(
 				ModernCodecs.IDENTIFIER,
 				RegistrySynchronization.PackedRegistryEntry::id,
-				ModernCodecs.optional(ModernCodecs.NAMED_TAG),
+				ModernCodecs.optional(ModernCodecs.TAG),
 				RegistrySynchronization.PackedRegistryEntry::data,
 				RegistrySynchronization.PackedRegistryEntry::new
 		);

@@ -79,6 +79,10 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SLoginAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
 
+			// Send Tags
+			// TODO (Required)
+
+			// Send Registries
 			defaultRegistries.forEach(entry -> {
 				final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 
@@ -87,7 +91,7 @@ public final class DecoderRewriter extends Rewriter {
 					final NbtTag value = registryEntry.getValue();
 					entries.add(new RegistrySynchronization.PackedRegistryEntry(
 							Identifier.of(registryEntry.getKey()),
-							value == null ? Optional.empty() : Optional.of(value.asCompoundTag())
+							Optional.ofNullable(value.asCompoundTag())
 					));
 				});
 
