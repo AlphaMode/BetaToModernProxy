@@ -28,9 +28,9 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPo
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
+import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
 import me.alphamode.beta.proxy.util.data.modern.TagNetworkSerialization;
 import me.alphamode.beta.proxy.util.data.modern.registry.Registry;
-import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
