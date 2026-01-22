@@ -139,6 +139,18 @@ public interface ModernCodecs {
 	StreamCodec<ByteBuf, NbtTag> TAG = new StreamCodec<>() {
 		@Override
 		public void encode(ByteBuf buf, NbtTag value) {
+			PacketTypes.writeUnnamedTag(buf, value);
+		}
+
+		@Override
+		public NbtTag decode(ByteBuf buf) {
+			return PacketTypes.readUnnamedTag(buf);
+		}
+	};
+
+	StreamCodec<ByteBuf, NbtTag> NAMED_TAG = new StreamCodec<>() {
+		@Override
+		public void encode(ByteBuf buf, NbtTag value) {
 			PacketTypes.writeNamedTag(buf, value);
 		}
 
