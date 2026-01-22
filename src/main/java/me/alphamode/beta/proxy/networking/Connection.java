@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
@@ -22,6 +24,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	private PacketState state = PacketState.HANDSHAKING;
 	private UUID uuid;
 	private String username;
+	private int protocolVersion;
 
 	public Connection(final String ip) {
 		this.realServerIp = ip;
@@ -48,12 +51,17 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public void kick(final TextComponent message) {
-		switch (this.state) {
-			case HANDSHAKING -> throw new RuntimeException("Cannot send disconnect packet during HANDSHAKING state");
-			case PLAY -> this.send(new S2CDisconnectPacket(message));
-			case STATUS -> throw new RuntimeException("Cannot send disconnect packet during STATUS state");
-			case LOGIN -> throw new RuntimeException("TODO");
-			case CONFIGURATION -> throw new RuntimeException("TODO");
+		if (this.protocolVersion == BetaRecordPacket.PROTOCOL_VERSION) {
+			this.send(new DisconnectPacket(message.asLegacyFormatString()));
+		} else {
+			switch (this.state) {
+				case HANDSHAKING ->
+						throw new RuntimeException("Cannot send disconnect packet during HANDSHAKING state");
+				case PLAY -> this.send(new S2CDisconnectPacket(message));
+				case STATUS -> throw new RuntimeException("Cannot send disconnect packet during STATUS state");
+				case LOGIN -> throw new RuntimeException("TODO");
+				case CONFIGURATION -> throw new RuntimeException("TODO");
+			}
 		}
 
 		if (this.channel.isActive()) {
@@ -86,7 +94,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public UUID getId() {
-		return uuid;
+		return this.uuid;
 	}
 
 	public void setId(final UUID uuid) {
@@ -94,11 +102,19 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public String getUsername() {
-		return username;
+		return this.username;
 	}
 
 	public void setUsername(final String username) {
 		this.username = username;
+	}
+
+	public int getProtocolVersion() {
+		return this.protocolVersion;
+	}
+
+	public void setProtocolVersion(final int protocolVersion) {
+		this.protocolVersion = protocolVersion;
 	}
 
 	@Override
