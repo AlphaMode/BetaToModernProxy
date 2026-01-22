@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.*;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public interface ModernPackets extends Packets {
 	Identifier getIdentifier();

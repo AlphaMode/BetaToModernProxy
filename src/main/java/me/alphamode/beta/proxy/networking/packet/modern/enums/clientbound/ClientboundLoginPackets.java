@@ -2,15 +2,15 @@ package me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound;
 
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernClientboundPackets;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ClientboundLoginPackets implements ModernClientboundPackets {
-	LOGIN_DISCONNECT(0x00, Identifier.vanilla("login_disconnect"), PacketState.LOGIN),
-	HELLO(0x01, Identifier.vanilla("hello"), PacketState.LOGIN),
-	FINISHED(0x02, Identifier.vanilla("login_finished"), PacketState.LOGIN),
-	COMPRESSION(0x03, Identifier.vanilla("login_compression"), PacketState.LOGIN),
-	CUSTOM_QUERY(0x04, Identifier.vanilla("custom_query"), PacketState.LOGIN),
-	COOKIE_REQUEST(0x05, Identifier.vanilla("cookie_request"), PacketState.LOGIN);
+	LOGIN_DISCONNECT(0x00, Identifier.defaultNamespace("login_disconnect"), PacketState.LOGIN),
+	HELLO(0x01, Identifier.defaultNamespace("hello"), PacketState.LOGIN),
+	FINISHED(0x02, Identifier.defaultNamespace("login_finished"), PacketState.LOGIN),
+	COMPRESSION(0x03, Identifier.defaultNamespace("login_compression"), PacketState.LOGIN),
+	CUSTOM_QUERY(0x04, Identifier.defaultNamespace("custom_query"), PacketState.LOGIN),
+	COOKIE_REQUEST(0x05, Identifier.defaultNamespace("cookie_request"), PacketState.LOGIN);
 
 	private final int id;
 	private final Identifier identifier;

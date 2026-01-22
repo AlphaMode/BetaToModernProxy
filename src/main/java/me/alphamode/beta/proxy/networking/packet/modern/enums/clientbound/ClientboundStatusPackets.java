@@ -2,11 +2,11 @@ package me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound;
 
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernClientboundPackets;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ClientboundStatusPackets implements ModernClientboundPackets {
-	STATUS_RESPONSE(0x00, Identifier.vanilla("status_response"), PacketState.STATUS),
-	PONG_RESPONSE(0x01, Identifier.vanilla("pong_response"), PacketState.STATUS);
+	STATUS_RESPONSE(0x00, Identifier.defaultNamespace("status_response"), PacketState.STATUS),
+	PONG_RESPONSE(0x01, Identifier.defaultNamespace("pong_response"), PacketState.STATUS);
 
 	private final int id;
 	private final Identifier identifier;

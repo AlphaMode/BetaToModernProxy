@@ -2,10 +2,10 @@ package me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound;
 
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ServerboundHandshakingPackets implements ModernServerboundPackets {
-	INTENTION(0x00, Identifier.vanilla("intention"), PacketState.HANDSHAKING);
+	INTENTION(0x00, Identifier.defaultNamespace("intention"), PacketState.HANDSHAKING);
 
 	private final int id;
 	private final Identifier identifier;

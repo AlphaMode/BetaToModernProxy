@@ -2,14 +2,14 @@ package me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound;
 
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ServerboundLoginPackets implements ModernServerboundPackets {
-	HELLO(0x00, Identifier.vanilla("hello"), PacketState.LOGIN),
-	KEY(0x01, Identifier.vanilla("key"), PacketState.LOGIN),
-	CUSTOM_QUERY_ANSWER(0x02, Identifier.vanilla("custom_query_answer"), PacketState.LOGIN),
-	ACKNOWLEDGED(0x03, Identifier.vanilla("login_acknowledged"), PacketState.LOGIN),
-	COOKIE_RESPONSE(0x04, Identifier.vanilla("cookie_response"), PacketState.LOGIN);
+	HELLO(0x00, Identifier.defaultNamespace("hello"), PacketState.LOGIN),
+	KEY(0x01, Identifier.defaultNamespace("key"), PacketState.LOGIN),
+	CUSTOM_QUERY_ANSWER(0x02, Identifier.defaultNamespace("custom_query_answer"), PacketState.LOGIN),
+	ACKNOWLEDGED(0x03, Identifier.defaultNamespace("login_acknowledged"), PacketState.LOGIN),
+	COOKIE_RESPONSE(0x04, Identifier.defaultNamespace("cookie_response"), PacketState.LOGIN);
 
 	private final int id;
 	private final Identifier identifier;
