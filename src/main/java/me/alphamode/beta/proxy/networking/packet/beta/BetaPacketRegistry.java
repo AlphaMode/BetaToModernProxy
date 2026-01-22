@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
 
-	public BetaPacketRegistry() {
+	private BetaPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
@@ -19,7 +19,7 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
-			return getCodec(packetType).decode(byteBuf);
+			return this.getCodec(packetType).decode(byteBuf);
 		}
 	}
 

@@ -12,7 +12,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 	private PacketState state = PacketState.HANDSHAKING;
 
-	public ModernPacketRegistry() {
+	private ModernPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
@@ -22,7 +22,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		if (packetType == null) {
 			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
-			return getCodec(packetType).decode(byteBuf);
+			return this.getCodec(packetType).decode(byteBuf);
 		}
 	}
 
