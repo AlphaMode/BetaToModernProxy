@@ -7,8 +7,8 @@ import me.alphamode.beta.proxy.util.data.Identifier;
 public enum ClientboundLoginPackets implements ModernClientboundPackets {
 	LOGIN_DISCONNECT(0x00, Identifier.vanilla("login_disconnect"), PacketState.LOGIN),
 	HELLO(0x01, Identifier.vanilla("hello"), PacketState.LOGIN),
-	LOGIN_FINISHED(0x02, Identifier.vanilla("login_finished"), PacketState.LOGIN),
-	LOGIN_COMPRESSION(0x03, Identifier.vanilla("login_compression"), PacketState.LOGIN),
+	FINISHED(0x02, Identifier.vanilla("login_finished"), PacketState.LOGIN),
+	COMPRESSION(0x03, Identifier.vanilla("login_compression"), PacketState.LOGIN),
 	CUSTOM_QUERY(0x04, Identifier.vanilla("custom_query"), PacketState.LOGIN),
 	COOKIE_REQUEST(0x05, Identifier.vanilla("cookie_request"), PacketState.LOGIN);
 

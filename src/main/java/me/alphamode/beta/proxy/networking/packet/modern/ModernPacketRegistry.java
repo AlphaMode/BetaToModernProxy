@@ -127,19 +127,18 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundLoginPackets.HELLO, null);
 		this.registerPacket(ServerboundLoginPackets.KEY, null);
 		this.registerPacket(ServerboundLoginPackets.CUSTOM_QUERY_ANSWER, null);
-		this.registerPacket(ServerboundLoginPackets.LOGIN_ACKNOWLEDGED, null);
-		this.registerPacket(ServerboundLoginPackets.LOGIN_COOKIE_RESPONSE, null);
+		this.registerPacket(ServerboundLoginPackets.ACKNOWLEDGED, null);
+		this.registerPacket(ServerboundLoginPackets.COOKIE_RESPONSE, null);
 
 		// Clientbound
 		this.registerPacket(ClientboundLoginPackets.LOGIN_DISCONNECT, null);
 		this.registerPacket(ClientboundLoginPackets.HELLO, null);
-		this.registerPacket(ClientboundLoginPackets.LOGIN_FINISHED, null);
-		this.registerPacket(ClientboundLoginPackets.LOGIN_COMPRESSION, null);
+		this.registerPacket(ClientboundLoginPackets.FINISHED, null);
+		this.registerPacket(ClientboundLoginPackets.COMPRESSION, null);
 		this.registerPacket(ClientboundLoginPackets.CUSTOM_QUERY, null);
 		this.registerPacket(ClientboundLoginPackets.COOKIE_REQUEST, null);
 	}
 
 	private void registerConfigurationPackets() {
-
 	}
 }
