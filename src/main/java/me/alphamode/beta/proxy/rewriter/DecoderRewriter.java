@@ -38,13 +38,11 @@ public final class DecoderRewriter extends Rewriter {
 				case TRANSFER -> throw new RuntimeException("Transfer is unsupported");
 			}
 
-			return new HandshakePacket("-");
-		});
-
-		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
-			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"name\":\"1.21.11\",\"protocol\":774}}"));
-			connection.disconnect();
-			return null;
+			if (packet.intention() == C2SIntentionRecordPacket.ClientIntent.LOGIN) {
+				return new HandshakePacket("-");
+			} else {
+				return null;
+			}
 		});
 
 		this.registerRewriter(C2SHelloPacket.class, PacketDirection.SERVERBOUND, (connection, packet) -> {
@@ -52,6 +50,12 @@ public final class DecoderRewriter extends Rewriter {
 			connection.setId(packet.profileId());
 			connection.send(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
 			return new LoginPacket(packet.username(), BetaRecordPacket.PROTOCOL_VERSION);
+		});
+
+		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
+			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"name\":\"1.21.11\",\"protocol\":774}}"));
+			connection.disconnect();
+			return null;
 		});
 
 		this.registerRewriter(C2SCommonKeepAlivePacket.class, PacketDirection.SERVERBOUND, (_, _) -> new KeepAlivePacket());
@@ -65,7 +69,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerRewriter(C2SFinishConfigurationPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
-			connection.kick("meow meow mrrp :3 nyaaa uwu");
+			//connection.kick("meow meow mrrp :3 nyaaa uwu");
 			return null;
 		});
 
