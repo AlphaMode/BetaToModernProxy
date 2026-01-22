@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
@@ -11,9 +12,14 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket<BetaPackets>> {
 	private final String realServerIp;
 	private NetClient realServer;
+	private Channel channel;
 
 	public C2PChannel(final String ip) {
 		this.realServerIp = ip;
+	}
+
+	public Channel getChannel() {
+		return this.channel;
 	}
 
 	@Override
@@ -32,6 +38,8 @@ public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket<B
 				}
 			});
 		}
+
+		this.channel = context.channel();
 	}
 
 	@Override
