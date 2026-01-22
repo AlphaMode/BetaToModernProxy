@@ -22,9 +22,7 @@ public class ModernPacketDecoder extends ByteToMessageDecoder {
 			DebugUtil.printBuf(buf);
 			final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
 			final int packetId = PacketTypes.readVarInt(buf);
-			IO.println(packetId);
 			final ByteBuf packetData = buf.readBytes(buf.readableBytes());
-			DebugUtil.printBuf(packetData);
 			try {
 				out.add(packetRegistry.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
 			} catch (Exception exception) {
