@@ -16,6 +16,12 @@ import java.util.List;
 
 // Client -> Proxy
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
+	private final String realServerIp;
+
+	public PacketRewriterDecoder(final String realServerIp) {
+		this.realServerIp = realServerIp;
+	}
+
 	// P -> C
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<ModernPackets> packet, final List<Object> out) throws Exception {
@@ -34,7 +40,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 					case STATUS -> connection.setState(PacketState.STATUS);
 				}
 			} else if ((Object) packet instanceof C2SStatusRequestPacket) {
-				connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server\"}}"));
+				connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"name\":\"1.21.11\",\"protocol\":774}}"));
 				connection.disconnect();
 			}
 		}

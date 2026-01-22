@@ -3,8 +3,10 @@ package me.alphamode.beta.proxy.networking.packet.modern;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundLoginPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundHandshakingPackets;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundLoginPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
@@ -121,6 +123,20 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerLoginPackets() {
+		// Serverbound
+		this.registerPacket(ServerboundLoginPackets.HELLO, null);
+		this.registerPacket(ServerboundLoginPackets.KEY, null);
+		this.registerPacket(ServerboundLoginPackets.CUSTOM_QUERY_ANSWER, null);
+		this.registerPacket(ServerboundLoginPackets.LOGIN_ACKNOWLEDGED, null);
+		this.registerPacket(ServerboundLoginPackets.LOGIN_COOKIE_RESPONSE, null);
+
+		// Clientbound
+		this.registerPacket(ClientboundLoginPackets.LOGIN_DISCONNECT, null);
+		this.registerPacket(ClientboundLoginPackets.HELLO, null);
+		this.registerPacket(ClientboundLoginPackets.LOGIN_FINISHED, null);
+		this.registerPacket(ClientboundLoginPackets.LOGIN_COMPRESSION, null);
+		this.registerPacket(ClientboundLoginPackets.CUSTOM_QUERY, null);
+		this.registerPacket(ClientboundLoginPackets.COOKIE_REQUEST, null);
 	}
 
 	private void registerConfigurationPackets() {
