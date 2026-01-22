@@ -24,7 +24,7 @@ public record Identifier(String namespace, String path) {
 			namespace = "minecraft";
 			path = input;
 		} else {
-			final String[] parts = input.split(":", 1);
+			final String[] parts = input.split(":", 2);
 			if (parts.length < 2) {
 				throw new Exception("Invalid identifier");
 			} else {
@@ -44,6 +44,7 @@ public record Identifier(String namespace, String path) {
 		try {
 			return new Identifier(input);
 		} catch (final Exception exception) {
+			exception.printStackTrace();
 			return null;
 		}
 	}
