@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.rewriter;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
@@ -85,43 +86,10 @@ public final class DecoderRewriter extends Rewriter {
 			connection.setState(PacketState.CONFIGURATION);
 
 			// Send Tags
-			{
-				final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
-				defaultTags.forEach(entry -> {
-					final Map<Identifier, IntList> map = new HashMap<>();
-
-					entry.getValue().asCompoundTag().forEach(tag -> {
-						final IntList list = new IntArrayList();
-						final IntArrayTag listTag = tag.getValue().asIntArrayTag();
-						listTag.forEach(list::add);
-						map.put(Identifier.of(tag.getKey()), list);
-					});
-
-					final TagNetworkSerialization.NetworkPayload payload = new TagNetworkSerialization.NetworkPayload(map);
-					tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
-				});
-
-				connection.send(new S2CUpdateTagsPacket(tags));
-			}
+			this.sendTags(connection);
 
 			// Send Registries
-			defaultRegistries.forEach(entry -> {
-				final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
-
-				final CompoundTag tag = entry.getValue().asCompoundTag();
-				tag.forEach(registryEntry -> {
-					final NbtTag value = registryEntry.getValue();
-					entries.add(new RegistrySynchronization.PackedRegistryEntry(
-							Identifier.of(registryEntry.getKey()),
-							Optional.ofNullable(value.asCompoundTag())
-					));
-				});
-
-				connection.send(new S2CRegistryDataPacket(
-						ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
-						entries
-				));
-			});
+			this.sendRegistries(connection);
 
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
 			return null;
@@ -142,5 +110,44 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SCommonCustomPayloadPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
 		this.registerRewriter(C2SCustomQueryAnswerPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
 		this.registerRewriter(C2SClientInformationPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
+	}
+
+	private void sendTags(final Connection connection) {
+		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
+		this.defaultTags.forEach(entry -> {
+			final Map<Identifier, IntList> map = new HashMap<>();
+
+			entry.getValue().asCompoundTag().forEach(tag -> {
+				final IntList list = new IntArrayList();
+				final IntArrayTag listTag = tag.getValue().asIntArrayTag();
+				listTag.forEach(list::add);
+				map.put(Identifier.of(tag.getKey()), list);
+			});
+
+			final TagNetworkSerialization.NetworkPayload payload = new TagNetworkSerialization.NetworkPayload(map);
+			tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
+		});
+
+		connection.send(new S2CUpdateTagsPacket(tags));
+	}
+
+	private void sendRegistries(final Connection connection) {
+		this.defaultRegistries.forEach(entry -> {
+			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
+
+			final CompoundTag tag = entry.getValue().asCompoundTag();
+			tag.forEach(registryEntry -> {
+				final NbtTag value = registryEntry.getValue();
+				entries.add(new RegistrySynchronization.PackedRegistryEntry(
+						Identifier.of(registryEntry.getKey()),
+						Optional.ofNullable(value.asCompoundTag())
+				));
+			});
+
+			connection.send(new S2CRegistryDataPacket(
+					ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
+					entries
+			));
+		});
 	}
 }
