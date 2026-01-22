@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.rewriter;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import me.alphamode.beta.proxy.Proxy;
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
@@ -76,7 +77,8 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
-            final ServerStatus serverStatus = new ServerStatus(TextComponent.of("Beta 1.7.3 Server (" + this.realServerIp + ")"), Optional.of(new ServerStatus.Players(20, 0, List.of())), Optional.of(new ServerStatus.Version("1.21.11", 774)), Optional.empty(), false);
+            final Proxy proxy = Proxy.getProxy();
+            final ServerStatus serverStatus = new ServerStatus(proxy.getMotd(), Optional.of(new ServerStatus.Players(proxy.getConfig().getMaxPlayers(), 0, List.of())), Optional.of(new ServerStatus.Version(proxy.getBrand(), 774)), Optional.empty(), false);
             connection.send(new S2CStatusResponsePacket(serverStatus));
 			connection.send(new S2CPongResponsePacket(0L));
 			connection.disconnect();
