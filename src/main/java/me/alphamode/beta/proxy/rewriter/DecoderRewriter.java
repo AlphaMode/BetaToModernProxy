@@ -23,15 +23,19 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CSt
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
+import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class DecoderRewriter extends Rewriter {
 	private final String realServerIp;
+	private final CompoundTag defaultRegistries;
 
-	public DecoderRewriter(final String realServerIp) {
-		this.realServerIp = realServerIp; // TODO: find better way to handle data like this
+	public DecoderRewriter(final String realServerIp, final CompoundTag defaultRegistries) {
+		// TODO: find better way to handle data like this
+		this.realServerIp = realServerIp;
+		this.defaultRegistries = defaultRegistries;
 	}
 
 	@Override
@@ -71,6 +75,8 @@ public final class DecoderRewriter extends Rewriter {
 			connection.setState(PacketState.CONFIGURATION);
 
 			// TODO: read nbt file
+
+
 			connection.send(new S2CRegistryDataPacket(
 					ResourceKey.createRegistryKey(Identifier.defaultNamespace("worldgen/biome")),
 					new ArrayList<>()

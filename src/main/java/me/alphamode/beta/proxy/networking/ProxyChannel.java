@@ -8,6 +8,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketDeco
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegistry;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
+import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 
 // Packets
@@ -16,9 +17,11 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 	public static final AttributeKey<ModernPacketRegistry> MODERN_PACKET_REGISTRY_KEY = AttributeKey.newInstance("modern_packet_registry");
 	public static final AttributeKey<Connection> CONNECTION_KEY = AttributeKey.newInstance("connection");
 	private final String serverIp;
+	private final CompoundTag defaultRegistries;
 
-	public ProxyChannel(final String ip) {
+	public ProxyChannel(final String ip, final CompoundTag defaultRegistries) {
 		this.serverIp = ip;
+		this.defaultRegistries = defaultRegistries;
 	}
 
 	// Client -> Proxy
@@ -31,7 +34,7 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(ModernPacketEncoder.KEY, new ModernPacketEncoder());
 
 		final Connection connection = new Connection(this.serverIp);
-		channel.pipeline().addLast(new PacketRewriterDecoder(this.serverIp));
+		channel.pipeline().addLast(new PacketRewriterDecoder(this.serverIp, this.defaultRegistries));
 		channel.pipeline().addLast(connection);
 		channel.attr(CONNECTION_KEY).set(connection);
 	}

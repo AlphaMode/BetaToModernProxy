@@ -8,6 +8,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
+import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 
 import java.util.List;
 
@@ -15,8 +16,8 @@ import java.util.List;
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
 	private final DecoderRewriter rewriter;
 
-	public PacketRewriterDecoder(final String realServerIp) {
-		this.rewriter = new DecoderRewriter(realServerIp);
+	public PacketRewriterDecoder(final String realServerIp, final CompoundTag defaultRegistries) {
+		this.rewriter = new DecoderRewriter(realServerIp, defaultRegistries);
 		this.rewriter.registerPackets();
 	}
 
