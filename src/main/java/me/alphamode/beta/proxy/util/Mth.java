@@ -35,4 +35,8 @@ public class Mth {
 	public static int positiveModulo(final int input, final int mod) {
 		return Math.floorMod(input, mod);
 	}
+
+	public static int positiveCeilDiv(int input, int divisor) {
+		return -Math.floorDiv(-input, divisor);
+	}
 }

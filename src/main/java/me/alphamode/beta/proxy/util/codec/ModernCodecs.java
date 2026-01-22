@@ -1,16 +1,14 @@
 package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.Mth;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 
@@ -178,6 +176,26 @@ public interface ModernCodecs {
 			@Override
 			public T decode(final ByteBuf buf) {
 				return buf.readBoolean() ? codec.decode(buf) : null;
+			}
+		};
+	}
+
+	static StreamCodec<ByteBuf, BitSet> sizedBitSet(final int size) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final BitSet bitSet) {
+				if (bitSet.length() > size) {
+					throw new RuntimeException("BitSet is larger than expected size (" + bitSet.length() + ">" + size + ")");
+				} else {
+					buf.writeBytes(Arrays.copyOf(bitSet.toByteArray(), Mth.positiveCeilDiv(size, 8)));
+				}
+			}
+
+			@Override
+			public BitSet decode(final ByteBuf buf) {
+				final byte[] bytes = new byte[Mth.positiveCeilDiv(size, 8)];
+				buf.readBytes(bytes);
+				return BitSet.valueOf(bytes);
 			}
 		};
 	}
