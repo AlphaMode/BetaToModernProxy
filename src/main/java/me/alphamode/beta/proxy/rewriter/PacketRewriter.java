@@ -13,11 +13,15 @@ public final class PacketRewriter extends MessageToMessageCodec<ModernRecordPack
 	@Override
 	protected void encode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
 		IO.println(buf);
+		out.add(buf);
+		// TODO
 	}
 
 	// P -> C
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<ModernPackets> packet, final List<Object> out) throws Exception {
 		IO.println(packet);
+		out.add(packet);
+		// TODO
 	}
 }
