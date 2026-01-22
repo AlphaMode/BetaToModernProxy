@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.util.codec;
 
+import com.google.gson.*;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
 import me.alphamode.beta.proxy.util.Mth;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
@@ -299,4 +301,24 @@ public interface ModernCodecs {
 			}
 		};
 	}
+
+    static StreamCodec<ByteBuf, JsonElement> lenientJson(final int maxLength) {
+        return new StreamCodec<>() {
+            private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+
+            @Override
+            public JsonElement decode(final ByteBuf buf) {
+                try {
+                    return JsonParser.parseString(stringUtf8(maxLength).decode(buf));
+                } catch (JsonSyntaxException e) {
+                    throw new RuntimeException("Failed to parse JSON", e);
+                }
+            }
+
+            @Override
+            public void encode(final ByteBuf buf, final JsonElement value) {
+                stringUtf8(maxLength).encode(buf, GSON.toJson(value));
+            }
+        };
+    }
 }

@@ -23,15 +23,14 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPo
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
+import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import net.lenni0451.mcstructs.text.TextComponent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class DecoderRewriter extends Rewriter {
 	private final String realServerIp;
@@ -68,7 +67,8 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
-			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"registryId\":\"1.21.11\",\"protocol\":774}}"));
+            final ServerStatus serverStatus = new ServerStatus(TextComponent.of("Beta 1.7.3 Server (" + this.realServerIp + ")"), Optional.of(new ServerStatus.Players(20, 0, List.of())), Optional.of(new ServerStatus.Version("1.21.11", 774)), Optional.empty(), false);
+            connection.send(new S2CStatusResponsePacket(serverStatus));
 			connection.send(new S2CPongResponsePacket(0L));
 			connection.disconnect();
 			return null;
