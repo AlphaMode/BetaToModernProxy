@@ -7,6 +7,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.Server
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SAcceptTeleportationRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SBlockEntityTagQueryPacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
@@ -48,6 +49,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 
     private void registerPlayPackets() {
         this.registerPacket(ServerboundPlayPackets.ACCEPT_TELEPORTATION, C2SAcceptTeleportationRecordPacket.CODEC);
+        this.registerPacket(ServerboundPlayPackets.BLOCK_ENTITY_TAG_QUERY, C2SBlockEntityTagQueryPacket.CODEC);
     }
 
     private void registerStatusPackets() {
