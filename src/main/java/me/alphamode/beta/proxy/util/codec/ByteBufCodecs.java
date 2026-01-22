@@ -29,6 +29,22 @@ public interface ByteBufCodecs {
 		}
 	};
 
+	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
+		@Override
+		public byte[] decode(final ByteBuf buf) {
+			final byte[] data = new byte[buf.readInt()];
+			buf.readBytes(data);
+			return data;
+		}
+
+		@Override
+		public void encode(final ByteBuf buf, final byte[] value) {
+			buf.writeInt(value.length);
+			buf.writeBytes(value);
+		}
+	};
+
+
 	StreamCodec<ByteBuf, byte[]> TINY_BYTE_ARRAY = new StreamCodec<>() {
 		public byte[] decode(final ByteBuf buf) {
 			final byte[] data = new byte[buf.readByte() & 255];
@@ -120,21 +136,6 @@ public interface ByteBufCodecs {
 			}
 		};
 	}
-
-	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
-		@Override
-		public byte[] decode(ByteBuf buf) {
-			final byte[] data = new byte[buf.readInt()];
-			buf.readBytes(data);
-			return data;
-		}
-
-		@Override
-		public void encode(ByteBuf buf, byte[] value) {
-			buf.writeInt(value.length);
-			buf.writeBytes(value);
-		}
-	};
 
 	int MAX_STRING_LENGTH = 32767;
 
