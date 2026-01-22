@@ -3,8 +3,8 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configurati
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundConfigurationPackets;
 
 public class S2CRegistryDataPacket implements S2CConfigurationPacket {
-    @Override
-    public ClientboundConfigurationPackets getType() {
-        return null;
-    }
+	@Override
+	public ClientboundConfigurationPackets getType() {
+		return null;
+	}
 }

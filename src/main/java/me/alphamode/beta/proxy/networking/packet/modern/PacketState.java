@@ -5,5 +5,5 @@ public enum PacketState {
 	PLAY,
 	STATUS,
 	LOGIN,
-	CONFIGURATION;
+	CONFIGURATION
 }

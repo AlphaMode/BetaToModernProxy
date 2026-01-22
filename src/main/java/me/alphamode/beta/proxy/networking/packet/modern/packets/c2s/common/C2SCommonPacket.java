@@ -5,8 +5,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
 
 public interface C2SCommonPacket<T extends ModernServerboundPackets> extends ModernRecordPacket<T> {
-    @Override
-    default PacketDirection getDirection() {
-        return PacketDirection.SERVERBOUND;
-    }
+	@Override
+	default PacketDirection getDirection() {
+		return PacketDirection.SERVERBOUND;
+	}
 }
