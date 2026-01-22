@@ -25,21 +25,6 @@ public interface BasicCodecs {
 		}
 	};
 
-	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
-		@Override
-		public byte[] decode(final ByteBuf buf) {
-			final byte[] data = new byte[buf.readInt()];
-			buf.readBytes(data);
-			return data;
-		}
-
-		@Override
-		public void encode(final ByteBuf buf, final byte[] value) {
-			buf.writeInt(value.length);
-			buf.writeBytes(value);
-		}
-	};
-
 	StreamCodec<ByteBuf, Short> UNSIGNED_BYTE = new StreamCodec<>() {
 		public Short decode(final ByteBuf buf) {
 			return buf.readUnsignedByte();

@@ -9,6 +9,21 @@ import java.util.function.ToIntFunction;
 public interface ModernCodecs {
 	short MAX_STRING_LENGTH = 32767;
 
+    StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
+        @Override
+        public byte[] decode(final ByteBuf buf) {
+            final byte[] data = new byte[VAR_INT.decode(buf)];
+            buf.readBytes(data);
+            return data;
+        }
+
+        @Override
+        public void encode(final ByteBuf buf, final byte[] value) {
+            VAR_INT.encode(buf, value.length);
+            buf.writeBytes(value);
+        }
+    };
+
 	StreamCodec<ByteBuf, Integer> VAR_INT = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final Integer value) {
