@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.modern.ModernPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
@@ -9,17 +9,17 @@ import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record C2SIntentionPacket(int protocolVersion, String hostName, short port, ClientIntent intention) implements ModernPacket<ModernServerboundPackets> {
-    public static final StreamCodec<ByteBuf, C2SIntentionPacket> CODEC = StreamCodec.composite(
+public record C2SIntentionRecordPacket(int protocolVersion, String hostName, short port, ClientIntent intention) implements ModernRecordPacket<ModernServerboundPackets> {
+    public static final StreamCodec<ByteBuf, C2SIntentionRecordPacket> CODEC = StreamCodec.composite(
             ModernCodecs.VAR_INT,
-            C2SIntentionPacket::protocolVersion,
+            C2SIntentionRecordPacket::protocolVersion,
             ModernCodecs.stringUtf8(),
-            C2SIntentionPacket::hostName,
+            C2SIntentionRecordPacket::hostName,
             BasicCodecs.SHORT,
-            C2SIntentionPacket::port,
+            C2SIntentionRecordPacket::port,
             ClientIntent.CODEC,
-            C2SIntentionPacket::intention,
-            C2SIntentionPacket::new
+            C2SIntentionRecordPacket::intention,
+            C2SIntentionRecordPacket::new
     );
 
     @Override
