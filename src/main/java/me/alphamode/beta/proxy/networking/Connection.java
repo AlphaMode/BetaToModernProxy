@@ -61,7 +61,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	@Override
-	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) throws Exception {
+	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) {
 		if (this.realServer != null && this.realServer.getChannel().isActive()) {
 			this.realServer.getChannel().writeAndFlush(packet);
 		}

@@ -12,6 +12,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHel
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
@@ -133,7 +134,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		// Clientbound
 		this.registerPacket(ClientboundLoginPackets.LOGIN_DISCONNECT, null);
 		this.registerPacket(ClientboundLoginPackets.HELLO, S2CHelloPacket.CODEC);
-		this.registerPacket(ClientboundLoginPackets.FINISHED, null);
+		this.registerPacket(ClientboundLoginPackets.FINISHED, S2CLoginFinishedPacket.CODEC);
 		this.registerPacket(ClientboundLoginPackets.COMPRESSION, null);
 		this.registerPacket(ClientboundLoginPackets.CUSTOM_QUERY, null);
 		this.registerPacket(ClientboundLoginPackets.COOKIE_REQUEST, null);
