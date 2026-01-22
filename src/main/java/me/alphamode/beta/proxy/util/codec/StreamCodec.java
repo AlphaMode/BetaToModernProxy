@@ -5,21 +5,21 @@ import java.util.function.Function;
 
 public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B, V> {
 	@Override
-	void encode(B output, V value);
+	void encode(B buf, V value);
 
 	@Override
-	V decode(B input);
+	V decode(B buf);
 
 	static <B, V> StreamCodec<B, V> of(final StreamEncoder<B, V> encoder, final StreamDecoder<B, V> decoder) {
 		return new StreamCodec<>() {
 			@Override
-			public V decode(final B input) {
-				return decoder.decode(input);
+			public V decode(final B buf) {
+				return decoder.decode(buf);
 			}
 
 			@Override
-			public void encode(final B output, final V value) {
-				encoder.encode(output, value);
+			public void encode(final B buf, final V value) {
+				encoder.encode(buf, value);
 			}
 		};
 	}
@@ -27,13 +27,13 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	static <B, V> StreamCodec<B, V> ofMember(final StreamMemberEncoder<B, V> encoder, final StreamDecoder<B, V> decoder) {
 		return new StreamCodec<>() {
 			@Override
-			public V decode(final B input) {
-				return decoder.decode(input);
+			public V decode(final B buf) {
+				return decoder.decode(buf);
 			}
 
 			@Override
-			public void encode(final B output, final V value) {
-				encoder.encode(value, output);
+			public void encode(final B buf, final V value) {
+				encoder.encode(value, buf);
 			}
 		};
 	}
@@ -41,12 +41,12 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	static <B, V> StreamCodec<B, V> unit(final V instance) {
 		return new StreamCodec<>() {
 			@Override
-			public V decode(final B input) {
+			public V decode(final B buf) {
 				return instance;
 			}
 
 			@Override
-			public void encode(final B output, final V value) {
+			public void encode(final B buf, final V value) {
 				if (!value.equals(instance)) {
 					throw new IllegalStateException("Can't encode '" + value + "', expected '" + instance + "'");
 				}
@@ -61,14 +61,14 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<B, C>() {
 			@Override
-			public C decode(final B input) {
-				T1 v1 = codec1.decode(input);
+			public C decode(final B buf) {
+				T1 v1 = codec1.decode(buf);
 				return constructor.apply(v1);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
 			}
 		};
 	}
@@ -82,14 +82,14 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
-				return constructor.apply(codec1.decode(input), codec2.decode(input));
+			public C decode(final B buf) {
+				return constructor.apply(codec1.decode(buf), codec2.decode(buf));
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
 			}
 		};
 	}
@@ -105,15 +105,15 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
-				return constructor.apply(codec1.decode(input), codec2.decode(input), codec3.decode(input));
+			public C decode(final B buf) {
+				return constructor.apply(codec1.decode(buf), codec2.decode(buf), codec3.decode(buf));
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
 			}
 		};
 	}
@@ -131,21 +131,21 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
 			}
 		};
 	}
@@ -165,23 +165,23 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
 			}
 		};
 	}
@@ -203,25 +203,25 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
 			}
 		};
 	}
@@ -245,27 +245,27 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input),
-						codec7.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf),
+						codec7.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
-				codec7.encode(output, getter7.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
+				codec7.encode(buf, getter7.apply(value));
 			}
 		};
 	}
@@ -291,29 +291,29 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input),
-						codec7.decode(input),
-						codec8.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf),
+						codec7.decode(buf),
+						codec8.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
-				codec7.encode(output, getter7.apply(value));
-				codec8.encode(output, getter8.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
+				codec7.encode(buf, getter7.apply(value));
+				codec8.encode(buf, getter8.apply(value));
 			}
 		};
 	}
@@ -341,31 +341,31 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input),
-						codec7.decode(input),
-						codec8.decode(input),
-						codec9.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf),
+						codec7.decode(buf),
+						codec8.decode(buf),
+						codec9.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
-				codec7.encode(output, getter7.apply(value));
-				codec8.encode(output, getter8.apply(value));
-				codec9.encode(output, getter9.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
+				codec7.encode(buf, getter7.apply(value));
+				codec8.encode(buf, getter8.apply(value));
+				codec9.encode(buf, getter9.apply(value));
 			}
 		};
 	}
@@ -395,33 +395,33 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input),
-						codec7.decode(input),
-						codec8.decode(input),
-						codec9.decode(input),
-						codec10.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf),
+						codec7.decode(buf),
+						codec8.decode(buf),
+						codec9.decode(buf),
+						codec10.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
-				codec7.encode(output, getter7.apply(value));
-				codec8.encode(output, getter8.apply(value));
-				codec9.encode(output, getter9.apply(value));
-				codec10.encode(output, getter10.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
+				codec7.encode(buf, getter7.apply(value));
+				codec8.encode(buf, getter8.apply(value));
+				codec9.encode(buf, getter9.apply(value));
+				codec10.encode(buf, getter10.apply(value));
 			}
 		};
 	}
@@ -453,35 +453,35 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input),
-						codec7.decode(input),
-						codec8.decode(input),
-						codec9.decode(input),
-						codec10.decode(input),
-						codec11.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf),
+						codec7.decode(buf),
+						codec8.decode(buf),
+						codec9.decode(buf),
+						codec10.decode(buf),
+						codec11.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
-				codec7.encode(output, getter7.apply(value));
-				codec8.encode(output, getter8.apply(value));
-				codec9.encode(output, getter9.apply(value));
-				codec10.encode(output, getter10.apply(value));
-				codec11.encode(output, getter11.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
+				codec7.encode(buf, getter7.apply(value));
+				codec8.encode(buf, getter8.apply(value));
+				codec9.encode(buf, getter9.apply(value));
+				codec10.encode(buf, getter10.apply(value));
+				codec11.encode(buf, getter11.apply(value));
 			}
 		};
 	}
@@ -515,37 +515,37 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	) {
 		return new StreamCodec<>() {
 			@Override
-			public C decode(final B input) {
+			public C decode(final B buf) {
 				return constructor.apply(
-						codec1.decode(input),
-						codec2.decode(input),
-						codec3.decode(input),
-						codec4.decode(input),
-						codec5.decode(input),
-						codec6.decode(input),
-						codec7.decode(input),
-						codec8.decode(input),
-						codec9.decode(input),
-						codec10.decode(input),
-						codec11.decode(input),
-						codec12.decode(input)
+						codec1.decode(buf),
+						codec2.decode(buf),
+						codec3.decode(buf),
+						codec4.decode(buf),
+						codec5.decode(buf),
+						codec6.decode(buf),
+						codec7.decode(buf),
+						codec8.decode(buf),
+						codec9.decode(buf),
+						codec10.decode(buf),
+						codec11.decode(buf),
+						codec12.decode(buf)
 				);
 			}
 
 			@Override
-			public void encode(final B output, final C value) {
-				codec1.encode(output, getter1.apply(value));
-				codec2.encode(output, getter2.apply(value));
-				codec3.encode(output, getter3.apply(value));
-				codec4.encode(output, getter4.apply(value));
-				codec5.encode(output, getter5.apply(value));
-				codec6.encode(output, getter6.apply(value));
-				codec7.encode(output, getter7.apply(value));
-				codec8.encode(output, getter8.apply(value));
-				codec9.encode(output, getter9.apply(value));
-				codec10.encode(output, getter10.apply(value));
-				codec11.encode(output, getter11.apply(value));
-				codec12.encode(output, getter12.apply(value));
+			public void encode(final B buf, final C value) {
+				codec1.encode(buf, getter1.apply(value));
+				codec2.encode(buf, getter2.apply(value));
+				codec3.encode(buf, getter3.apply(value));
+				codec4.encode(buf, getter4.apply(value));
+				codec5.encode(buf, getter5.apply(value));
+				codec6.encode(buf, getter6.apply(value));
+				codec7.encode(buf, getter7.apply(value));
+				codec8.encode(buf, getter8.apply(value));
+				codec9.encode(buf, getter9.apply(value));
+				codec10.encode(buf, getter10.apply(value));
+				codec11.encode(buf, getter11.apply(value));
+				codec12.encode(buf, getter12.apply(value));
 			}
 		};
 	}
