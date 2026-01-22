@@ -28,10 +28,6 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			throw new RuntimeException("Cannot decode modern packet as packet-registry is null!");
 		} else {
 			final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
-			if (connection == null || !connection.isConnected()) {
-				return;
-			}
-
 			IO.println(packet);
 			for (final Class<?> clazz : this.rewriter.serverboundRewriters.keySet()) {
 				if (clazz.isAssignableFrom(packet.getClass())) {

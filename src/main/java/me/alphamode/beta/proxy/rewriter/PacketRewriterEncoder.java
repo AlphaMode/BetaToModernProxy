@@ -24,13 +24,8 @@ public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRec
 		if (packetRegistry == null) {
 			throw new RuntimeException("Cannot encode beta packet as packet-registry is null!");
 		} else {
-			IO.println("sending beta packet to modern client");
-
 			final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
-			if (connection == null || !connection.isConnected()) {
-				return;
-			}
-
+			IO.println("sending beta packet to modern client");
 			IO.println(packet);
 			for (final Class<?> clazz : this.rewriter.clientboundRewriters.keySet()) {
 				if (clazz.isAssignableFrom(packet.getClass())) {
