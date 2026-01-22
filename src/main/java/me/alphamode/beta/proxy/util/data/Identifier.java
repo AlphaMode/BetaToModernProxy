@@ -1,6 +1,22 @@
 package me.alphamode.beta.proxy.util.data;
 
+import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
+
 public record Identifier(String namespace, String path) {
+	public static final StreamCodec<ByteBuf, Identifier> CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final Identifier value) {
+			ModernCodecs.stringUtf8().encode(buf, value.toString());
+		}
+
+		@Override
+		public Identifier decode(final ByteBuf buf) {
+			return Identifier.ofNullable(ModernCodecs.stringUtf8().decode(buf));
+		}
+	};
+
 	public Identifier(String input) throws Exception {
 		String namespace;
 		String path;
@@ -27,8 +43,13 @@ public record Identifier(String namespace, String path) {
 	public static Identifier ofNullable(final String input) {
 		try {
 			return new Identifier(input);
-		} catch (Exception exception) {
+		} catch (final Exception exception) {
 			return null;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return this.namespace + ":" + this.path;
 	}
 }

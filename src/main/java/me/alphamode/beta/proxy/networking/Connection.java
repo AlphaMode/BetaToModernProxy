@@ -57,6 +57,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public void setState(final PacketState state) {
+		IO.println("Switching to state " + state);
 		this.state = state;
 	}
 

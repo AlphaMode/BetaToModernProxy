@@ -8,24 +8,24 @@ import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record C2SPongPacket(int id) implements C2SCommonPongPacket<ServerboundPlayPackets> {
-    public static final StreamCodec<ByteBuf, C2SPongPacket> CODEC = StreamCodec.composite(
-            BasicCodecs.INT,
-            C2SPongPacket::id,
-            C2SPongPacket::new
-    );
+	public static final StreamCodec<ByteBuf, C2SPongPacket> CODEC = StreamCodec.composite(
+			BasicCodecs.INT,
+			C2SPongPacket::id,
+			C2SPongPacket::new
+	);
 
-    @Override
-    public PacketState getState() {
-        return PacketState.PLAY;
-    }
+	@Override
+	public PacketState getState() {
+		return PacketState.PLAY;
+	}
 
-    @Override
-    public ServerboundPlayPackets getType() {
-        return ServerboundPlayPackets.PONG;
-    }
+	@Override
+	public ServerboundPlayPackets getType() {
+		return ServerboundPlayPackets.PONG;
+	}
 
-    @Override
-    public int getId() {
-        return this.id;
-    }
+	@Override
+	public int getId() {
+		return this.id;
+	}
 }

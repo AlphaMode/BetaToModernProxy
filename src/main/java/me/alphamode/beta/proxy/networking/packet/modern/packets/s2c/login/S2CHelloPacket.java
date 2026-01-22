@@ -10,9 +10,9 @@ public record S2CHelloPacket(String serverId, byte[] publicKey, byte[] challenge
     public static final StreamCodec<ByteBuf, S2CHelloPacket> CODEC = StreamCodec.composite(
             ModernCodecs.stringUtf8(20),
             S2CHelloPacket::serverId,
-            ModernCodecs.BYTE_ARRAY,
+            ModernCodecs.PREFIXED_BYTE_ARRAY,
             S2CHelloPacket::publicKey,
-            ModernCodecs.BYTE_ARRAY,
+            ModernCodecs.PREFIXED_BYTE_ARRAY,
             S2CHelloPacket::challenge,
             BasicCodecs.BOOL,
             S2CHelloPacket::shouldAuthenticate,

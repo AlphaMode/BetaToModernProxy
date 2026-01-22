@@ -13,6 +13,20 @@ public interface ModernCodecs {
 	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
 		public byte[] decode(final ByteBuf buf) {
+			final byte[] data = new byte[buf.readableBytes()];
+			buf.readBytes(data);
+			return data;
+		}
+
+		@Override
+		public void encode(final ByteBuf buf, final byte[] value) {
+			buf.writeBytes(value);
+		}
+	};
+
+	StreamCodec<ByteBuf, byte[]> PREFIXED_BYTE_ARRAY = new StreamCodec<>() {
+		@Override
+		public byte[] decode(final ByteBuf buf) {
 			final byte[] data = new byte[VAR_INT.decode(buf)];
 			buf.readBytes(data);
 			return data;
