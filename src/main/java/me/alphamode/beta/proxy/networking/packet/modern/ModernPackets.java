@@ -7,4 +7,12 @@ public interface ModernPackets extends Packets {
 	Identifier getIdentifier();
 
 	PacketState getState();
+
+	static <T extends ModernPackets> T getPacket(final int id, final PacketDirection direction, final PacketState state) {
+		if (direction == PacketDirection.CLIENTBOUND) {
+			return (T) ModernClientboundPackets.getPacket(id, state);
+		} else {
+			return (T) ModernServerboundPackets.getPacket(id, state);
+		}
+	}
 }

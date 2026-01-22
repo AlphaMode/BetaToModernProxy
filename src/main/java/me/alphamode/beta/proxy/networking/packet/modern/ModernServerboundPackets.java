@@ -40,4 +40,14 @@ public enum ModernServerboundPackets implements ModernPackets {
 	public PacketState getState() {
 		return this.state;
 	}
+
+	public static ModernServerboundPackets getPacket(final int id, final PacketState state) {
+		for (final ModernServerboundPackets packet : ModernServerboundPackets.values()) {
+			if (packet.getId() == id && packet.state == state) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }

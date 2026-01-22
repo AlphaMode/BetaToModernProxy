@@ -14,8 +14,8 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	@Override
-	public RecordPacket<ModernPackets> createPacket(final int id, final ByteBuf byteBuf) {
-		final ModernPackets packetType = ModernClientboundPackets.getPacket(id, this.state);
+	public RecordPacket<ModernPackets> createPacket(final int id, final PacketDirection direction, final ByteBuf byteBuf) {
+		final ModernPackets packetType = ModernPackets.getPacket(id, direction, this.state);
 		if (packetType == null) {
 			throw new RuntimeException("Packet ? is not registered in the packet registry");
 		} else {
@@ -32,6 +32,6 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerVanillaPackets() {
-        registerPacket(ModernServerboundPackets.INTENTION, C2SIntentionPacket.CODEC);
+		registerPacket(ModernServerboundPackets.INTENTION, C2SIntentionPacket.CODEC);
 	}
 }

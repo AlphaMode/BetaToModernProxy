@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class PacketRegistry<V extends Packets> {
 	protected final Map<V, StreamCodec<ByteBuf, ? extends RecordPacket<?>>> registry = new ConcurrentHashMap<>();
 
-	public abstract RecordPacket<V> createPacket(int packetId, final ByteBuf byteBuf);
+	public abstract RecordPacket<V> createPacket(final int packetId, final PacketDirection direction, final ByteBuf byteBuf);
 
 	public <T extends RecordPacket<V>> StreamCodec<ByteBuf, T> getCodec(final V type) {
 		if (!registry.containsKey(type)) {
