@@ -16,8 +16,8 @@ import java.util.List;
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
 	private final DecoderRewriter rewriter;
 
-	public PacketRewriterDecoder(final String realServerIp, final CompoundTag defaultRegistries) {
-		this.rewriter = new DecoderRewriter(realServerIp, defaultRegistries);
+	public PacketRewriterDecoder(final String realServerIp, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+		this.rewriter = new DecoderRewriter(realServerIp, defaultTags, defaultRegistries);
 		this.rewriter.registerPackets();
 	}
 

@@ -17,10 +17,12 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 	public static final AttributeKey<ModernPacketRegistry> MODERN_PACKET_REGISTRY_KEY = AttributeKey.newInstance("modern_packet_registry");
 	public static final AttributeKey<Connection> CONNECTION_KEY = AttributeKey.newInstance("connection");
 	private final String serverIp;
+	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
-	public ProxyChannel(final String ip, final CompoundTag defaultRegistries) {
+	public ProxyChannel(final String ip, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
 		this.serverIp = ip;
+		this.defaultTags = defaultTags;
 		this.defaultRegistries = defaultRegistries;
 	}
 
@@ -34,7 +36,7 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(ModernPacketEncoder.KEY, new ModernPacketEncoder());
 
 		final Connection connection = new Connection(this.serverIp);
-		channel.pipeline().addLast(new PacketRewriterDecoder(this.serverIp, this.defaultRegistries));
+		channel.pipeline().addLast(new PacketRewriterDecoder(this.serverIp, this.defaultTags, this.defaultRegistries));
 		channel.pipeline().addLast(connection);
 		channel.attr(CONNECTION_KEY).set(connection);
 	}

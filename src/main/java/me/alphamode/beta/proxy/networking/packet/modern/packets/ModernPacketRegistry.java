@@ -21,6 +21,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SSt
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
@@ -321,7 +322,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundConfigurationPackets.STORE_COOKIE, null);
 		this.registerPacket(ClientboundConfigurationPackets.TRANSFER, null);
 		this.registerPacket(ClientboundConfigurationPackets.UPDATE_ENABLED_FEATURES, null);
-		this.registerPacket(ClientboundConfigurationPackets.UPDATE_TAGS, null);
+		this.registerPacket(ClientboundConfigurationPackets.UPDATE_TAGS, S2CUpdateTagsPacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.SELECT_KNOWN_PACKS, null);
 		this.registerPacket(ClientboundConfigurationPackets.CUSTOM_REPORT_DETAILS, null);
 		this.registerPacket(ClientboundConfigurationPackets.SERVER_LINKS, null);

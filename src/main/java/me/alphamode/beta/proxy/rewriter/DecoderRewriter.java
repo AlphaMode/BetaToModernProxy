@@ -1,5 +1,8 @@
 package me.alphamode.beta.proxy.rewriter;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
@@ -18,27 +21,33 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConf
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
+import me.alphamode.beta.proxy.util.data.modern.TagNetworkSerialization;
+import me.alphamode.beta.proxy.util.data.modern.registry.Registry;
 import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import net.lenni0451.mcstructs.nbt.tags.IntArrayTag;
 import net.lenni0451.mcstructs.text.TextComponent;
 
 import java.util.*;
 
 public final class DecoderRewriter extends Rewriter {
 	private final String realServerIp;
+	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
-	public DecoderRewriter(final String realServerIp, final CompoundTag defaultRegistries) {
+	public DecoderRewriter(final String realServerIp, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
 		// TODO: find better way to handle data like this
 		this.realServerIp = realServerIp;
+		this.defaultTags = defaultTags;
 		this.defaultRegistries = defaultRegistries;
 	}
 
@@ -79,23 +88,11 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SLoginAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
 
-			defaultRegistries.forEach(entry -> {
-				final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
+			// Send Tags
+			this.sendTags(connection);
 
-				final CompoundTag tag = entry.getValue().asCompoundTag();
-				tag.forEach(registryEntry -> {
-					final NbtTag value = registryEntry.getValue();
-					entries.add(new RegistrySynchronization.PackedRegistryEntry(
-							Identifier.of(registryEntry.getKey()),
-							value == null ? Optional.empty() : Optional.of(value.asCompoundTag())
-					));
-				});
-
-				connection.send(new S2CRegistryDataPacket(
-						ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
-						entries
-				));
-			});
+			// Send Registries
+			this.sendRegistries(connection);
 
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
 			return null;
@@ -116,5 +113,44 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SCommonCustomPayloadPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
 		this.registerRewriter(C2SCustomQueryAnswerPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
 		this.registerRewriter(C2SClientInformationPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
+	}
+
+	private void sendTags(final Connection connection) {
+		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
+		this.defaultTags.forEach(entry -> {
+			final Map<Identifier, IntList> map = new HashMap<>();
+
+			entry.getValue().asCompoundTag().forEach(tag -> {
+				final IntList list = new IntArrayList();
+				final IntArrayTag listTag = tag.getValue().asIntArrayTag();
+				listTag.forEach(list::add);
+				map.put(Identifier.of(tag.getKey()), list);
+			});
+
+			final TagNetworkSerialization.NetworkPayload payload = new TagNetworkSerialization.NetworkPayload(map);
+			tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
+		});
+
+		connection.send(new S2CUpdateTagsPacket(tags));
+	}
+
+	private void sendRegistries(final Connection connection) {
+		this.defaultRegistries.forEach(entry -> {
+			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
+
+			final CompoundTag tag = entry.getValue().asCompoundTag();
+			tag.forEach(registryEntry -> {
+				final NbtTag value = registryEntry.getValue();
+				entries.add(new RegistrySynchronization.PackedRegistryEntry(
+						Identifier.of(registryEntry.getKey()),
+						Optional.ofNullable(value.asCompoundTag())
+				));
+			});
+
+			connection.send(new S2CRegistryDataPacket(
+					ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
+					entries
+			));
+		});
 	}
 }
