@@ -2,11 +2,12 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record PlayerInputPacket(float deltaX, float deltaZ, float yaw, float pitch, boolean jumping,
-								boolean shifting) implements RecordPacket {
+								boolean shifting) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, PlayerInputPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.FLOAT,
 			PlayerInputPacket::deltaX,

@@ -1,42 +1,28 @@
 package me.alphamode.beta.proxy.networking.packet.beta;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.*;
-import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-public class BetaPacketRegistry {
+public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
-	private final Map<BetaPackets, StreamCodec<ByteBuf, ? extends RecordPacket>> registry = new EnumMap<>(BetaPackets.class);
 
 	public BetaPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
-	public RecordPacket createPacket(final int packetId, final ByteBuf byteBuf) {
+	@Override
+	public RecordPacket<BetaPackets> createPacket(final int packetId, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		if (packetType == null) {
-			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
+			throw new IllegalArgumentException("Packet ? is not registered in the packet registry");
 		} else {
 			return getCodec(packetType).decode(byteBuf);
 		}
 	}
 
-	public <T extends RecordPacket> StreamCodec<ByteBuf, T> getCodec(final BetaPackets type) {
-		if (!registry.containsKey(type)) {
-			throw new IllegalArgumentException("Packet type " + type + " is not registered in the packet registry");
-		} else {
-			return (StreamCodec<ByteBuf, T>) this.registry.get(type);
-		}
-	}
-
-	protected final void registerPacket(final BetaPackets packetType, final StreamCodec<ByteBuf, ? extends RecordPacket> packetCreator) {
-		this.registry.put(packetType, packetCreator);
-	}
-
-	public void registerVanillaPackets() {
+	private void registerVanillaPackets() {
 		this.registerPacket(BetaPackets.KEEP_ALIVE, KeepAlivePacket.CODEC);
 		this.registerPacket(BetaPackets.LOGIN, LoginPacket.CODEC);
 		this.registerPacket(BetaPackets.HANDSHAKE, HandshakePacket.CODEC);
@@ -93,6 +79,7 @@ public class BetaPacketRegistry {
 		this.registerPacket(BetaPackets.SIGN_UPDATE, SignUpdatePacket.CODEC);
 		this.registerPacket(BetaPackets.MAP_ITEM_DATA, MapItemDataPacket.CODEC);
 		this.registerPacket(BetaPackets.UPDATE_STAT, UpdateStatPacket.CODEC);
+		this.registerPacket(BetaPackets.SERVER_LIST_PING, ServerListPingPacket.CODEC);
 		this.registerPacket(BetaPackets.DISCONNECT, DisconnectPacket.CODEC);
 	}
 }

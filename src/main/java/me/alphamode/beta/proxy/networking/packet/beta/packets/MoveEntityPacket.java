@@ -1,11 +1,13 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class MoveEntityPacket implements RecordPacket {
-    public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = RecordPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
+public class MoveEntityPacket implements BetaRecordPacket {
+	public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = RecordPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
 	public int id;
 	public byte xa;
 	public byte ya;
@@ -15,7 +17,7 @@ public class MoveEntityPacket implements RecordPacket {
 	public boolean hasRot = false;
 
 	public MoveEntityPacket(final ByteBuf buf) {
-        this.id = buf.readInt();
+		this.id = buf.readInt();
 	}
 
 	public MoveEntityPacket(int entityId) {
@@ -26,24 +28,24 @@ public class MoveEntityPacket implements RecordPacket {
 		buf.writeInt(this.id);
 	}
 
-    @Override
-    public BetaPackets getType() {
-        return BetaPackets.MOVE_ENTITY;
-    }
+	@Override
+	public BetaPackets getType() {
+		return BetaPackets.MOVE_ENTITY;
+	}
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[id=" + id + ", xa=" + this.xa + ", ya=" + this.ya + ", za=" + this.za + ", yRot=" + this.yRot + ", xRot=" + this.xRot + ", hasRot=" + this.hasRot + "]";
-    }
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "[entityId=" + id + ", xa=" + this.xa + ", ya=" + this.ya + ", za=" + this.za + ", yRot=" + this.yRot + ", xRot=" + this.xRot + ", hasRot=" + this.hasRot + "]";
+	}
 
-    public static class Pos extends MoveEntityPacket {
-        public static final StreamCodec<ByteBuf, Pos> CODEC = RecordPacket.codec(Pos::write, Pos::new);
+	public static class Pos extends MoveEntityPacket {
+		public static final StreamCodec<ByteBuf, Pos> CODEC = RecordPacket.codec(Pos::write, Pos::new);
 
 		public Pos(final ByteBuf buf) {
-            super(buf);
-            this.xa = buf.readByte();
-            this.ya = buf.readByte();
-            this.za = buf.readByte();
+			super(buf);
+			this.xa = buf.readByte();
+			this.ya = buf.readByte();
+			this.za = buf.readByte();
 		}
 
 		public Pos(int entityId, byte xa, byte ya, byte za) {
@@ -61,22 +63,22 @@ public class MoveEntityPacket implements RecordPacket {
 			buf.writeByte(this.za);
 		}
 
-        @Override
-        public BetaPackets getType() {
-            return BetaPackets.MOVE_ENTITY_POS;
-        }
-    }
+		@Override
+		public BetaPackets getType() {
+			return BetaPackets.MOVE_ENTITY_POS;
+		}
+	}
 
 	public static class PosRot extends MoveEntityPacket {
-        public static final StreamCodec<ByteBuf, PosRot> CODEC = RecordPacket.codec(PosRot::write, PosRot::new);
+		public static final StreamCodec<ByteBuf, PosRot> CODEC = RecordPacket.codec(PosRot::write, PosRot::new);
 
 		public PosRot(final ByteBuf buf) {
-            super(buf);
-            this.xa = buf.readByte();
-            this.ya = buf.readByte();
-            this.za = buf.readByte();
-            this.yRot = buf.readByte();
-            this.xRot = buf.readByte();
+			super(buf);
+			this.xa = buf.readByte();
+			this.ya = buf.readByte();
+			this.za = buf.readByte();
+			this.yRot = buf.readByte();
+			this.xRot = buf.readByte();
 			this.hasRot = true;
 		}
 
@@ -100,19 +102,19 @@ public class MoveEntityPacket implements RecordPacket {
 			buf.writeByte(this.xRot);
 		}
 
-        @Override
-        public BetaPackets getType() {
-            return BetaPackets.MOVE_ENTITY_POS_ROT;
-        }
-    }
+		@Override
+		public BetaPackets getType() {
+			return BetaPackets.MOVE_ENTITY_POS_ROT;
+		}
+	}
 
 	public static class Rot extends MoveEntityPacket {
-        public static final StreamCodec<ByteBuf, Rot> CODEC = RecordPacket.codec(Rot::write, Rot::new);
+		public static final StreamCodec<ByteBuf, Rot> CODEC = RecordPacket.codec(Rot::write, Rot::new);
 
 		public Rot(final ByteBuf buf) {
-            super(buf);
-            this.yRot = buf.readByte();
-            this.xRot = buf.readByte();
+			super(buf);
+			this.yRot = buf.readByte();
+			this.xRot = buf.readByte();
 			this.hasRot = true;
 		}
 
@@ -130,9 +132,9 @@ public class MoveEntityPacket implements RecordPacket {
 			buf.writeByte(this.xRot);
 		}
 
-        @Override
-        public BetaPackets getType() {
-            return BetaPackets.MOVE_ENTITY_ROT;
-        }
-    }
+		@Override
+		public BetaPackets getType() {
+			return BetaPackets.MOVE_ENTITY_ROT;
+		}
+	}
 }

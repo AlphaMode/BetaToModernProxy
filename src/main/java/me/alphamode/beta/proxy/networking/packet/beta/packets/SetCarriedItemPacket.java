@@ -2,10 +2,11 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record SetCarriedItemPacket(short slot) implements RecordPacket {
+public record SetCarriedItemPacket(short slot) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, SetCarriedItemPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.SHORT,
 			SetCarriedItemPacket::slot,

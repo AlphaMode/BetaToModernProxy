@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.beta;
 
-public enum BetaPackets {
+import me.alphamode.beta.proxy.networking.packet.Packets;
+
+public enum BetaPackets implements Packets {
 	KEEP_ALIVE(0),
 	LOGIN(1),
 	HANDSHAKE(2),
@@ -57,21 +59,22 @@ public enum BetaPackets {
 	SIGN_UPDATE(130),
 	MAP_ITEM_DATA(131),
 	UPDATE_STAT(200),
+	SERVER_LIST_PING(254),
 	DISCONNECT(255);
 
-	private final int packetId;
+	private final int id;
 
 	BetaPackets(int id) {
-		this.packetId = id;
+		this.id = id;
 	}
 
 	public int getId() {
-		return packetId;
+		return id;
 	}
 
-	public static BetaPackets getPacket(final int packetId) {
+	public static BetaPackets getPacket(final int id) {
 		for (final BetaPackets packet : BetaPackets.values()) {
-			if (packet.getId() == packetId) {
+			if (packet.getId() == id) {
 				return packet;
 			}
 		}

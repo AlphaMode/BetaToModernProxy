@@ -92,6 +92,35 @@ public interface ByteBufCodecs {
 		}
 	};
 
+	StreamCodec<ByteBuf, Double> DOUBLE = new StreamCodec<>() {
+		public Double decode(final ByteBuf buf) {
+			return buf.readDouble();
+		}
+
+		public void encode(final ByteBuf buf, final Double value) {
+			buf.writeDouble(value);
+		}
+	};
+
+	default StreamCodec<ByteBuf, Double> doubleRange(final double min, final double max) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final Double value) {
+				DOUBLE.encode(buf, Math.max(min, Math.min(max, value)));
+			}
+
+			@Override
+			public Double decode(final ByteBuf buf) {
+				final double value = DOUBLE.decode(buf);
+				if (value < min || value > max) {
+					throw new RuntimeException("Double value is out of range!");
+				} else {
+					return value;
+				}
+			}
+		};
+	}
+
 	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
 		public byte[] decode(ByteBuf buf) {
@@ -155,7 +184,7 @@ public interface ByteBufCodecs {
 				try {
 					dos.writeUTF(msg);
 				} catch (Exception exception) {
-					exception.printStackTrace();
+					throw new RuntimeException(exception);
 				}
 			}
 
@@ -165,8 +194,7 @@ public interface ByteBufCodecs {
 				try {
 					return dis.readUTF();
 				} catch (Exception exception) {
-					exception.printStackTrace();
-					return "";
+					throw new RuntimeException(exception);
 				}
 			}
 		};

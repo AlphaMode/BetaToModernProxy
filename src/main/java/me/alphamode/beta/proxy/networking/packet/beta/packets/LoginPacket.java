@@ -2,10 +2,11 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record LoginPacket(int clientVersion, String username, long seed, byte dimension) implements RecordPacket {
+public record LoginPacket(int clientVersion, String username, long seed, byte dimension) implements BetaRecordPacket {
 	public static final int MAX_USERNAME_LENGTH = 16;
 	public static final StreamCodec<ByteBuf, String> USERNAME_CODEC = ByteBufCodecs.stringUtf8(MAX_USERNAME_LENGTH);
 	public static final StreamCodec<ByteBuf, LoginPacket> CODEC = StreamCodec.composite(
