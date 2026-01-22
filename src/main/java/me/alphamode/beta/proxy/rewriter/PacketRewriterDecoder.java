@@ -16,6 +16,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
@@ -66,6 +67,8 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				return;
 			} else if ((Object) packet instanceof C2SLoginAcknowledgedPacket) {
 				connection.setState(PacketState.CONFIGURATION);
+				connection.send(S2CFinishConfigurationPacket.INSTANCE);
+				connection.setState(PacketState.PLAY);
 				return;
 			}
 
