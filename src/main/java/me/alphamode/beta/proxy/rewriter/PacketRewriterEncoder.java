@@ -7,9 +7,11 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import java.util.List;
 
 // Proxy -> Client
-public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRecordPacket> implements Rewriter {
+public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRecordPacket> {
+	private final EncoderRewriter rewriter = new EncoderRewriter();
+
 	public PacketRewriterEncoder() {
-		this.registerPackets();
+		rewriter.registerPackets();
 	}
 
 	@Override
@@ -17,9 +19,5 @@ public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRec
 		IO.println("sending beta packet to modern client");
 		IO.println(packet);
 		out.add(packet);
-	}
-
-	@Override
-	public void registerPackets() {
 	}
 }
