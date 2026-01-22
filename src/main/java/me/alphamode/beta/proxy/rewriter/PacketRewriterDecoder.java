@@ -2,8 +2,8 @@ package me.alphamode.beta.proxy.rewriter;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import me.alphamode.beta.proxy.networking.C2PChannel;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
+import me.alphamode.beta.proxy.networking.connection.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
@@ -15,10 +15,10 @@ import java.util.List;
 
 // Client -> Proxy
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
-	private final C2PChannel clientChannel;
+	private final ClientConnection connection;
 
-	public PacketRewriterDecoder(final C2PChannel clientChannel) {
-		this.clientChannel = clientChannel;
+	public PacketRewriterDecoder(final ClientConnection connection) {
+		this.connection = connection;
 	}
 
 	// P -> C

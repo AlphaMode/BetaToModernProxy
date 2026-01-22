@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.util.AttributeKey;
+import me.alphamode.beta.proxy.networking.connection.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
@@ -11,8 +12,9 @@ import net.raphimc.netminecraft.netty.codec.PacketSizer;
 
 // Packets
 public final class ProxyChannel extends ChannelInitializer<Channel> {
-	public static final AttributeKey<BetaPacketRegistry> BETA_PACKET_REGISTRY_KEY = AttributeKey.valueOf("beta_packet_registry");
-	public static final AttributeKey<ModernPacketRegistry> MODERN_PACKET_REGISTRY_KEY = AttributeKey.valueOf("modern_packet_registry");
+	public static final AttributeKey<BetaPacketRegistry> BETA_PACKET_REGISTRY_KEY = AttributeKey.newInstance("beta_packet_registry");
+	public static final AttributeKey<ModernPacketRegistry> MODERN_PACKET_REGISTRY_KEY = AttributeKey.newInstance("modern_packet_registry");
+	public static final AttributeKey<ClientConnection> CONNECTION_KEY = AttributeKey.newInstance("connection");
 	private final String serverIp;
 
 	public ProxyChannel(final String ip) {
@@ -28,7 +30,9 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(new ModernPacketDecoder());
 
 		final C2PChannel clientChannel = new C2PChannel(this.serverIp);
-		channel.pipeline().addLast(new PacketRewriterDecoder(clientChannel));
+		final ClientConnection connection = new ClientConnection(clientChannel.getChannel());
+		channel.attr(CONNECTION_KEY).set(connection);
+		channel.pipeline().addLast(new PacketRewriterDecoder(connection));
 		channel.pipeline().addLast(clientChannel);
 	}
 }
