@@ -63,6 +63,7 @@ public final class C2PChannel extends ChannelInboundHandlerAdapter {
 		if (this.connection != null) {
 			this.connection.disconnect();
 			this.connection = null;
+			context.channel().attr(ProxyChannel.CONNECTION_KEY).set(null);
 		}
 	}
 
