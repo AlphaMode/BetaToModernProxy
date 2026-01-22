@@ -25,19 +25,22 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 		} else {
 			IO.println("decoding modern packet");
 			IO.println(packet);
+
+			final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
+			if (connection == null || !connection.isConnected()) {
+				return;
+			}
+
 			if ((Object) packet instanceof C2SIntentionRecordPacket intentionPacket) {
 				switch (intentionPacket.intention()) {
-					case LOGIN -> packetRegistry.setState(PacketState.LOGIN);
-					case STATUS -> packetRegistry.setState(PacketState.STATUS);
+					case LOGIN -> connection.setState(PacketState.LOGIN);
+					case STATUS -> connection.setState(PacketState.STATUS);
 				}
 			} else if ((Object) packet instanceof C2SStatusRequestPacket) {
 				IO.println("Sending Status Response");
 
-				final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
-				if (connection != null && connection.isConnected()) {
-					connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server\"}}"));
-					connection.disconnect();
-				}
+				connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server\"}}"));
+				connection.disconnect();
 			}
 		}
 	}

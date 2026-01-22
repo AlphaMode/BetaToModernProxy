@@ -5,6 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.*;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 
 public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
@@ -14,7 +15,7 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	}
 
 	@Override
-	public RecordPacket<BetaPackets> createPacket(final int packetId, final PacketDirection direction, final ByteBuf byteBuf) {
+	public RecordPacket<BetaPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");

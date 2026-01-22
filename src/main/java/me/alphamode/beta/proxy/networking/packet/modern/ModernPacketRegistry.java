@@ -13,28 +13,20 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SSt
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
-	private PacketState state = PacketState.HANDSHAKING;
+	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 
-	public ModernPacketRegistry() {
+	private ModernPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
 	@Override
-	public RecordPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final ByteBuf byteBuf) {
-		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, this.state);
+	public RecordPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
+		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, state);
 		if (packetType == null) {
 			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
 			return this.getCodec(packetType).decode(byteBuf);
 		}
-	}
-
-	public PacketState getState() {
-		return state;
-	}
-
-	public void setState(final PacketState state) {
-		this.state = state;
 	}
 
 	private void registerVanillaPackets() {

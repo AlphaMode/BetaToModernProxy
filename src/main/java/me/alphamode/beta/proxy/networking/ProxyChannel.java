@@ -24,7 +24,7 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 	// Client -> Proxy
 	@Override
 	protected void initChannel(final Channel channel) {
-		channel.attr(MODERN_PACKET_REGISTRY_KEY).set(new ModernPacketRegistry());
+		channel.attr(MODERN_PACKET_REGISTRY_KEY).set(ModernPacketRegistry.INSTANCE);
 
 		channel.pipeline().addLast(new PacketSizer());
 		channel.pipeline().addLast(ModernPacketDecoder.KEY, new ModernPacketDecoder());
