@@ -17,9 +17,10 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
-import net.raphimc.netminecraft.packet.impl.play.S2CPlayDisconnectPacket;
+import net.lenni0451.mcstructs.text.TextComponent;
 
 import java.util.HashMap;
 
@@ -66,7 +67,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerRewriter(C2SFinishConfigurationPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
-			connection.send(new S2c("sorry"));
+			connection.send(new S2CDisconnectPacket(TextComponent.of("sorry")));
 			return null;
 		});
 
