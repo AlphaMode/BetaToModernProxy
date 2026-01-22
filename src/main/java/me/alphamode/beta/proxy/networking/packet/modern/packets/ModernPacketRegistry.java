@@ -20,6 +20,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
@@ -313,7 +314,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundConfigurationPackets.KEEP_ALIVE, null);
 		this.registerPacket(ClientboundConfigurationPackets.PING, null);
 		this.registerPacket(ClientboundConfigurationPackets.RESET_CHAT, null);
-		this.registerPacket(ClientboundConfigurationPackets.REGISTRY_DATA, null);
+		this.registerPacket(ClientboundConfigurationPackets.REGISTRY_DATA, S2CRegistryDataPacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.RESOURCE_PACK_POP, null);
 		this.registerPacket(ClientboundConfigurationPackets.RESOURCE_PACK_PUSH, null);
 		this.registerPacket(ClientboundConfigurationPackets.STORE_COOKIE, null);

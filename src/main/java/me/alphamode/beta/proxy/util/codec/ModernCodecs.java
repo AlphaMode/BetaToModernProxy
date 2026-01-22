@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.util.codec;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.Mth;
 import net.lenni0451.mcstructs.core.Identifier;
+import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
 import net.raphimc.netminecraft.netty.crypto.CryptUtil;
@@ -135,6 +136,18 @@ public interface ModernCodecs {
 		}
 	};
 
+	StreamCodec<ByteBuf, NbtTag> TAG = new StreamCodec<>() {
+		@Override
+		public void encode(ByteBuf buf, NbtTag value) {
+			PacketTypes.writeNamedTag(buf, value);
+		}
+
+		@Override
+		public NbtTag decode(ByteBuf buf) {
+			return PacketTypes.readNamedTag(buf);
+		}
+	};
+
 	StreamCodec<ByteBuf, TextComponent> COMPONENT = new StreamCodec<>() {
 		@Override
 		public void encode(ByteBuf buf, TextComponent value) {
@@ -194,6 +207,25 @@ public interface ModernCodecs {
 			@Override
 			public T decode(final ByteBuf buf) {
 				return buf.readBoolean() ? codec.decode(buf) : null;
+			}
+		};
+	}
+
+	static <T, S extends T> StreamCodec<ByteBuf, Optional<S>> optional(final StreamCodec<ByteBuf, T> codec) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final Optional<S> value) {
+				if (value.isEmpty()) {
+					buf.writeBoolean(false);
+				} else {
+					buf.writeBoolean(true);
+					codec.encode(buf, value.get());
+				}
+			}
+
+			@Override
+			public Optional<S> decode(final ByteBuf buf) {
+				return buf.readBoolean() ? Optional.of((S) codec.decode(buf)) : Optional.empty();
 			}
 		};
 	}
