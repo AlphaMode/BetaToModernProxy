@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.util.codec;
 import io.netty.buffer.ByteBuf;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
+import java.util.UUID;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 
@@ -33,6 +34,18 @@ public interface ModernCodecs {
 		@Override
 		public Integer decode(final ByteBuf buf) {
 			return PacketTypes.readVarInt(buf);
+		}
+	};
+
+	StreamCodec<ByteBuf, UUID> UUID = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final UUID value) {
+			PacketTypes.writeUuid(buf, value);
+		}
+
+		@Override
+		public UUID decode(final ByteBuf buf) {
+			return PacketTypes.readUuid(buf);
 		}
 	};
 
