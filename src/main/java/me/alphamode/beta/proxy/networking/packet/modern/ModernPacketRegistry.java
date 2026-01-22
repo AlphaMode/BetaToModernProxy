@@ -10,6 +10,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
@@ -56,11 +57,11 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundPlayPackets.BUNDLE_ITEM_SELECTED, C2SSelectBundleItemPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHANGE_DIFFICULTY, C2SChangeDifficultyPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHANGE_GAME_MODE, C2SChangeGameModePacket.CODEC);
-		this.registerPacket(ServerboundPlayPackets.CHAT_ACK, null);
-		this.registerPacket(ServerboundPlayPackets.CHAT_COMMAND, null);
-		this.registerPacket(ServerboundPlayPackets.CHAT_COMMAND_SIGNED, null);
-		this.registerPacket(ServerboundPlayPackets.CHAT, null);
-		this.registerPacket(ServerboundPlayPackets.CHAT_SESSION_UPDATE, null);
+		this.registerPacket(ServerboundPlayPackets.CHAT_ACK, C2SChatAckPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.CHAT_COMMAND, C2SChatCommandPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.CHAT_COMMAND_SIGNED, C2SChatCommandSignedPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.CHAT, C2SChatPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.CHAT_SESSION_UPDATE, C2SChatSessionUpdatePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHUNK_BATCH_RECEIVED, null);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, null);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_TICK_END, null);
@@ -132,7 +133,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		// Serverbound
 		this.registerPacket(ServerboundLoginPackets.HELLO, C2SHelloPacket.CODEC);
 		this.registerPacket(ServerboundLoginPackets.KEY, null);
-		this.registerPacket(ServerboundLoginPackets.CUSTOM_QUERY_ANSWER, null);
+		this.registerPacket(ServerboundLoginPackets.CUSTOM_QUERY_ANSWER, C2SCustomQueryAnswerPacket.CODEC);
 		this.registerPacket(ServerboundLoginPackets.ACKNOWLEDGED, C2SLoginAcknowledgedPacket.CODEC);
 		this.registerPacket(ServerboundLoginPackets.COOKIE_RESPONSE, null);
 

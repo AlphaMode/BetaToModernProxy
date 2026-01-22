@@ -14,6 +14,12 @@ public record C2SSelectBundleItemPacket(int slotId, int selectedItemIndex) imple
 			C2SSelectBundleItemPacket::new
 	);
 
+	public C2SSelectBundleItemPacket {
+		if (selectedItemIndex < 0 && selectedItemIndex != -1) {
+			throw new IllegalArgumentException("Invalid selectedItemIndex: " + selectedItemIndex);
+		}
+	}
+
 	@Override
 	public ServerboundPlayPackets getType() {
 		return ServerboundPlayPackets.BUNDLE_ITEM_SELECTED;

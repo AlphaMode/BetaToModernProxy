@@ -7,8 +7,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCo
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ClientInformation;
 
-public record C2SClientInformationPacket(
-		ClientInformation information) implements C2SCommonClientInformationPacket<ServerboundConfigurationPackets> {
+public record C2SClientInformationPacket(ClientInformation information) implements C2SCommonClientInformationPacket<ServerboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, C2SClientInformationPacket> CODEC = StreamCodec.composite(
 			ClientInformation.CODEC,
 			C2SClientInformationPacket::information,

@@ -15,6 +15,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
@@ -32,7 +33,7 @@ import java.util.function.BiFunction;
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
 	private final String realServerIp;
 
-	private Map<Class<? extends ModernRecordPacket<?>>, BiFunction<Connection, ModernRecordPacket<?>, BetaRecordPacket>> rewriters = new HashMap<>();
+	private final Map<Class<? extends ModernRecordPacket<?>>, BiFunction<Connection, ModernRecordPacket<?>, BetaRecordPacket>> rewriters = new HashMap<>();
 
 	public PacketRewriterDecoder(final String realServerIp) {
 		this.realServerIp = realServerIp;
@@ -69,7 +70,10 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			return null;
 		});
 
+		// Cancel
 		this.registerRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> null);
+		this.registerRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> null);
+		this.registerRewriter(C2SLoginAcknowledgedPacket.class, (_, _) -> null);
 	}
 
 	// P -> C

@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
+import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
-import net.lenni0451.mcstructs.text.serializer.TextComponentSerializer;
-import net.lenni0451.mcstructs.core.Identifier;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
+import java.time.Instant;
 import java.util.UUID;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
@@ -43,6 +43,22 @@ public interface ModernCodecs {
 		}
 	};
 
+	static StreamCodec<ByteBuf, byte[]> sizedByteArray(final int size) {
+		return new StreamCodec<>() {
+			@Override
+			public byte[] decode(final ByteBuf buf) {
+				final byte[] data = new byte[size];
+				buf.readBytes(data);
+				return data;
+			}
+
+			@Override
+			public void encode(final ByteBuf buf, final byte[] value) {
+				buf.writeBytes(value);
+			}
+		};
+	}
+
 	StreamCodec<ByteBuf, Integer> VAR_INT = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final Integer value) {
@@ -76,6 +92,18 @@ public interface ModernCodecs {
 		}
 	};
 
+	StreamCodec<ByteBuf, Instant> INSTANT = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final Instant value) {
+			buf.writeLong(value.toEpochMilli());
+		}
+
+		@Override
+		public Instant decode(final ByteBuf buf) {
+			return Instant.ofEpochMilli(buf.readLong());
+		}
+	};
+
 	StreamCodec<ByteBuf, Identifier> IDENTIFIER = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final Identifier value) {
@@ -88,17 +116,17 @@ public interface ModernCodecs {
 		}
 	};
 
-    StreamCodec<ByteBuf, TextComponent> COMPONENT = new StreamCodec<>() {
-        @Override
-        public void encode(ByteBuf buf, TextComponent value) {
-            PacketTypes.writeUnnamedTag(buf, TextComponentCodec.LATEST.serializeNbtTree(value));
-        }
+	StreamCodec<ByteBuf, TextComponent> COMPONENT = new StreamCodec<>() {
+		@Override
+		public void encode(ByteBuf buf, TextComponent value) {
+			PacketTypes.writeUnnamedTag(buf, TextComponentCodec.LATEST.serializeNbtTree(value));
+		}
 
-        @Override
-        public TextComponent decode(ByteBuf buf) {
-            return TextComponentCodec.LATEST.deserialize(PacketTypes.readUnnamedTag(buf));
-        }
-    };
+		@Override
+		public TextComponent decode(ByteBuf buf) {
+			return TextComponentCodec.LATEST.deserialize(PacketTypes.readUnnamedTag(buf));
+		}
+	};
 
 	static StreamCodec<ByteBuf, String> stringUtf8(final int maxLength) {
 		return new StreamCodec<>() {

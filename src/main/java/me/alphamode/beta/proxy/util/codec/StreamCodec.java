@@ -62,8 +62,7 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 		return new StreamCodec<>() {
 			@Override
 			public C decode(final B buf) {
-				T1 v1 = codec1.decode(buf);
-				return constructor.apply(v1);
+				return constructor.apply(codec1.decode(buf));
 			}
 
 			@Override
