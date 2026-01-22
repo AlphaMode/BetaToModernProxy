@@ -3,6 +3,9 @@ package me.alphamode.beta.proxy.util.codec;
 import io.netty.buffer.ByteBuf;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
+import java.util.function.IntFunction;
+import java.util.function.ToIntFunction;
+
 public interface ModernCodecs {
     short MAX_STRING_LENGTH = 32767;
 
@@ -21,18 +24,32 @@ public interface ModernCodecs {
     static StreamCodec<ByteBuf, String> stringUtf8(final int maxLength) {
         return new StreamCodec<>() {
             @Override
-            public void encode(final ByteBuf output, final String value) {
-                PacketTypes.writeString(output, value);
+            public void encode(final ByteBuf buf, final String value) {
+                PacketTypes.writeString(buf, value);
             }
 
             @Override
-            public String decode(final ByteBuf input) {
-                return PacketTypes.readString(input, maxLength);
+            public String decode(final ByteBuf buf) {
+                return PacketTypes.readString(buf, maxLength);
             }
         };
     }
 
     static StreamCodec<ByteBuf, String> stringUtf8() {
         return stringUtf8(MAX_STRING_LENGTH);
+    }
+
+    static <T> StreamCodec<ByteBuf, T> idMapper(final IntFunction<T> byId, final ToIntFunction<T> toId) {
+        return new StreamCodec<>() {
+            public T decode(final ByteBuf buf) {
+                int id = VAR_INT.decode(buf);
+                return byId.apply(id);
+            }
+
+            public void encode(final ByteBuf buf, final T value) {
+                int id = toId.applyAsInt(value);
+                VAR_INT.encode(buf, id);
+            }
+        };
     }
 }
