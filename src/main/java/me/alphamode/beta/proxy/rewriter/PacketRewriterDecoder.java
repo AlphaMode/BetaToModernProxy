@@ -28,18 +28,17 @@ import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
 
 // Client -> Proxy
-public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
+public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> implements Rewriter {
 	private final String realServerIp;
-
-	private final Map<Class<? extends ModernRecordPacket<?>>, BiFunction<Connection, ModernRecordPacket<?>, BetaRecordPacket>> rewriters = new HashMap<>();
 
 	public PacketRewriterDecoder(final String realServerIp) {
 		this.realServerIp = realServerIp;
+	}
 
+	@Override
+	public void registerPackets() {
 		this.registerRewriter(C2SIntentionRecordPacket.class, (connection, packet) -> {
 			switch (packet.intention()) {
 				case LOGIN -> connection.setState(PacketState.LOGIN);
@@ -107,9 +106,5 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				}
 			}
 		}
-	}
-
-	private <T extends ModernRecordPacket<?>> void registerRewriter(final Class<T> clazz, final BiFunction<Connection, T, BetaRecordPacket> wrapper) {
-		this.rewriters.put(clazz, (BiFunction<Connection, ModernRecordPacket<?>, BetaRecordPacket>) wrapper);
 	}
 }
