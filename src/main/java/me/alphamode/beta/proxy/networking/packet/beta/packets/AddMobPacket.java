@@ -3,27 +3,27 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import me.alphamode.beta.proxy.util.entity.SynchedEntityData;
+import me.alphamode.beta.proxy.util.entity.BetaSynchedEntityData;
 
 import java.util.List;
 
 public record AddMobPacket(int id, byte type, Vec3i position, byte yRot, byte xRot,
-						   List<SynchedEntityData.DataItem<?>> dataItems) implements BetaRecordPacket {
+						   List<BetaSynchedEntityData.DataItem<?>> dataItems) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, AddMobPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.INT,
+			BasicCodecs.INT,
 			AddMobPacket::id,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			AddMobPacket::type,
 			Vec3i.CODEC,
 			AddMobPacket::position,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			AddMobPacket::yRot,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			AddMobPacket::xRot,
-			SynchedEntityData.DATA_ITEMS_CODEC,
+			BetaSynchedEntityData.DATA_ITEMS_CODEC,
 			AddMobPacket::dataItems,
 			AddMobPacket::new
 	);

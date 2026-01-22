@@ -1,7 +1,8 @@
 package me.alphamode.beta.proxy.util.entity;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
+import me.alphamode.beta.proxy.util.codec.BetaCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.Vec3i;
@@ -9,7 +10,7 @@ import me.alphamode.beta.proxy.util.data.Vec3i;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SynchedEntityData {
+public class BetaSynchedEntityData {
 	public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final List<DataItem<?>> dataItems) {
@@ -33,11 +34,11 @@ public class SynchedEntityData {
 	};
 
 	public enum DataType {
-		BYTE(0, ByteBufCodecs.BYTE),
-		SHORT(1, ByteBufCodecs.SHORT),
-		INT(2, ByteBufCodecs.INT),
-		FLOAT(3, ByteBufCodecs.FLOAT),
-		STRING(4, ByteBufCodecs.stringUtf8()),
+		BYTE(0, BasicCodecs.BYTE),
+		SHORT(1, BasicCodecs.SHORT),
+		INT(2, BasicCodecs.INT),
+		FLOAT(3, BasicCodecs.FLOAT),
+		STRING(4, BetaCodecs.stringUtf8()),
 		ITEM_STACK(5, BetaItemStack.CODEC),
 		VEC3I(6, Vec3i.CODEC);
 

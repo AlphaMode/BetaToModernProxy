@@ -3,16 +3,16 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record ContainerSetDataPacket(short containerId, short id, short value) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, ContainerSetDataPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.UNSIGNED_BYTE,
+			BasicCodecs.UNSIGNED_BYTE,
 			ContainerSetDataPacket::containerId,
-			ByteBufCodecs.SHORT,
+			BasicCodecs.SHORT,
 			ContainerSetDataPacket::id,
-			ByteBufCodecs.SHORT,
+			BasicCodecs.SHORT,
 			ContainerSetDataPacket::value,
 			ContainerSetDataPacket::new
 	);

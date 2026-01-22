@@ -3,19 +3,19 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record TeleportEntityPacket(int id, Vec3i position, byte yRot, byte xRot) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, TeleportEntityPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.INT,
+			BasicCodecs.INT,
 			TeleportEntityPacket::id,
 			Vec3i.CODEC,
 			TeleportEntityPacket::position,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			TeleportEntityPacket::yRot,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			TeleportEntityPacket::xRot,
 			TeleportEntityPacket::new
 	);

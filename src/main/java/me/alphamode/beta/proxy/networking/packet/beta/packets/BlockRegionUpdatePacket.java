@@ -3,25 +3,25 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record BlockRegionUpdatePacket(int x, short y, int z, byte xs, byte ys, byte zs,
 									  byte[] data) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, BlockRegionUpdatePacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.INT,
+			BasicCodecs.INT,
 			BlockRegionUpdatePacket::x,
-			ByteBufCodecs.SHORT,
+			BasicCodecs.SHORT,
 			BlockRegionUpdatePacket::y,
-			ByteBufCodecs.INT,
+			BasicCodecs.INT,
 			BlockRegionUpdatePacket::z,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			BlockRegionUpdatePacket::xs,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			BlockRegionUpdatePacket::ys,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			BlockRegionUpdatePacket::zs,
-			ByteBufCodecs.BYTE_ARRAY,
+			BasicCodecs.BYTE_ARRAY,
 			BlockRegionUpdatePacket::data,
 			BlockRegionUpdatePacket::new
 	);

@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 
@@ -31,7 +31,7 @@ public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items)
 	};
 
 	public static final StreamCodec<ByteBuf, ContainerSetContentPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			ContainerSetContentPacket::containerId,
 			ITEM_STACK_ARRAY,
 			ContainerSetContentPacket::items,

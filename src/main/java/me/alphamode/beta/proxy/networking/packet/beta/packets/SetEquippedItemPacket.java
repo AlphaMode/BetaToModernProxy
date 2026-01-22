@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 
@@ -22,9 +22,9 @@ public record SetEquippedItemPacket(int entityId, short slot, BetaItemStack item
 	};
 
 	public static final StreamCodec<ByteBuf, SetEquippedItemPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.INT,
+			BasicCodecs.INT,
 			SetEquippedItemPacket::entityId,
-			ByteBufCodecs.SHORT,
+			BasicCodecs.SHORT,
 			SetEquippedItemPacket::slot,
 			EQUIPPED_ITEM_CODEC,
 			SetEquippedItemPacket::item,

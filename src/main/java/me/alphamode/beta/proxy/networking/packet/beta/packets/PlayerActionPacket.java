@@ -3,17 +3,17 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record PlayerActionPacket(byte action, Vec3i pos, byte face) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, PlayerActionPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			PlayerActionPacket::action,
 			Vec3i.TINY_CODEC,
 			PlayerActionPacket::pos,
-			ByteBufCodecs.BYTE,
+			BasicCodecs.BYTE,
 			PlayerActionPacket::face,
 			PlayerActionPacket::new
 	);
