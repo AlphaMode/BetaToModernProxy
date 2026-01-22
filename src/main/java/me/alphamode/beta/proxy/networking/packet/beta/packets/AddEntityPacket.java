@@ -3,11 +3,12 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddEntityPacket(int entityId, byte type, Vec3i position, int data, short xd, short yd,
-							  short zd) implements RecordPacket<BetaPackets> {
+							  short zd) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, AddEntityPacket> CODEC = RecordPacket.codec(AddEntityPacket::write, AddEntityPacket::new);
 
 	public AddEntityPacket(final ByteBuf buf) {

@@ -7,6 +7,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
+// ByteBuf -> Packet
 public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket<BetaPackets>> {
 	private final String realServerIp;
 	private NetClient realServer;

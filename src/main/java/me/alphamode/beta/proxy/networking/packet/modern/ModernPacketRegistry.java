@@ -5,6 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
+	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 	private PacketState state = PacketState.HANDSHAKING;
 
 	public ModernPacketRegistry() {
@@ -20,6 +21,12 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		} else {
 			return getCodec(packetType).decode(byteBuf);
 		}
+	}
+
+	public ModernPackets getPacket(final int id) {
+
+
+		return null;
 	}
 
 	public PacketState getState() {

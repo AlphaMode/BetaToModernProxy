@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record SetEntityMotionPacket(int id, short deltaX, short deltaY, short deltaZ) implements RecordPacket<BetaPackets> {
+public record SetEntityMotionPacket(int id, short deltaX, short deltaY, short deltaZ) implements BetaRecordPacket {
 	public static final double DELTA_CAP = 3.9;
 	public static final StreamCodec<ByteBuf, SetEntityMotionPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.INT,

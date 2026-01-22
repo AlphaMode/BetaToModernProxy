@@ -11,7 +11,7 @@ public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket<B
 
 	@Override
 	protected void encode(final ChannelHandlerContext context, final RecordPacket<BetaPackets> packet, final ByteBuf buf) {
-		final BetaPacketRegistry packetRegistry = context.channel().attr(ProxyChannel.PACKET_REGISTRY_ATTRIBUTE_KEY).get();
+		final BetaPacketRegistry packetRegistry = context.channel().attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).get();
 		if (packetRegistry == null) {
 			throw new IllegalStateException("Can't write Packet without a packet registry");
 		} else {

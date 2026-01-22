@@ -12,7 +12,7 @@ public final class BetaPacketDecoder extends ReplayingDecoder<Void> {
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
-		final BetaPacketRegistry packetRegistry = context.channel().attr(ProxyChannel.PACKET_REGISTRY_ATTRIBUTE_KEY).get();
+		final BetaPacketRegistry packetRegistry = context.channel().attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).get();
 		if (packetRegistry == null) {
 			throw new RuntimeException("Cannot decode beta packet as packet-registry is null!");
 		} else {

@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record MapItemDataPacket(short item, short mapId, byte[] colors) implements RecordPacket<BetaPackets> {
+public record MapItemDataPacket(short item, short mapId, byte[] colors) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, MapItemDataPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.SHORT,
 			MapItemDataPacket::item,

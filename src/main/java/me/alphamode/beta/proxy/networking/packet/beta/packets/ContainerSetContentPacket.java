@@ -1,13 +1,13 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.ByteBufCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.BetaItemStack;
 
-public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items) implements RecordPacket<BetaPackets> {
+public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, BetaItemStack[]> ITEM_STACK_ARRAY = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack[] items) {
