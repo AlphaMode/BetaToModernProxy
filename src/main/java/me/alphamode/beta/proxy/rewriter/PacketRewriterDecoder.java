@@ -4,11 +4,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.HandshakePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
@@ -34,15 +37,25 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				return;
 			}
 
+			IO.println(packet);
 			if ((Object) packet instanceof C2SIntentionRecordPacket intentionPacket) {
 				switch (intentionPacket.intention()) {
 					case LOGIN -> connection.setState(PacketState.LOGIN);
 					case STATUS -> connection.setState(PacketState.STATUS);
 				}
+
+				out.add(new HandshakePacket("-"));
+				return;
 			} else if ((Object) packet instanceof C2SStatusRequestPacket) {
 				connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"name\":\"1.21.11\",\"protocol\":774}}"));
 				connection.disconnect();
+				return;
+			} else if ((Object) packet instanceof C2SHelloPacket helloPacket) {
+				out.add(new LoginPacket(helloPacket.username(), 14));
+				return;
 			}
+
+			out.add(packet);
 		}
 	}
 }
