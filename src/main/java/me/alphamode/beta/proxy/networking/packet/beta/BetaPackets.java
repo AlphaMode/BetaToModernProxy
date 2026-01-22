@@ -69,7 +69,7 @@ public enum BetaPackets implements Packets {
 	}
 
 	public int getId() {
-		return id;
+		return this.id;
 	}
 
 	public static BetaPackets getPacket(final int id) {
