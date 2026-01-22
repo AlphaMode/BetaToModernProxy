@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundHandshakingPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
@@ -33,6 +34,6 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerVanillaPackets() {
-		registerPacket(ModernServerboundPackets.INTENTION, C2SIntentionPacket.CODEC);
+		registerPacket(ServerboundHandshakingPackets.INTENTION, C2SIntentionPacket.CODEC);
 	}
 }
