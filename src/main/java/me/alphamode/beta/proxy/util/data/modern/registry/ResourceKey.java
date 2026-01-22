@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.registry;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.core.Identifier;
 
@@ -8,6 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ResourceKey<T> {
+	public static final StreamCodec<ByteBuf, ResourceKey<? extends Registry<?>>> CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final ResourceKey<? extends Registry<?>> value) {
+			ModernCodecs.IDENTIFIER.encode(buf, value.identifier());
+		}
+
+		@Override
+		public ResourceKey<? extends Registry<?>> decode(final ByteBuf buf) {
+			return ResourceKey.createRegistryKey(ModernCodecs.IDENTIFIER.decode(buf));
+		}
+	};
+
 	private static final ConcurrentMap<InternKey, ResourceKey<?>> VALUES = new ConcurrentHashMap<>();
 	private final Identifier registryName;
 	private final Identifier identifier;

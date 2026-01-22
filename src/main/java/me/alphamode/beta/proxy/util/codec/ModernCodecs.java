@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.util.Mth;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
@@ -72,6 +74,27 @@ public interface ModernCodecs {
 		@Override
 		public Integer decode(final ByteBuf buf) {
 			return PacketTypes.readVarInt(buf);
+		}
+	};
+
+	StreamCodec<ByteBuf, IntList> INT_LIST = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final IntList value) {
+			VAR_INT.encode(buf, value.size());
+			for (int i = 0; i < value.size(); i++) {
+				VAR_INT.encode(buf, value.getInt(i));
+			}
+		}
+
+		@Override
+		public IntList decode(final ByteBuf buf) {
+			final int count = VAR_INT.decode(buf);
+			final IntList list = new IntArrayList();
+			for (int i = 0; i < count; ++i) {
+				list.add(VAR_INT.decode(buf));
+			}
+
+			return list;
 		}
 	};
 
@@ -296,6 +319,30 @@ public interface ModernCodecs {
 			@Override
 			public List<T> decode(final ByteBuf buf) {
 				return List.copyOf(collectionCodec.decode(buf));
+			}
+		};
+	}
+
+	static <T, S> StreamCodec<ByteBuf, Map<T, S>> map(final StreamCodec<ByteBuf, T> keyCodec, final StreamCodec<ByteBuf, S> valueCodec) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final Map<T, S> map) {
+				VAR_INT.encode(buf, map.size());
+				for (final var entry : map.entrySet()) {
+					keyCodec.encode(buf, entry.getKey());
+					valueCodec.encode(buf, entry.getValue());
+				}
+			}
+
+			@Override
+			public Map<T, S> decode(final ByteBuf buf) {
+				final int count = VAR_INT.decode(buf);
+				final Map<T, S> map = new HashMap<>();
+				for (int i = 0; i < count; ++i) {
+					map.put(keyCodec.decode(buf), valueCodec.decode(buf));
+				}
+
+				return map;
 			}
 		};
 	}
