@@ -14,6 +14,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
@@ -42,6 +43,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			switch (packet.intention()) {
 				case LOGIN -> connection.setState(PacketState.LOGIN);
 				case STATUS -> connection.setState(PacketState.STATUS);
+				case TRANSFER -> throw new RuntimeException("Transfer is unsupported");
 			}
 
 			return new HandshakePacket("-");
@@ -57,7 +59,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
 			connection.send(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
-			return new LoginPacket(packet.username(), 14);
+			return new LoginPacket(packet.username(), BetaRecordPacket.PROTOCOL_VERSION);
 		});
 
 		this.registerRewriter(C2SCommonKeepAlivePacket.class, (_, _) -> new KeepAlivePacket());
@@ -73,7 +75,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 		// Cancel
 		this.registerRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> null);
 		this.registerRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> null);
-		this.registerRewriter(C2SLoginAcknowledgedPacket.class, (_, _) -> null);
+		this.registerRewriter(C2SClientInformationPacket.class, (_, _) -> null);
 	}
 
 	// P -> C
@@ -90,11 +92,13 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 
 			IO.println(packet);
 			for (final Class<?> clazz : this.rewriters.keySet()) {
-				if (packet.getClass().isAssignableFrom(clazz)) {
+				if (clazz.isAssignableFrom(packet.getClass())) {
 					final BetaRecordPacket betaPacket = this.rewriters.get(clazz).apply(connection, packet);
 					if (betaPacket != null) {
 						out.add(betaPacket);
 					}
+
+					return;
 				}
 			}
 		}
