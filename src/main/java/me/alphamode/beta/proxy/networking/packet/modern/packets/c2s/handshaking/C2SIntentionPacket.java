@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.ModernServerboundPackets;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.util.codec.BasicCodecs;

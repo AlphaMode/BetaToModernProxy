@@ -1,25 +1,18 @@
-package me.alphamode.beta.proxy.networking.packet.modern;
+package me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound;
 
+import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernClientboundPackets;
 import me.alphamode.beta.proxy.util.data.Identifier;
 
-public enum ModernClientboundPackets implements ModernPackets {
-	// Handshaking
-
-	// Play
-
-	// Status
+public enum ClientboundStatusPackets implements ModernClientboundPackets {
 	STATUS_RESPONSE(0x00, Identifier.vanilla("status_response"), PacketState.STATUS),
 	PONG_RESPONSE(0x01, Identifier.vanilla("pong_response"), PacketState.STATUS);
-
-	// Login
-
-	// Configuration
 
 	private final int id;
 	private final Identifier identifier;
 	private final PacketState state;
 
-	ModernClientboundPackets(final int id, final Identifier identifier, final PacketState state) {
+	ClientboundStatusPackets(final int id, final Identifier identifier, final PacketState state) {
 		this.id = id;
 		this.identifier = identifier;
 		this.state = state;
@@ -38,15 +31,5 @@ public enum ModernClientboundPackets implements ModernPackets {
 	@Override
 	public PacketState getState() {
 		return this.state;
-	}
-
-	public static ModernClientboundPackets getPacket(final int id, final PacketState state) {
-		for (final ModernClientboundPackets packet : ModernClientboundPackets.values()) {
-			if (packet.getId() == id && packet.state == state) {
-				return packet;
-			}
-		}
-
-		return null;
 	}
 }
