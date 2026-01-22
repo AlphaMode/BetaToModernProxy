@@ -18,7 +18,7 @@ public class TagNetworkSerialization {
 
 		private final Map<Identifier, IntList> tags;
 
-		NetworkPayload(Map<Identifier, IntList> tags) {
+		public NetworkPayload(Map<Identifier, IntList> tags) {
 			this.tags = tags;
 		}
 

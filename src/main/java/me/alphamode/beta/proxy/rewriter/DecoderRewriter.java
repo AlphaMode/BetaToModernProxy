@@ -1,5 +1,7 @@
 package me.alphamode.beta.proxy.rewriter;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
@@ -18,20 +20,21 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConf
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
+import me.alphamode.beta.proxy.util.data.modern.TagNetworkSerialization;
+import me.alphamode.beta.proxy.util.data.modern.registry.Registry;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import net.lenni0451.mcstructs.nbt.tags.IntArrayTag;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class DecoderRewriter extends Rewriter {
 	private final String realServerIp;
@@ -82,7 +85,24 @@ public final class DecoderRewriter extends Rewriter {
 			connection.setState(PacketState.CONFIGURATION);
 
 			// Send Tags
-			// TODO (Required)
+			{
+				final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
+				defaultTags.forEach(entry -> {
+					final Map<Identifier, IntList> map = new HashMap<>();
+
+					entry.getValue().asCompoundTag().forEach(tag -> {
+						final IntList list = new IntArrayList();
+						final IntArrayTag listTag = tag.getValue().asIntArrayTag();
+						listTag.forEach(list::add);
+						map.put(Identifier.of(tag.getKey()), list);
+					});
+
+					final TagNetworkSerialization.NetworkPayload payload = new TagNetworkSerialization.NetworkPayload(map);
+					tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
+				});
+
+				connection.send(new S2CUpdateTagsPacket(tags));
+			}
 
 			// Send Registries
 			defaultRegistries.forEach(entry -> {
