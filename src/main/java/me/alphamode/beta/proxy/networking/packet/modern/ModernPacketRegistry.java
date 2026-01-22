@@ -4,7 +4,9 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundHandshakingPackets;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SAcceptTeleportationPacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
@@ -33,6 +35,29 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerVanillaPackets() {
-		registerPacket(ServerboundHandshakingPackets.INTENTION, C2SIntentionPacket.CODEC);
+        this.registerHandshakingPackets();
+		this.registerPlayPackets();
+		this.registerStatusPackets();
+        this.registerLoginPackets();
+        this.registerConfigurationPackets();
 	}
+
+    private void registerHandshakingPackets() {
+        this.registerPacket(ServerboundHandshakingPackets.INTENTION, C2SIntentionPacket.CODEC);
+    }
+
+    private void registerPlayPackets() {
+        this.registerPacket(ServerboundPlayPackets.ACCEPT_TELEPORTATION, C2SAcceptTeleportationPacket.CODEC);
+    }
+
+    private void registerStatusPackets() {
+
+    }
+
+    private void registerLoginPackets() {
+    }
+
+    private void registerConfigurationPackets() {
+
+    }
 }
