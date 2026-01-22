@@ -1,7 +1,6 @@
 package me.alphamode.beta.proxy.networking.packet.modern;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
@@ -18,19 +17,12 @@ public class ModernPacketEncoder extends MessageToByteEncoder<RecordPacket<Moder
 			throw new IllegalStateException("Can't write Packet without a packet registry");
 		} else {
 			final ModernPackets type = packet.getType();
-
-			final ByteBuf newBuf = Unpooled.buffer();
+			ModernCodecs.VAR_INT.encode(buf, type.getId());
 			try {
-				ModernCodecs.VAR_INT.encode(newBuf, type.getId());
-				packetRegistry.getCodec(type).encode(newBuf, packet);
+				packetRegistry.getCodec(type).encode(buf, packet);
 			} catch (Exception exception) {
 				exception.printStackTrace();
-				return;
 			}
-
-			ModernCodecs.VAR_INT.encode(buf, newBuf.readableBytes());
-			buf.writeBytes(newBuf);
-			newBuf.release();
 		}
 	}
 }
