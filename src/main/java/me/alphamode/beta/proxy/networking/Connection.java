@@ -3,18 +3,24 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import me.alphamode.beta.proxy.networking.connection.ClientConnection;
+import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
-// ByteBuf -> Packet
-public final class C2PChannel extends ChannelInboundHandlerAdapter {
+public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> {
 	private final String realServerIp;
 	private NetClient realServer;
-	private ClientConnection connection;
 
-	public C2PChannel(final String ip) {
+	public Connection(final String ip) {
 		this.realServerIp = ip;
+	}
+
+	@Override
+	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) throws Exception {
+		if (this.realServer != null && this.realServer.getChannel().isActive()) {
+			this.realServer.getChannel().writeAndFlush(packet);
+		}
 	}
 
 	@Override
@@ -40,16 +46,6 @@ public final class C2PChannel extends ChannelInboundHandlerAdapter {
 				}
 			});
 		}
-
-		this.connection = new ClientConnection(context.channel());
-		context.channel().attr(ProxyChannel.CONNECTION_KEY).set(this.connection);
-	}
-
-	@Override
-	public void channelRead(final ChannelHandlerContext ctx, final Object data) {
-		if (this.realServer != null && this.realServer.getChannel().isActive()) {
-			this.realServer.getChannel().writeAndFlush(data);
-		}
 	}
 
 	@Override
@@ -58,12 +54,6 @@ public final class C2PChannel extends ChannelInboundHandlerAdapter {
 		if (this.realServer != null) {
 			this.realServer.getChannel().close();
 			this.realServer = null;
-		}
-
-		if (this.connection != null) {
-			this.connection.disconnect();
-			this.connection = null;
-			context.channel().attr(ProxyChannel.CONNECTION_KEY).set(null);
 		}
 	}
 

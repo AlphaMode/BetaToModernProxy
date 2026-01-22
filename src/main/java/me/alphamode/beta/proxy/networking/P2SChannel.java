@@ -25,7 +25,7 @@ public final class P2SChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		channel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
 			@Override
-			public void channelRead(final ChannelHandlerContext ctx, final Object message) throws Exception {
+			public void channelRead(final ChannelHandlerContext ctx, final Object message) {
 				otherChannel.writeAndFlush(message);
 			}
 		});

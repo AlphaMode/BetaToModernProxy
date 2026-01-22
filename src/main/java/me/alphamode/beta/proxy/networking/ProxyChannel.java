@@ -30,6 +30,6 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(new ModernPacketDecoder());
 
 		channel.pipeline().addLast(new PacketRewriterDecoder());
-		channel.pipeline().addLast(new C2PChannel(this.serverIp));
+		channel.pipeline().addLast(new Connection(this.serverIp));
 	}
 }
