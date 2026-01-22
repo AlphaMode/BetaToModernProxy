@@ -13,7 +13,8 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	}
 
 	@Override
-	public RecordPacket<BetaPackets> createPacket(final BetaPackets packetType, final ByteBuf byteBuf) {
+	public RecordPacket<BetaPackets> createPacket(final int packetId, final ByteBuf byteBuf) {
+		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet ? is not registered in the packet registry");
 		} else {

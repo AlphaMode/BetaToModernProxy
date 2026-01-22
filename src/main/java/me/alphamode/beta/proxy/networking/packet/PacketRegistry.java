@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class PacketRegistry<V extends Packets> {
 	protected final Map<V, StreamCodec<ByteBuf, ? extends RecordPacket<V>>> registry = new ConcurrentHashMap<>();
 
-	public abstract RecordPacket<V> createPacket(V packetType, final ByteBuf byteBuf);
+	public abstract RecordPacket<V> createPacket(int packetId, final ByteBuf byteBuf);
 
 	public <T extends RecordPacket<V>> StreamCodec<ByteBuf, T> getCodec(final V type) {
 		if (!registry.containsKey(type)) {

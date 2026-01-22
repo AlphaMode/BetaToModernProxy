@@ -18,7 +18,7 @@ public class ModernPacketDecoder extends ByteToMessageDecoder {
 			final int packetId = PacketTypes.readVarInt(buf);
 			final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 			try {
-				out.add(packetRegistry.createPacket(packetRegistry.getPacket(packetId), packetData));
+				out.add(packetRegistry.createPacket(packetId, packetData));
 			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
