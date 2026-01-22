@@ -13,10 +13,9 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SSt
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
-	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 	private PacketState state = PacketState.HANDSHAKING;
 
-	private ModernPacketRegistry() {
+	public ModernPacketRegistry() {
 		this.registerVanillaPackets();
 	}
 
