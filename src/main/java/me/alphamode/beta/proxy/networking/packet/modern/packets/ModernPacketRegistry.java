@@ -24,6 +24,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
@@ -273,7 +274,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 
 		// Clientbound
 		this.registerPacket(ClientboundStatusPackets.STATUS_RESPONSE, S2CStatusResponsePacket.CODEC);
-		this.registerPacket(ClientboundStatusPackets.PONG_RESPONSE, null);
+		this.registerPacket(ClientboundStatusPackets.PONG_RESPONSE, S2CPongResponsePacket.CODEC);
 	}
 
 	private void registerLoginPackets() {

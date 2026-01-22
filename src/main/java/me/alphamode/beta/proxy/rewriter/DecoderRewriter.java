@@ -19,6 +19,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SSt
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
@@ -68,7 +69,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"registryId\":\"1.21.11\",\"protocol\":774}}"));
-			// TODO: send pong/ping
+			connection.send(new S2CPongResponsePacket(0L));
 			connection.disconnect();
 			return null;
 		});
