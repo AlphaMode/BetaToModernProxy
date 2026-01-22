@@ -268,9 +268,11 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	private void registerStatusPackets() {
 		// Serverbound
 		this.registerPacket(ServerboundStatusPackets.STATUS_REQUEST, C2SStatusRequestPacket.CODEC);
+		this.registerPacket(ServerboundStatusPackets.PING_REQUEST, null);
 
 		// Clientbound
 		this.registerPacket(ClientboundStatusPackets.STATUS_RESPONSE, S2CStatusResponsePacket.CODEC);
+		this.registerPacket(ClientboundStatusPackets.PONG_RESPONSE, null);
 	}
 
 	private void registerLoginPackets() {

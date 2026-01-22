@@ -19,6 +19,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
+import net.raphimc.netminecraft.packet.impl.status.S2CStatusPongResponsePacket;
 
 import java.util.HashMap;
 
@@ -54,6 +55,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"name\":\"1.21.11\",\"protocol\":774}}"));
+			connection.send(new S2CStatusResponsePacket());
 			connection.disconnect();
 			return null;
 		});
