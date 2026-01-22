@@ -35,11 +35,13 @@ import java.util.Optional;
 
 public final class DecoderRewriter extends Rewriter {
 	private final String realServerIp;
+	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
-	public DecoderRewriter(final String realServerIp, final CompoundTag defaultRegistries) {
+	public DecoderRewriter(final String realServerIp, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
 		// TODO: find better way to handle data like this
 		this.realServerIp = realServerIp;
+		this.defaultTags = defaultTags;
 		this.defaultRegistries = defaultRegistries;
 	}
 

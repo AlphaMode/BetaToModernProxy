@@ -13,10 +13,19 @@ import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
 public final class Main {
+	private static final CompoundTag DEFAULT_TAGS;
 	private static final CompoundTag DEFAULT_REGISTRIES;
 
 	static {
 		CompoundTag tag;
+		try {
+			tag = NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/vanilla_tags.nbt")))), new NbtReadTracker()).getTag().asCompoundTag();
+		} catch (final Exception exception) {
+			tag = new CompoundTag();
+		}
+
+		DEFAULT_TAGS = tag;
+
 		try {
 			tag = NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/vanilla_registries.nbt")))), new NbtReadTracker()).getTag().asCompoundTag();
 		} catch (final Exception exception) {
@@ -31,7 +40,7 @@ public final class Main {
 		final int bindPort = Integer.parseInt(args[1]);
 		final String serverAddress = args[2];
 		IO.println(String.format("Listening on %s:%d -> %s", bindAddress, bindPort, serverAddress));
-		new NetServer(new ProxyChannel(serverAddress, DEFAULT_REGISTRIES))
+		new NetServer(new ProxyChannel(serverAddress, DEFAULT_TAGS, DEFAULT_REGISTRIES))
 				.bind(new InetSocketAddress(bindAddress, bindPort));
 	}
 }
