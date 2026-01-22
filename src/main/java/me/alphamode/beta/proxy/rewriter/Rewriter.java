@@ -26,9 +26,9 @@ public interface Rewriter {
 
 	default <T extends RecordPacket<?>, S extends RecordPacket<?>> void registerRewriter(final Class<T> clazz, final PacketDirection direction, BiFunction<Connection, T, S> consumer) {
 		if (direction == PacketDirection.SERVERBOUND) {
-			registerServerboundRewriter(clazz, consumer);
+			registerServerboundRewriter((Class<ModernRecordPacket<?>>) clazz, (BiFunction<Connection, ModernRecordPacket<?>, BetaRecordPacket>) consumer);
 		} else {
-			registerClientboundRewriter(clazz, consumer);
+			registerClientboundRewriter((Class<BetaRecordPacket>) clazz, (BiFunction<Connection, BetaRecordPacket, ModernRecordPacket<?>>) consumer);
 		}
 	}
 }
