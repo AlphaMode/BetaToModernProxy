@@ -21,12 +21,16 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
+import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
+import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public final class DecoderRewriter extends Rewriter {
 	private final String realServerIp;
@@ -74,13 +78,23 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SLoginAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
 
-			// TODO: read nbt file
+			defaultRegistries.forEach(entry -> {
+				final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 
+				final CompoundTag tag = entry.getValue().asCompoundTag();
+				tag.forEach(registryEntry -> {
+					final NbtTag value = registryEntry.getValue();
+					entries.add(new RegistrySynchronization.PackedRegistryEntry(
+							Identifier.of(registryEntry.getKey()),
+							value == null ? Optional.empty() : Optional.of(value.asCompoundTag())
+					));
+				});
 
-			connection.send(new S2CRegistryDataPacket(
-					ResourceKey.createRegistryKey(Identifier.defaultNamespace("worldgen/biome")),
-					new ArrayList<>()
-			));
+				connection.send(new S2CRegistryDataPacket(
+						ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
+						entries
+				));
+			});
 
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
 			return null;
