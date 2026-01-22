@@ -15,7 +15,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	private final String realServerIp;
 	private NetClient realServer;
 	private Channel channel;
-	private PacketState state;
+	private PacketState state = PacketState.HANDSHAKING;
 
 	public Connection(final String ip) {
 		this.realServerIp = ip;
@@ -53,7 +53,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public PacketState getState() {
-		return state;
+		return this.state;
 	}
 
 	public void setState(final PacketState state) {
