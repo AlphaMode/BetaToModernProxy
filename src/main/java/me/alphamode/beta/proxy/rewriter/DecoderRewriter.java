@@ -21,7 +21,10 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
+import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
+import net.lenni0451.mcstructs.core.Identifier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class DecoderRewriter extends Rewriter {
@@ -67,7 +70,11 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SLoginAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
 
-//			connection.send(new S2CRegistryDataPacket());
+			// TODO: read nbt file
+			connection.send(new S2CRegistryDataPacket(
+					ResourceKey.createRegistryKey(Identifier.defaultNamespace("worldgen/biome")),
+					new ArrayList<>()
+			));
 
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
 			return null;
