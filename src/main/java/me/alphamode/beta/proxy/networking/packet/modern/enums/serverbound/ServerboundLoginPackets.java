@@ -35,4 +35,14 @@ public enum ServerboundLoginPackets implements ModernServerboundPackets {
 	public PacketState getState() {
 		return this.state;
 	}
+
+	public static ServerboundLoginPackets getPacket(final int id) {
+		for (final ServerboundLoginPackets packet : ServerboundLoginPackets.values()) {
+			if (packet.getId() == id) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }

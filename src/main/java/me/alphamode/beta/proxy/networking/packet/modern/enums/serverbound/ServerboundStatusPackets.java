@@ -32,4 +32,14 @@ public enum ServerboundStatusPackets implements ModernServerboundPackets {
 	public PacketState getState() {
 		return this.state;
 	}
+
+	public static ServerboundStatusPackets getPacket(final int id) {
+		for (final ServerboundStatusPackets packet : ServerboundStatusPackets.values()) {
+			if (packet.getId() == id) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }

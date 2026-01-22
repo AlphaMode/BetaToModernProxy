@@ -169,4 +169,14 @@ public enum ClientboundPlayPackets implements ModernClientboundPackets {
 	public PacketState getState() {
 		return this.state;
 	}
+
+	public static ClientboundPlayPackets getPacket(final int id) {
+		for (final ClientboundPlayPackets packet : ClientboundPlayPackets.values()) {
+			if (packet.getId() == id) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }

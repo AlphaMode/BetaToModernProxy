@@ -97,4 +97,13 @@ public enum ServerboundPlayPackets implements ModernServerboundPackets {
 		return this.state;
 	}
 
+	public static ServerboundPlayPackets getPacket(final int id) {
+		for (final ServerboundPlayPackets packet : ServerboundPlayPackets.values()) {
+			if (packet.getId() == id) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }

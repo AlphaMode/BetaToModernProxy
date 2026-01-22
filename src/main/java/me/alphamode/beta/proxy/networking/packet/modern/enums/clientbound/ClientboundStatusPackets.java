@@ -32,4 +32,14 @@ public enum ClientboundStatusPackets implements ModernClientboundPackets {
 	public PacketState getState() {
 		return this.state;
 	}
+
+	public static ClientboundStatusPackets getPacket(final int id) {
+		for (final ClientboundStatusPackets packet : ClientboundStatusPackets.values()) {
+			if (packet.getId() == id) {
+				return packet;
+			}
+		}
+
+		return null;
+	}
 }
