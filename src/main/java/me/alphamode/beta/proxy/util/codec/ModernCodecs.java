@@ -5,8 +5,10 @@ import me.alphamode.beta.proxy.util.Mth;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
+import net.raphimc.netminecraft.netty.crypto.CryptUtil;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
+import java.security.PublicKey;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.IntFunction;
@@ -102,6 +104,22 @@ public interface ModernCodecs {
 		@Override
 		public Instant decode(final ByteBuf buf) {
 			return Instant.ofEpochMilli(buf.readLong());
+		}
+	};
+
+	StreamCodec<ByteBuf, PublicKey> PUBLIC_KEY = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final PublicKey key) {
+			BYTE_ARRAY.encode(buf, key.getEncoded());
+		}
+
+		@Override
+		public PublicKey decode(final ByteBuf buf) {
+			try {
+				return CryptUtil.decodeRsaPublicKey(sizedByteArray(512).decode(buf));
+			} catch (final Exception exception) {
+				throw new RuntimeException("Malformed public key bytes", exception);
+			}
 		}
 	};
 
