@@ -1,12 +1,9 @@
 package me.alphamode.beta.proxy.rewriter;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;

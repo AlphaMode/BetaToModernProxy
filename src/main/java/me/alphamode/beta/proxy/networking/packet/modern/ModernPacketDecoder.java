@@ -17,6 +17,7 @@ public class ModernPacketDecoder extends ByteToMessageDecoder {
 		if (packetRegistry == null) {
 			throw new RuntimeException("Cannot decode modern packet as packet-registry is null!");
 		} else {
+			IO.println("encoding modern packet");
 			final int packetId = PacketTypes.readVarInt(buf);
 			final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 			try {
