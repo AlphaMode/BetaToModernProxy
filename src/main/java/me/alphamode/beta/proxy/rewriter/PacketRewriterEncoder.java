@@ -11,10 +11,11 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPack
 import java.util.List;
 
 public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRecordPacket> {
-	private final EncoderRewriter rewriter = new EncoderRewriter();
+	private final EncoderRewriter rewriter;
 
 	public PacketRewriterEncoder() {
-		rewriter.registerPackets();
+		this.rewriter = new EncoderRewriter();
+		this.rewriter.registerPackets();
 	}
 
 	// S -> P

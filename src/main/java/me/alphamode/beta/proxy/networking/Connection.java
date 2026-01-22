@@ -17,6 +17,7 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
 import java.util.UUID;
 
+// Proxy -> Client
 public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> {
 	private final String realServerIp;
 	private NetClient realServer;
@@ -89,7 +90,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public void setState(final PacketState state) {
-		IO.println("Switching to state " + state);
+//		IO.println("Switching to state " + state);
 		this.state = state;
 	}
 
@@ -126,7 +127,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-		IO.println("Connection acquired!");
+//		IO.println("Connection acquired!");
 		if (this.realServer == null) {
 			this.realServer = new NetClient(new RelayChannel(context.channel()));
 			this.realServer.connect(MinecraftServerAddress.ofResolved(this.realServerIp)).addListener(future -> {
@@ -137,8 +138,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 			this.realServer.getChannel().pipeline().addLast(new ChannelInboundHandlerAdapter() {
 				@Override
 				public void channelRead(final ChannelHandlerContext ctx, final Object data) {
-					final Channel clientChannel = context.channel();
-					clientChannel.eventLoop().execute(() -> clientChannel.writeAndFlush(data));
+					channel.writeAndFlush(data);
 				}
 
 				@Override
@@ -153,7 +153,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		IO.println("Connection lost!");
+//		IO.println("Connection lost!");
 		if (this.realServer != null) {
 			this.realServer.getChannel().close();
 			this.realServer = null;

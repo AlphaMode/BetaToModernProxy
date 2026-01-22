@@ -348,23 +348,37 @@ public interface ModernCodecs {
 		};
 	}
 
-    static StreamCodec<ByteBuf, JsonElement> lenientJson(final int maxLength) {
-        return new StreamCodec<>() {
-            private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+	static StreamCodec<ByteBuf, JsonElement> lenientJson(final int maxLength) {
+		return new StreamCodec<>() {
+			private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
-            @Override
-            public JsonElement decode(final ByteBuf buf) {
-                try {
-                    return JsonParser.parseString(stringUtf8(maxLength).decode(buf));
-                } catch (JsonSyntaxException e) {
-                    throw new RuntimeException("Failed to parse JSON", e);
-                }
-            }
+			@Override
+			public JsonElement decode(final ByteBuf buf) {
+				try {
+					return JsonParser.parseString(stringUtf8(maxLength).decode(buf));
+				} catch (JsonSyntaxException e) {
+					throw new RuntimeException("Failed to parse JSON", e);
+				}
+			}
 
-            @Override
-            public void encode(final ByteBuf buf, final JsonElement value) {
-                stringUtf8(maxLength).encode(buf, GSON.toJson(value));
-            }
-        };
-    }
+			@Override
+			public void encode(final ByteBuf buf, final JsonElement value) {
+				stringUtf8(maxLength).encode(buf, GSON.toJson(value));
+			}
+		};
+	}
+
+	static <T extends Enum<T>> StreamCodec<ByteBuf, T> emum(final Class<T> enumClazz) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final T value) {
+				nullable(stringUtf8()).encode(buf, value.name());
+			}
+
+			@Override
+			public T decode(final ByteBuf buf) {
+				return Arrays.stream(enumClazz.getEnumConstants()).filter(en -> en.name().equals(nullable(stringUtf8()).decode(buf))).findAny().orElse(null);
+			}
+		};
+	}
 }
