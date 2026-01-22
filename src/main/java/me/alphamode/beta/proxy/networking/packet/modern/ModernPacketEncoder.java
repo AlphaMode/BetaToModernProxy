@@ -30,6 +30,7 @@ public class ModernPacketEncoder extends MessageToByteEncoder<RecordPacket<Moder
 
 			ModernCodecs.VAR_INT.encode(buf, newBuf.readableBytes());
 			buf.writeBytes(newBuf);
+			newBuf.release();
 		}
 	}
 }
