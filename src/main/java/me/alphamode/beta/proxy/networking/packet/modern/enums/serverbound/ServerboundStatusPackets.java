@@ -2,11 +2,11 @@ package me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound;
 
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ServerboundStatusPackets implements ModernServerboundPackets {
-	STATUS_REQUEST(0x00, Identifier.vanilla("status_request"), PacketState.STATUS),
-	PING_REQUEST(0x01, Identifier.vanilla("ping_request"), PacketState.STATUS);
+	STATUS_REQUEST(0x00, Identifier.defaultNamespace("status_request"), PacketState.STATUS),
+	PING_REQUEST(0x01, Identifier.defaultNamespace("ping_request"), PacketState.STATUS);
 
 	private final int id;
 	private final Identifier identifier;

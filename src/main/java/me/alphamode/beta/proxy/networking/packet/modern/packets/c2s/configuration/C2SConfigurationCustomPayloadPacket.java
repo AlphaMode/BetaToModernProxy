@@ -6,12 +6,12 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.Server
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.Identifier;
+import net.lenni0451.mcstructs.core.Identifier;
 
 public record C2SConfigurationCustomPayloadPacket(Identifier identifier,
 												  byte[] data) implements C2SCommonCustomPayloadPacket<ServerboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, C2SConfigurationCustomPayloadPacket> CODEC = StreamCodec.composite(
-			Identifier.CODEC,
+			ModernCodecs.IDENTIFIER,
 			C2SConfigurationCustomPayloadPacket::identifier,
 			ModernCodecs.BYTE_ARRAY,
 			C2SConfigurationCustomPayloadPacket::data,

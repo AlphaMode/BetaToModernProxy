@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
+import net.lenni0451.mcstructs.core.Identifier;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
 import java.util.UUID;
@@ -69,6 +70,18 @@ public interface ModernCodecs {
 		@Override
 		public UUID decode(final ByteBuf buf) {
 			return PacketTypes.readUuid(buf);
+		}
+	};
+
+	StreamCodec<ByteBuf, Identifier> IDENTIFIER = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final Identifier value) {
+			stringUtf8().encode(buf, value.toString());
+		}
+
+		@Override
+		public Identifier decode(final ByteBuf buf) {
+			return Identifier.of(stringUtf8().decode(buf));
 		}
 	};
 
