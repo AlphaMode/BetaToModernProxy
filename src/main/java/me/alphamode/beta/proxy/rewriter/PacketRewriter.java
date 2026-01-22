@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.HandshakePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
@@ -40,6 +42,9 @@ public final class PacketRewriter extends MessageToMessageCodec<ModernRecordPack
 					}
 					case TRANSFER -> throw new RuntimeException("transfer not supported");
 				}
+
+				out.add(new HandshakePacket("-"));
+				return;
 			}
 
 			IO.println("decoding");

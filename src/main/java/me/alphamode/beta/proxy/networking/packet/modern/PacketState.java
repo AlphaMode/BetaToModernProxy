@@ -6,8 +6,4 @@ public enum PacketState {
 	STATUS,
 	LOGIN,
 	CONFIGURATION;
-
-	public static PacketState fromId(final int id) {
-		return values()[id];
-	}
 }
