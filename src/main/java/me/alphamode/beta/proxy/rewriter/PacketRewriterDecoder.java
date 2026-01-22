@@ -36,7 +36,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				IO.println("Sending Status Response");
 
 				final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
-				if (connection != null) {
+				if (connection != null && connection.isConnected()) {
 					final ByteBuf buf = Unpooled.buffer();
 					buf.writeByte(254);
 					DisconnectPacket.CODEC.encode(buf, new DisconnectPacket("meowmeow§0§10"));
