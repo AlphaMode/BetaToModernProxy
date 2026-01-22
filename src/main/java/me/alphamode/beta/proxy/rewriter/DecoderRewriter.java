@@ -1,11 +1,11 @@
 package me.alphamode.beta.proxy.rewriter;
 
-import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.HandshakePacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.KeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.LoginPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
-import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;

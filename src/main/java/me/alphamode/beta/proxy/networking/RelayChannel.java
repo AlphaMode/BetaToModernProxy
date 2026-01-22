@@ -4,8 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketEncoder;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
 
 // Packet -> ByteBuf
 public final class RelayChannel extends ChannelInitializer<Channel> {

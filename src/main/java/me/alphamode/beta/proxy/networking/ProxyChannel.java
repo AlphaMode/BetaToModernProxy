@@ -3,12 +3,11 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.util.AttributeKey;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketDecoder;
-import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketEncoder;
-import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketDecoder;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketEncoder;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegistry;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
-import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 
 // Packets

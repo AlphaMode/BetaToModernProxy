@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound;
 
-import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
 import net.lenni0451.mcstructs.core.Identifier;
 

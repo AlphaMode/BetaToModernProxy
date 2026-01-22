@@ -2,9 +2,9 @@ package me.alphamode.beta.proxy.rewriter;
 
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
 
 import java.util.HashMap;
 import java.util.Map;
