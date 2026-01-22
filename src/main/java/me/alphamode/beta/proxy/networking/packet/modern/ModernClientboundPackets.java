@@ -40,9 +40,9 @@ public enum ModernClientboundPackets implements ModernPackets {
 		return this.state;
 	}
 
-	public static ModernClientboundPackets getPacket(final int id) {
+	public static ModernClientboundPackets getPacket(final int id, final PacketState state) {
 		for (final ModernClientboundPackets packet : ModernClientboundPackets.values()) {
-			if (packet.getId() == id) {
+			if (packet.getId() == id && packet.state == state) {
 				return packet;
 			}
 		}
