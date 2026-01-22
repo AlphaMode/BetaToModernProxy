@@ -3,12 +3,14 @@ package me.alphamode.beta.proxy.networking.packet.modern;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundHandshakingPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
@@ -120,7 +122,11 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerStatusPackets() {
+        // Serverbound
         this.registerPacket(ServerboundStatusPackets.STATUS_REQUEST, C2SStatusRequestPacket.CODEC);
+
+        // Clientbound
+        this.registerPacket(ClientboundStatusPackets.STATUS_RESPONSE, S2CStatusResponsePacket.CODEC);
 	}
 
 	private void registerLoginPackets() {
