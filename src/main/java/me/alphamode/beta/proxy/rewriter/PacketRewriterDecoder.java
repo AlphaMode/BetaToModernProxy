@@ -1,9 +1,12 @@
 package me.alphamode.beta.proxy.rewriter;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
 import me.alphamode.beta.proxy.networking.connection.ClientConnection;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
@@ -15,12 +18,6 @@ import java.util.List;
 
 // Client -> Proxy
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
-	private final ClientConnection connection;
-
-	public PacketRewriterDecoder(final ClientConnection connection) {
-		this.connection = connection;
-	}
-
 	// P -> C
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<ModernPackets> packet, final List<Object> out) throws Exception {
@@ -34,18 +31,21 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				switch (intentionPacket.intention()) {
 					case LOGIN -> packetRegistry.setState(PacketState.LOGIN);
 					case STATUS -> packetRegistry.setState(PacketState.STATUS);
-					case TRANSFER -> throw new RuntimeException("transfer not supported");
 				}
 			} else if ((Object) packet instanceof C2SStatusRequestPacket) {
-				// TODO
-				/*IO.println("Sending Status Response");
+				IO.println("Sending Status Response");
+
+				final ClientConnection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
 
 				final String motd = "meowmeow§0§10";
 				final ByteBuf buf = Unpooled.buffer();
 				buf.writeByte(254);
 				DisconnectPacket.CODEC.encode(buf, new DisconnectPacket(motd));
 
-				this.clientChannel.getChannel().writeAndFlush(buf);*/
+				if (connection != null) {
+					connection.write(buf);
+					connection.disconnect();
+				}
 			}
 		}
 	}

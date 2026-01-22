@@ -2,34 +2,36 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import me.alphamode.beta.proxy.networking.connection.ClientConnection;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
 // ByteBuf -> Packet
-public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket<BetaPackets>> {
+public final class C2PChannel extends ChannelInboundHandlerAdapter {
 	private final String realServerIp;
 	private NetClient realServer;
-	private Channel channel;
+	private ClientConnection connection;
 
 	public C2PChannel(final String ip) {
 		this.realServerIp = ip;
 	}
 
-	public Channel getChannel() {
-		return this.channel;
-	}
-
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
+		IO.println("Connection acquired!");
 		if (this.realServer == null) {
 			this.realServer = new NetClient(new P2SChannel(context.channel()));
-			this.realServer.connect(MinecraftServerAddress.ofResolved(this.realServerIp)).syncUninterruptibly();
-			this.realServer.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<>() {
+			this.realServer.connect(MinecraftServerAddress.ofResolved(this.realServerIp)).addListener(future -> {
+				if (!future.isSuccess()) {
+					context.close();
+				}
+			});
+			this.realServer.getChannel().pipeline().addLast(new ChannelInboundHandlerAdapter() {
 				@Override
-				protected void channelRead0(final ChannelHandlerContext ctx, final Object msg) {
+				public void channelRead(final ChannelHandlerContext ctx, final Object data) {
+					final Channel clientChannel = context.channel();
+					clientChannel.eventLoop().execute(() -> clientChannel.writeAndFlush(data));
 				}
 
 				@Override
@@ -39,21 +41,34 @@ public final class C2PChannel extends SimpleChannelInboundHandler<RecordPacket<B
 			});
 		}
 
-		this.channel = context.channel();
+		this.connection = new ClientConnection(context.channel());
+		context.channel().attr(ProxyChannel.CONNECTION_KEY).set(this.connection);
 	}
 
 	@Override
-	protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<BetaPackets> byteBuf) {
-		this.realServer.getChannel().writeAndFlush(byteBuf);
+	public void channelRead(final ChannelHandlerContext ctx, final Object data) {
+		if (this.realServer != null && this.realServer.getChannel().isActive()) {
+			this.realServer.getChannel().writeAndFlush(data);
+		}
 	}
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		this.realServer.getChannel().close().syncUninterruptibly();
+		IO.println("Connection lost!");
+		if (this.realServer != null) {
+			this.realServer.getChannel().close();
+			this.realServer = null;
+		}
+
+		if (this.connection != null) {
+			this.connection.disconnect();
+			this.connection = null;
+		}
 	}
 
 	@Override
-	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) throws Exception {
-		super.exceptionCaught(context, cause);
+	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
+		cause.printStackTrace();
+		context.close();
 	}
 }

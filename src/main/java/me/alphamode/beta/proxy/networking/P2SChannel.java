@@ -2,12 +2,10 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 
 // Packet -> ByteBuf
 public final class P2SChannel extends ChannelInitializer<Channel> {
@@ -25,10 +23,10 @@ public final class P2SChannel extends ChannelInitializer<Channel> {
 	protected void initChannel(final Channel channel) {
 		channel.attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).set(BetaPacketRegistry.INSTANCE);
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
-		channel.pipeline().addLast(new SimpleChannelInboundHandler<RecordPacket<BetaPackets>>() {
+		channel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
 			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<BetaPackets> packet) {
-				otherChannel.writeAndFlush(packet);
+			public void channelRead(final ChannelHandlerContext ctx, final Object message) throws Exception {
+				otherChannel.writeAndFlush(message);
 			}
 		});
 	}

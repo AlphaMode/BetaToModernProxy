@@ -7,6 +7,10 @@ public final class ClientConnection {
 	private final Channel channel;
 
 	public ClientConnection(final Channel channel) {
+		if (channel == null) {
+			throw new RuntimeException("Cannot create connection with null channel!");
+		}
+
 		this.channel = channel;
 	}
 
