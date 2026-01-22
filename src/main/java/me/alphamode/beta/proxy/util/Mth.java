@@ -27,4 +27,12 @@ public class Mth {
         result |= result >> 16;
         return result + 1;
     }
+
+    public static int clamp(final int value, final int min, final int max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    public static int positiveModulo(final int input, final int mod) {
+        return Math.floorMod(input, mod);
+    }
 }
