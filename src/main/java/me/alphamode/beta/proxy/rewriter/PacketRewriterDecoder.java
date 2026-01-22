@@ -15,6 +15,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
@@ -68,6 +69,10 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			connection.setState(PacketState.CONFIGURATION);
 			// send registries/etc
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
+			return null;
+		});
+
+		this.registerRewriter(C2SFinishConfigurationPacket.class, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
 			return null;
 		});
