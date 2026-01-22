@@ -14,11 +14,9 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 
 	@Override
 	public RecordPacket<ModernPackets> createPacket(final int id, final ByteBuf byteBuf) {
-		final ModernPackets packetType = ModernClientboundPackets.getPacket(id);
+		final ModernPackets packetType = ModernClientboundPackets.getPacket(id, this.state);
 		if (packetType == null) {
 			throw new RuntimeException("Packet ? is not registered in the packet registry");
-		} else if (packetType.getState() != this.state) {
-			throw new RuntimeException("Cannot create packet for different state!");
 		} else {
 			return getCodec(packetType).decode(byteBuf);
 		}
