@@ -26,6 +26,14 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		}
 	}
 
+	public void write(final RecordPacket<?> packet) {
+		if (this.isConnected()) {
+			this.channel.write(packet);
+		} else {
+			throw new RuntimeException("Cannot write to dead connection!");
+		}
+	}
+
 	public void disconnect() {
 		if (this.isConnected()) {
 			this.channel.close();

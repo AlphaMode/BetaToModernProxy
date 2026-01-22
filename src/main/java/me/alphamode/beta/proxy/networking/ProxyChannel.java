@@ -28,9 +28,8 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(new PacketSizer());
 		channel.pipeline().addLast(new ModernPacketDecoder());
 
-		channel.pipeline().addLast(new PacketRewriterDecoder());
-
 		final Connection connection = new Connection(this.serverIp);
+		channel.pipeline().addLast(new PacketRewriterDecoder(connection));
 		channel.pipeline().addLast(connection);
 		channel.attr(CONNECTION_KEY).set(connection);
 	}
