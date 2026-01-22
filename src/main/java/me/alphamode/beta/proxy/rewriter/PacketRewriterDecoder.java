@@ -13,6 +13,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 import java.util.List;
 
@@ -37,10 +38,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 
 				final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
 				if (connection != null && connection.isConnected()) {
-					final ByteBuf buf = Unpooled.buffer();
-					buf.writeByte(254);
-					DisconnectPacket.CODEC.encode(buf, new DisconnectPacket("meowmeow§0§10"));
-					connection.write(buf);
+					connection.send(new S2CStatusResponsePacket("{}"));
 					connection.disconnect();
 				}
 			}
