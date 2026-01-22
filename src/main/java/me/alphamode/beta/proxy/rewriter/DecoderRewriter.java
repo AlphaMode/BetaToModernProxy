@@ -67,7 +67,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerRewriter(C2SFinishConfigurationPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
-			connection.send(new S2CDisconnectPacket(TextComponent.of("sorry")));
+			connection.send(new S2CDisconnectPacket(TextComponent.of("meow meow mrrp :3 nyaaa uwu")));
 			return null;
 		});
 
