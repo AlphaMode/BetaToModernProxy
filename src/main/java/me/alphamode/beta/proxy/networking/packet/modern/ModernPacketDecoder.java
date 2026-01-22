@@ -9,6 +9,8 @@ import net.raphimc.netminecraft.packet.PacketTypes;
 import java.util.List;
 
 public class ModernPacketDecoder extends ByteToMessageDecoder {
+	public static final String KEY = "modern-decoder";
+
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
 		final ModernPacketRegistry packetRegistry = context.channel().attr(ProxyChannel.MODERN_PACKET_REGISTRY_KEY).get();
