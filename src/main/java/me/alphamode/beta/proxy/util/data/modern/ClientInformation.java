@@ -7,10 +7,10 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record ClientInformation(
 		String language,
-		int viewDistance,
+		byte viewDistance,
 		ChatVisiblity chatVisibility,
 		boolean chatColors,
-		int modelCustomisation,
+		short modelCustomisation,
 		HumanoidArm mainHand,
 		boolean textFilteringEnabled,
 		boolean allowsListing,
@@ -21,13 +21,13 @@ public record ClientInformation(
 	public static final StreamCodec<ByteBuf, ClientInformation> CODEC = StreamCodec.composite(
 			ModernCodecs.stringUtf8(MAX_LANGUAGE_LENGTH),
 			ClientInformation::language,
-			BasicCodecs.INT,
+			BasicCodecs.BYTE,
 			ClientInformation::viewDistance,
 			ChatVisiblity.CODEC,
 			ClientInformation::chatVisibility,
 			BasicCodecs.BOOL,
 			ClientInformation::chatColors,
-			BasicCodecs.INT,
+			BasicCodecs.UNSIGNED_BYTE,
 			ClientInformation::modelCustomisation,
 			HumanoidArm.CODEC,
 			ClientInformation::mainHand,
@@ -43,10 +43,10 @@ public record ClientInformation(
 	public ClientInformation() {
 		this(
 				"en_us",
-				2,
+				(byte) 2,
 				ChatVisiblity.FULL,
 				true,
-				0,
+				(short) 0,
 				HumanoidArm.RIGHT,
 				false,
 				false,
