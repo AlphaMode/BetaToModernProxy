@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.BetaItemStack;
+import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 
 public record ContainerClickPacket(byte containerId, short slot, byte button, short uid, boolean quickMove,
 								   BetaItemStack item) implements BetaRecordPacket {

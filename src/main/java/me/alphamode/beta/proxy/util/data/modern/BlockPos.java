@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.util.data;
+package me.alphamode.beta.proxy.util.data.modern;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.Mth;

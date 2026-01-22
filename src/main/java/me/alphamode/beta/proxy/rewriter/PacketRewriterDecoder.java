@@ -18,7 +18,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
-import me.alphamode.beta.proxy.util.data.GameProfile;
+import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 
 import java.util.HashMap;
 import java.util.List;

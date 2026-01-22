@@ -7,6 +7,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundLoginPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.*;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
@@ -145,7 +146,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 
 	private void registerConfigurationPackets() {
 		// Serverbound
-		this.registerPacket(ServerboundConfigurationPackets.CLIENT_INFORMATION, null);
+		this.registerPacket(ServerboundConfigurationPackets.CLIENT_INFORMATION, C2SClientInformationPacket.CODEC);
 		this.registerPacket(ServerboundConfigurationPackets.COOKIE_RESPONSE, null);
 		this.registerPacket(ServerboundConfigurationPackets.CUSTOM_PAYLOAD, C2SConfigurationCustomPayloadPacket.CODEC);
 		this.registerPacket(ServerboundConfigurationPackets.FINISH_CONFIGURATION, null);

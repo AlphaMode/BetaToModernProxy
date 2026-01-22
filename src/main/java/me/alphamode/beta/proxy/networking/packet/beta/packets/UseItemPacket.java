@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.BetaItemStack;
+import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record UseItemPacket(Vec3i position, byte face, BetaItemStack item) implements BetaRecordPacket {

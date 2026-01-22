@@ -1,8 +1,10 @@
-package me.alphamode.beta.proxy.util.data;
+package me.alphamode.beta.proxy.util.data.beta;
+
+import me.alphamode.beta.proxy.util.data.Vec3i;
 
 import java.util.Arrays;
 
-public record NibbleArray(byte[] data) {
+public record BetaNibbleArray(byte[] data) {
 	public void fill(int value) {
 		Arrays.fill(this.data, (byte) value);
 	}
