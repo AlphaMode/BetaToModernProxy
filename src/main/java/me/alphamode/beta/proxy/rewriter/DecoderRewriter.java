@@ -56,7 +56,7 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
-			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"name\":\"1.21.11\",\"protocol\":774}}"));
+			connection.send(new S2CStatusResponsePacket("{\"description\":{\"text\":\"Beta 1.7.3 Server (" + this.realServerIp + ")\"},\"players\":{\"online\":0,\"max\":20},\"version\":{\"registryId\":\"1.21.11\",\"protocol\":774}}"));
 			// TODO: send pong/ping
 			connection.disconnect();
 			return null;
@@ -67,7 +67,7 @@ public final class DecoderRewriter extends Rewriter {
 		this.registerRewriter(C2SLoginAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
 
-			connection.send(new S2CRegistryDataPacket());
+//			connection.send(new S2CRegistryDataPacket());
 
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
 			return null;

@@ -4,6 +4,9 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.modern.enums.ChatVisiblity;
+import me.alphamode.beta.proxy.util.data.modern.enums.HumanoidArm;
+import me.alphamode.beta.proxy.util.data.modern.enums.ParticleStatus;
 
 public record ClientInformation(
 		String language,

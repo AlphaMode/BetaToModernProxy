@@ -1,8 +1,9 @@
-package me.alphamode.beta.proxy.util.data.modern;
+package me.alphamode.beta.proxy.util.data.modern.enums;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.modern.ByIdMap;
 
 import java.util.function.IntFunction;
 
