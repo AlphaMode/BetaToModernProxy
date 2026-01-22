@@ -7,6 +7,9 @@ import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
@@ -175,6 +178,44 @@ public interface ModernCodecs {
 			@Override
 			public T decode(final ByteBuf buf) {
 				return buf.readBoolean() ? codec.decode(buf) : null;
+			}
+		};
+	}
+
+	static <T> StreamCodec<ByteBuf, Collection<T>> collection(final StreamCodec<ByteBuf, T> codec) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final Collection<T> collection) {
+				VAR_INT.encode(buf, collection.size());
+				for (final T value : collection) {
+					codec.encode(buf, value);
+				}
+			}
+
+			@Override
+			public Collection<T> decode(final ByteBuf buf) {
+				final int count = VAR_INT.decode(buf);
+				final Collection<T> collection = new ArrayList<>();
+				for (int i = 0; i < count; ++i) {
+					collection.add(codec.decode(buf));
+				}
+
+				return collection;
+			}
+		};
+	}
+
+	static <T> StreamCodec<ByteBuf, List<T>> list(final StreamCodec<ByteBuf, T> codec) {
+		final StreamCodec<ByteBuf, Collection<T>> collectionCodec = collection(codec);
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final List<T> list) {
+				collectionCodec.encode(buf, list);
+			}
+
+			@Override
+			public List<T> decode(final ByteBuf buf) {
+				return List.copyOf(collectionCodec.decode(buf));
 			}
 		};
 	}
