@@ -1,6 +1,9 @@
 package me.alphamode.beta.proxy.util.codec;
 
 import io.netty.buffer.ByteBuf;
+import net.lenni0451.mcstructs.text.TextComponent;
+import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
+import net.lenni0451.mcstructs.text.serializer.TextComponentSerializer;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
 import java.util.UUID;
@@ -71,6 +74,18 @@ public interface ModernCodecs {
 			return PacketTypes.readUuid(buf);
 		}
 	};
+
+    StreamCodec<ByteBuf, TextComponent> COMPONENT = new StreamCodec<>() {
+        @Override
+        public void encode(ByteBuf buf, TextComponent value) {
+            PacketTypes.writeUnnamedTag(buf, TextComponentCodec.LATEST.serializeNbtTree(value));
+        }
+
+        @Override
+        public TextComponent decode(ByteBuf buf) {
+            return TextComponentCodec.LATEST.deserialize(PacketTypes.readUnnamedTag(buf));
+        }
+    };
 
 	static StreamCodec<ByteBuf, String> stringUtf8(final int maxLength) {
 		return new StreamCodec<>() {
