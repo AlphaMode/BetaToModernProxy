@@ -17,7 +17,7 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	public RecordPacket<BetaPackets> createPacket(final int packetId, final PacketDirection direction, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		if (packetType == null) {
-			throw new IllegalArgumentException("Packet ? is not registered in the packet registry");
+			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
 			return getCodec(packetType).decode(byteBuf);
 		}

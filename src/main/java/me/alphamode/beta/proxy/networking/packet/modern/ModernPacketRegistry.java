@@ -3,7 +3,6 @@ package me.alphamode.beta.proxy.networking.packet.modern;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundHandshakingPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 
@@ -16,10 +15,10 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	@Override
-	public RecordPacket<ModernPackets> createPacket(final int id, final PacketDirection direction, final ByteBuf byteBuf) {
-		final ModernPackets packetType = ModernPackets.getPacket(id, direction, this.state);
+	public RecordPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final ByteBuf byteBuf) {
+		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, this.state);
 		if (packetType == null) {
-			throw new RuntimeException("Packet ? is not registered in the packet registry");
+			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
 			return getCodec(packetType).decode(byteBuf);
 		}
