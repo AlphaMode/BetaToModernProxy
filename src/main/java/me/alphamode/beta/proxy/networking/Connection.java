@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -11,9 +12,25 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> {
 	private final String realServerIp;
 	private NetClient realServer;
+	private Channel channel;
 
 	public Connection(final String ip) {
 		this.realServerIp = ip;
+	}
+
+	public void write(final ByteBuf buf) {
+		this.channel.write(buf);
+	}
+
+	public void disconnect() {
+		if (this.isConnected()) {
+			this.channel.close();
+			this.channel = null;
+		}
+	}
+
+	public boolean isConnected() {
+		return this.channel != null && this.channel.isActive();
 	}
 
 	@Override
@@ -46,6 +63,8 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 				}
 			});
 		}
+
+		this.channel = context.channel();
 	}
 
 	@Override

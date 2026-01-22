@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
+import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
 import me.alphamode.beta.proxy.networking.connection.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.DisconnectPacket;
@@ -35,7 +36,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			} else if ((Object) packet instanceof C2SStatusRequestPacket) {
 				IO.println("Sending Status Response");
 
-				final ClientConnection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
+				final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
 
 				final String motd = "meowmeow§0§10";
 				final ByteBuf buf = Unpooled.buffer();

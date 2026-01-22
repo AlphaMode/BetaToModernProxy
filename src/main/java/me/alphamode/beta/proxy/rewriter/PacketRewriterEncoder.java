@@ -2,16 +2,16 @@ package me.alphamode.beta.proxy.rewriter;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import me.alphamode.beta.proxy.networking.connection.ClientConnection;
+import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaRecordPacket;
 
 import java.util.List;
 
 // Proxy -> Client
 public class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRecordPacket> {
-	private final ClientConnection connection;
+	private final Connection connection;
 
-	public PacketRewriterEncoder(final ClientConnection connection) {
+	public PacketRewriterEncoder(final Connection connection) {
 		this.connection = connection;
 	}
 
