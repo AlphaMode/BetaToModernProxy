@@ -20,15 +20,15 @@ public interface Rewriter {
 		serverboundRewriters.put(clazz, (BiFunction<Connection, ModernRecordPacket<?>, BetaRecordPacket>) wrapper);
 	}
 
-	default <T extends BetaRecordPacket> void registerClientboundRewriter(final Class<T> clazz, final BiFunction<Connection, BetaRecordPacket, T> wrapper) {
-		serverboundRewriters.put(clazz, (BiFunction<Connection, BetaRecordPacket, ModernRecordPacket<?>>) wrapper);
+	default <T extends BetaRecordPacket> void registerClientboundRewriter(final Class<T> clazz, final BiFunction<Connection, T, ModernRecordPacket<?>> wrapper) {
+		clientboundRewriters.put(clazz, (BiFunction<Connection, BetaRecordPacket, ModernRecordPacket<?>>) wrapper);
 	}
 
 	default <T extends RecordPacket<?>, S extends RecordPacket<?>> void registerRewriter(final Class<T> clazz, final PacketDirection direction, BiFunction<Connection, T, S> consumer) {
 		if (direction == PacketDirection.SERVERBOUND) {
-			registerServerboundRewriter((BetaRecordPacket) clazz, consumer);
+			registerServerboundRewriter(clazz, consumer);
 		} else {
-			registerClientboundRewriter((ModernRecordPacket<?>) clazz, consumer);
+			registerClientboundRewriter(clazz, consumer);
 		}
 	}
 }
