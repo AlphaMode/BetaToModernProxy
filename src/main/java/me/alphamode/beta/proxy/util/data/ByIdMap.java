@@ -51,6 +51,6 @@ public interface ByIdMap {
 	enum OutOfBoundsStrategy {
 		ZERO,
 		WRAP,
-		CLAMP;
+		CLAMP
 	}
 }

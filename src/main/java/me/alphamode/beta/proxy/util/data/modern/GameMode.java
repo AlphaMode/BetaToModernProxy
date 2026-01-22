@@ -8,21 +8,21 @@ import me.alphamode.beta.proxy.util.data.ByIdMap;
 import java.util.function.IntFunction;
 
 public enum GameMode {
-    SURVIVAL(0),
-    CREATIVE(1),
-    ADVENTURE(2),
-    SPECTATOR(3);
+	SURVIVAL(0),
+	CREATIVE(1),
+	ADVENTURE(2),
+	SPECTATOR(3);
 
-    private static final IntFunction<GameMode> BY_ID = ByIdMap.continuous(GameMode::getId, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-    public static final StreamCodec<ByteBuf, GameMode> CODEC = ModernCodecs.idMapper(BY_ID, GameMode::getId);
+	private static final IntFunction<GameMode> BY_ID = ByIdMap.continuous(GameMode::getId, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+	public static final StreamCodec<ByteBuf, GameMode> CODEC = ModernCodecs.idMapper(BY_ID, GameMode::getId);
 
-    private final int id;
+	private final int id;
 
-    GameMode(final int id) {
-        this.id = id;
-    }
+	GameMode(final int id) {
+		this.id = id;
+	}
 
-    public int getId() {
-        return this.id;
-    }
+	public int getId() {
+		return this.id;
+	}
 }
