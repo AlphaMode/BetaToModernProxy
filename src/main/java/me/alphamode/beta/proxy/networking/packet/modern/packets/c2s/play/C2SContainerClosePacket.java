@@ -5,6 +5,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.Server
 public class C2SContainerClosePacket implements C2SPlayPacket {
 	@Override
 	public ServerboundPlayPackets getType() {
-		return null;
+		return ServerboundPlayPackets.CONTAINER_CLOSE;
 	}
 }

@@ -5,6 +5,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.Server
 public class C2SLockDifficultyPacket implements C2SPlayPacket {
 	@Override
 	public ServerboundPlayPackets getType() {
-		return null;
+		return ServerboundPlayPackets.LOCK_DIFFICULTY;
 	}
 }

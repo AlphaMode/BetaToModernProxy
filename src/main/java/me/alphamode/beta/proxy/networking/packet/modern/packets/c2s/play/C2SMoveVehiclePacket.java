@@ -5,6 +5,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.Server
 public class C2SMoveVehiclePacket implements C2SPlayPacket {
 	@Override
 	public ServerboundPlayPackets getType() {
-		return null;
+		return ServerboundPlayPackets.MOVE_VEHICLE;
 	}
 }

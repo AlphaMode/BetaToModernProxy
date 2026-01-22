@@ -55,7 +55,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 
 	private void registerPlayPackets() {
 		// Serverbound
-		this.registerPacket(ServerboundPlayPackets.ACCEPT_TELEPORTATION, C2SAcceptTeleportationRecordPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.ACCEPT_TELEPORTATION, C2SAcceptTeleportationPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.BLOCK_ENTITY_TAG_QUERY, C2SBlockEntityTagQueryPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.BUNDLE_ITEM_SELECTED, C2SSelectBundleItemPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHANGE_DIFFICULTY, C2SChangeDifficultyPacket.CODEC);
@@ -97,8 +97,8 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ABILITIES, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ACTION, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_COMMAND, null);
-		this.registerPacket(ServerboundPlayPackets.PLAYER_INPUT, null);
-		this.registerPacket(ServerboundPlayPackets.PLAYER_LOADED, null);
+		this.registerPacket(ServerboundPlayPackets.PLAYER_INPUT, C2SPlayerInputPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.PLAYER_LOADED, C2SPlayerLoadedPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PONG, C2SPongPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.RECIPE_BOOK_CHANGE_SETTINGS, null);
 		this.registerPacket(ServerboundPlayPackets.RECIPE_BOOK_SEEN_RECIPE, null);
