@@ -24,7 +24,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	private PacketState state = PacketState.HANDSHAKING;
 	private UUID uuid;
 	private String username;
-	private int protocolVersion;
+	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 
 	public Connection(final String ip) {
 		this.realServerIp = ip;
