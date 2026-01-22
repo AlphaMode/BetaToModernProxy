@@ -96,7 +96,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundPlayPackets.PLAYER_COMMAND, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_INPUT, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_LOADED, null);
-		this.registerPacket(ServerboundPlayPackets.PONG, null);
+		this.registerPacket(ServerboundPlayPackets.PONG, C2SPongPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.RECIPE_BOOK_CHANGE_SETTINGS, null);
 		this.registerPacket(ServerboundPlayPackets.RECIPE_BOOK_SEEN_RECIPE, null);
 		this.registerPacket(ServerboundPlayPackets.RENAME_ITEM, null);
