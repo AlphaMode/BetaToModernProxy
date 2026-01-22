@@ -19,7 +19,7 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
-			return getCodec(packetType).decode(byteBuf);
+			return this.getCodec(packetType).decode(byteBuf);
 		}
 	}
 
