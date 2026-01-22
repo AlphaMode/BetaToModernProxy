@@ -138,39 +138,38 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerConfigurationPackets() {
-        // Serverbound
-        this.registerPacket(ServerboundConfigurationPackets.CLIENT_INFORMATION, null);
-        this.registerPacket(ServerboundConfigurationPackets.COOKIE_RESPONSE, null);
-        this.registerPacket(ServerboundConfigurationPackets.CUSTOM_PAYLOAD, null);
-        this.registerPacket(ServerboundConfigurationPackets.FINISH_CONFIGURATION, null);
-        this.registerPacket(ServerboundConfigurationPackets.KEEP_ALIVE, null);
-        this.registerPacket(ServerboundConfigurationPackets.PONG, null);
-        this.registerPacket(ServerboundConfigurationPackets.RESOURCE_PACK, null);
-        this.registerPacket(ServerboundConfigurationPackets.SELECT_KNOWN_PACKS, null);
-        this.registerPacket(ServerboundConfigurationPackets.CUSTOM_CLICK_ACTION, null);
-        this.registerPacket(ServerboundConfigurationPackets.ACCEPT_CODE_OF_CONDUCT, null);
+		// Serverbound
+		this.registerPacket(ServerboundConfigurationPackets.CLIENT_INFORMATION, null);
+		this.registerPacket(ServerboundConfigurationPackets.COOKIE_RESPONSE, null);
+		this.registerPacket(ServerboundConfigurationPackets.CUSTOM_PAYLOAD, null);
+		this.registerPacket(ServerboundConfigurationPackets.FINISH_CONFIGURATION, null);
+		this.registerPacket(ServerboundConfigurationPackets.KEEP_ALIVE, null);
+		this.registerPacket(ServerboundConfigurationPackets.PONG, null);
+		this.registerPacket(ServerboundConfigurationPackets.RESOURCE_PACK, null);
+		this.registerPacket(ServerboundConfigurationPackets.SELECT_KNOWN_PACKS, null);
+		this.registerPacket(ServerboundConfigurationPackets.CUSTOM_CLICK_ACTION, null);
+		this.registerPacket(ServerboundConfigurationPackets.ACCEPT_CODE_OF_CONDUCT, null);
 
-        // Clientbound
-        this.registerPacket(ClientboundConfigurationPackets.COOKIE_REQUEST, null);
-        this.registerPacket(ClientboundConfigurationPackets.CUSTOM_PAYLOAD, null);
-        this.registerPacket(ClientboundConfigurationPackets.DISCONNECT, null);
-        this.registerPacket(ClientboundConfigurationPackets.FINISH_CONFIGURATION, null);
-        this.registerPacket(ClientboundConfigurationPackets.KEEP_ALIVE, null);
-        this.registerPacket(ClientboundConfigurationPackets.PING, null);
-        this.registerPacket(ClientboundConfigurationPackets.RESET_CHAT, null);
-        this.registerPacket(ClientboundConfigurationPackets.REGISTRY_DATA, null);
-        this.registerPacket(ClientboundConfigurationPackets.RESOURCE_PACK_POP, null);
-        this.registerPacket(ClientboundConfigurationPackets.RESOURCE_PACK_PUSH, null);
-        this.registerPacket(ClientboundConfigurationPackets.STORE_COOKIE, null);
-        this.registerPacket(ClientboundConfigurationPackets.TRANSFER, null);
-        this.registerPacket(ClientboundConfigurationPackets.UPDATE_ENABLED_FEATURES, null);
-        this.registerPacket(ClientboundConfigurationPackets.UPDATE_TAGS, null);
-        this.registerPacket(ClientboundConfigurationPackets.SELECT_KNOWN_PACKS, null);
-        this.registerPacket(ClientboundConfigurationPackets.CUSTOM_REPORT_DETAILS, null);
-        this.registerPacket(ClientboundConfigurationPackets.SERVER_LINKS, null);
-        this.registerPacket(ClientboundConfigurationPackets.CLEAR_DIALOG, null);
-        this.registerPacket(ClientboundConfigurationPackets.SHOW_DIALOG, null);
-        this.registerPacket(ClientboundConfigurationPackets.CODE_OF_CONDUCT, null);
-
-    }
+		// Clientbound
+		this.registerPacket(ClientboundConfigurationPackets.COOKIE_REQUEST, null);
+		this.registerPacket(ClientboundConfigurationPackets.CUSTOM_PAYLOAD, null);
+		this.registerPacket(ClientboundConfigurationPackets.DISCONNECT, null);
+		this.registerPacket(ClientboundConfigurationPackets.FINISH_CONFIGURATION, null);
+		this.registerPacket(ClientboundConfigurationPackets.KEEP_ALIVE, null);
+		this.registerPacket(ClientboundConfigurationPackets.PING, null);
+		this.registerPacket(ClientboundConfigurationPackets.RESET_CHAT, null);
+		this.registerPacket(ClientboundConfigurationPackets.REGISTRY_DATA, null);
+		this.registerPacket(ClientboundConfigurationPackets.RESOURCE_PACK_POP, null);
+		this.registerPacket(ClientboundConfigurationPackets.RESOURCE_PACK_PUSH, null);
+		this.registerPacket(ClientboundConfigurationPackets.STORE_COOKIE, null);
+		this.registerPacket(ClientboundConfigurationPackets.TRANSFER, null);
+		this.registerPacket(ClientboundConfigurationPackets.UPDATE_ENABLED_FEATURES, null);
+		this.registerPacket(ClientboundConfigurationPackets.UPDATE_TAGS, null);
+		this.registerPacket(ClientboundConfigurationPackets.SELECT_KNOWN_PACKS, null);
+		this.registerPacket(ClientboundConfigurationPackets.CUSTOM_REPORT_DETAILS, null);
+		this.registerPacket(ClientboundConfigurationPackets.SERVER_LINKS, null);
+		this.registerPacket(ClientboundConfigurationPackets.CLEAR_DIALOG, null);
+		this.registerPacket(ClientboundConfigurationPackets.SHOW_DIALOG, null);
+		this.registerPacket(ClientboundConfigurationPackets.CODE_OF_CONDUCT, null);
+	}
 }
