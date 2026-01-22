@@ -11,7 +11,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
@@ -62,7 +62,7 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				out.add(new LoginPacket(username, 14));
 				connection.send(new S2CLoginFinishedPacket(new GameProfile(profileId, username, new HashMap<>())));
 				return;
-			} else if (packet instanceof C2SKeepAlivePacket<?>) {
+			} else if (packet instanceof C2SCommonKeepAlivePacket<?>) {
 				out.add(new KeepAlivePacket());
 				return;
 			} else if ((Object) packet instanceof C2SLoginAcknowledgedPacket) {
