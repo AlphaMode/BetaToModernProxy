@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.util.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+import net.raphimc.netminecraft.packet.PacketTypes;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -120,6 +121,18 @@ public interface ByteBufCodecs {
 			}
 		};
 	}
+
+    StreamCodec<ByteBuf, Integer> VAR_INT = new StreamCodec<>() {
+        @Override
+        public void encode(ByteBuf output, Integer value) {
+            PacketTypes.writeVarInt(output, value);
+        }
+
+        @Override
+        public Integer decode(ByteBuf input) {
+            return PacketTypes.readVarInt(input);
+        }
+    };
 
 	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
