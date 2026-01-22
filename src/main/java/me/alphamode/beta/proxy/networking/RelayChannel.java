@@ -8,10 +8,10 @@ import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.BetaPacketRegistry;
 
 // Packet -> ByteBuf
-public final class P2SChannel extends ChannelInitializer<Channel> {
+public final class RelayChannel extends ChannelInitializer<Channel> {
 	private final Channel otherChannel;
 
-	public P2SChannel(final Channel channel) {
+	public RelayChannel(final Channel channel) {
 		this.otherChannel = channel;
 		if (channel == null) {
 			throw new RuntimeException("Cannot create P2S connection! Channel is null!");

@@ -59,7 +59,7 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 			final Function<C, T1> getter1,
 			final Function<T1, C> constructor
 	) {
-		return new StreamCodec<B, C>() {
+		return new StreamCodec<>() {
 			@Override
 			public C decode(final B buf) {
 				T1 v1 = codec1.decode(buf);

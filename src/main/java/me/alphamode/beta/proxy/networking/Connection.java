@@ -11,11 +11,15 @@ import me.alphamode.beta.proxy.networking.packet.modern.PacketState;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
+import java.util.UUID;
+
 public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> {
 	private final String realServerIp;
 	private NetClient realServer;
 	private Channel channel;
 	private PacketState state = PacketState.HANDSHAKING;
+	private UUID uuid;
+	private String username;
 
 	public Connection(final String ip) {
 		this.realServerIp = ip;
@@ -61,6 +65,22 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		this.state = state;
 	}
 
+	public UUID getId() {
+		return uuid;
+	}
+
+	public void setId(final UUID uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(final String username) {
+		this.username = username;
+	}
+
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) {
 		if (this.realServer != null && this.realServer.getChannel().isActive()) {
@@ -72,7 +92,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	public void channelActive(final ChannelHandlerContext context) {
 		IO.println("Connection acquired!");
 		if (this.realServer == null) {
-			this.realServer = new NetClient(new P2SChannel(context.channel()));
+			this.realServer = new NetClient(new RelayChannel(context.channel()));
 			this.realServer.connect(MinecraftServerAddress.ofResolved(this.realServerIp)).addListener(future -> {
 				if (!future.isSuccess()) {
 					context.close();

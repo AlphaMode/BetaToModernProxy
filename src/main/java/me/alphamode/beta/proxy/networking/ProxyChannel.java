@@ -8,6 +8,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.modern.ModernPacketRegistry;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 
 // Packets
