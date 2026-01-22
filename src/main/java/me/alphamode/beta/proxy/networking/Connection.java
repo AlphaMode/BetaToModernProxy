@@ -26,7 +26,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		}
 	}
 
-	public void write(final RecordPacket<?> packet) {
+	public void send(final RecordPacket<?> packet) {
 		if (this.isConnected()) {
 			this.channel.write(packet);
 		} else {
