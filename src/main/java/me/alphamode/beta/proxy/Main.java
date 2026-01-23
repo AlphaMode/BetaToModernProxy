@@ -8,7 +8,7 @@ public final class Main {
         Config config = new Config();
         config.load();
 
-        Proxy proxy = new Proxy(config);
+        BrodernProxy proxy = new BrodernProxy(config);
 
 		proxy.listen();
 	}

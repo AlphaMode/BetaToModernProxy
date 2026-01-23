@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.Proxy;
+import me.alphamode.beta.proxy.BrodernProxy;
 
 public interface DebugUtil {
 	static void printBuf(final ByteBuf buf) {
@@ -17,6 +17,6 @@ public interface DebugUtil {
 		}
 
 		builder.append(']');
-		Proxy.LOGGER.info(builder.toString());
+		BrodernProxy.LOGGER.info(builder.toString());
 	}
 }

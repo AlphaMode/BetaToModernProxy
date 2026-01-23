@@ -16,11 +16,11 @@ import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
-public class Proxy implements ProxyAPI {
-	private static Proxy instance;
-	public static final Logger LOGGER = LogManager.getLogger(Proxy.class);
+public class BrodernProxy implements ProxyAPI {
+	private static BrodernProxy instance;
+	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
 
-	public static Proxy getProxy() {
+	public static BrodernProxy getProxy() {
 		if (instance == null) {
 			throw new IllegalStateException("Proxy has not been initialized yet");
 		}
@@ -57,7 +57,7 @@ public class Proxy implements ProxyAPI {
 	private final int bindPort;
 	private final String serverAddress;
 
-	public Proxy(final Config config) {
+	public BrodernProxy(final Config config) {
 		instance = this;
 		this.config = config;
 		this.brand = config.getBrand();
@@ -68,7 +68,7 @@ public class Proxy implements ProxyAPI {
 	}
 
 	public void listen() {
-		Proxy.LOGGER.info("Listening on {}:{} -> {}", this.bindAddress, this.bindPort, this.serverAddress);
+		BrodernProxy.LOGGER.info("Listening on {}:{} -> {}", this.bindAddress, this.bindPort, this.serverAddress);
 		new NetServer(new ProxyChannel(this.serverAddress, DEFAULT_TAGS, DEFAULT_REGISTRIES))
 				.bind(new InetSocketAddress(this.bindAddress, this.bindPort));
 	}

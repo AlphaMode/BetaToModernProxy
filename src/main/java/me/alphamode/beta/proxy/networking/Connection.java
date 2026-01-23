@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.Proxy;
+import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
@@ -47,7 +47,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
 			}
 
-			Proxy.LOGGER.info("Sending {} to client!", packet.getType());
+			BrodernProxy.LOGGER.info("Sending {} to client!", packet.getType());
 			this.channel.writeAndFlush(packet);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
@@ -93,7 +93,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	}
 
 	public void setState(final PacketState state) {
-		Proxy.LOGGER.info("Switching to state {}", state);
+		BrodernProxy.LOGGER.info("Switching to state {}", state);
 		this.state = state;
 	}
 
@@ -123,14 +123,14 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-		Proxy.LOGGER.info("Connection acquired!");
+		BrodernProxy.LOGGER.info("Connection acquired!");
 		this.channel = context.channel();
 		if (this.realServer == null) {
-			Proxy.LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
+			BrodernProxy.LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 			this.realServer = new NetClient(new RelayChannel(context.channel()));
 			this.realServer.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
-					Proxy.LOGGER.info("Failed to connect to real server!");
+					BrodernProxy.LOGGER.info("Failed to connect to real server!");
 					future.cause().printStackTrace();
 					context.close();
 				}
@@ -138,7 +138,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 			this.realServer.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<>() {
 				@Override
 				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
-					Proxy.LOGGER.info(data);
+					BrodernProxy.LOGGER.info(data);
 					channel.writeAndFlush(data);
 				}
 
@@ -150,9 +150,10 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 		}
 	}
 
-	// Out channel (Writing to client)
+	// Out channel (Writing from Proxy to Serer)
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Object packet) {
+		BrodernProxy.LOGGER.info("Received Packet {}", packet);
 		if (this.realServer != null && this.realServer.getChannel().isActive()) {
 			this.realServer.getChannel().writeAndFlush(packet);
 		}
@@ -161,9 +162,9 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
 		LAST_CONNECTION_ID--;
-		Proxy.LOGGER.info("Connection lost!");
+		BrodernProxy.LOGGER.info("Connection lost!");
 		if (this.realServer != null) {
-			Proxy.LOGGER.info("Disconnected from real server!");
+			BrodernProxy.LOGGER.info("Disconnected from real server!");
 			this.realServer.getChannel().close();
 			this.realServer = null;
 		}

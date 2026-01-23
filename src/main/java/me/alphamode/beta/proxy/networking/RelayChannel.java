@@ -4,7 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.Proxy;
+import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
@@ -28,7 +28,7 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<RecordPacket<?>>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<?> packet) {
-				Proxy.LOGGER.info("meow");
+				BrodernProxy.LOGGER.info("meow");
 				otherChannel.writeAndFlush(packet);
 			}
 		});
