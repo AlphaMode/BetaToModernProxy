@@ -173,7 +173,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 		LOGGER.info("Connection lost!");
 		if (this.realServer != null) {
 			LOGGER.info("Disconnected from real server!");
-			this.realServer.getChannel().close().syncUninterruptibly();
+			this.realServer.getChannel().closeFuture();
 			this.realServer = null;
 		}
 	}
