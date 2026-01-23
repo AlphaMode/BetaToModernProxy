@@ -79,7 +79,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 
 	public void disconnect() {
 		if (this.isConnected()) {
-			this.channel.close();
+			this.channel.closeFuture();
 			this.channel = null;
 		}
 	}
@@ -153,9 +153,9 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	// Out channel (Writing from Proxy to Serer)
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, final Object packet) {
-		BrodernProxy.LOGGER.info("Received Packet {}", packet);
-		if (this.realServer != null && this.realServer.getChannel().isActive()) {
-			this.realServer.getChannel().writeAndFlush(packet);
+		BrodernProxy.LOGGER.info("Sending Packet to Server: {}", packet);
+		if (this.realServer != null) {
+			this.realServer.getChannel().writeAndFlush(packet).syncUninterruptibly();
 		}
 	}
 
@@ -165,7 +165,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 		BrodernProxy.LOGGER.info("Connection lost!");
 		if (this.realServer != null) {
 			BrodernProxy.LOGGER.info("Disconnected from real server!");
-			this.realServer.getChannel().close();
+			this.realServer.getChannel().closeFuture();
 			this.realServer = null;
 		}
 	}

@@ -96,7 +96,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundPlayPackets.PADDLE_BOAT, null);
 		this.registerPacket(ServerboundPlayPackets.PICK_ITEM_FROM_BLOCK, null);
 		this.registerPacket(ServerboundPlayPackets.PICK_ITEM_FROM_ENTITY, null);
-		this.registerPacket(ServerboundPlayPackets.PING_REQUEST, null);
+		this.registerPacket(ServerboundPlayPackets.PING_REQUEST, C2SPingRequestPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PLACE_RECIPE, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ABILITIES, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ACTION, null);

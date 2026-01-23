@@ -5,11 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.BrodernProxy;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketDecoder;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
 
-// Packet -> ByteBuf
 public final class RelayChannel extends ChannelInitializer<Channel> {
 	private final Channel otherChannel;
 
@@ -24,12 +22,16 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 	@Override
 	protected void initChannel(final Channel channel) {
 		channel.attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).set(BetaPacketRegistry.INSTANCE);
-		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
-		channel.pipeline().addLast(new SimpleChannelInboundHandler<RecordPacket<?>>() {
+		// ByteBuf -> BetaPacket
+		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
+		// BetaPacket -> ModernPacket
+//		channel.pipeline().addLast(new PacketRewriterEncoder());
+		// ModernPacket -> ByteBuf?
+		channel.pipeline().addLast(new SimpleChannelInboundHandler<>() {
 			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<?> packet) {
-				BrodernProxy.LOGGER.info("meow");
-				otherChannel.writeAndFlush(packet);
+			protected void channelRead0(final ChannelHandlerContext context, final Object buf) {
+				BrodernProxy.LOGGER.info("Sending Packet to Client: {}", buf);
+				otherChannel.writeAndFlush(buf);
 			}
 		});
 	}
