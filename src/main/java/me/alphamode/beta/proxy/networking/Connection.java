@@ -80,6 +80,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	}
 
 	public void kick(final String message) {
+		LOGGER.error("Kicking client with reason: {}", message);
 		this.kick(TextComponent.of(message));
 	}
 
