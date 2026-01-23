@@ -1,1 +1,13 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name "FabricMC"
+            url "https://maven.fabricmc.net/"
+        }
+    }
+}
+
 rootProject.name = 'BetaToModernProxy'
+
+include(":data-gen")

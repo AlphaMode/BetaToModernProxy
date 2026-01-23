@@ -1,0 +1,38 @@
+plugins {
+    id 'maven-publish'
+    id 'net.fabricmc.fabric-loom' version '1.14-SNAPSHOT'
+}
+
+group = "me.alphamode.beta.proxy.data"
+version = "1.0-SNAPSHOT"
+
+loom {
+    runs {
+        datagen {
+            environment("client")
+            mainClass = "me.alphamode.beta.proxy.data.Main"
+
+            name "Data Generation"
+            vmArg "-Ddatagen.output-dir=${rootProject.file("src/generated/resources")}"
+
+            runDir "build/datagen"
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://maven.lenni0451.net/releases"
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.21.11_unobfuscated"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 25
+}
