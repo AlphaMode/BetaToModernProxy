@@ -29,9 +29,9 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		// ByteBuf -> BetaPacket
 		channel.pipeline().addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 		// BetaPacket -> ModernPacket
-		channel.pipeline().addLast(new PacketRewriterEncoder());
+		channel.pipeline().addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder());
 		//  ModernPacket -> ByteBuf
-		channel.pipeline().addLast(new ModernPacketWriter());
+		channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 		// ByteBuf -> Client
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<>() {
 			@Override

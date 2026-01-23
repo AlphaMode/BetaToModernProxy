@@ -14,6 +14,7 @@ import java.util.List;
 
 public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRecordPacket> {
 	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterEncoder.class);
+	public static final String KEY = "packet-rewriter-encoder";
 
 	private final EncoderRewriter rewriter;
 
