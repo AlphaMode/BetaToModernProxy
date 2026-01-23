@@ -34,8 +34,8 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 				if (clazz.isAssignableFrom(packet.getClass())) {
 					final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(connection, packet);
 					if (betaPacket != null) {
-//						Proxy.LOGGER.info(("writing beta packet");
-//						Proxy.LOGGER.info((betaPacket);
+//						Proxy.LOGGER.info("writing beta packet");
+//						Proxy.LOGGER.info(betaPacket);
 						out.add(betaPacket);
 					}
 

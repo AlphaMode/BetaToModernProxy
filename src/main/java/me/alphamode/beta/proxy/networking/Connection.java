@@ -18,7 +18,9 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import java.util.UUID;
 
 // Proxy -> Client
-public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> {
+public final class Connection extends SimpleChannelInboundHandler<Object> {
+	private static int LAST_CONNECTION_ID = 0;
+
 	private final MinecraftServerAddress serverAddress;
 	private NetClient realServer;
 	private Channel channel;
@@ -124,6 +126,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		Proxy.LOGGER.info("Connection acquired!");
 		this.channel = context.channel();
 		if (this.realServer == null) {
+			Proxy.LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 			this.realServer = new NetClient(new RelayChannel(context.channel()));
 			this.realServer.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
@@ -147,8 +150,9 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		}
 	}
 
+	// Out channel (Writing to client)
 	@Override
-	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) {
+	protected void channelRead0(final ChannelHandlerContext ctx, final Object packet) {
 		if (this.realServer != null && this.realServer.getChannel().isActive()) {
 			this.realServer.getChannel().writeAndFlush(packet);
 		}
@@ -156,6 +160,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
+		LAST_CONNECTION_ID--;
 		Proxy.LOGGER.info("Connection lost!");
 		if (this.realServer != null) {
 			Proxy.LOGGER.info("Disconnected from real server!");

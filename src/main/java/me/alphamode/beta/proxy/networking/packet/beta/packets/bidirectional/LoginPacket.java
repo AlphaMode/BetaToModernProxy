@@ -22,7 +22,7 @@ public record LoginPacket(int clientVersion, String username, long seed, byte di
 			LoginPacket::new
 	);
 
-	public LoginPacket(String username, int protocol) {
+	public LoginPacket(int protocol, String username) {
 		this(protocol, username, 0L, (byte) 0);
 	}
 
