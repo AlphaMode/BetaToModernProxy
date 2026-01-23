@@ -65,8 +65,7 @@ public record ServerStatus(TextComponent description,
 			} else {
 				try {
 					final String base64 = data.substring("data:image/png;base64,".length()).replaceAll("\n", "");
-					final byte[] iconBytes = Base64.getDecoder().decode(base64.getBytes(StandardCharsets.UTF_8));
-					return Result.success(new ServerStatus.Favicon(iconBytes));
+					return Result.success(new ServerStatus.Favicon(Base64.getDecoder().decode(base64.getBytes(StandardCharsets.UTF_8))));
 				} catch (IllegalArgumentException var3) {
 					return Result.error("Malformed base64 server icon");
 				}
@@ -85,16 +84,20 @@ public record ServerStatus(TextComponent description,
 
 	public record NameAndId(UUID id, String name) {
 		public static final Codec<NameAndId> CODEC = MapCodecMerger.codec(
-				Codec.STRICT_STRING_UUID.mapCodec("id").required(), NameAndId::id,
-				Codec.STRING.mapCodec("name").required(), NameAndId::name,
+				Codec.STRICT_STRING_UUID.mapCodec("id").required(),
+				NameAndId::id,
+				Codec.STRING.mapCodec("name").required(),
+				NameAndId::name,
 				NameAndId::new
 		);
 	}
 
 	public record Version(String name, int protocol) {
 		public static final Codec<Version> CODEC = MapCodecMerger.codec(
-				Codec.STRING.mapCodec("name").required(), Version::name,
-				Codec.INTEGER.mapCodec("protocol").required(), Version::protocol,
+				Codec.STRING.mapCodec("name").required(),
+				Version::name,
+				Codec.INTEGER.mapCodec("protocol").required(),
+				Version::protocol,
 				Version::new
 		);
 	}

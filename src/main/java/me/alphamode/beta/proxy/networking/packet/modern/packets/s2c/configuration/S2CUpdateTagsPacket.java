@@ -12,7 +12,8 @@ import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 
 import java.util.Map;
 
-public record S2CUpdateTagsPacket(Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags) implements S2CCommonUpdateTagsPacket<ClientboundConfigurationPackets> {
+public record S2CUpdateTagsPacket(
+		Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags) implements S2CCommonUpdateTagsPacket<ClientboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, S2CUpdateTagsPacket> CODEC = StreamCodec.composite(
 			ModernCodecs.map(ResourceKey.CODEC, TagNetworkSerialization.NetworkPayload.CODEC),
 			S2CUpdateTagsPacket::tags,

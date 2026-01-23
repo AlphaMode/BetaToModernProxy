@@ -5,13 +5,13 @@ import net.lenni0451.mcstructs.text.TextComponent;
 
 public interface ProxyAPI {
 
-    void setBrand(String brand);
+	void setBrand(String brand);
 
-    String getBrand();
+	String getBrand();
 
-    void setMessage(TextComponent description);
+	void setMessage(TextComponent description);
 
-    TextComponent getMessage();
+	TextComponent getMessage();
 
-    Config getConfig();
+	Config getConfig();
 }

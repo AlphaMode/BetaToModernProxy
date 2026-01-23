@@ -3,7 +3,8 @@ package me.alphamode.beta.proxy.util.data.modern;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record Input(boolean forward, boolean backward, boolean left, boolean right, boolean jump, boolean shift, boolean sprint) {
+public record Input(boolean forward, boolean backward, boolean left, boolean right, boolean jump, boolean shift,
+					boolean sprint) {
 	public static final byte FLAG_FORWARD = 1;
 	public static final byte FLAG_BACKWARD = 2;
 	public static final byte FLAG_LEFT = 4;

@@ -6,8 +6,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
@@ -25,16 +23,18 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 	// Server -> Proxy
 	@Override
 	protected void initChannel(final Channel channel) {
-		channel.attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).set(BetaPacketRegistry.INSTANCE);
-		channel.attr(ProxyChannel.MODERN_PACKET_REGISTRY_KEY).set(ModernPacketRegistry.INSTANCE);
 		// ByteBuf -> BetaPacket
 		channel.pipeline().addLast(BetaPacketReader.KEY, new BetaPacketReader());
+
 		// BetaPacket -> ModernPacket (Rewriting)
 		channel.pipeline().addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder());
+
 		// ModernPacket -> ByteBuf
 		channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+
 		// Writes pre-fixed length
 		channel.pipeline().addLast(new PacketSizer());
+
 		// ByteBuf -> Client
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<>() {
 			@Override

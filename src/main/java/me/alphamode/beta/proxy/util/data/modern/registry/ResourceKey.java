@@ -65,7 +65,7 @@ public class ResourceKey<T> {
 	}
 
 	public ResourceKey<Registry<T>> registryKey() {
-		return this.createRegistryKey(this.registryName);
+		return createRegistryKey(this.registryName);
 	}
 
 	@Override
