@@ -29,7 +29,7 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		channel.attr(ProxyChannel.MODERN_PACKET_REGISTRY_KEY).set(ModernPacketRegistry.INSTANCE);
 		// ByteBuf -> BetaPacket
 		channel.pipeline().addLast(BetaPacketReader.KEY, new BetaPacketReader());
-		// BetaPacket -> ModernPacket
+		// BetaPacket -> ModernPacket (Rewriting)
 		channel.pipeline().addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder());
 		// ModernPacket -> ByteBuf
 		channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());

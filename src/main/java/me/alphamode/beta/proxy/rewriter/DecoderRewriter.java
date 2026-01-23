@@ -74,7 +74,7 @@ public final class DecoderRewriter extends Rewriter {
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
 			connection.send(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
-			return new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 42L, (byte) 0);
+			return new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0);
 		});
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
