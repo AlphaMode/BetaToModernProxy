@@ -20,7 +20,7 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		}
 	}
 
-	// Server -> Proxy
+	// Server -> Proxy -> Client
 	@Override
 	protected void initChannel(final Channel channel) {
 		// ByteBuf -> BetaPacket

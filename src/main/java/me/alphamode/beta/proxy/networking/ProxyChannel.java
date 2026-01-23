@@ -1,13 +1,14 @@
 package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,11 +27,11 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		this.defaultRegistries = defaultRegistries;
 	}
 
-	// Client -> Proxy
+	// Client -> Proxy -> Server
 	@Override
 	protected void initChannel(final Channel channel) {
 		// Reads Prefixed Length & Splits Packets
-		channel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
+		channel.pipeline().addLast(new PacketSizer());
 
 		// ByteBuf -> ModernPacket
 		channel.pipeline().addLast(ModernPacketReader.KEY, new ModernPacketReader());
@@ -44,5 +45,20 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		final Connection connection = new Connection(MinecraftServerAddress.ofResolved(this.serverIp));
 		channel.pipeline().addLast(connection);
 		channel.attr(CONNECTION_KEY).set(connection);
+	}
+
+	@Override
+	public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
+		super.channelRead(ctx, msg);
+	}
+
+	@Override
+	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
+		super.channelActive(ctx);
+	}
+
+	@Override
+	public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
+		super.channelInactive(ctx);
 	}
 }

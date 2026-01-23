@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.rewriter;
 
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
@@ -18,6 +19,11 @@ public final class EncoderRewriter extends Rewriter {
 
 		this.registerClientboundRewriter(LoginPacket.class, (connection, packet) -> {
 			LOGGER.info("Encoding Login Packet to Modern");
+			return null;
+		});
+
+		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {
+			connection.kick(packet.reason());
 			return null;
 		});
 	}

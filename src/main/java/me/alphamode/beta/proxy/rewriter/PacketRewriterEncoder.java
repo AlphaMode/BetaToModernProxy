@@ -22,7 +22,7 @@ public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRec
 		this.rewriter.registerPackets();
 	}
 
-	// S -> P
+	// Server -> Proxy -> Client
 	@Override
 	protected void encode(final ChannelHandlerContext context, final BetaRecordPacket packet, final List<Object> out) throws Exception {
 		final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
