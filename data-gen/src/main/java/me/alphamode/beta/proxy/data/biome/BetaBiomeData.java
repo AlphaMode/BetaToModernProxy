@@ -4,6 +4,7 @@ import me.alphamode.beta.proxy.data.registries.BetaBiomes;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public class BetaBiomeData {
     public static void bootstrap(final BootstrapContext<Biome> context) {
-        HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
-        HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
+        final HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
+        final HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
         context.register(BetaBiomes.RAINFOREST, betaBiome(placedFeatures, carvers, builder().setColor(588342).setName("Rainforest").setLeafColor(2094168)));
         context.register(BetaBiomes.SWAPLAND, betaBiome(placedFeatures, carvers, builder().setColor(522674).setName("Swampland").setLeafColor(9154376)));
         context.register(BetaBiomes.SEASONAL_FOREST, betaBiome(placedFeatures, carvers, builder().setColor(10215459).setName("Seasonal Forest")));
@@ -69,7 +70,7 @@ public class BetaBiomeData {
 
     public static Biome betaBiome(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> carvers, BetaBiomeBuilder builder) {
         final BiomeSpecialEffects.Builder specialEffects = new BiomeSpecialEffects.Builder();
-        specialEffects.waterColor(16777215);
+        specialEffects.waterColor(ARGB.white(1.0F));
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(builder.hasPrecipitation)
                 .temperature(builder.snowCovered ? -0.5F : 2.0F)
