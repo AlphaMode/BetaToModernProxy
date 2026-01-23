@@ -35,8 +35,8 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	private static int LAST_CONNECTION_ID = 0;
 
 	private final MinecraftServerAddress serverAddress;
-	private NetClient realServer;
-	private Channel channel;
+	private Channel serverChannel;
+	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
 	private UUID uuid;
 	private String username;
@@ -48,7 +48,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 
 	public void write(final ByteBuf buf) {
 		if (this.isConnected()) {
-			this.channel.writeAndFlush(buf);
+			this.clientChannel.writeAndFlush(buf);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
 		}
@@ -60,7 +60,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
 			}
 
-			this.channel.writeAndFlush(packet);
+			this.clientChannel.writeAndFlush(packet);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
 		}
@@ -85,13 +85,22 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 
 	public void disconnect() {
 		if (this.isConnected()) {
-			this.channel.closeFuture();
-			this.channel = null;
+			this.clientChannel.closeFuture();
+			this.clientChannel = null;
+
+			this.serverChannel.closeFuture();
+			this.serverChannel = null;
+		} else {
+			throw new RuntimeException("Cannot disconnect dead connection!");
 		}
 	}
 
 	public boolean isConnected() {
-		return this.channel != null;
+		return this.clientChannel != null && this.clientChannel.isActive();
+	}
+
+	public boolean isConnectedToServer() {
+		return this.serverChannel != null && this.serverChannel.isActive();
 	}
 
 	public PacketState getState() {
@@ -150,13 +159,14 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	public void channelActive(final ChannelHandlerContext context) {
 		LOGGER.info("Connection acquired!");
 
-		this.channel = context.channel();
-		this.channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+		this.clientChannel = context.channel();
+		this.clientChannel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
-		if (this.realServer == null) {
+		if (this.serverChannel == null) {
 			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
-			this.realServer = new NetClient(new RelayChannel(this));
-			this.realServer.connect(this.serverAddress).addListener(future -> {
+
+			final NetClient realServerConnection = new NetClient(new RelayChannel(this));
+			realServerConnection.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
 					LOGGER.info("Failed to connect to real server!");
 					future.cause().printStackTrace();
@@ -164,11 +174,12 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 				}
 			});
 
-			this.realServer.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<>() {
+			this.serverChannel = realServerConnection.getChannel();
+			this.serverChannel.pipeline().addLast(new SimpleChannelInboundHandler<>() {
 				@Override
 				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
 					LOGGER.info(data);
-					channel.writeAndFlush(data).syncUninterruptibly();
+					clientChannel.writeAndFlush(data).syncUninterruptibly();
 				}
 
 				@Override
@@ -177,7 +188,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 				}
 			});
 
-			final ChannelPipeline serverPipeline = this.realServer.getChannel().pipeline();
+			final ChannelPipeline serverPipeline = this.serverChannel.pipeline();
 			serverPipeline.addLast(new PacketRewriterEncoder());
 			serverPipeline.addLast(new BetaPacketWriter());
 		}
@@ -187,8 +198,8 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final Object object) {
 		LOGGER.info("Sending Packet to Server: {}", object);
-		if (this.realServer != null) {
-			this.realServer.getChannel().writeAndFlush(object).syncUninterruptibly();
+		if (this.isConnectedToServer()) {
+			this.serverChannel.writeAndFlush(io.netty.util.ReferenceCountUtil.retain(object));
 		}
 	}
 
@@ -196,11 +207,6 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	public void channelInactive(final ChannelHandlerContext context) {
 		LAST_CONNECTION_ID--;
 		LOGGER.info("Connection lost!");
-		if (this.realServer != null) {
-			LOGGER.info("Disconnected from real server!");
-			this.realServer.getChannel().closeFuture();
-			this.realServer = null;
-		}
 	}
 
 	@Override

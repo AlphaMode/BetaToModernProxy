@@ -3,7 +3,6 @@ package me.alphamode.beta.proxy.rewriter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.alphamode.beta.proxy.networking.Connection;
-import me.alphamode.beta.proxy.networking.ProxyChannel;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
@@ -18,9 +17,11 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterDecoder.class);
 	public static final String KEY = "packet-rewriter-decoder";
 
+	private final Connection connection;
 	private final DecoderRewriter rewriter;
 
-	public PacketRewriterDecoder(final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+	public PacketRewriterDecoder(final Connection connection, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+		this.connection = connection;
 		this.rewriter = new DecoderRewriter(defaultTags, defaultRegistries);
 		this.rewriter.registerPackets();
 	}
@@ -29,14 +30,14 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<? extends ModernPackets> packet, final List<Object> out) throws Exception {
 		LOGGER.debug("Rewriter hit: {}", packet.getClass());
-		final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
 		for (final Class<?> clazz : this.rewriter.serverboundRewriters.keySet()) {
 			if (clazz.isAssignableFrom(packet.getClass())) {
-				final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(connection, packet);
+				final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(this.connection, packet);
 				if (betaPacket != null) {
 					out.add(betaPacket);
 				}
 
+				LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
 				return;
 			}
 		}

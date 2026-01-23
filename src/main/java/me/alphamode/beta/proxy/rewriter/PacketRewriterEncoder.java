@@ -35,6 +35,7 @@ public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRec
 					out.add(modernPacket);
 				}
 
+				LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
 				return;
 			}
 		}

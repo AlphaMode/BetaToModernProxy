@@ -20,7 +20,7 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 	// Server -> Proxy -> Client
 	@Override
 	protected void initChannel(final Channel channel) {
-		channel.pipeline().addLast(ModernPacketReader.KEY, new ModernPacketReader());
+//		channel.pipeline().addLast(ModernPacketReader.KEY, new ModernPacketReader());
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<ModernRecordPacket<?>>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext ctx, final ModernRecordPacket<?> buf) {
