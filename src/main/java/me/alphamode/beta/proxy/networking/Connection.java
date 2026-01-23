@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
@@ -37,6 +38,8 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 
 	public void write(final ByteBuf buf) {
 		if (this.isConnected()) {
+			// Rewrite here
+
 			this.channel.writeAndFlush(buf);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
@@ -44,6 +47,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	}
 
 	public void send(final RecordPacket<?> packet) {
+		LOGGER.warn("[P2C] Attempting to send {} packet", packet.getType());
 		if (this.isConnected()) {
 			if (packet instanceof ModernRecordPacket<?> modernPacket && modernPacket.getState() != this.state) {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
@@ -124,22 +128,24 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
 		LOGGER.info("Connection acquired!");
+
 		this.channel = context.channel();
 		if (this.realServer == null) {
 			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
-			this.realServer = new NetClient(new RelayChannel(context.channel()));
+			this.realServer = new NetClient(new RelayChannel(this));
 			this.realServer.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
 					LOGGER.info("Failed to connect to real server!");
 					future.cause().printStackTrace();
-					context.close();
+					context.close().syncUninterruptibly();
 				}
 			});
+
 			this.realServer.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<>() {
 				@Override
 				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
 					LOGGER.info(data);
-					channel.writeAndFlush(data);
+					channel.writeAndFlush(data).syncUninterruptibly();
 				}
 
 				@Override
@@ -147,15 +153,17 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 					context.close();
 				}
 			});
+
+			this.channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 		}
 	}
 
 	// Out channel (Writing from Proxy to Serer)
 	@Override
-	protected void channelRead0(final ChannelHandlerContext ctx, final Object packet) {
-		LOGGER.info("Sending Packet to Server: {}", packet);
+	protected void channelRead0(final ChannelHandlerContext context, final Object object) {
+		LOGGER.info("Sending Packet to Server: {}", object);
 		if (this.realServer != null) {
-			this.realServer.getChannel().writeAndFlush(packet).syncUninterruptibly();
+			this.realServer.getChannel().writeAndFlush(object).syncUninterruptibly();
 		}
 	}
 
@@ -165,14 +173,14 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 		LOGGER.info("Connection lost!");
 		if (this.realServer != null) {
 			LOGGER.info("Disconnected from real server!");
-			this.realServer.getChannel().closeFuture();
+			this.realServer.getChannel().close().syncUninterruptibly();
 			this.realServer = null;
 		}
 	}
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
-		LOGGER.error(String.format("Caught exception in connection (%s)", this.username), cause);
-        this.kick(cause.getMessage());
+		LOGGER.error("Caught exception in connection ({})", this.username, cause);
+		this.kick(cause.getMessage());
 	}
 }

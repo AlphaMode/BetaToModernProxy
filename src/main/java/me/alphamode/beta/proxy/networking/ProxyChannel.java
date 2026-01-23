@@ -30,8 +30,6 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 	// Client -> Proxy -> Server
 	@Override
 	protected void initChannel(final Channel channel) {
-		final Connection connection = new Connection(this.address);
-
 		// Reads Prefixed Length & Splits Packets
 		channel.pipeline().addLast(new PacketSizer());
 
@@ -44,6 +42,7 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		// BetaPacket -> ByteBuf
 		channel.pipeline().addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 
+		final Connection connection = new Connection(this.address);
 		channel.pipeline().addLast(connection);
 		channel.attr(CONNECTION_KEY).set(connection);
 	}
