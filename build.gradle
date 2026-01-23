@@ -5,6 +5,14 @@ plugins {
 group = "me.alphamode.beta.proxy"
 version = "1.0-SNAPSHOT"
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/generated/resources"
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 
