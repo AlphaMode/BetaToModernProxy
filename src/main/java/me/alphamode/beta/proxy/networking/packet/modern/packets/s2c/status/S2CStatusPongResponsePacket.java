@@ -5,11 +5,11 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.util.codec.BasicCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record S2CPongResponsePacket(long time) implements S2CStatusPacket {
-	public static final StreamCodec<ByteBuf, S2CPongResponsePacket> CODEC = StreamCodec.composite(
+public record S2CStatusPongResponsePacket(long time) implements S2CStatusPacket {
+	public static final StreamCodec<ByteBuf, S2CStatusPongResponsePacket> CODEC = StreamCodec.composite(
 			BasicCodecs.LONG,
-			S2CPongResponsePacket::time,
-			S2CPongResponsePacket::new
+			S2CStatusPongResponsePacket::time,
+			S2CStatusPongResponsePacket::new
 	);
 
 	@Override

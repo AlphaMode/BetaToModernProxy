@@ -17,6 +17,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCus
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusPingRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
@@ -25,7 +26,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPongResponsePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
@@ -96,7 +97,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundPlayPackets.PADDLE_BOAT, null);
 		this.registerPacket(ServerboundPlayPackets.PICK_ITEM_FROM_BLOCK, null);
 		this.registerPacket(ServerboundPlayPackets.PICK_ITEM_FROM_ENTITY, null);
-		this.registerPacket(ServerboundPlayPackets.PING_REQUEST, C2SPingRequestPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.PING_REQUEST, C2SPlayPingRequestPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PLACE_RECIPE, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ABILITIES, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ACTION, null);
@@ -271,11 +272,11 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	private void registerStatusPackets() {
 		// Serverbound
 		this.registerPacket(ServerboundStatusPackets.STATUS_REQUEST, C2SStatusRequestPacket.CODEC);
-		this.registerPacket(ServerboundStatusPackets.PING_REQUEST, null);
+		this.registerPacket(ServerboundStatusPackets.PING_REQUEST, C2SStatusPingRequestPacket.CODEC);
 
 		// Clientbound
 		this.registerPacket(ClientboundStatusPackets.STATUS_RESPONSE, S2CStatusResponsePacket.CODEC);
-		this.registerPacket(ClientboundStatusPackets.PONG_RESPONSE, S2CPongResponsePacket.CODEC);
+		this.registerPacket(ClientboundStatusPackets.PONG_RESPONSE, S2CStatusPongResponsePacket.CODEC);
 	}
 
 	private void registerLoginPackets() {

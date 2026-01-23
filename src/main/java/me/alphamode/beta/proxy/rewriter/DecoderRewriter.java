@@ -24,7 +24,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CPongResponsePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
@@ -77,7 +77,7 @@ public final class DecoderRewriter extends Rewriter {
 			final BrodernProxy proxy = BrodernProxy.getProxy();
 			final ServerStatus serverStatus = new ServerStatus(proxy.getMessage(), Optional.of(new ServerStatus.Players(proxy.getConfig().getMaxPlayers(), 0, List.of())), Optional.of(new ServerStatus.Version(proxy.getBrand(), 774)), Optional.empty(), false);
 			connection.send(new S2CStatusResponsePacket(serverStatus));
-			connection.send(new S2CPongResponsePacket(0L));
+			connection.send(new S2CStatusPongResponsePacket(0L));
 			connection.disconnect();
 			return null;
 		});
