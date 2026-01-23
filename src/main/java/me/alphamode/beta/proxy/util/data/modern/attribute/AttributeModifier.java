@@ -63,8 +63,6 @@ public interface AttributeModifier<Subject, Argument> {
             BlendToGray.CODEC
     );
 
-    Codec<Argument> argumentCodec(EnvironmentAttribute<Subject> attribute);
-
     enum OperationId implements StringRepresentable {
         OVERRIDE("override"),
         ALPHA_BLEND("alpha_blend"),
