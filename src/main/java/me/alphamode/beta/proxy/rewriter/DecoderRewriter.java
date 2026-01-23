@@ -19,6 +19,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCus
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusPingRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
@@ -87,8 +88,11 @@ public final class DecoderRewriter extends Rewriter {
 					false
 			);
 			connection.send(new S2CStatusResponsePacket(serverStatus));
+			return null;
+		});
+
+		this.registerServerboundRewriter(C2SStatusPingRequestPacket.class, (connection, _) -> {
 			connection.send(new S2CStatusPongResponsePacket(0L));
-			connection.disconnect();
 			return null;
 		});
 

@@ -33,9 +33,10 @@ public final class PacketRewriterEncoder extends MessageToMessageEncoder<BetaRec
 				final ModernRecordPacket<?> modernPacket = this.rewriter.clientboundRewriters.get(clazz).apply(connection, packet);
 				if (modernPacket != null) {
 					out.add(modernPacket);
+				} else {
+					LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
 				}
 
-				LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
 				return;
 			}
 		}

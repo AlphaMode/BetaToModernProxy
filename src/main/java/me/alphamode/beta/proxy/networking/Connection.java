@@ -189,8 +189,8 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 			});
 
 			final ChannelPipeline serverPipeline = this.serverChannel.pipeline();
-			serverPipeline.addLast(new PacketRewriterEncoder());
-			serverPipeline.addLast(new BetaPacketWriter());
+			serverPipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder());
+			serverPipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 		}
 	}
 
