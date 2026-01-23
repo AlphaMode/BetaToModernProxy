@@ -51,6 +51,7 @@ public record BrodernProxy(Config config) {
 
 	public BrodernProxy {
 		INSTANCE = this;
+		config.load();
 	}
 
 	public void listen() {
