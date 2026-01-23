@@ -4,18 +4,20 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.MessageToMessageCodec;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.UUID;
 
 // Proxy -> Client
@@ -61,18 +63,15 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 			this.send(new DisconnectPacket(message.asLegacyFormatString()));
 		} else {
 			switch (this.state) {
-				case HANDSHAKING ->
-						throw new RuntimeException("Cannot send disconnect packet during HANDSHAKING state");
-				case PLAY -> this.send(new S2CDisconnectPacket(message));
+				case HANDSHAKING -> throw new RuntimeException("Cannot send disconnect packet during HANDSHAKING state");
+				case PLAY -> this.send(new S2CPlayDisconnectPacket(message));
 				case STATUS -> throw new RuntimeException("Cannot send disconnect packet during STATUS state");
-				case LOGIN -> throw new RuntimeException("TODO");
-				case CONFIGURATION -> throw new RuntimeException("TODO");
+				case LOGIN -> throw new RuntimeException("TODO LOGIN DISCONNECT");
+				case CONFIGURATION -> throw new RuntimeException("TODO CONFIGURATION DISCONNECT");
 			}
 		}
 
-		if (this.channel.isActive()) {
-			this.disconnect();
-		}
+		this.disconnect();
 	}
 
 	public void kick(final String message) {
@@ -127,6 +126,21 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	public void channelActive(final ChannelHandlerContext context) {
 		LOGGER.info("Connection acquired!");
 		this.channel = context.channel();
+		this.channel.pipeline().addLast(new MessageToMessageCodec<>() {
+			@Override
+			protected void encode(final ChannelHandlerContext ctx, final Object msg, final List<Object> out) throws Exception {
+				LOGGER.warn("ENCODING");
+				LOGGER.warn("{}", msg);
+				out.add(msg);
+			}
+
+			@Override
+			protected void decode(final ChannelHandlerContext ctx, final Object msg, final List<Object> out) throws Exception {
+				LOGGER.warn("DECODING");
+				out.add(msg);
+			}
+		});
+
 		if (this.realServer == null) {
 			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 			this.realServer = new NetClient(new RelayChannel(context.channel()));

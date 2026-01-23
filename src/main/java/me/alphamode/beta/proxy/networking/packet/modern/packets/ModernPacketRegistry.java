@@ -25,7 +25,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
@@ -160,7 +160,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundPlayPackets.DEBUG_EVENT, null);
 		this.registerPacket(ClientboundPlayPackets.DEBUG_SAMPLE, null);
 		this.registerPacket(ClientboundPlayPackets.DELETE_CHAT, null);
-		this.registerPacket(ClientboundPlayPackets.DISCONNECT, S2CDisconnectPacket.CODEC);
+		this.registerPacket(ClientboundPlayPackets.DISCONNECT, S2CPlayDisconnectPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.DISGUISED_CHAT, null);
 		this.registerPacket(ClientboundPlayPackets.ENTITY_EVENT, null);
 		this.registerPacket(ClientboundPlayPackets.ENTITY_POSITION_SYNC, null);

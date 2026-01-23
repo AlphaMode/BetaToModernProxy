@@ -3,8 +3,11 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class BetaPacketWriter extends MessageToByteEncoder<BetaRecordPacket> {
+	private static final Logger LOGGER = LogManager.getLogger(BetaPacketWriter.class);
 	public static final String KEY = "beta-encoder";
 
 	@Override
@@ -14,7 +17,8 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaRecordPacke
 		try {
 			BetaPacketRegistry.INSTANCE.getCodec(type).encode(buf, packet);
 		} catch (Exception exception) {
-			exception.printStackTrace();
+			LOGGER.info("Failed to encode beta packet");
+			throw new RuntimeException(exception);
 		}
 	}
 }

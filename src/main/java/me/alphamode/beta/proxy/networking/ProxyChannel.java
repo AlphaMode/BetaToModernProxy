@@ -5,7 +5,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
@@ -37,7 +36,7 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(new PacketRewriterDecoder(this.defaultTags, this.defaultRegistries));
 
 		// BetaPacket -> ByteBuf
-		channel.pipeline().addLast(ModernPacketWriter.KEY, new BetaPacketWriter());
+		channel.pipeline().addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 
 		final Connection connection = new Connection(MinecraftServerAddress.ofResolved(this.serverIp));
 		channel.pipeline().addLast(connection);

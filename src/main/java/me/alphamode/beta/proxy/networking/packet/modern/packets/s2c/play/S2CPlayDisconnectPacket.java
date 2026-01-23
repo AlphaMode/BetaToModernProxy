@@ -8,11 +8,11 @@ import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.text.TextComponent;
 
-public record S2CDisconnectPacket(TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundPlayPackets> {
-	public static final StreamCodec<ByteBuf, S2CDisconnectPacket> CODEC = StreamCodec.composite(
+public record S2CPlayDisconnectPacket(TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundPlayPackets> {
+	public static final StreamCodec<ByteBuf, S2CPlayDisconnectPacket> CODEC = StreamCodec.composite(
 			ModernCodecs.COMPONENT,
-			S2CDisconnectPacket::reason,
-			S2CDisconnectPacket::new
+			S2CPlayDisconnectPacket::reason,
+			S2CPlayDisconnectPacket::new
 	);
 
 	@Override
