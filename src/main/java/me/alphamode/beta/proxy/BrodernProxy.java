@@ -1,13 +1,12 @@
 package me.alphamode.beta.proxy;
 
-import me.alphamode.beta.proxy.api.ProxyAPI;
 import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
-import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetServer;
+import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,16 +15,16 @@ import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
-public class BrodernProxy implements ProxyAPI {
-	private static BrodernProxy instance;
+public record BrodernProxy(Config config) {
+	private static BrodernProxy INSTANCE;
 	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
 
 	public static BrodernProxy getProxy() {
-		if (instance == null) {
+		if (INSTANCE == null) {
 			throw new IllegalStateException("Proxy has not been initialized yet");
 		}
 
-		return instance;
+		return INSTANCE;
 	}
 
 	private static final CompoundTag DEFAULT_TAGS;
@@ -50,51 +49,18 @@ public class BrodernProxy implements ProxyAPI {
 		DEFAULT_REGISTRIES = tag;
 	}
 
-	private final Config config;
-	private String brand;
-	private TextComponent message;
-	private final String bindAddress;
-	private final int bindPort;
-	private final String serverAddress;
-
-	public BrodernProxy(final Config config) {
-		instance = this;
-		this.config = config;
-		this.brand = config.getBrand();
-		this.message = config.getMessage();
-		this.bindAddress = config.getBindAddress();
-		this.bindPort = config.getBindPort();
-		this.serverAddress = config.getServerAddress();
+	public BrodernProxy {
+		INSTANCE = this;
 	}
 
 	public void listen() {
-		LOGGER.info("Listening on {}:{} -> {}", this.bindAddress, this.bindPort, this.serverAddress);
-		new NetServer(new ProxyChannel(this.serverAddress, DEFAULT_TAGS, DEFAULT_REGISTRIES))
-				.bind(new InetSocketAddress(this.bindAddress, this.bindPort));
-	}
+		final String bindAddress = this.config.getBindAddress();
+		final int bindPort = this.config.getBindPort();
+		final String serverAddress = this.config.getServerAddress();
+		final int serverPort = this.config.getServerPort();
 
-	@Override
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-	@Override
-	public String getBrand() {
-		return this.brand;
-	}
-
-	@Override
-	public void setMessage(TextComponent description) {
-		this.message = description;
-	}
-
-	@Override
-	public TextComponent getMessage() {
-		return this.message;
-	}
-
-	@Override
-	public Config getConfig() {
-		return this.config;
+		LOGGER.info("Listening on {}:{} -> {}:{}", bindAddress, bindPort, serverAddress, serverPort);
+		new NetServer(new ProxyChannel(MinecraftServerAddress.ofResolved(serverAddress, serverPort), DEFAULT_TAGS, DEFAULT_REGISTRIES))
+				.bind(new InetSocketAddress(bindAddress, bindPort));
 	}
 }

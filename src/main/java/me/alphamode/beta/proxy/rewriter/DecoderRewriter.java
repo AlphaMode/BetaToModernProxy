@@ -79,7 +79,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
 			final BrodernProxy proxy = BrodernProxy.getProxy();
-			final ServerStatus serverStatus = new ServerStatus(proxy.getMessage(), Optional.of(new ServerStatus.Players(proxy.getConfig().getMaxPlayers(), 0, List.of())), Optional.of(new ServerStatus.Version(proxy.getBrand(), 774)), Optional.empty(), false);
+			final ServerStatus serverStatus = new ServerStatus(proxy.getMessage(), Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())), Optional.of(new ServerStatus.Version(proxy.getBrand(), 774)), Optional.empty(), false);
 			connection.send(new S2CStatusResponsePacket(serverStatus));
 			connection.send(new S2CStatusPongResponsePacket(0L));
 			connection.disconnect();
