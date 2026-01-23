@@ -4,13 +4,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 
-public final class BetaPacketWriter extends MessageToByteEncoder<RecordPacket<BetaPackets>> {
+public final class BetaPacketWriter extends MessageToByteEncoder<BetaRecordPacket> {
 	public static final String KEY = "beta-encoder";
 
 	@Override
-	protected void encode(final ChannelHandlerContext context, final RecordPacket<BetaPackets> packet, final ByteBuf buf) {
+	protected void encode(final ChannelHandlerContext context, final BetaRecordPacket packet, final ByteBuf buf) throws Exception {
 		final BetaPacketRegistry packetRegistry = context.channel().attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).get();
 		if (packetRegistry == null) {
 			throw new IllegalStateException("Can't write Packet without a packet registry");
