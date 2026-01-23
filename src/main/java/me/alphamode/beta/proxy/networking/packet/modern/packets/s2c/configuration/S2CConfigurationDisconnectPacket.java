@@ -8,8 +8,7 @@ import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.text.TextComponent;
 
-public record S2CConfigurationDisconnectPacket(
-		TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundConfigurationPackets> {
+public record S2CConfigurationDisconnectPacket(TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, S2CConfigurationDisconnectPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.COMPONENT,
 			S2CConfigurationDisconnectPacket::reason,

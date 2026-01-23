@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ClientboundLoginPackets implements ModernClientboundPackets {
-	LOGIN_DISCONNECT(0x00, Identifier.defaultNamespace("login_disconnect"), PacketState.LOGIN),
+	DISCONNECT(0x00, Identifier.defaultNamespace("login_disconnect"), PacketState.LOGIN),
 	HELLO(0x01, Identifier.defaultNamespace("hello"), PacketState.LOGIN),
 	FINISHED(0x02, Identifier.defaultNamespace("login_finished"), PacketState.LOGIN),
 	COMPRESSION(0x03, Identifier.defaultNamespace("login_compression"), PacketState.LOGIN),

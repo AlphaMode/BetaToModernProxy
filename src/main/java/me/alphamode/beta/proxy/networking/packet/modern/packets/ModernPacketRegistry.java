@@ -288,7 +288,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundLoginPackets.COOKIE_RESPONSE, null);
 
 		// Clientbound
-		this.registerPacket(ClientboundLoginPackets.LOGIN_DISCONNECT, null);
+		this.registerPacket(ClientboundLoginPackets.DISCONNECT, null);
 		this.registerPacket(ClientboundLoginPackets.HELLO, S2CHelloPacket.CODEC);
 		this.registerPacket(ClientboundLoginPackets.FINISHED, S2CLoginFinishedPacket.CODEC);
 		this.registerPacket(ClientboundLoginPackets.COMPRESSION, null);

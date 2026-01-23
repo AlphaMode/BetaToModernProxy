@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
@@ -12,6 +13,10 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Disc
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.lenni0451.mcstructs.text.TextComponent;
@@ -23,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 
 // Proxy -> Client
-public final class Connection extends SimpleChannelInboundHandler<Object> {
+public final class Connection extends SimpleChannelInboundHandler<Object> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
@@ -63,13 +68,9 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 		if (this.protocolVersion == BetaRecordPacket.PROTOCOL_VERSION) {
 			this.send(new DisconnectPacket(message.asLegacyFormatString()));
 		} else {
-			switch (this.state) {
-				case HANDSHAKING ->
-						throw new RuntimeException("Cannot send disconnect packet during HANDSHAKING state");
-				case PLAY -> this.send(new S2CPlayDisconnectPacket(message));
-				case STATUS -> throw new RuntimeException("Cannot send disconnect packet during STATUS state");
-				case LOGIN -> throw new RuntimeException("TODO LOGIN DISCONNECT");
-				case CONFIGURATION -> throw new RuntimeException("TODO CONFIGURATION DISCONNECT");
+			final S2CCommonDisconnectPacket<?> disconnectPacket = this.createDisconnectPacket(message);
+			if (disconnectPacket != null) {
+				this.send(disconnectPacket);
 			}
 		}
 
@@ -122,6 +123,21 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 
 	public void setProtocolVersion(final int protocolVersion) {
 		this.protocolVersion = protocolVersion;
+	}
+
+	@Override
+	public S2CCommonDisconnectPacket<?> createDisconnectPacket(final TextComponent message) {
+		return switch (this.state) {
+			case HANDSHAKING, STATUS -> null;
+			case PLAY -> new S2CPlayDisconnectPacket(message);
+			case LOGIN -> new S2CLoginDisconnectPacket(message);
+			case CONFIGURATION -> new S2CConfigurationDisconnectPacket(message);
+		};
+	}
+
+	@Override
+	public S2CCommonKeepAlivePacket<?> getKeepAlivePacket(final long time) {
+		return null;
 	}
 
 	@Override
