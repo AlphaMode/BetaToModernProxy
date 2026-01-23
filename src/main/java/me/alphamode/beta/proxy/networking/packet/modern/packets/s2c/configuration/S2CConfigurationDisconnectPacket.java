@@ -16,11 +16,6 @@ public record S2CConfigurationDisconnectPacket(TextComponent reason) implements 
 	);
 
 	@Override
-	public TextComponent getReason() {
-		return this.reason;
-	}
-
-	@Override
 	public ClientboundConfigurationPackets getType() {
 		return ClientboundConfigurationPackets.DISCONNECT;
 	}
@@ -28,5 +23,10 @@ public record S2CConfigurationDisconnectPacket(TextComponent reason) implements 
 	@Override
 	public PacketState getState() {
 		return PacketState.CONFIGURATION;
+	}
+
+	@Override
+	public TextComponent getReason() {
+		return this.reason;
 	}
 }

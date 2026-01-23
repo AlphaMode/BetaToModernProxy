@@ -16,8 +16,10 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2ConfigurationKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
@@ -137,7 +139,11 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 
 	@Override
 	public S2CCommonKeepAlivePacket<?> getKeepAlivePacket(final long time) {
-		return null;
+		return switch (this.state) {
+			case HANDSHAKING, STATUS, LOGIN -> null;
+			case PLAY -> new S2CPlayKeepAlivePacket(time);
+			case CONFIGURATION -> new S2ConfigurationKeepAlivePacket(time);
+		};
 	}
 
 	@Override

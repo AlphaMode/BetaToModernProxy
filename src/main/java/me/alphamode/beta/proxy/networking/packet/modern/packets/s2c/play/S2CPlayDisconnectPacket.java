@@ -16,8 +16,8 @@ public record S2CPlayDisconnectPacket(TextComponent reason) implements S2CCommon
 	);
 
 	@Override
-	public TextComponent getReason() {
-		return this.reason;
+	public ClientboundPlayPackets getType() {
+		return ClientboundPlayPackets.DISCONNECT;
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public record S2CPlayDisconnectPacket(TextComponent reason) implements S2CCommon
 	}
 
 	@Override
-	public ClientboundPlayPackets getType() {
-		return ClientboundPlayPackets.DISCONNECT;
+	public TextComponent getReason() {
+		return this.reason;
 	}
 }
