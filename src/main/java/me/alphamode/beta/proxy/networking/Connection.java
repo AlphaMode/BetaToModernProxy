@@ -47,10 +47,10 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	}
 
 	public void write(final ByteBuf buf) {
-		if (this.isConnected()) {
+		if (this.isConnected() && this.clientChannel.isWritable()) {
 			this.clientChannel.writeAndFlush(buf);
 		} else {
-			throw new RuntimeException("Cannot write to dead connection!");
+			throw new RuntimeException("Cannot write to connection!");
 		}
 	}
 

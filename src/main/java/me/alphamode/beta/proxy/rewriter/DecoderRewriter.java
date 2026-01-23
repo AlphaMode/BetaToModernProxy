@@ -9,7 +9,6 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Hand
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
@@ -56,7 +55,7 @@ public final class DecoderRewriter extends Rewriter {
 
 	@Override
 	public void registerPackets() {
-		this.registerRewriter(C2SIntentionRecordPacket.class, PacketDirection.SERVERBOUND, (connection, packet) -> {
+		this.registerServerboundRewriter(C2SIntentionRecordPacket.class, (connection, packet) -> {
 			switch (packet.intention()) {
 				case LOGIN -> connection.setState(PacketState.LOGIN);
 				case STATUS -> connection.setState(PacketState.STATUS);
@@ -71,14 +70,14 @@ public final class DecoderRewriter extends Rewriter {
 			}
 		});
 
-		this.registerRewriter(C2SHelloPacket.class, PacketDirection.SERVERBOUND, (connection, packet) -> {
+		this.registerServerboundRewriter(C2SHelloPacket.class, (connection, packet) -> {
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
 			connection.send(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
 			return new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0);
 		});
 
-		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
+		this.registerServerboundRewriter(C2SStatusRequestPacket.class, (connection, _) -> {
 			final BrodernProxy proxy = BrodernProxy.getProxy();
 			final ServerStatus serverStatus = new ServerStatus(
 					proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.isConnectedToServer())),
@@ -93,9 +92,9 @@ public final class DecoderRewriter extends Rewriter {
 			return null;
 		});
 
-		this.registerRewriter(C2SCommonKeepAlivePacket.class, PacketDirection.SERVERBOUND, (_, _) -> new KeepAlivePacket());
+		this.registerServerboundRewriter(C2SCommonKeepAlivePacket.class, (_, _) -> new KeepAlivePacket());
 
-		this.registerRewriter(C2SLoginAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
+		this.registerServerboundRewriter(C2SLoginAcknowledgedPacket.class, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
 
 			// Send Tags
@@ -108,21 +107,21 @@ public final class DecoderRewriter extends Rewriter {
 			return null;
 		});
 
-		this.registerRewriter(C2SFinishConfigurationPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
+		this.registerServerboundRewriter(C2SFinishConfigurationPacket.class, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
 			//connection.kick("meow meow mrrp :3 nyaaa uwu");
 			return null;
 		});
 
-		this.registerRewriter(C2SConfigurationAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, packet) -> {
+		this.registerServerboundRewriter(C2SConfigurationAcknowledgedPacket.class, (connection, packet) -> {
 			LOGGER.info("meow meow");
 			return null;
 		});
 
 		// Cancel
-		this.registerRewriter(C2SCommonCustomPayloadPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
-		this.registerRewriter(C2SCustomQueryAnswerPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
-		this.registerRewriter(C2SClientInformationPacket.class, PacketDirection.SERVERBOUND, (_, _) -> null);
+		this.registerServerboundRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> null);
+		this.registerServerboundRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> null);
+		this.registerServerboundRewriter(C2SClientInformationPacket.class, (_, _) -> null);
 	}
 
 	private void sendTags(final Connection connection) {
