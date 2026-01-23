@@ -33,8 +33,8 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.attr(MODERN_PACKET_REGISTRY_KEY).set(ModernPacketRegistry.INSTANCE);
 
 		channel.pipeline().addLast(new PacketSizer());
-		channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 		channel.pipeline().addLast(ModernPacketReader.KEY, new ModernPacketReader());
+		channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
 		final Connection connection = new Connection(MinecraftServerAddress.ofResolved(this.serverIp));
 		channel.pipeline().addLast(new PacketRewriterDecoder(this.defaultTags, this.defaultRegistries));
