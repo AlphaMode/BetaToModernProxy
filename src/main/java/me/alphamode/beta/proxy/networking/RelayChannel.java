@@ -5,8 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
@@ -27,7 +27,7 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		channel.attr(ProxyChannel.BETA_PACKET_REGISTRY_KEY).set(BetaPacketRegistry.INSTANCE);
 		channel.attr(ProxyChannel.MODERN_PACKET_REGISTRY_KEY).set(ModernPacketRegistry.INSTANCE);
 		// ByteBuf -> BetaPacket
-		channel.pipeline().addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+		channel.pipeline().addLast(BetaPacketReader.KEY, new BetaPacketReader());
 		// BetaPacket -> ModernPacket
 		channel.pipeline().addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder());
 		//  ModernPacket -> ByteBuf
