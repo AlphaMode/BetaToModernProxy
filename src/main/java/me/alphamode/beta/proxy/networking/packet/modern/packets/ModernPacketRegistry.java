@@ -19,13 +19,12 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusPingRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
@@ -171,7 +170,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundPlayPackets.MOUNT_SCREEN_OPEN, null);
 		this.registerPacket(ClientboundPlayPackets.HURT_ANIMATION, null);
 		this.registerPacket(ClientboundPlayPackets.INITIALIZE_BORDER, null);
-		this.registerPacket(ClientboundPlayPackets.KEEP_ALIVE, null);
+		this.registerPacket(ClientboundPlayPackets.KEEP_ALIVE, S2CPlayKeepAlivePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.LEVEL_CHUNK_WITH_LIGHT, null);
 		this.registerPacket(ClientboundPlayPackets.LEVEL_EVENT, null);
 		this.registerPacket(ClientboundPlayPackets.LEVEL_PARTICLES, null);
@@ -288,7 +287,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ServerboundLoginPackets.COOKIE_RESPONSE, null);
 
 		// Clientbound
-		this.registerPacket(ClientboundLoginPackets.DISCONNECT, null);
+		this.registerPacket(ClientboundLoginPackets.DISCONNECT, S2CLoginDisconnectPacket.CODEC);
 		this.registerPacket(ClientboundLoginPackets.HELLO, S2CHelloPacket.CODEC);
 		this.registerPacket(ClientboundLoginPackets.FINISHED, S2CLoginFinishedPacket.CODEC);
 		this.registerPacket(ClientboundLoginPackets.COMPRESSION, null);
@@ -314,7 +313,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundConfigurationPackets.CUSTOM_PAYLOAD, null);
 		this.registerPacket(ClientboundConfigurationPackets.DISCONNECT, S2CConfigurationDisconnectPacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.FINISH_CONFIGURATION, S2CFinishConfigurationPacket.CODEC);
-		this.registerPacket(ClientboundConfigurationPackets.KEEP_ALIVE, null);
+		this.registerPacket(ClientboundConfigurationPackets.KEEP_ALIVE, S2CConfigurationKeepAlivePacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.PING, null);
 		this.registerPacket(ClientboundConfigurationPackets.RESET_CHAT, null);
 		this.registerPacket(ClientboundConfigurationPackets.REGISTRY_DATA, S2CRegistryDataPacket.CODEC);

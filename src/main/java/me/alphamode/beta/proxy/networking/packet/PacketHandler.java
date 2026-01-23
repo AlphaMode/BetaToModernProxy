@@ -7,5 +7,5 @@ import net.lenni0451.mcstructs.text.TextComponent;
 public interface PacketHandler {
 	S2CCommonDisconnectPacket<?> createDisconnectPacket(final TextComponent message);
 
-	S2CCommonKeepAlivePacket<?> getKeepAlivePacket(final long time);
+	S2CCommonKeepAlivePacket<?> createKeepAlivePacket(final long time);
 }

@@ -16,7 +16,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationDisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2ConfigurationKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CConfigurationKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
@@ -138,11 +138,11 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	}
 
 	@Override
-	public S2CCommonKeepAlivePacket<?> getKeepAlivePacket(final long time) {
+	public S2CCommonKeepAlivePacket<?> createKeepAlivePacket(final long time) {
 		return switch (this.state) {
 			case HANDSHAKING, STATUS, LOGIN -> null;
 			case PLAY -> new S2CPlayKeepAlivePacket(time);
-			case CONFIGURATION -> new S2ConfigurationKeepAlivePacket(time);
+			case CONFIGURATION -> new S2CConfigurationKeepAlivePacket(time);
 		};
 	}
 

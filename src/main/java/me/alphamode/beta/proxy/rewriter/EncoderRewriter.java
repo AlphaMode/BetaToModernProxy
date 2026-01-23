@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.rewriter;
 
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,11 @@ public final class EncoderRewriter extends Rewriter {
 
 	@Override
 	public void registerPackets() {
+		this.registerClientboundRewriter(KeepAlivePacket.class, (connection, _) -> {
+			LOGGER.info("keep alive");
+			return connection.createKeepAlivePacket(0L);
+		});
+
 		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
 			LOGGER.info("Encoding Handshake Packet to Modern");
 			return new S2CHelloPacket("_", new byte[0], new byte[0], false);
