@@ -8,4 +8,10 @@ import java.util.Map;
 public class EnvironmentAttributeMap {
     public static final EnvironmentAttributeMap EMPTY = new EnvironmentAttributeMap(/*Map.of()*/);
     public static final Codec<EnvironmentAttributeMap> CODEC = null;
+
+    private final Map<EnvironmentAttribute<?>, EnvironmentAttributeMap.Entry<?, ?>> entries;
+
+    public record Entry<Value, Argument>(Argument argument, AttributeModifier<Value, Argument> modifier) {
+
+    }
 }
