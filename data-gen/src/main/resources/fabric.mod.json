@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "proxy_test",
+  "version": "1.0.0",
+  "name": "Test mod that provides debug info for BetaToModernProxy",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "AlphaMode", "lowercasebtw"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "mixins": [
+    "proxy.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*"
+  }
+}

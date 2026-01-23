@@ -17,6 +17,21 @@ loom {
 
             runDir "build/datagen"
         }
+
+        vanilla {
+            environment("client")
+            mainClass = "net.minecraft.client.main.Main"
+
+            name "Vanilla"
+
+            programArgs "--accessToken", "Proxy", "--version", "Proxy"
+
+            runDir "build/vanilla"
+        }
+    }
+
+    runs {
+
     }
 }
 
@@ -30,6 +45,8 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:1.21.11_unobfuscated"
+
+    implementation "net.fabricmc:fabric-loader:0.18.2"
 }
 
 tasks.withType(JavaCompile).configureEach {
