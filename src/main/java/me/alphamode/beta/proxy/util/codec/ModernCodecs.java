@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface ModernCodecs {
 	Codec<Integer> STRING_RGB_COLOR = hexColor(6).map(ARGB::transparent, ARGB::opaque);
+    Codec<Integer> STRING_ARGB_COLOR = hexColor(8);
 
 	static <A> MapCodec<A> optional(final String name, final Codec<A> codec, final A defaultValue) {
 		return optional(name, codec, defaultValue, false);
