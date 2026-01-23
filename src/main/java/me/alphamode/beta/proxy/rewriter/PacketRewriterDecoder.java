@@ -14,8 +14,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 // Client -> Proxy
-public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
+public final class PacketRewriterDecoder extends MessageToMessageDecoder<Object> {
 	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterDecoder.class);
+	public static final String KEY = "packet-rewriter-decoder";
 
 	private final DecoderRewriter rewriter;
 
@@ -26,11 +27,12 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 
 	// P -> C
 	@Override
-	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<ModernPackets> packet, final List<Object> out) throws Exception {
+	protected void decode(final ChannelHandlerContext context, final Object packet, final List<Object> out) throws Exception {
+		LOGGER.debug("Rewriter hit: {}", packet.getClass());
 		final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
 		for (final Class<?> clazz : this.rewriter.serverboundRewriters.keySet()) {
 			if (clazz.isAssignableFrom(packet.getClass())) {
-				final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(connection, packet);
+				final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(connection, (ModernRecordPacket<?>) packet);
 				if (betaPacket != null) {
 					out.add(betaPacket);
 				}

@@ -217,13 +217,11 @@ public interface ModernCodecs {
 	static <T> StreamCodec<ByteBuf, T> idMapper(final IntFunction<T> byId, final ToIntFunction<T> toId) {
 		return new StreamCodec<>() {
 			public T decode(final ByteBuf buf) {
-				int id = VAR_INT.decode(buf);
-				return byId.apply(id);
+				return byId.apply(VAR_INT.decode(buf));
 			}
 
 			public void encode(final ByteBuf buf, final T value) {
-				int id = toId.applyAsInt(value);
-				VAR_INT.encode(buf, id);
+				VAR_INT.encode(buf, toId.applyAsInt(value));
 			}
 		};
 	}

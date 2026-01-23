@@ -12,13 +12,14 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaRecordPacke
 
 	@Override
 	protected void encode(final ChannelHandlerContext context, final BetaRecordPacket packet, final ByteBuf buf) throws Exception {
-		final BetaPackets type = packet.getType();
-		buf.writeByte(type.getId());
-		try {
-			BetaPacketRegistry.INSTANCE.getCodec(type).encode(buf, packet);
-		} catch (Exception exception) {
-			LOGGER.info("Failed to encode beta packet");
-			throw new RuntimeException(exception);
-		}
+		LOGGER.info("Packeterere {}", packet);
+//		final BetaPackets type = packet.getType();
+//		buf.writeByte(type.getId());
+//		try {
+//			BetaPacketRegistry.INSTANCE.getCodec(type).encode(buf, packet);
+//		} catch (Exception exception) {
+//			LOGGER.info("Failed to encode beta packet");
+//			throw new RuntimeException(exception);
+//		}
 	}
 }
