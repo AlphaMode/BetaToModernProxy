@@ -1,9 +1,12 @@
 package me.alphamode.beta.proxy.util;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.BrodernProxy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public interface DebugUtil {
+	Logger LOGGER = LogManager.getLogger(DebugUtil.class);
+
 	static void printBuf(final ByteBuf buf) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append('[');
@@ -17,6 +20,6 @@ public interface DebugUtil {
 		}
 
 		builder.append(']');
-		BrodernProxy.LOGGER.info(builder.toString());
+		LOGGER.info(builder.toString());
 	}
 }

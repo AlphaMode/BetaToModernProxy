@@ -68,7 +68,7 @@ public class BrodernProxy implements ProxyAPI {
 	}
 
 	public void listen() {
-		BrodernProxy.LOGGER.info("Listening on {}:{} -> {}", this.bindAddress, this.bindPort, this.serverAddress);
+		LOGGER.info("Listening on {}:{} -> {}", this.bindAddress, this.bindPort, this.serverAddress);
 		new NetServer(new ProxyChannel(this.serverAddress, DEFAULT_TAGS, DEFAULT_REGISTRIES))
 				.bind(new InetSocketAddress(this.bindAddress, this.bindPort));
 	}

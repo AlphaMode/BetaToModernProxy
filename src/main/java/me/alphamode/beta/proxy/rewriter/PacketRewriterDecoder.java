@@ -9,11 +9,15 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegi
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 // Client -> Proxy
 public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<ModernPackets>> {
+	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterDecoder.class);
+
 	private final DecoderRewriter rewriter;
 
 	public PacketRewriterDecoder(final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
@@ -29,13 +33,13 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 			throw new RuntimeException("Cannot decode modern packet as packet-registry is null!");
 		} else {
 			final Connection connection = context.channel().attr(ProxyChannel.CONNECTION_KEY).get();
-//			Proxy.LOGGER.info((packet);
+//			LOGGER.info("{}", packet);
 			for (final Class<?> clazz : this.rewriter.serverboundRewriters.keySet()) {
 				if (clazz.isAssignableFrom(packet.getClass())) {
 					final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(connection, packet);
 					if (betaPacket != null) {
-//						Proxy.LOGGER.info("writing beta packet");
-//						Proxy.LOGGER.info(betaPacket);
+//						LOGGER.info("writing beta packet");
+//						LOGGER.info(betaPacket);
 						out.add(betaPacket);
 					}
 

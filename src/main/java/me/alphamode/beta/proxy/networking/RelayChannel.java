@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketEncoder;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 
 public final class RelayChannel extends ChannelInitializer<Channel> {
 	private final Channel otherChannel;
@@ -25,8 +26,8 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		// ByteBuf -> BetaPacket
 		channel.pipeline().addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 		// BetaPacket -> ModernPacket
-//		channel.pipeline().addLast(new PacketRewriterEncoder());
-		// ModernPacket -> ByteBuf?
+		channel.pipeline().addLast(new PacketRewriterEncoder());
+		// TODO: ModernPacket -> ByteBuf?
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final Object buf) {

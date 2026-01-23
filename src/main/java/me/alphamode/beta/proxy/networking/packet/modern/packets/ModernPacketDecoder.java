@@ -3,14 +3,16 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
 import net.raphimc.netminecraft.packet.PacketTypes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class ModernPacketDecoder extends ByteToMessageDecoder {
+	private static final Logger LOGGER = LogManager.getLogger(ModernPacketDecoder.class);
 	public static final String KEY = "modern-decoder";
 
 	@Override
@@ -25,7 +27,7 @@ public class ModernPacketDecoder extends ByteToMessageDecoder {
 			try {
 				out.add(packetRegistry.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
 			} catch (Exception exception) {
-				BrodernProxy.LOGGER.info("Failed to decode modern packet in state {}", connection.getState());
+				LOGGER.info("Failed to decode modern packet in state {}", connection.getState());
 				throw new RuntimeException(exception);
 			}
 		}

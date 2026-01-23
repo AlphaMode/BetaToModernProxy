@@ -36,10 +36,14 @@ import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.lenni0451.mcstructs.nbt.tags.IntArrayTag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
 public final class DecoderRewriter extends Rewriter {
+	private static final Logger LOGGER = LogManager.getLogger(DecoderRewriter.class);
+
 	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
@@ -104,7 +108,7 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		this.registerRewriter(C2SConfigurationAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, packet) -> {
-//			Proxy.LOGGER.info(("meow meow");
+			LOGGER.info("meow meow");
 			return null;
 		});
 
