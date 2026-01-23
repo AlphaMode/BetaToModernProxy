@@ -19,9 +19,11 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 	protected void initChannel(final Channel channel) {
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
 			@Override
-			protected void channelRead0(final ChannelHandlerContext ctx, final ByteBuf buf) {
+			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
 				BrodernProxy.LOGGER.info("Sending Packet to Client: {}", buf);
-				connection.write(buf);
+				if (RelayChannel.this.connection.isConnected()) {
+					RelayChannel.this.connection.write(buf);
+				}
 			}
 		});
 	}
