@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
+import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.registry.Registry;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
@@ -11,8 +12,8 @@ public record CommonPlayerSpawnInfo(
 		Holder<DimensionType> dimensionType,
 		ResourceKey<Registry<Identifier>> dimension,
 		long seed,
-		GameType gameType,
-		@Nullable GameType previousGameType,
+		GameMode gameType,
+		@Nullable GameMode previousGameType,
 		boolean isDebug,
 		boolean isFlat,
 		Optional<GlobalPos> lastDeathLocation,
