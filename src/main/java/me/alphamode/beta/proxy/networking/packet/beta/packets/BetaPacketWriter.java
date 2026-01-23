@@ -12,7 +12,7 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaRecordPacke
 
 	@Override
 	protected void encode(final ChannelHandlerContext context, final BetaRecordPacket packet, final ByteBuf buf) throws Exception {
-		LOGGER.info("Packeterere {}", packet);
+		LOGGER.info("Writing Beta Packet {}", packet);
 		final BetaPackets type = packet.getType();
 		buf.writeByte(type.getId());
 		try {

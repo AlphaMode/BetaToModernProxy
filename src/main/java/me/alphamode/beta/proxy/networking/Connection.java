@@ -3,14 +3,17 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
@@ -47,13 +50,12 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 	}
 
 	public void send(final RecordPacket<?> packet) {
-		LOGGER.warn("[P2C] Attempting to send {} packet", packet.getType());
 		if (this.isConnected()) {
 			if (packet instanceof ModernRecordPacket<?> modernPacket && modernPacket.getState() != this.state) {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
 			}
 
-			LOGGER.info("Sending {} to client!", packet.getType());
+			// LOGGER.info("Sending {} to client!", packet.getType());
 			this.channel.writeAndFlush(packet);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
@@ -130,6 +132,8 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 		LOGGER.info("Connection acquired!");
 
 		this.channel = context.channel();
+		this.channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+
 		if (this.realServer == null) {
 			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 			this.realServer = new NetClient(new RelayChannel(this));
@@ -137,7 +141,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 				if (!future.isSuccess()) {
 					LOGGER.info("Failed to connect to real server!");
 					future.cause().printStackTrace();
-					context.close().syncUninterruptibly();
+					context.channel().closeFuture();
 				}
 			});
 
@@ -154,7 +158,9 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 				}
 			});
 
-			this.channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+			final ChannelPipeline serverPipeline = this.realServer.getChannel().pipeline();
+			serverPipeline.addLast(new PacketRewriterEncoder());
+			serverPipeline.addLast(new BetaPacketWriter());
 		}
 	}
 
