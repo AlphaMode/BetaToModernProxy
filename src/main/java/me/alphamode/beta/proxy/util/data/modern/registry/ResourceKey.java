@@ -30,7 +30,7 @@ public class ResourceKey<T> {
 		this.identifier = identifier;
 	}
 
-	public static <T> StreamCodec<ByteBuf, ResourceKey<T>> codec(final ResourceKey<? extends Registry<T>> registryName) {
+	public static <T> StreamCodec<ByteBuf, ResourceKey<T>> streamCodec(final ResourceKey<? extends Registry<T>> registryName) {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteBuf buf, final ResourceKey<T> value) {

@@ -4,6 +4,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Disc
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLoginPacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +20,7 @@ public final class EncoderRewriter extends Rewriter {
 
 		this.registerClientboundRewriter(LoginPacket.class, (connection, packet) -> {
 			LOGGER.info("Encoding Login Packet to Modern");
-			return null;
+			return new S2CLoginPacket();
 		});
 
 		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {
