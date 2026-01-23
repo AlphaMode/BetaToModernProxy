@@ -9,9 +9,9 @@ public interface ProxyAPI {
 
     String getBrand();
 
-    void setMotd(TextComponent description);
+    void setMessage(TextComponent description);
 
-    TextComponent getMotd();
+    TextComponent getMessage();
 
     Config getConfig();
 }

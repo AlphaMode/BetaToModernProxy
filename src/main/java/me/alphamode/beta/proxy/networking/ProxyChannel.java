@@ -10,6 +10,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegi
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
+import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
 // Packets
 public final class ProxyChannel extends ChannelInitializer<Channel> {
@@ -35,8 +36,8 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(ModernPacketDecoder.KEY, new ModernPacketDecoder());
 		channel.pipeline().addLast(ModernPacketEncoder.KEY, new ModernPacketEncoder());
 
-		final Connection connection = new Connection(this.serverIp);
-		channel.pipeline().addLast(new PacketRewriterDecoder(this.serverIp, this.defaultTags, this.defaultRegistries));
+		final Connection connection = new Connection(MinecraftServerAddress.ofResolved(this.serverIp));
+		channel.pipeline().addLast(new PacketRewriterDecoder(this.defaultTags, this.defaultRegistries));
 		channel.pipeline().addLast(connection);
 		channel.attr(CONNECTION_KEY).set(connection);
 	}

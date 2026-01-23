@@ -36,18 +36,15 @@ import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.lenni0451.mcstructs.nbt.tags.IntArrayTag;
-import net.lenni0451.mcstructs.text.TextComponent;
 
 import java.util.*;
 
 public final class DecoderRewriter extends Rewriter {
-	private final String realServerIp;
 	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
-	public DecoderRewriter(final String realServerIp, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+	public DecoderRewriter(final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
 		// TODO: find better way to handle data like this
-		this.realServerIp = realServerIp;
 		this.defaultTags = defaultTags;
 		this.defaultRegistries = defaultRegistries;
 	}
@@ -77,9 +74,9 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		this.registerRewriter(C2SStatusRequestPacket.class, PacketDirection.SERVERBOUND, (connection, _) -> {
-            final Proxy proxy = Proxy.getProxy();
-            final ServerStatus serverStatus = new ServerStatus(proxy.getMotd(), Optional.of(new ServerStatus.Players(proxy.getConfig().getMaxPlayers(), 0, List.of())), Optional.of(new ServerStatus.Version(proxy.getBrand(), 774)), Optional.empty(), false);
-            connection.send(new S2CStatusResponsePacket(serverStatus));
+			final Proxy proxy = Proxy.getProxy();
+			final ServerStatus serverStatus = new ServerStatus(proxy.getMessage(), Optional.of(new ServerStatus.Players(proxy.getConfig().getMaxPlayers(), 0, List.of())), Optional.of(new ServerStatus.Version(proxy.getBrand(), 774)), Optional.empty(), false);
+			connection.send(new S2CStatusResponsePacket(serverStatus));
 			connection.send(new S2CPongResponsePacket(0L));
 			connection.disconnect();
 			return null;

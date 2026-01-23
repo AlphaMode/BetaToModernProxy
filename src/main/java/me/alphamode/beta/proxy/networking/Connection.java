@@ -3,7 +3,6 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 // Proxy -> Client
 public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> {
-	private final String realServerIp;
+	private final MinecraftServerAddress serverAddress;
 	private NetClient realServer;
 	private Channel channel;
 	private PacketState state = PacketState.HANDSHAKING;
@@ -27,8 +26,8 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	private String username;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 
-	public Connection(final String ip) {
-		this.realServerIp = ip;
+	public Connection(final MinecraftServerAddress serverAddress) {
+		this.serverAddress = serverAddress;
 	}
 
 	public void write(final ByteBuf buf) {
@@ -90,7 +89,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public void setState(final PacketState state) {
-//		IO.println("Switching to state " + state);
+		IO.println("Switching to state " + state);
 		this.state = state;
 	}
 
@@ -119,25 +118,22 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	@Override
-	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) {
-		if (this.realServer != null && this.realServer.getChannel().isActive()) {
-			this.realServer.getChannel().writeAndFlush(packet);
-		}
-	}
-
-	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-//		IO.println("Connection acquired!");
+		IO.println("Connection acquired!");
+		this.channel = context.channel();
 		if (this.realServer == null) {
 			this.realServer = new NetClient(new RelayChannel(context.channel()));
-			this.realServer.connect(MinecraftServerAddress.ofResolved(this.realServerIp)).addListener(future -> {
+			this.realServer.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
+					IO.println("Failed to connect to real server!");
+					future.cause().printStackTrace();
 					context.close();
-				}
+				})
 			});
-			this.realServer.getChannel().pipeline().addLast(new ChannelInboundHandlerAdapter() {
+			this.realServer.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<>() {
 				@Override
-				public void channelRead(final ChannelHandlerContext ctx, final Object data) {
+				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
+					IO.println(data);
 					channel.writeAndFlush(data);
 				}
 
@@ -147,14 +143,20 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 				}
 			});
 		}
+	}
 
-		this.channel = context.channel();
+	@Override
+	protected void channelRead0(final ChannelHandlerContext ctx, final RecordPacket<?> packet) {
+		if (this.realServer != null && this.realServer.getChannel().isActive()) {
+			this.realServer.getChannel().writeAndFlush(packet);
+		}
 	}
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-//		IO.println("Connection lost!");
+		IO.println("Connection lost!");
 		if (this.realServer != null) {
+			IO.println("Disconnected from real server!");
 			this.realServer.getChannel().close();
 			this.realServer = null;
 		}
