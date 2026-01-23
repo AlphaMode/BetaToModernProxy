@@ -172,7 +172,7 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
-		cause.printStackTrace();
-		context.close();
+		LOGGER.error(String.format("Caught exception in connection (%s)", this.username), cause);
+        this.kick(cause.getMessage());
 	}
 }
