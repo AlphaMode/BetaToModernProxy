@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import me.alphamode.beta.proxy.networking.Connection;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import net.raphimc.netminecraft.packet.PacketTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,9 +24,7 @@ public class ModernPacketReader extends ByteToMessageDecoder {
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {
-			final RecordPacket<?> packet = ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), packetData);
-			LOGGER.info("Decoded modern packet {}", packet);
-			out.add(packet);
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), packetData));
 		} catch (Exception exception) {
 			LOGGER.info("Failed to encode modern packet in state {}", this.connection.getState());
 			throw new RuntimeException(exception);
