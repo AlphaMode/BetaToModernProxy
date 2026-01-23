@@ -29,18 +29,17 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 	// P -> C
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<? extends ModernPackets> packet, final List<Object> out) throws Exception {
-		LOGGER.debug("Rewriter hit: {}", packet.getClass());
 		for (final Class<?> clazz : this.rewriter.serverboundRewriters.keySet()) {
 			if (clazz.isAssignableFrom(packet.getClass())) {
 				final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(this.connection, packet);
 				if (betaPacket != null) {
 					out.add(betaPacket);
-				} else {
-					LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
 				}
 
 				return;
 			}
 		}
+
+		LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
 	}
 }
