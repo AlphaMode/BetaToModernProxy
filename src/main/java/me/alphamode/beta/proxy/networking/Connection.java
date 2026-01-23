@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.Proxy;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
@@ -44,6 +45,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
 			}
 
+			Proxy.LOGGER.info("Sending {} to client!", packet.getType());
 			this.channel.writeAndFlush(packet);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
@@ -89,7 +91,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	}
 
 	public void setState(final PacketState state) {
-		IO.println("Switching to state " + state);
+		Proxy.LOGGER.info("Switching to state {}", state);
 		this.state = state;
 	}
 
@@ -119,21 +121,21 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-		IO.println("Connection acquired!");
+		Proxy.LOGGER.info("Connection acquired!");
 		this.channel = context.channel();
 		if (this.realServer == null) {
 			this.realServer = new NetClient(new RelayChannel(context.channel()));
 			this.realServer.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
-					IO.println("Failed to connect to real server!");
+					Proxy.LOGGER.info("Failed to connect to real server!");
 					future.cause().printStackTrace();
 					context.close();
-				})
+				}
 			});
 			this.realServer.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<>() {
 				@Override
 				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
-					IO.println(data);
+					Proxy.LOGGER.info(data);
 					channel.writeAndFlush(data);
 				}
 
@@ -154,9 +156,9 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		IO.println("Connection lost!");
+		Proxy.LOGGER.info("Connection lost!");
 		if (this.realServer != null) {
-			IO.println("Disconnected from real server!");
+			Proxy.LOGGER.info("Disconnected from real server!");
 			this.realServer.getChannel().close();
 			this.realServer = null;
 		}

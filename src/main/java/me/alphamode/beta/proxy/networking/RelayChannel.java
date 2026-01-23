@@ -1,10 +1,13 @@
 package me.alphamode.beta.proxy.networking;
 
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.Proxy;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketDecoder;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 
 // Packet -> ByteBuf
 public final class RelayChannel extends ChannelInitializer<Channel> {
@@ -24,8 +27,8 @@ public final class RelayChannel extends ChannelInitializer<Channel> {
 		channel.pipeline().addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder());
 		channel.pipeline().addLast(new SimpleChannelInboundHandler<RecordPacket<?>>() {
 			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<?> packet) throws Exception {
-				IO.println("meow");
+			protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<?> packet) {
+				Proxy.LOGGER.info("meow");
 				otherChannel.writeAndFlush(packet);
 			}
 		});

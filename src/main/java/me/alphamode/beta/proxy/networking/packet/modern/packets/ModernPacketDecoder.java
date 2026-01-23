@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import me.alphamode.beta.proxy.Proxy;
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
 import net.raphimc.netminecraft.packet.PacketTypes;
@@ -24,7 +25,7 @@ public class ModernPacketDecoder extends ByteToMessageDecoder {
 			try {
 				out.add(packetRegistry.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
 			} catch (Exception exception) {
-				IO.println("Failed to decode modern packet in state " + connection.getState());
+				Proxy.LOGGER.info("Failed to decode modern packet in state {}", connection.getState());
 				throw new RuntimeException(exception);
 			}
 		}

@@ -104,7 +104,7 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		this.registerRewriter(C2SConfigurationAcknowledgedPacket.class, PacketDirection.SERVERBOUND, (connection, packet) -> {
-//			IO.println("meow meow");
+//			Proxy.LOGGER.info(("meow meow");
 			return null;
 		});
 

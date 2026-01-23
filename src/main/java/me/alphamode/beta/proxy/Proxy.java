@@ -8,6 +8,8 @@ import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetServer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.DataInputStream;
 import java.net.InetSocketAddress;
@@ -16,6 +18,7 @@ import java.util.zip.GZIPInputStream;
 
 public class Proxy implements ProxyAPI {
 	private static Proxy instance;
+	public static final Logger LOGGER = LogManager.getLogger(Proxy.class);
 
 	public static Proxy getProxy() {
 		if (instance == null) {
@@ -65,7 +68,7 @@ public class Proxy implements ProxyAPI {
 	}
 
 	public void listen() {
-		IO.println(String.format("Listening on %s:%d -> %s", this.bindAddress, this.bindPort, this.serverAddress));
+		Proxy.LOGGER.info("Listening on {}:{} -> {}", this.bindAddress, this.bindPort, this.serverAddress);
 		new NetServer(new ProxyChannel(this.serverAddress, DEFAULT_TAGS, DEFAULT_REGISTRIES))
 				.bind(new InetSocketAddress(this.bindAddress, this.bindPort));
 	}
