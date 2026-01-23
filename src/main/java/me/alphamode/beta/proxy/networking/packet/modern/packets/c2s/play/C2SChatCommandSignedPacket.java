@@ -2,8 +2,8 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
-import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ArgumentSignatures;
 import me.alphamode.beta.proxy.util.data.modern.LastSeenMessages;
@@ -18,11 +18,11 @@ public record C2SChatCommandSignedPacket(
 		LastSeenMessages.Update lastSeenMessages
 ) implements C2SPlayPacket {
 	public static final StreamCodec<ByteBuf, C2SChatCommandSignedPacket> CODEC = StreamCodec.composite(
-			ModernCodecs.stringUtf8(),
+			ModernStreamCodecs.stringUtf8(),
 			C2SChatCommandSignedPacket::command,
-			ModernCodecs.INSTANT,
+			ModernStreamCodecs.INSTANT,
 			C2SChatCommandSignedPacket::timeStamp,
-			BasicCodecs.LONG,
+			BasicStreamCodecs.LONG,
 			C2SChatCommandSignedPacket::salt,
 			ArgumentSignatures.CODEC,
 			C2SChatCommandSignedPacket::signature,

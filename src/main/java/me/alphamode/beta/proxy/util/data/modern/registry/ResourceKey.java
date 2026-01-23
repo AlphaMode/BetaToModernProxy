@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.registry;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.core.Identifier;
 
@@ -12,12 +12,12 @@ public class ResourceKey<T> {
 	public static final StreamCodec<ByteBuf, ResourceKey<? extends Registry<?>>> CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final ResourceKey<? extends Registry<?>> value) {
-			ModernCodecs.IDENTIFIER.encode(buf, value.identifier());
+			ModernStreamCodecs.IDENTIFIER.encode(buf, value.identifier());
 		}
 
 		@Override
 		public ResourceKey<? extends Registry<?>> decode(final ByteBuf buf) {
-			return ResourceKey.createRegistryKey(ModernCodecs.IDENTIFIER.decode(buf));
+			return ResourceKey.createRegistryKey(ModernStreamCodecs.IDENTIFIER.decode(buf));
 		}
 	};
 
@@ -34,12 +34,12 @@ public class ResourceKey<T> {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteBuf buf, final ResourceKey<T> value) {
-				ModernCodecs.IDENTIFIER.encode(buf, value.identifier);
+				ModernStreamCodecs.IDENTIFIER.encode(buf, value.identifier);
 			}
 
 			@Override
 			public ResourceKey<T> decode(final ByteBuf buf) {
-				return ResourceKey.create(registryName, ModernCodecs.IDENTIFIER.decode(buf));
+				return ResourceKey.create(registryName, ModernStreamCodecs.IDENTIFIER.decode(buf));
 			}
 		};
 	}

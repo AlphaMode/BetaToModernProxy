@@ -4,16 +4,16 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundConfigurationPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
-import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.core.Identifier;
 
 public record C2SConfigurationCustomPayloadPacket(Identifier identifier,
 												  byte[] data) implements C2SCommonCustomPayloadPacket<ServerboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, C2SConfigurationCustomPayloadPacket> CODEC = StreamCodec.composite(
-			ModernCodecs.IDENTIFIER,
+			ModernStreamCodecs.IDENTIFIER,
 			C2SConfigurationCustomPayloadPacket::identifier,
-			ModernCodecs.BYTE_ARRAY,
+			ModernStreamCodecs.BYTE_ARRAY,
 			C2SConfigurationCustomPayloadPacket::data,
 			C2SConfigurationCustomPayloadPacket::new
 	);

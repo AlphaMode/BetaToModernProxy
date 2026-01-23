@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.lang.reflect.Array;
 
-public interface BasicCodecs {
+public interface BasicStreamCodecs {
 	StreamCodec<ByteBuf, Boolean> BOOL = new StreamCodec<>() {
 		public Boolean decode(final ByteBuf buf) {
 			return buf.readBoolean();

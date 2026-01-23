@@ -3,19 +3,19 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record SetEntityMotionPacket(int id, short deltaX, short deltaY, short deltaZ) implements BetaRecordPacket {
 	public static final double DELTA_CAP = 3.9;
 	public static final StreamCodec<ByteBuf, SetEntityMotionPacket> CODEC = StreamCodec.composite(
-			BasicCodecs.INT,
+			BasicStreamCodecs.INT,
 			SetEntityMotionPacket::id,
-			BasicCodecs.SHORT,
+			BasicStreamCodecs.SHORT,
 			SetEntityMotionPacket::deltaX,
-			BasicCodecs.SHORT,
+			BasicStreamCodecs.SHORT,
 			SetEntityMotionPacket::deltaY,
-			BasicCodecs.SHORT,
+			BasicStreamCodecs.SHORT,
 			SetEntityMotionPacket::deltaZ,
 			SetEntityMotionPacket::new
 	);

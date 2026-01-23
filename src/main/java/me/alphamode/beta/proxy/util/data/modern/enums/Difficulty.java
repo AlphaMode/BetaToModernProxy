@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.enums;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ByIdMap;
 
@@ -14,7 +14,7 @@ public enum Difficulty {
 	HARD(3);
 
 	private static final IntFunction<Difficulty> BY_ID = ByIdMap.continuous(Difficulty::getId, values(), ByIdMap.OutOfBoundsStrategy.WRAP);
-	public static final StreamCodec<ByteBuf, Difficulty> CODEC = ModernCodecs.idMapper(BY_ID, Difficulty::getId);
+	public static final StreamCodec<ByteBuf, Difficulty> CODEC = ModernStreamCodecs.idMapper(BY_ID, Difficulty::getId);
 	private final int id;
 
 	Difficulty(final int id) {

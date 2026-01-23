@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
@@ -11,17 +11,17 @@ import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 public record AddItemEntityPacket(int entityId, BetaItemStack item, Vec3i position, byte xa, byte ya,
 								  byte za) implements BetaRecordPacket {
 	public static final StreamCodec<ByteBuf, AddItemEntityPacket> CODEC = StreamCodec.composite(
-			BasicCodecs.INT,
+			BasicStreamCodecs.INT,
 			AddItemEntityPacket::entityId,
 			BetaItemStack.CODEC,
 			AddItemEntityPacket::item,
 			Vec3i.CODEC,
 			AddItemEntityPacket::position,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			AddItemEntityPacket::xa,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			AddItemEntityPacket::ya,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			AddItemEntityPacket::za,
 			AddItemEntityPacket::new
 	);

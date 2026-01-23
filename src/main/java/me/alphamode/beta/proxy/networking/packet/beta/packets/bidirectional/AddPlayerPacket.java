@@ -3,27 +3,27 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
-import me.alphamode.beta.proxy.util.codec.BetaCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddPlayerPacket(int id, String name, Vec3i position, byte yaw, byte pitch,
 							  short carriedItem) implements BetaRecordPacket {
 	public static final int MAX_NAME_LENGTH = 16;
-	public static final StreamCodec<ByteBuf, String> NAME_CODEC = BetaCodecs.stringUtf8(MAX_NAME_LENGTH);
+	public static final StreamCodec<ByteBuf, String> NAME_CODEC = BetaStreamCodecs.stringUtf8(MAX_NAME_LENGTH);
 	public static final StreamCodec<ByteBuf, AddPlayerPacket> CODEC = StreamCodec.composite(
-			BasicCodecs.INT,
+			BasicStreamCodecs.INT,
 			AddPlayerPacket::id,
 			NAME_CODEC,
 			AddPlayerPacket::name,
 			Vec3i.CODEC,
 			AddPlayerPacket::position,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			AddPlayerPacket::yaw,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			AddPlayerPacket::pitch,
-			BasicCodecs.SHORT,
+			BasicStreamCodecs.SHORT,
 			AddPlayerPacket::carriedItem,
 			AddPlayerPacket::new
 	);

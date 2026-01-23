@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public interface BetaCodecs {
+public interface BetaStreamCodecs {
 	int MAX_STRING_LENGTH = 32767;
 
 	StreamCodec<ByteBuf, byte[]> BYTE_ARRAY = new StreamCodec<>() {

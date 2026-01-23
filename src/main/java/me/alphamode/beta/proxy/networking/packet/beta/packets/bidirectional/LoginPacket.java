@@ -3,21 +3,21 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
-import me.alphamode.beta.proxy.util.codec.BetaCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record LoginPacket(int clientVersion, String username, long seed, byte dimension) implements BetaRecordPacket {
 	public static final int MAX_USERNAME_LENGTH = 16;
-	public static final StreamCodec<ByteBuf, String> USERNAME_CODEC = BetaCodecs.stringUtf8(MAX_USERNAME_LENGTH);
+	public static final StreamCodec<ByteBuf, String> USERNAME_CODEC = BetaStreamCodecs.stringUtf8(MAX_USERNAME_LENGTH);
 	public static final StreamCodec<ByteBuf, LoginPacket> CODEC = StreamCodec.composite(
-			BasicCodecs.INT,
+			BasicStreamCodecs.INT,
 			LoginPacket::clientVersion,
 			USERNAME_CODEC,
 			LoginPacket::username,
-			BasicCodecs.LONG,
+			BasicStreamCodecs.LONG,
 			LoginPacket::seed,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			LoginPacket::dimension,
 			LoginPacket::new
 	);

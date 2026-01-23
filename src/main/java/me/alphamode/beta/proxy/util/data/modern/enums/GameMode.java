@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.enums;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ByIdMap;
 
@@ -14,7 +14,7 @@ public enum GameMode {
 	SPECTATOR(3);
 
 	private static final IntFunction<GameMode> BY_ID = ByIdMap.continuous(GameMode::getId, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-	public static final StreamCodec<ByteBuf, GameMode> CODEC = ModernCodecs.idMapper(BY_ID, GameMode::getId);
+	public static final StreamCodec<ByteBuf, GameMode> CODEC = ModernStreamCodecs.idMapper(BY_ID, GameMode::getId);
 
 	private final int id;
 

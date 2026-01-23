@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
@@ -11,9 +11,9 @@ public record TileEventPacket(Vec3i position, byte b0, byte b1) implements BetaR
 	public static final StreamCodec<ByteBuf, TileEventPacket> CODEC = StreamCodec.composite(
 			Vec3i.SEMI_TINY_CODEC,
 			TileEventPacket::position,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			TileEventPacket::b0,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			TileEventPacket::b1,
 			TileEventPacket::new
 	);

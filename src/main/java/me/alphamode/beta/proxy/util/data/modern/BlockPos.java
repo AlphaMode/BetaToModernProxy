@@ -2,12 +2,12 @@ package me.alphamode.beta.proxy.util.data.modern;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.Mth;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record BlockPos(int x, int y, int z) {
 	public static final StreamCodec<ByteBuf, BlockPos> CODEC = StreamCodec.composite(
-			BasicCodecs.LONG,
+			BasicStreamCodecs.LONG,
 			BlockPos::pack,
 			BlockPos::unpack
 	);

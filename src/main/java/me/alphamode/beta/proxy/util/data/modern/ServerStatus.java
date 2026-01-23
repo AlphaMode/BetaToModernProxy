@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.util.data.modern;
 import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.converter.codec.Codec;
 import net.lenni0451.mcstructs.converter.codec.map.MapCodecMerger;
@@ -25,15 +26,15 @@ public record ServerStatus(TextComponent description,
 						   boolean enforcesSecureChat) {
 	public static final Codec<ServerStatus> CODEC = MapCodecMerger.codec(
 			TextComponentCodec.LATEST.getTextCodec().mapCodec("description").required(), ServerStatus::description,
-			Players.CODEC.mapCodec("players").optional().defaulted(null), serverStatus -> serverStatus.players.orElse(null),
-			Version.CODEC.mapCodec("version").optional().defaulted(null), serverStatus -> serverStatus.version.orElse(null),
-			Favicon.CODEC.mapCodec("favicon").optional().defaulted(null), serverStatus -> serverStatus.favicon.orElse(null),
+            ModernCodecs.optional("players", Players.CODEC), ServerStatus::players,
+			ModernCodecs.optional("version", Version.CODEC), ServerStatus::version,
+			ModernCodecs.optional("favicon", Favicon.CODEC), ServerStatus::favicon,
 			Codec.BOOLEAN.mapCodec("enforcesSecureChat").optional().defaulted(false), ServerStatus::enforcesSecureChat,
 			ServerStatus::new
 	);
 
 	public static final StreamCodec<ByteBuf, ServerStatus> STREAM_CODEC = new StreamCodec<>() {
-		private static final StreamCodec<ByteBuf, JsonElement> JSON = ModernCodecs.lenientJson(ModernCodecs.MAX_STRING_LENGTH);
+		private static final StreamCodec<ByteBuf, JsonElement> JSON = ModernStreamCodecs.lenientJson(ModernStreamCodecs.MAX_STRING_LENGTH);
 
 		@Override
 		public void encode(final ByteBuf buf, final ServerStatus value) {

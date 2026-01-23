@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.util.entity;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
-import me.alphamode.beta.proxy.util.codec.BetaCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
@@ -34,11 +34,11 @@ public class BetaSynchedEntityData {
 	};
 
 	public enum DataType {
-		BYTE(0, BasicCodecs.BYTE),
-		SHORT(1, BasicCodecs.SHORT),
-		INT(2, BasicCodecs.INT),
-		FLOAT(3, BasicCodecs.FLOAT),
-		STRING(4, BetaCodecs.stringUtf8()),
+		BYTE(0, BasicStreamCodecs.BYTE),
+		SHORT(1, BasicStreamCodecs.SHORT),
+		INT(2, BasicStreamCodecs.INT),
+		FLOAT(3, BasicStreamCodecs.FLOAT),
+		STRING(4, BetaStreamCodecs.stringUtf8()),
 		ITEM_STACK(5, BetaItemStack.CODEC),
 		VEC3I(6, Vec3i.CODEC);
 

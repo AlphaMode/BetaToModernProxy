@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicCodecs;
-import me.alphamode.beta.proxy.util.codec.ModernCodecs;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.enums.ChatVisiblity;
 import me.alphamode.beta.proxy.util.data.modern.enums.HumanoidArm;
@@ -22,21 +22,21 @@ public record ClientInformation(
 	public static final int MAX_LANGUAGE_LENGTH = 16;
 
 	public static final StreamCodec<ByteBuf, ClientInformation> CODEC = StreamCodec.composite(
-			ModernCodecs.stringUtf8(MAX_LANGUAGE_LENGTH),
+			ModernStreamCodecs.stringUtf8(MAX_LANGUAGE_LENGTH),
 			ClientInformation::language,
-			BasicCodecs.BYTE,
+			BasicStreamCodecs.BYTE,
 			ClientInformation::viewDistance,
 			ChatVisiblity.CODEC,
 			ClientInformation::chatVisibility,
-			BasicCodecs.BOOL,
+			BasicStreamCodecs.BOOL,
 			ClientInformation::chatColors,
-			BasicCodecs.UNSIGNED_BYTE,
+			BasicStreamCodecs.UNSIGNED_BYTE,
 			ClientInformation::modelCustomisation,
 			HumanoidArm.CODEC,
 			ClientInformation::mainHand,
-			BasicCodecs.BOOL,
+			BasicStreamCodecs.BOOL,
 			ClientInformation::textFilteringEnabled,
-			BasicCodecs.BOOL,
+			BasicStreamCodecs.BOOL,
 			ClientInformation::allowsListing,
 			ParticleStatus.CODEC,
 			ClientInformation::particleStatus,
