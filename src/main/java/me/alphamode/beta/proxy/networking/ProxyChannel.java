@@ -17,12 +17,12 @@ import org.apache.logging.log4j.Logger;
 public final class ProxyChannel extends ChannelInitializer<Channel> {
 	private static final Logger LOGGER = LogManager.getLogger(ProxyChannel.class);
 	public static final AttributeKey<Connection> CONNECTION_KEY = AttributeKey.newInstance("connection");
-	private final String serverIp;
+	private final MinecraftServerAddress address;
 	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
-	public ProxyChannel(final String ip, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
-		this.serverIp = ip;
+	public ProxyChannel(final MinecraftServerAddress address, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+		this.address = address;
 		this.defaultTags = defaultTags;
 		this.defaultRegistries = defaultRegistries;
 	}
@@ -30,7 +30,7 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 	// Client -> Proxy -> Server
 	@Override
 	protected void initChannel(final Channel channel) {
-		final Connection connection = new Connection(MinecraftServerAddress.ofResolved(this.serverIp));
+		final Connection connection = new Connection(this.address);
 
 		// Reads Prefixed Length & Splits Packets
 		channel.pipeline().addLast(new PacketSizer());

@@ -27,6 +27,7 @@ public final class Config {
 			object.addProperty("bind_address", value.bindAddress);
 			object.addProperty("bind_port", value.bindPort);
 			object.addProperty("server_address", value.serverAddress);
+			object.addProperty("server_port", value.serverPort);
 		}
 
 		@Override
@@ -39,6 +40,7 @@ public final class Config {
 			config.bindAddress = elementMap.getOrDefault("bind_address", new JsonPrimitive("0.0.0.0")).getAsString();
 			config.bindPort = elementMap.getOrDefault("bind_port", new JsonPrimitive(25566)).getAsInt();
 			config.serverAddress = elementMap.getOrDefault("server_address", new JsonPrimitive("0.0.0.0")).getAsString();
+			config.serverPort = elementMap.getOrDefault("server_port", new JsonPrimitive(25565)).getAsInt();
 			return config;
 		}
 	};
@@ -49,6 +51,7 @@ public final class Config {
 	private String bindAddress = "0.0.0.0";
 	private int bindPort = 25566;
 	private String serverAddress = "0.0.0.0";
+	private int serverPort = 25565;
 
 	public String getBrand() {
 		return this.brand;
@@ -84,6 +87,10 @@ public final class Config {
 
 	public String getServerAddress() {
 		return this.serverAddress;
+	}
+
+	public int getServerPort() {
+		return this.serverPort;
 	}
 
 	public void load() {
