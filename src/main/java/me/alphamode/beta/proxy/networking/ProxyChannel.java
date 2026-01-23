@@ -4,8 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketDecoder;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketEncoder;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketRegistry;
 import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -33,8 +33,8 @@ public final class ProxyChannel extends ChannelInitializer<Channel> {
 		channel.attr(MODERN_PACKET_REGISTRY_KEY).set(ModernPacketRegistry.INSTANCE);
 
 		channel.pipeline().addLast(new PacketSizer());
-		channel.pipeline().addLast(ModernPacketDecoder.KEY, new ModernPacketDecoder());
-		channel.pipeline().addLast(ModernPacketEncoder.KEY, new ModernPacketEncoder());
+		channel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+		channel.pipeline().addLast(ModernPacketReader.KEY, new ModernPacketReader());
 
 		final Connection connection = new Connection(MinecraftServerAddress.ofResolved(this.serverIp));
 		channel.pipeline().addLast(new PacketRewriterDecoder(this.defaultTags, this.defaultRegistries));

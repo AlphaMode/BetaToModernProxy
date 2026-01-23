@@ -7,7 +7,7 @@ import me.alphamode.beta.proxy.networking.ProxyChannel;
 
 import java.util.List;
 
-public final class BetaPacketDecoder extends ReplayingDecoder<Void> {
+public final class BetaPacketReader extends ReplayingDecoder<Void> {
 	public static final String KEY = "beta-decoder";
 
 	@Override

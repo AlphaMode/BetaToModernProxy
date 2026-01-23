@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class ModernPacketDecoder extends ByteToMessageDecoder {
-	private static final Logger LOGGER = LogManager.getLogger(ModernPacketDecoder.class);
-	public static final String KEY = "modern-decoder";
+public class ModernPacketReader extends ByteToMessageDecoder {
+	private static final Logger LOGGER = LogManager.getLogger(ModernPacketReader.class);
+	public static final String KEY = "modern-encoder";
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
@@ -27,7 +27,7 @@ public class ModernPacketDecoder extends ByteToMessageDecoder {
 			try {
 				out.add(packetRegistry.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
 			} catch (Exception exception) {
-				LOGGER.info("Failed to decode modern packet in state {}", connection.getState());
+				LOGGER.info("Failed to encode modern packet in state {}", connection.getState());
 				throw new RuntimeException(exception);
 			}
 		}

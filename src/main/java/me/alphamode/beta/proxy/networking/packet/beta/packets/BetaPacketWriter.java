@@ -6,7 +6,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.networking.ProxyChannel;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 
-public final class BetaPacketEncoder extends MessageToByteEncoder<RecordPacket<BetaPackets>> {
+public final class BetaPacketWriter extends MessageToByteEncoder<RecordPacket<BetaPackets>> {
 	public static final String KEY = "beta-encoder";
 
 	@Override
