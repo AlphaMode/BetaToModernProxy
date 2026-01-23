@@ -4,6 +4,7 @@
 	"package": "me.alphamode.beta.proxy.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"PacketEncoderAndDecoderMixin"
 	],
 	"client": [
 	],
