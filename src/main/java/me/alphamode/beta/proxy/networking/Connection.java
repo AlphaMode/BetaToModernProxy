@@ -84,14 +84,14 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	}
 
 	public void disconnect() {
+		if (this.isConnectedToServer()) {
+			this.serverChannel.closeFuture();
+			this.serverChannel = null;
+		}
+
 		if (this.isConnected()) {
 			this.clientChannel.closeFuture();
 			this.clientChannel = null;
-
-			this.serverChannel.closeFuture();
-			this.serverChannel = null;
-		} else {
-			throw new RuntimeException("Cannot disconnect dead connection!");
 		}
 	}
 
