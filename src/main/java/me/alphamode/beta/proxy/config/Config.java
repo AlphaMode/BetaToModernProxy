@@ -1,7 +1,9 @@
 package me.alphamode.beta.proxy.config;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentSerializer;
@@ -10,6 +12,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 public final class Config {
 	private static final Gson GSON = TextComponentSerializer.LATEST.getGson().newBuilder().setPrettyPrinting().create();
@@ -29,12 +32,13 @@ public final class Config {
 		@Override
 		public Config decode(final JsonObject object) {
 			final Config config = new Config();
-			config.brand = object.has("brand") ? object.get("brand").getAsString() : "BetaToModernProxy";
-			config.message = TextComponent.of(object.has("message") ? object.get("message").getAsString() : "A modern to b1.7.3 proxy server");
-			config.maxPlayers = object.has("max_players") ? object.get("max_players").getAsInt() : 20;
-			config.bindAddress = object.has("bind_address") ? object.get("bind_address").getAsString() : "BetaToModernProxy";
-			config.bindPort = object.has("bind_port") ? object.get("bind_port").getAsInt() : 25566;
-			config.serverAddress = object.has("server_address") ? object.get("server_address").getAsString() : "BetaToModernProxy";
+			final Map<String, JsonElement> elementMap = object.asMap();
+			config.brand = elementMap.getOrDefault("brand", new JsonPrimitive("BetaToModernProxy")).getAsString();
+			config.message = TextComponent.of(elementMap.getOrDefault("message", new JsonPrimitive("A modern to b1.7.3 proxy server.")).getAsString());
+			config.maxPlayers = elementMap.getOrDefault("max_players", new JsonPrimitive(20)).getAsInt();
+			config.bindAddress = elementMap.getOrDefault("bind_address", new JsonPrimitive("0.0.0.0")).getAsString();
+			config.bindPort = elementMap.getOrDefault("bind_port", new JsonPrimitive(25566)).getAsInt();
+			config.serverAddress = elementMap.getOrDefault("server_address", new JsonPrimitive("0.0.0.0")).getAsString();
 			return config;
 		}
 	};
