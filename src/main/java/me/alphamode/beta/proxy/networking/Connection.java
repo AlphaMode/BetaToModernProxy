@@ -41,8 +41,6 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 
 	public void write(final ByteBuf buf) {
 		if (this.isConnected()) {
-			// Rewrite here
-
 			this.channel.writeAndFlush(buf);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
@@ -55,7 +53,6 @@ public final class Connection extends SimpleChannelInboundHandler<Object> {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
 			}
 
-			// LOGGER.info("Sending {} to client!", packet.getType());
 			this.channel.writeAndFlush(packet);
 		} else {
 			throw new RuntimeException("Cannot write to dead connection!");
