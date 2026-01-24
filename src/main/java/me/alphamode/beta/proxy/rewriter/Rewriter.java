@@ -4,6 +4,7 @@ import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.Packets;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 
 import java.util.HashMap;
@@ -17,11 +18,11 @@ public abstract class Rewriter<S extends RecordPacket<?>> {
 
 	public abstract void rewrite(final Connection connection, final S packet);
 
-	public <K extends ModernRecordPacket<?>, V extends K> void registerServerboundRewriter(final Class<V> clazz, final RewriterFactory<K> factory) {
+	public <V extends ModernRecordPacket<?>> void registerServerboundRewriter(final Class<V> clazz, final RewriterFactory<V> factory) {
 
 	}
 
-	public <K extends BetaRecordPacket, V extends K> void registerClientboundRewriter(final Class<V> clazz, final RewriterFactory<K> factory) {
+	public <V extends BetaRecordPacket> void registerClientboundRewriter(final Class<V> clazz, final RewriterFactory<V> factory) {
 
 	}
 
