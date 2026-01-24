@@ -195,14 +195,14 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
 		realServerConnection.connect(this.serverAddress).addListener(future -> {
 			if (!future.isSuccess()) {
-				LOGGER.info("Failed to connect to real server!");
+				LOGGER.info("Failed to connect proxy #{} to real server!", this.id);
 				future.cause().printStackTrace();
 				this.disconnect();
 				return;
 			}
 
 			if (!this.isConnected()) {
-				LOGGER.info("Client already has disconnected, closing the server connection!");
+				LOGGER.info("Client #{} already has disconnected, closing the server connection!", this.id);
 				realServerConnection.getChannel().close();
 				return;
 			}
