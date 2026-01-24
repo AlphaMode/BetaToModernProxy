@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -54,6 +55,16 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	public EncoderRewriter getEncoderRewriter() {
 		return this.encoderRewriter;
+	}
+
+	public void write(final ByteBuf buf, final boolean serverbound) {
+		if (this.isConnectedToServer() && serverbound) {
+			this.serverChannel.writeAndFlush(buf);
+		} else if (this.isConnected() && !serverbound) {
+			this.clientChannel.writeAndFlush(buf);
+		} else {
+			throw new RuntimeException("Cannot write to dead connection!");
+		}
 	}
 
 	public void send(final BetaRecordPacket packet) {

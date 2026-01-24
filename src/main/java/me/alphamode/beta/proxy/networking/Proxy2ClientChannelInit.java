@@ -5,8 +5,6 @@ import io.netty.channel.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 	private final Connection connection;
@@ -25,11 +23,11 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 
 		// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
 		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
-            @Override
-            protected void channelRead0(ChannelHandlerContext ctx, BetaRecordPacket msg) {
-                connection.getEncoderRewriter().rewrite(connection, msg);
-            }
-        });
+			@Override
+			protected void channelRead0(final ChannelHandlerContext context, final BetaRecordPacket msg) {
+				connection.getEncoderRewriter().rewrite(connection, msg);
+			}
+		});
 
 		// BetaPacket -> ByteBuf
 		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
