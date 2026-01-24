@@ -4,6 +4,8 @@ import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSystemChatPacket;
+import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,6 +37,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 		this.registerClientboundRewriter(ChatPacket.class, (connection, packet) -> {
 			// connection.sendToClient(new S2CPlayerChatPacket());
 			LOGGER.info("{}", packet.message());
+			connection.sendToClient(new S2CSystemChatPacket(TextComponent.of(packet.message()), false));
 		});
 
 		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {

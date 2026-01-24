@@ -23,10 +23,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayerChatPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetTimePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
@@ -252,7 +249,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundPlayPackets.START_CONFIGURATION, null);
 		this.registerPacket(ClientboundPlayPackets.STOP_SOUND, null);
 		this.registerPacket(ClientboundPlayPackets.STORE_COOKIE, null);
-		this.registerPacket(ClientboundPlayPackets.SYSTEM_CHAT, null);
+		this.registerPacket(ClientboundPlayPackets.SYSTEM_CHAT, S2CSystemChatPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.TAB_LIST, null);
 		this.registerPacket(ClientboundPlayPackets.TAG_QUERY, null);
 		this.registerPacket(ClientboundPlayPackets.TAKE_ITEM_ENTITY, null);
