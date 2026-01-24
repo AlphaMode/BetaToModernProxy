@@ -179,8 +179,6 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-		// Inbound
-		// Outbound -> ModernRecordPacket<T> -> Write Modern Packets
 		this.clientChannel = context.channel();
 
 		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
@@ -200,7 +198,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 			LOGGER.info("Proxy {} connected to {}", this.id, this.serverAddress);
 			this.serverChannel = realServerConnection.getChannel();
-		});
+		}).syncUninterruptibly();
 	}
 
 	// Out channel (Writing from Proxy to Serer)
