@@ -10,12 +10,16 @@ import org.apache.logging.log4j.Logger;
 
 public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 	private static final Logger LOGGER = LogManager.getLogger(Proxy2ClientChannelInit.class);
+	private final Connection connection;
+
+	Proxy2ClientChannelInit(final Connection connection) {
+		this.connection = connection;
+	}
 
 	// Proxy -> Client
 	@Override
 	protected void initChannel(final Channel channel) {
 		final ChannelPipeline pipeline = channel.pipeline();
-		final Connection connection = channel.attr(Connection.KEY).get();
 
 		// ByteBuf -> BetaPacket
 		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
@@ -41,8 +45,7 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		final Connection connection = context.channel().attr(Connection.KEY).get();
-		LOGGER.warn("Real Server for Proxy #{} Became Inactive, Disconnecting client...", connection.getId());
-		connection.disconnect();
+		LOGGER.warn("Real Server for Proxy #{} Became Inactive, Disconnecting client...", this.connection.getId());
+		this.connection.disconnect();
 	}
 }

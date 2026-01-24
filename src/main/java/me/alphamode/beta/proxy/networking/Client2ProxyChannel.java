@@ -17,14 +17,13 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 	@Override
 	protected void initChannel(final Channel channel) {
 		final Connection connection = new Connection(this.address);
-		channel.attr(Connection.KEY).set(connection);
 		final ChannelPipeline pipeline = channel.pipeline();
 
 		// Reads Prefixed Length & Splits Packets
 		pipeline.addLast(new PacketSizer());
 
 		// ByteBuf -> ModernPacket
-		pipeline.addLast(ModernPacketReader.KEY, new ModernPacketReader());
+		pipeline.addLast(ModernPacketReader.KEY, new ModernPacketReader(connection));
 
 		pipeline.addLast(connection);
 

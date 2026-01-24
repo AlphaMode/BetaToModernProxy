@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
@@ -28,8 +27,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 
 public final class Connection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
-	public static final AttributeKey<Connection> KEY = AttributeKey.newInstance("connection");
-
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
@@ -199,7 +196,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
 
-		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit());
+		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
 		realServerConnection.connect(this.serverAddress).addListener(future -> {
 			if (!future.isSuccess()) {
 				LOGGER.info("Failed to connect proxy #{} to real server!", this.id);
