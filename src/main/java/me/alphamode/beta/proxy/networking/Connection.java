@@ -222,12 +222,12 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		LOGGER.warn("Proxy Connection Became Inactive, Disconnecting...");
+		LOGGER.warn("Proxy #{} Became Inactive, Disconnecting...", this.id);
 		this.disconnect();
 	}
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
-		LOGGER.error("Caught exception in connection ({})", this.username, cause);
+		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.username, cause);
 	}
 }
