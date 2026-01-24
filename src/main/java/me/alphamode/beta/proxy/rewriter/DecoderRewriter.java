@@ -56,16 +56,14 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 			}
 
 			connection.setProtocolVersion(packet.protocolVersion());
-			if (packet.intention() == C2SIntentionPacket.ClientIntent.LOGIN) {
-				connection.sendToServer(new HandshakePacket("-"));
-			}
 		});
 
 		this.registerServerboundRewriter(C2SHelloPacket.class, (connection, packet) -> {
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
-			connection.sendToClient(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
+			connection.sendToServer(new HandshakePacket("-"));
 			connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0));
+			connection.sendToClient(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
 		});
 
 		this.registerServerboundRewriter(C2SStatusRequestPacket.class, (connection, _) -> {
