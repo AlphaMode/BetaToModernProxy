@@ -57,9 +57,7 @@ public final class DecoderRewriter extends Rewriter {
 
 			connection.setProtocolVersion(packet.protocolVersion());
 			if (packet.intention() == C2SIntentionRecordPacket.ClientIntent.LOGIN) {
-				return new HandshakePacket("-");
-			} else {
-				return null;
+				connection.send(new HandshakePacket("-"));
 			}
 		});
 
@@ -67,7 +65,7 @@ public final class DecoderRewriter extends Rewriter {
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
 			connection.send(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
-			return new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0);
+			connection.send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0));
 		});
 
 		this.registerServerboundRewriter(C2SStatusRequestPacket.class, (connection, _) -> {
@@ -80,15 +78,13 @@ public final class DecoderRewriter extends Rewriter {
 					false
 			);
 			connection.send(new S2CStatusResponsePacket(serverStatus));
-			return null;
 		});
 
 		this.registerServerboundRewriter(C2SStatusPingRequestPacket.class, (connection, _) -> {
 			connection.send(new S2CStatusPongResponsePacket(0L));
-			return null;
 		});
 
-		this.registerServerboundRewriter(C2SCommonKeepAlivePacket.class, (_, _) -> new KeepAlivePacket());
+		this.registerServerboundRewriter(C2SCommonKeepAlivePacket.class, (connection, _) -> connection.send(new KeepAlivePacket()));
 
 		this.registerServerboundRewriter(C2SLoginAcknowledgedPacket.class, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
@@ -100,24 +96,21 @@ public final class DecoderRewriter extends Rewriter {
 			this.sendRegistries(connection);
 
 			connection.send(S2CFinishConfigurationPacket.INSTANCE);
-			return null;
 		});
 
 		this.registerServerboundRewriter(C2SFinishConfigurationPacket.class, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
 			connection.send(new S2CLevelChunkPacketData());
-			return null;
 		});
 
 		this.registerServerboundRewriter(C2SConfigurationAcknowledgedPacket.class, (connection, packet) -> {
 			LOGGER.info("meow meow");
-			return null;
 		});
 
 		// Cancel
-		this.registerServerboundRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> null);
-		this.registerServerboundRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> null);
-		this.registerServerboundRewriter(C2SClientInformationPacket.class, (_, _) -> null);
+		this.registerServerboundRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> {});
+		this.registerServerboundRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> {});
+		this.registerServerboundRewriter(C2SClientInformationPacket.class, (_, _) -> {});
 	}
 
 	private void sendTags(final Connection connection) {

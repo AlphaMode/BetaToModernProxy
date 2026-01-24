@@ -14,17 +14,15 @@ public final class EncoderRewriter extends Rewriter {
 		this.registerClientboundRewriter(KeepAlivePacket.class, (connection, _) -> {
 			final long lastMs = connection.getLastKeepAliveMS();
 			connection.setLastKeepAliveMS(System.currentTimeMillis());
-			return connection.createKeepAlivePacket(lastMs);
+			connection.send(connection.createKeepAlivePacket(lastMs));
 		});
 
 		this.registerClientboundRewriter(HandshakePacket.class, (_, _) -> new S2CHelloPacket("_", new byte[0], new byte[0], false));
 
 		this.registerClientboundRewriter(LoginPacket.class, (_, _) -> {
-			return null;
 		});
 
 		this.registerClientboundRewriter(SetSpawnPositionPacket.class, (_, packet) -> {
-			return null;
 		});
 
 		// SET_SPAWN_POSITION
@@ -41,14 +39,13 @@ public final class EncoderRewriter extends Rewriter {
 
 		// CONTAINER_SET_SLOT
 
-		this.registerClientboundRewriter(SetTimePacket.class, (_, packet) -> {
+		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {
 			final long time = packet.time();
-			return new S2CSetTimePacket(time, time, time > -1);
+			connection.send(new S2CSetTimePacket(time, time, time > -1));
 		});
 
 		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {
 			connection.kick(packet.reason());
-			return null;
 		});
 	}
 }

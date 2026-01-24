@@ -18,6 +18,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
+import me.alphamode.beta.proxy.rewriter.DecoderRewriter;
+import me.alphamode.beta.proxy.rewriter.EncoderRewriter;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
@@ -27,11 +29,13 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 
 // Proxy -> Client
-public final class Connection extends SimpleChannelInboundHandler<ByteBuf> implements PacketHandler {
+public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
 	private final MinecraftServerAddress serverAddress;
+    private final DecoderRewriter decoderRewriter = new DecoderRewriter();
+    private final EncoderRewriter encoderRewriter = new EncoderRewriter();
 	private Channel serverChannel;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
@@ -42,6 +46,8 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 
 	public Connection(final MinecraftServerAddress serverAddress) {
 		this.serverAddress = serverAddress;
+        this.decoderRewriter.registerPackets();
+        this.encoderRewriter.registerPackets();
 	}
 
 	public void write(final ByteBuf buf) {
@@ -52,17 +58,24 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 		}
 	}
 
-	public void send(final RecordPacket<?> packet) {
-		if (this.isConnected()) {
-			if (packet instanceof ModernRecordPacket<?> modernPacket && modernPacket.getState() != this.state) {
-				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + modernPacket.getState());
-			}
+    public void send(final BetaRecordPacket packet) {
+        if (this.isConnectedToServer()) {
+            this.serverChannel.writeAndFlush(packet);
+        } else {
+            throw new RuntimeException("Cannot write to dead connection!");
+        }
+    }
 
-			this.clientChannel.writeAndFlush(packet);
-		} else {
-			throw new RuntimeException("Cannot write to dead connection!");
-		}
-	}
+    public void send(final ModernRecordPacket<?> packet) {
+        if (this.isConnected()) {
+            if (packet.getState() != this.state) {
+                throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + packet.getState());
+            }
+            this.clientChannel.writeAndFlush(packet);
+        } else {
+            throw new RuntimeException("Cannot write to dead connection!");
+        }
+    }
 
 	public void kick(final TextComponent message) {
 		if (this.protocolVersion == BetaRecordPacket.PROTOCOL_VERSION) {
@@ -196,12 +209,39 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 
 	// Out channel (Writing from Proxy to Serer)
 	@Override
-	protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
-		LOGGER.info("Sending Packet to Server: {}", buf);
+	protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<?> packet) {
+//		LOGGER.info("Sending Packet to Server: {}", packet);
+
 		if (this.isConnectedToServer()) {
-			this.serverChannel.writeAndFlush(buf.retain());
+            if (packet instanceof BetaRecordPacket betaPacket) {
+                rewritePacketB2C(betaPacket);
+            } else if (packet instanceof ModernRecordPacket<?> modernPacket) {
+                rewritePacketC2B(modernPacket);
+            } else {
+                LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
+            }
 		}
 	}
+
+    private void rewritePacketB2C(final BetaRecordPacket packet) {
+        LOGGER.warn("Encoding Beta to Modern Packet ({})", packet.getType());
+        for (final Class<?> clazz : this.encoderRewriter.clientboundRewriters.keySet()) {
+            if (clazz.isAssignableFrom(packet.getClass())) {
+                this.encoderRewriter.clientboundRewriters.get(clazz).rewrite(this, packet);
+                return;
+            }
+        }
+    }
+
+    private void rewritePacketC2B(final ModernRecordPacket<?> packet) {
+        LOGGER.warn("Encoding Modern to Beta Packet ({})", packet.getType());
+        for (final Class<?> clazz : this.decoderRewriter.serverboundRewriters.keySet()) {
+            if (clazz.isAssignableFrom(packet.getClass())) {
+                this.decoderRewriter.serverboundRewriters.get(clazz).rewrite(this, packet);
+                return;
+            }
+        }
+    }
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
