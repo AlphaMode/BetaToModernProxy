@@ -6,18 +6,18 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record C2SIntentionRecordPacket(int protocolVersion, String hostName, short port,
-									   ClientIntent intention) implements C2SHandshakingPacket {
-	public static final StreamCodec<ByteBuf, C2SIntentionRecordPacket> CODEC = StreamCodec.composite(
+public record C2SIntentionPacket(int protocolVersion, String hostName, short port,
+								 ClientIntent intention) implements C2SHandshakingPacket {
+	public static final StreamCodec<ByteBuf, C2SIntentionPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.VAR_INT,
-			C2SIntentionRecordPacket::protocolVersion,
-			ModernStreamCodecs.stringUtf8(),
-			C2SIntentionRecordPacket::hostName,
+			C2SIntentionPacket::protocolVersion,
+			ModernStreamCodecs.stringUtf8(255),
+			C2SIntentionPacket::hostName,
 			BasicStreamCodecs.SHORT,
-			C2SIntentionRecordPacket::port,
+			C2SIntentionPacket::port,
 			ClientIntent.CODEC,
-			C2SIntentionRecordPacket::intention,
-			C2SIntentionRecordPacket::new
+			C2SIntentionPacket::intention,
+			C2SIntentionPacket::new
 	);
 
 	@Override

@@ -10,13 +10,11 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Keep
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SKeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
@@ -50,7 +48,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 
 	@Override
 	public void registerPackets() {
-		this.registerServerboundRewriter(C2SIntentionRecordPacket.class, (connection, packet) -> {
+		this.registerServerboundRewriter(C2SIntentionPacket.class, (connection, packet) -> {
 			switch (packet.intention()) {
 				case LOGIN -> connection.setState(PacketState.LOGIN);
 				case STATUS -> connection.setState(PacketState.STATUS);
@@ -58,7 +56,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 			}
 
 			connection.setProtocolVersion(packet.protocolVersion());
-			if (packet.intention() == C2SIntentionRecordPacket.ClientIntent.LOGIN) {
+			if (packet.intention() == C2SIntentionPacket.ClientIntent.LOGIN) {
 				connection.send(new HandshakePacket("-"));
 			}
 		});

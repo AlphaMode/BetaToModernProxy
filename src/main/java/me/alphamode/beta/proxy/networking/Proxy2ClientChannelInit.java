@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
-	private static final Logger LOGGER = LogManager.getLogger(Proxy2ClientChannelInit.class);
 	private final Connection connection;
 
 	public Proxy2ClientChannelInit(final Connection connection) {
@@ -24,16 +23,16 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 		// ByteBuf -> BetaPacket
 		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
 
-        // Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
-        pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
+		// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
+		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
             @Override
             protected void channelRead0(ChannelHandlerContext ctx, BetaRecordPacket msg) {
                 connection.getEncoderRewriter().rewrite(connection, msg);
             }
         });
 
-        // BetaPacket -> ByteBuf
-        pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+		// BetaPacket -> ByteBuf
+		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 
 		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
 			@Override
@@ -44,7 +43,7 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 	}
 
 	@Override
-	public void channelInactive(final ChannelHandlerContext ctx) {
+	public void channelInactive(final ChannelHandlerContext context) {
 		this.connection.disconnect();
 	}
 }

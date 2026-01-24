@@ -12,7 +12,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SKeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
@@ -59,7 +59,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	private void registerHandshakingPackets() {
-		this.registerPacket(ServerboundHandshakingPackets.INTENTION, C2SIntentionRecordPacket.CODEC);
+		this.registerPacket(ServerboundHandshakingPackets.INTENTION, C2SIntentionPacket.CODEC);
 	}
 
 	private void registerPlayPackets() {

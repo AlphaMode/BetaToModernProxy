@@ -14,7 +14,7 @@ public final class BetaPacketWriter extends MessageToMessageDecoder<BetaRecordPa
 	public static final String KEY = "beta-packet-writer";
 
 	@Override
-	protected void decode(final ChannelHandlerContext ctx, final BetaRecordPacket packet, final List<Object> out) throws Exception {
+	protected void decode(final ChannelHandlerContext context, final BetaRecordPacket packet, final List<Object> out) throws Exception {
 		LOGGER.info("Writing Beta Packet {}", packet);
 		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
 		final BetaPackets type = packet.getType();

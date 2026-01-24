@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
-// Proxy -> Client
 public final class Connection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;

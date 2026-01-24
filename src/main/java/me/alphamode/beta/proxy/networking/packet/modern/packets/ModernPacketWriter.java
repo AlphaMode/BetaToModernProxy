@@ -12,7 +12,7 @@ public class ModernPacketWriter extends MessageToMessageEncoder<ModernRecordPack
 	public static final String KEY = "modern-decoder";
 
 	@Override
-	protected void encode(final ChannelHandlerContext ctx, final ModernRecordPacket<ModernPackets> packet, final List<Object> out) throws Exception {
+	protected void encode(final ChannelHandlerContext context, final ModernRecordPacket<ModernPackets> packet, final List<Object> out) throws Exception {
 		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
 		final ModernPackets type = packet.getType();
 		ModernStreamCodecs.VAR_INT.encode(buf, type.getId());

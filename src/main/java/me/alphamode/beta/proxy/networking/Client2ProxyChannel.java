@@ -7,7 +7,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWrit
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
-// Packets
 public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 	private final MinecraftServerAddress address;
 
@@ -15,7 +14,6 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 		this.address = address;
 	}
 
-	// Client -> Proxy
 	@Override
 	protected void initChannel(final Channel channel) {
 		final Connection connection = new Connection(this.address);
@@ -28,18 +26,18 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 		// ByteBuf -> ModernPacket
 		pipeline.addLast(ModernPacketReader.KEY, new ModernPacketReader(connection));
 
-        pipeline.addLast(connection);
+		pipeline.addLast(connection);
 
         pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
         pipeline.addLast(new PacketSizer());
 
 		// _
-        pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-            @Override
-            protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-                ctx.channel().writeAndFlush(msg);
-            }
-        });
+		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
+			@Override
+			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
+				context.channel().writeAndFlush(buf);
+			}
+		});
 	}
 }
