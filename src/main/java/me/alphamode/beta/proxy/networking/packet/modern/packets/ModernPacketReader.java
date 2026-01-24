@@ -22,7 +22,6 @@ public class ModernPacketReader extends ByteToMessageDecoder {
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
-		DebugUtil.printBuf(buf);
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {

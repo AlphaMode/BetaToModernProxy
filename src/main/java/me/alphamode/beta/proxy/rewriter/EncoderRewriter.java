@@ -19,7 +19,15 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 			connection.send(connection.createKeepAlivePacket(lastMs));
 		});
 
-		this.registerClientboundRewriter(HandshakePacket.class, (_, _) -> new S2CHelloPacket("_", new byte[0], new byte[0], false));
+		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
+            if (packet.username().equals("-")) {
+                connection.send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getUsername()));
+            } else {
+                connection.kick("Online mode isn't supported!");
+                return;
+            }
+            connection.send(new S2CHelloPacket("", new byte[0], new byte[0], false));
+        });
 
 		this.registerClientboundRewriter(LoginPacket.class, (_, _) -> {
 		});
