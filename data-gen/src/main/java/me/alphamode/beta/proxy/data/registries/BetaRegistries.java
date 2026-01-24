@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.data.registries;
 
 import me.alphamode.beta.proxy.data.biome.BetaBiomeData;
+import me.alphamode.beta.proxy.data.dimension.BetaDimensionTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
@@ -23,7 +24,7 @@ public class BetaRegistries {
             .add(Registries.CHICKEN_VARIANT, BetaRegistries::emptyBootstrap)
             .add(Registries.ZOMBIE_NAUTILUS_VARIANT, BetaRegistries::emptyBootstrap)
             .add(Registries.PAINTING_VARIANT, BetaRegistries::emptyBootstrap)
-            .add(Registries.DIMENSION_TYPE, BetaRegistries::emptyBootstrap)
+            .add(Registries.DIMENSION_TYPE, BetaDimensionTypes::bootstrap)
             .add(Registries.DAMAGE_TYPE, BetaRegistries::emptyBootstrap)
             .add(Registries.BANNER_PATTERN, BetaRegistries::emptyBootstrap)
             .add(Registries.ENCHANTMENT, BetaRegistries::emptyBootstrap)
