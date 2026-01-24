@@ -1,7 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.util.AttributeKey;
@@ -45,20 +44,5 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 
 		// _
 		pipeline.addLast(connection);
-	}
-
-	@Override
-	public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-		super.channelRead(ctx, msg);
-	}
-
-	@Override
-	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-		super.channelActive(ctx);
-	}
-
-	@Override
-	public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
-		super.channelInactive(ctx);
 	}
 }

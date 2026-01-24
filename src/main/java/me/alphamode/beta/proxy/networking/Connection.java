@@ -181,9 +181,9 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
 		LOGGER.info("Sending Packet to Server: {}", buf);
-		/*if (this.isConnectedToServer()) {
+		if (this.isConnectedToServer()) {
 			this.serverChannel.writeAndFlush(buf.retain());
-		}*/
+		}
 	}
 
 	@Override
