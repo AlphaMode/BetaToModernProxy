@@ -50,6 +50,32 @@ public interface ModernStreamCodecs {
 		}
 	};
 
+	StreamCodec<ByteBuf, long[]> LONG_ARRAY = new StreamCodec<>() {
+		@Override
+		public long[] decode(final ByteBuf buf) {
+			final int size = VAR_INT.decode(buf);
+			final int maxSize = buf.readableBytes() / 8;
+			if (size > maxSize) {
+				throw new RuntimeException("LongArray with size " + size + " is bigger than allowed " + maxSize);
+			} else {
+				final long[] data = new long[size];
+				for (int i = 0; i < size; ++i) {
+					data[i] = buf.readLong();
+				}
+
+				return data;
+			}
+		}
+
+		@Override
+		public void encode(final ByteBuf buf, final long[] value) {
+			VAR_INT.encode(buf, value.length);
+			for (final long lol : value) {
+				buf.writeLong(lol);
+			}
+		}
+	};
+
 	static StreamCodec<ByteBuf, byte[]> sizedByteArray(final int size) {
 		return new StreamCodec<>() {
 			@Override

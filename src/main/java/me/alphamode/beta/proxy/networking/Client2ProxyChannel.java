@@ -1,14 +1,12 @@
 package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
-import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
-import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterM2B;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
@@ -19,13 +17,9 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 	private static final Logger LOGGER = LogManager.getLogger(Client2ProxyChannel.class);
 	public static final AttributeKey<Connection> CONNECTION_KEY = AttributeKey.newInstance("connection");
 	private final MinecraftServerAddress address;
-	private final CompoundTag defaultTags;
-	private final CompoundTag defaultRegistries;
 
-	public Client2ProxyChannel(final MinecraftServerAddress address, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+	public Client2ProxyChannel(final MinecraftServerAddress address) {
 		this.address = address;
-		this.defaultTags = defaultTags;
-		this.defaultRegistries = defaultRegistries;
 	}
 
 	// Client -> Proxy
@@ -43,27 +37,12 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 		pipeline.addLast(ModernPacketReader.KEY, new ModernPacketReader(connection));
 
 		// ModernPacket -> BetaPacket (Rewriting)
-		pipeline.addLast(PacketRewriterDecoder.KEY, new PacketRewriterDecoder(connection, this.defaultTags, this.defaultRegistries));
+		pipeline.addLast(PacketRewriterM2B.KEY, new PacketRewriterM2B(connection));
 
 		// BetaPacket -> ByteBuf
 		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 
 		// _
 		pipeline.addLast(connection);
-	}
-
-	@Override
-	public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-		super.channelRead(ctx, msg);
-	}
-
-	@Override
-	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
-		super.channelActive(ctx);
-	}
-
-	@Override
-	public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
-		super.channelInactive(ctx);
 	}
 }

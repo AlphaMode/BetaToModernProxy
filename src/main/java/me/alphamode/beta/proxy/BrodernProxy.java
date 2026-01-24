@@ -16,19 +16,11 @@ import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
 public record BrodernProxy(Config config) {
-	private static BrodernProxy INSTANCE;
 	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
 
-	public static BrodernProxy getProxy() {
-		if (INSTANCE == null) {
-			throw new IllegalStateException("Proxy has not been initialized yet");
-		}
-
-		return INSTANCE;
-	}
-
-	public static final CompoundTag DEFAULT_TAGS;
-	public static final CompoundTag DEFAULT_REGISTRIES;
+	private static BrodernProxy INSTANCE;
+	private static final CompoundTag DEFAULT_TAGS;
+	private static final CompoundTag DEFAULT_REGISTRIES;
 
 	static {
 		CompoundTag tag;
@@ -61,7 +53,23 @@ public record BrodernProxy(Config config) {
 		final int serverPort = this.config.getServerPort();
 
 		LOGGER.info("Listening on {}:{} -> {}:{}", bindAddress, bindPort, serverAddress, serverPort);
-		new NetServer(new Client2ProxyChannel(MinecraftServerAddress.ofResolved(serverAddress, serverPort), DEFAULT_TAGS, DEFAULT_REGISTRIES))
+		new NetServer(new Client2ProxyChannel(MinecraftServerAddress.ofResolved(serverAddress, serverPort)))
 				.bind(new InetSocketAddress(bindAddress, bindPort));
+	}
+
+	public static CompoundTag getDefaultTags() {
+		return DEFAULT_TAGS;
+	}
+
+	public static CompoundTag getDefaultRegistries() {
+		return DEFAULT_REGISTRIES;
+	}
+
+	public static BrodernProxy getProxy() {
+		if (INSTANCE == null) {
+			throw new IllegalStateException("Proxy has not been initialized yet");
+		}
+
+		return INSTANCE;
 	}
 }

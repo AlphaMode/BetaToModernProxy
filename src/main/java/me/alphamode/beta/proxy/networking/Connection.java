@@ -38,6 +38,7 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	private UUID uuid;
 	private String username;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
+	private long lastKeepAliveMS = 0L;
 
 	public Connection(final MinecraftServerAddress serverAddress) {
 		this.serverAddress = serverAddress;
@@ -82,13 +83,16 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	}
 
 	public void disconnect() {
-		if (this.isConnectedToServer()) {
-			this.serverChannel.closeFuture();
+		LAST_CONNECTION_ID--;
+		if (this.serverChannel != null) {
+			LOGGER.info("Disconnected from real server!");
+			this.serverChannel.close();
 			this.serverChannel = null;
 		}
 
-		if (this.isConnected()) {
-			this.clientChannel.closeFuture();
+		if (this.clientChannel != null) {
+			LOGGER.info("Disconnected proxy {}!", LAST_CONNECTION_ID);
+			this.clientChannel.close();
 			this.clientChannel = null;
 		}
 	}
@@ -134,6 +138,14 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 		this.protocolVersion = protocolVersion;
 	}
 
+	public long getLastKeepAliveMS() {
+		return this.lastKeepAliveMS;
+	}
+
+	public void setLastKeepAliveMS(final long lastKeepAliveMS) {
+		this.lastKeepAliveMS = lastKeepAliveMS;
+	}
+
 	@Override
 	public S2CCommonDisconnectPacket<?> createDisconnectPacket(final TextComponent message) {
 		return switch (this.state) {
@@ -155,41 +167,45 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-		LOGGER.info("Connection acquired!");
-
 		// Inbound
 		// Outbound -> ModernRecordPacket<T> -> Write Modern Packets
 		this.clientChannel = context.channel();
 		this.clientChannel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
-		if (this.serverChannel == null) {
-			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
+		LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 
-			final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
+		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
+		realServerConnection.connect(this.serverAddress).addListener(future -> {
+			if (!future.isSuccess()) {
+				LOGGER.info("Failed to connect to real server!");
+				future.cause().printStackTrace();
+				this.disconnect();
+				return;
+			}
+
+			if (!this.isConnected()) {
+				LOGGER.info("Client already has disconnected, closing the server connection!");
+				realServerConnection.getChannel().close();
+				return;
+			}
+
+			LOGGER.info("Connected to real server!");
 			this.serverChannel = realServerConnection.getChannel();
-			realServerConnection.connect(this.serverAddress).addListener(future -> {
-				if (!future.isSuccess()) {
-					LOGGER.info("Failed to connect to real server!");
-					future.cause().printStackTrace();
-					context.channel().closeFuture();
-				}
-			});
-		}
+		});
 	}
 
 	// Out channel (Writing from Proxy to Serer)
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
 		LOGGER.info("Sending Packet to Server: {}", buf);
-		/*if (this.isConnectedToServer()) {
+		if (this.isConnectedToServer()) {
 			this.serverChannel.writeAndFlush(buf.retain());
-		}*/
+		}
 	}
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		LAST_CONNECTION_ID--;
-		LOGGER.info("Connection lost!");
+		this.disconnect();
 	}
 
 	@Override

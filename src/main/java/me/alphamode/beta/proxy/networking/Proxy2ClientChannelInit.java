@@ -3,8 +3,8 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
-import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterB2M;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,24 +19,23 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 	// Proxy -> Client
 	@Override
 	protected void initChannel(final Channel channel) {
-//		final ChannelPipeline pipeline = channel.pipeline();
-//
-//		// ByteBuf -> BetaPacket
-//		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
-//
-//		// ModernPacket -> BetaPacket
-//		pipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder(this.connection));
-//
-//		// BetaPacket -> ByteBuf
-//		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
-//
-//		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-//			@Override
-//			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
-//				LOGGER.error("meow meow");
-//				context.channel().writeAndFlush(buf);
-//			}
-//		});
+		final ChannelPipeline pipeline = channel.pipeline();
+
+		// ByteBuf -> BetaPacket
+		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
+
+		// BetaPacket -> ModernPacket
+		pipeline.addLast(PacketRewriterB2M.KEY, new PacketRewriterB2M(this.connection));
+
+		// ModernPacket -> ByteBuf
+		pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+
+		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
+			@Override
+			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
+				context.channel().writeAndFlush(buf);
+			}
+		});
 	}
 
 	@Override

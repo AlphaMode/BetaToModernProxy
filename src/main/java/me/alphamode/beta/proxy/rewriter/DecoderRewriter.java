@@ -25,6 +25,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLevelChunkPacketData;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
@@ -44,15 +45,6 @@ import java.util.*;
 
 public final class DecoderRewriter extends Rewriter {
 	private static final Logger LOGGER = LogManager.getLogger(DecoderRewriter.class);
-
-	private final CompoundTag defaultTags;
-	private final CompoundTag defaultRegistries;
-
-	public DecoderRewriter(final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
-		// TODO: find better way to handle data like this
-		this.defaultTags = defaultTags;
-		this.defaultRegistries = defaultRegistries;
-	}
 
 	@Override
 	public void registerPackets() {
@@ -113,6 +105,7 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerServerboundRewriter(C2SFinishConfigurationPacket.class, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
+			connection.send(new S2CLevelChunkPacketData());
 			return null;
 		});
 
@@ -131,7 +124,7 @@ public final class DecoderRewriter extends Rewriter {
 		LOGGER.info("Sending Tags");
 
 		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
-		this.defaultTags.forEach(entry -> {
+		BrodernProxy.getDefaultTags().forEach(entry -> {
 			final Map<Identifier, IntList> map = new HashMap<>();
 
 			entry.getValue().asCompoundTag().forEach(tag -> {
@@ -151,7 +144,7 @@ public final class DecoderRewriter extends Rewriter {
 	private void sendRegistries(final Connection connection) {
 		LOGGER.info("Sending Registries");
 
-		this.defaultRegistries.forEach(entry -> {
+		BrodernProxy.getDefaultRegistries().forEach(entry -> {
 			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 
 			final CompoundTag tag = entry.getValue().asCompoundTag();

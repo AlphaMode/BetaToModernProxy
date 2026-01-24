@@ -25,6 +25,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetTimePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
@@ -238,7 +239,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundPlayPackets.SET_SCORE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_SIMULATION_DISTANCE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_SUBTITLE_TEXT, null);
-		this.registerPacket(ClientboundPlayPackets.SET_TIME, null);
+		this.registerPacket(ClientboundPlayPackets.SET_TIME, S2CSetTimePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_TITLE_TEXT, null);
 		this.registerPacket(ClientboundPlayPackets.SET_TITLES_ANIMATION, null);
 		this.registerPacket(ClientboundPlayPackets.SOUND_ENTITY, null);
