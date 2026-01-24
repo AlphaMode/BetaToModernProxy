@@ -38,6 +38,7 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	private UUID uuid;
 	private String username;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
+	private long lastKeepAliveMS = 0L;
 
 	public Connection(final MinecraftServerAddress serverAddress) {
 		this.serverAddress = serverAddress;
@@ -132,6 +133,14 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 
 	public void setProtocolVersion(final int protocolVersion) {
 		this.protocolVersion = protocolVersion;
+	}
+
+	public long getLastKeepAliveMS() {
+		return this.lastKeepAliveMS;
+	}
+
+	public void setLastKeepAliveMS(final long lastKeepAliveMS) {
+		this.lastKeepAliveMS = lastKeepAliveMS;
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package me.alphamode.beta.proxy.rewriter;
 
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,8 +14,9 @@ public final class EncoderRewriter extends Rewriter {
 	@Override
 	public void registerPackets() {
 		this.registerClientboundRewriter(KeepAlivePacket.class, (connection, _) -> {
-			LOGGER.info("keep alive");
-			return connection.createKeepAlivePacket(0L);
+			final long lastMs = connection.getLastKeepAliveMS();
+			connection.setLastKeepAliveMS(System.currentTimeMillis());
+			return connection.createKeepAlivePacket(lastMs);
 		});
 
 		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
