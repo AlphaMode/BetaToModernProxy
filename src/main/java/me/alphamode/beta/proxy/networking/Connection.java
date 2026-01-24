@@ -166,7 +166,6 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 
 			final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
-			this.serverChannel = realServerConnection.getChannel();
 			realServerConnection.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
 					LOGGER.info("Failed to connect to real server!");
@@ -174,6 +173,7 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 					context.channel().closeFuture();
 				}
 			});
+			this.serverChannel = realServerConnection.getChannel();
 		}
 	}
 
