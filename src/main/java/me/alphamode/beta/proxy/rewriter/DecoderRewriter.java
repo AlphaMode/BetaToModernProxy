@@ -43,7 +43,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public final class DecoderRewriter extends Rewriter {
+public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 	private static final Logger LOGGER = LogManager.getLogger(DecoderRewriter.class);
 
 	@Override
@@ -108,9 +108,12 @@ public final class DecoderRewriter extends Rewriter {
 		});
 
 		// Cancel
-		this.registerServerboundRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> {});
-		this.registerServerboundRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> {});
-		this.registerServerboundRewriter(C2SClientInformationPacket.class, (_, _) -> {});
+		this.registerServerboundRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> {
+		});
+		this.registerServerboundRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> {
+		});
+		this.registerServerboundRewriter(C2SClientInformationPacket.class, (_, _) -> {
+		});
 	}
 
 	private void sendTags(final Connection connection) {
@@ -154,5 +157,14 @@ public final class DecoderRewriter extends Rewriter {
 					entries
 			));
 		});
+	}
+
+	@Override
+	public void rewrite(final Connection connection, final ModernRecordPacket<?> packet) {
+		LOGGER.warn("Encoding Modern to Beta Packet ({})", packet.getType());
+		final RewriterFactory<ModernRecordPacket<?>> rewriter = this.getServerboundRewriter(packet.getClass());
+		if (rewriter != null) {
+			rewriter.rewrite(connection, packet);
+		}
 	}
 }
