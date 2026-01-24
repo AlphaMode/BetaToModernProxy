@@ -20,6 +20,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 		});
 
 		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
+            connection.sendToClient(new S2CHelloPacket("", new byte[0], new byte[0], false));
             if (packet.username().equals("-")) {
                 connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getUsername()));
             } else {
@@ -51,7 +52,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 
 		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {
 			final long time = packet.time();
-			connection.sendToClient(new S2CSetTimePacket(time, time, time > -1));
+//			connection.sendToClient(new S2CSetTimePacket(time, time, time > -1));
 		});
 
 		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {
@@ -61,7 +62,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 
 	@Override
 	public void rewrite(final Connection connection, final BetaRecordPacket packet) {
-		LOGGER.warn("Encoding Beta to Modern Packet ({})", packet.getType());
+//		LOGGER.warn("Encoding Beta to Modern Packet ({})", packet.getType());
 		final RewriterFactory<BetaRecordPacket> rewriter = this.getClientboundRewriter(packet.getClass());
 		if (rewriter != null) {
 			rewriter.rewrite(connection, packet);

@@ -78,7 +78,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	public void sendToClient(final ModernRecordPacket<?> packet) {
 		if (this.isConnected()) {
 			if (packet.getState() != this.state) {
-				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + packet.getState());
+				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + packet.getState() + " for packet " + packet);
 			}
 
 			this.clientChannel.writeAndFlush(packet);
