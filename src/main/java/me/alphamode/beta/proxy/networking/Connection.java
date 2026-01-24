@@ -35,6 +35,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 	private final MinecraftServerAddress serverAddress;
 	private final DecoderRewriter decoderRewriter = new DecoderRewriter();
 	private final EncoderRewriter encoderRewriter = new EncoderRewriter();
+	private final int id;
 	private Channel serverChannel;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
@@ -47,6 +48,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		this.serverAddress = serverAddress;
 		this.decoderRewriter.registerPackets();
 		this.encoderRewriter.registerPackets();
+		this.id = LAST_CONNECTION_ID++;
 	}
 
 	public void send(final BetaRecordPacket packet) {
@@ -96,7 +98,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		}
 
 		if (this.clientChannel != null) {
-			LOGGER.info("Disconnected proxy {}!", LAST_CONNECTION_ID);
+			LOGGER.info("Disconnected proxy {}!", this.id);
 			this.clientChannel.close();
 			this.clientChannel = null;
 		}
@@ -177,7 +179,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		this.clientChannel = context.channel();
 		this.clientChannel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
-		LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
+		LOGGER.info("Proxy {} connected to {}", this.id, this.serverAddress);
 
 		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
 		realServerConnection.connect(this.serverAddress).addListener(future -> {
