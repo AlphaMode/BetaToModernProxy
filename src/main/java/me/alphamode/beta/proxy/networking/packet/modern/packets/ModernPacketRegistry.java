@@ -2,7 +2,6 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundConfigurationPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundLoginPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
@@ -27,7 +26,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
-public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
+public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernRecordPacket<ModernPackets>> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 
 	private ModernPacketRegistry() {
@@ -35,13 +34,13 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 	}
 
 	@Override
-	public RecordPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
+	public ModernRecordPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
 		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, state);
 		if (packetType == null) {
 			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
 			try {
-				return this.getCodec(packetType).decode(byteBuf);
+				return (ModernRecordPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
 			} catch (final Exception e) {
 				throw new RuntimeException("Failed to decode modern packet " + packetType, e);
 			}

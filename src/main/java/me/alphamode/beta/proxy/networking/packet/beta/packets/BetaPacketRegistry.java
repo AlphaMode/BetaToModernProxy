@@ -2,12 +2,11 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 
-public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
+public class BetaPacketRegistry extends PacketRegistry<BetaPackets, BetaRecordPacket> {
 	public static final BetaPacketRegistry INSTANCE = new BetaPacketRegistry();
 
 	private BetaPacketRegistry() {
@@ -15,12 +14,12 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets> {
 	}
 
 	@Override
-	public RecordPacket<BetaPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
+	public BetaRecordPacket createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
 		final BetaPackets packetType = BetaPackets.getPacket(packetId);
 		if (packetType == null) {
 			throw new IllegalArgumentException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
-			return this.getCodec(packetType).decode(byteBuf);
+			return (BetaRecordPacket) this.getCodec(packetType).decode(byteBuf);
 		}
 	}
 
