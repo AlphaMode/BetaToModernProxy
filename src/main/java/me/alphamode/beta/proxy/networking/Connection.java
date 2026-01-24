@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
@@ -223,7 +224,7 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		}
 	}
 
-    private void rewritePacketB2C(final BetaRecordPacket packet) {
+    public void rewritePacketB2C(final BetaRecordPacket packet) {
         LOGGER.warn("Encoding Beta to Modern Packet ({})", packet.getType());
         for (final Class<?> clazz : this.encoderRewriter.clientboundRewriters.keySet()) {
             if (clazz.isAssignableFrom(packet.getClass())) {

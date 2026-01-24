@@ -42,7 +42,11 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		if (packetType == null) {
 			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
-			return this.getCodec(packetType).decode(byteBuf);
+            try {
+                return this.getCodec(packetType).decode(byteBuf);
+            } catch (final Exception e) {
+                throw new RuntimeException("Failed to decode modern packet " + packetType, e);
+            }
 		}
 	}
 
