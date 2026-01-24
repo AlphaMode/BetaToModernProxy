@@ -59,11 +59,9 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 		});
 
 		this.registerServerboundRewriter(C2SHelloPacket.class, (connection, packet) -> {
-            connection.send(new HandshakePacket(packet.username()));
+            connection.sendToServer(new HandshakePacket(packet.username()));
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
-			connection.sendToServer(new HandshakePacket("-"));
-			connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0));
 			connection.sendToClient(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
 		});
 
