@@ -19,14 +19,14 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 		});
 
 		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
-            if (packet.username().equals("-")) {
-                connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getUsername()));
-            } else {
-                connection.kick("Online mode isn't supported!");
-                return;
-            }
-            connection.sendToClient(new S2CHelloPacket("", new byte[0], new byte[0], false));
-        });
+			if (packet.username().equals("-")) {
+				connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getUsername()));
+			} else {
+				connection.kick("Online mode isn't supported!");
+				return;
+			}
+			connection.sendToClient(new S2CHelloPacket("", new byte[0], new byte[0], false));
+		});
 
 		this.registerClientboundRewriter(LoginPacket.class, (_, _) -> {
 		});
@@ -43,6 +43,9 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 		// MOVE_PLAYER_POS_ROT
 
 		// CHAT
+		this.registerClientboundRewriter(ChatPacket.class, (connection, packet) -> {
+			// connection.sendToClient(new S2CPlayerChatPacket());
+		});
 
 		// CONTAINER_SET_CONTENT
 

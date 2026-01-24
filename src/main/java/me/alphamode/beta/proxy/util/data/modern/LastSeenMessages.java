@@ -9,6 +9,8 @@ import java.util.BitSet;
 import java.util.List;
 
 public record LastSeenMessages(List<MessageSignature> signatures) {
+	public static LastSeenMessages EMPTY = new LastSeenMessages(List.of());
+
 	public static final StreamCodec<ByteBuf, LastSeenMessages> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.list(MessageSignature.CODEC),
 			LastSeenMessages::signatures,
@@ -24,6 +26,14 @@ public record LastSeenMessages(List<MessageSignature> signatures) {
 				BasicStreamCodecs.BYTE,
 				Update::checksum,
 				Update::new
+		);
+	}
+
+	public record Packed(List<MessageSignature.Packed> entries) {
+		public static final StreamCodec<ByteBuf, Packed> CODEC = StreamCodec.composite(
+				ModernStreamCodecs.collection(MessageSignature.Packed.CODEC),
+				Packed::entries,
+				Packed::new
 		);
 	}
 }

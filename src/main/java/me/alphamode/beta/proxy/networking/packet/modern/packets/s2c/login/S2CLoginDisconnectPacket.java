@@ -11,7 +11,7 @@ import net.lenni0451.mcstructs.text.TextComponent;
 public record S2CLoginDisconnectPacket(
 		TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundLoginPackets> {
 	public static final StreamCodec<ByteBuf, S2CLoginDisconnectPacket> CODEC = StreamCodec.composite(
-			ModernStreamCodecs.COMPONENT,
+			ModernStreamCodecs.TEXT_COMPONENT,
 			S2CLoginDisconnectPacket::reason,
 			S2CLoginDisconnectPacket::new
 	);

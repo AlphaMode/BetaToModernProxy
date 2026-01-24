@@ -76,6 +76,18 @@ public interface ModernStreamCodecs {
 		}
 	};
 
+	StreamCodec<ByteBuf, BitSet> BIT_SET = new StreamCodec<>() {
+		@Override
+		public BitSet decode(final ByteBuf buf) {
+			return BitSet.valueOf(LONG_ARRAY.decode(buf));
+		}
+
+		@Override
+		public void encode(final ByteBuf buf, final BitSet value) {
+			LONG_ARRAY.encode(buf, value.toLongArray());
+		}
+	};
+
 	static StreamCodec<ByteBuf, byte[]> sizedByteArray(final int size) {
 		return new StreamCodec<>() {
 			@Override
@@ -210,7 +222,7 @@ public interface ModernStreamCodecs {
 		}
 	};
 
-	StreamCodec<ByteBuf, TextComponent> COMPONENT = new StreamCodec<>() {
+	StreamCodec<ByteBuf, TextComponent> TEXT_COMPONENT = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final TextComponent value) {
 			PacketTypes.writeUnnamedTag(buf, TextComponentCodec.LATEST.serializeNbtTree(value));

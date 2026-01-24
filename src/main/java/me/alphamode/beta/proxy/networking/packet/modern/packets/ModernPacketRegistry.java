@@ -25,6 +25,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayerChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetTimePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
@@ -195,7 +196,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets> {
 		this.registerPacket(ClientboundPlayPackets.PONG_RESPONSE, null);
 		this.registerPacket(ClientboundPlayPackets.PLACE_GHOST_RECIPE, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_ABILITIES, null);
-		this.registerPacket(ClientboundPlayPackets.PLAYER_CHAT, null);
+		this.registerPacket(ClientboundPlayPackets.PLAYER_CHAT, S2CPlayerChatPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_COMBAT_END, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_COMBAT_ENTER, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_COMBAT_KILL, null);
