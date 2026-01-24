@@ -18,6 +18,9 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 			connection.sendToClient(connection.createKeepAlivePacket(lastMs));
 		});
 
+		this.registerClientboundRewriter(LoginPacket.class, (_, _) -> {
+		});
+
 		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
 			if (packet.username().equals("-")) {
 				connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getUsername()));
@@ -28,33 +31,165 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 			connection.sendToClient(new S2CHelloPacket("", new byte[0], new byte[0], false));
 		});
 
-		this.registerClientboundRewriter(LoginPacket.class, (_, _) -> {
+		this.registerClientboundRewriter(ChatPacket.class, (connection, packet) -> {
+			// connection.sendToClient(new S2CPlayerChatPacket());
+		});
+
+		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(SetEquippedItemPacket.class, (connection, packet) -> {
 		});
 
 		this.registerClientboundRewriter(SetSpawnPositionPacket.class, (_, packet) -> {
 		});
 
-		// SET_SPAWN_POSITION
-
-		// CHUNK_VISIBILITY
-
-		// BLOCK_REGION_UPDATE
-
-		// MOVE_PLAYER_POS_ROT
-
-		// CHAT
-		this.registerClientboundRewriter(ChatPacket.class, (connection, packet) -> {
-			// connection.sendToClient(new S2CPlayerChatPacket());
+		this.registerClientboundRewriter(InteractPacket.class, (connection, packet) -> {
 		});
 
-		// CONTAINER_SET_CONTENT
+		this.registerClientboundRewriter(SetHealthPacket.class, (connection, packet) -> {
+		});
 
-		// CONTAINER_SET_SLOT
+		this.registerClientboundRewriter(PlayerChangeDimensionPacket.class, (connection, packet) -> {
+		});
 
-//		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {
-//			final long time = packet.time();
-//			connection.sendToClient(new S2CSetTimePacket(time, time, time > -1));
-//		});
+		this.registerClientboundRewriter(MovePlayerPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MovePlayerPacket.Pos.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MovePlayerPacket.Rot.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MovePlayerPacket.PosRot.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(PlayerActionPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(UseItemPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(SetCarriedItemPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(InteractionPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AnimatePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(PlayerCommandPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AddPlayerPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AddItemEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(TakeItemEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AddEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AddMobPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AddPaintingPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(PlayerInputPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(SetEntityMotionPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(RemoveEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MoveEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MoveEntityPacket.Pos.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MoveEntityPacket.Rot.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MoveEntityPacket.PosRot.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(TeleportEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(EntityEventPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(SetRidingPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(SetEntityDataPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ChunkVisibilityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(BlockRegionUpdatePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ChunkTilesUpdatePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(TileUpdatePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(TileEventPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ExplodePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(LevelEventPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(GameEventPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(AddGlobalEntityPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerOpenPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerClosePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerClickPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerSetSlotPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerSetContentPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerSetDataPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(ContainerAckPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(SignUpdatePacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(MapItemDataPacket.class, (connection, packet) -> {
+		});
+
+		this.registerClientboundRewriter(UpdateStatPacket.class, (connection, packet) -> {
+		});
 
 		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {
 			connection.kick(packet.reason());
@@ -63,7 +198,6 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 
 	@Override
 	public void rewrite(final Connection connection, final BetaRecordPacket packet) {
-//		LOGGER.warn("Encoding Beta to Modern Packet ({})", packet.getType());
 		final RewriterFactory<BetaRecordPacket> rewriter = this.getClientboundRewriter(packet.getClass());
 		if (rewriter != null) {
 			rewriter.rewrite(connection, packet);

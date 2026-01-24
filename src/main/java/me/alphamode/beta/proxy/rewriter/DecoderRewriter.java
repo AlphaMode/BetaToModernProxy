@@ -4,10 +4,8 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.Connection;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
@@ -59,7 +57,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 		});
 
 		this.registerServerboundRewriter(C2SHelloPacket.class, (connection, packet) -> {
-            connection.sendToServer(new HandshakePacket(packet.username()));
+			connection.sendToServer(new HandshakePacket(packet.username()));
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
 			connection.sendToClient(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
@@ -158,7 +156,6 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 
 	@Override
 	public void rewrite(final Connection connection, final ModernRecordPacket<?> packet) {
-//		LOGGER.warn("Decoding Modern to Beta Packet ({})", packet.getType());
 		final RewriterFactory<ModernRecordPacket<?>> rewriter = this.getServerboundRewriter(packet.getClass());
 		if (rewriter != null) {
 			rewriter.rewrite(connection, packet);
