@@ -1,14 +1,11 @@
 package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
@@ -51,13 +48,13 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		this.id = LAST_CONNECTION_ID++;
 	}
 
-    public DecoderRewriter getDecoderRewriter() {
-        return this.decoderRewriter;
-    }
+	public DecoderRewriter getDecoderRewriter() {
+		return this.decoderRewriter;
+	}
 
-    public EncoderRewriter getEncoderRewriter() {
-        return this.encoderRewriter;
-    }
+	public EncoderRewriter getEncoderRewriter() {
+		return this.encoderRewriter;
+	}
 
 	public void send(final BetaRecordPacket packet) {
 		if (this.isConnectedToServer()) {
@@ -186,8 +183,6 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		// Outbound -> ModernRecordPacket<T> -> Write Modern Packets
 		this.clientChannel = context.channel();
 
-		LOGGER.info("Proxy {} connected to {}", this.id, this.serverAddress);
-
 		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
 		realServerConnection.connect(this.serverAddress).addListener(future -> {
 			if (!future.isSuccess()) {
@@ -203,7 +198,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 				return;
 			}
 
-			LOGGER.info("Connected to real server!");
+			LOGGER.info("Proxy {} connected to {}", this.id, this.serverAddress);
 			this.serverChannel = realServerConnection.getChannel();
 		});
 	}
@@ -212,7 +207,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final ModernRecordPacket<?> packet) {
 		if (this.isConnectedToServer()) {
-            this.decoderRewriter.rewrite(this, packet);
+			this.decoderRewriter.rewrite(this, packet);
 		}
 	}
 
