@@ -65,7 +65,7 @@ highContrastBlockOutline:false
 narratorHotkey:true
 resourcePacks:[]
 incompatibleResourcePacks:[]
-lastServer:
+lastServer:localhost:25566
 lang:en_us
 chatVisibility:0
 chatOpacity:1.0

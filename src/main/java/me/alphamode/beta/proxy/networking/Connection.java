@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
@@ -27,6 +28,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 
 public final class Connection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
+	public static final AttributeKey<Connection> KEY = AttributeKey.newInstance("connection");
+
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
@@ -128,6 +131,10 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		return this.serverChannel != null && this.serverChannel.isActive();
 	}
 
+	public int getId() {
+		return this.id;
+	}
+
 	public PacketState getState() {
 		return this.state;
 	}
@@ -137,11 +144,11 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		this.state = state;
 	}
 
-	public UUID getId() {
+	public UUID getUUID() {
 		return this.uuid;
 	}
 
-	public void setId(final UUID uuid) {
+	public void setUUID(final UUID uuid) {
 		this.uuid = uuid;
 	}
 
@@ -192,7 +199,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
 
-		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
+		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit());
 		realServerConnection.connect(this.serverAddress).addListener(future -> {
 			if (!future.isSuccess()) {
 				LOGGER.info("Failed to connect proxy #{} to real server!", this.id);
@@ -215,7 +222,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	// Out channel (Writing from Proxy to Serer)
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final ModernRecordPacket<?> packet) {
-		if (this.isConnectedToServer()) {
+		if (this.isConnected()) {
 			this.decoderRewriter.rewrite(this, packet);
 		}
 	}
@@ -229,5 +236,14 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
 		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.username, cause);
+	}
+
+	public void debug() {
+		System.out.println("-------------------------------------------------------------------");
+		System.out.printf("-     PROXY %s     -%n", this.id);
+		System.out.printf("Client connected? %s%n", this.isConnected());
+		System.out.printf("Server connected? %s%n", this.isConnectedToServer());
+		System.out.printf("State: %s%n", this.state);
+		System.out.println("-------------------------------------------------------------------");
 	}
 }

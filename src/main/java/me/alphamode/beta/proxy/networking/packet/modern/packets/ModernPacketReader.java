@@ -13,23 +13,17 @@ import java.util.List;
 public class ModernPacketReader extends ByteToMessageDecoder {
 	private static final Logger LOGGER = LogManager.getLogger(ModernPacketReader.class);
 	public static final String KEY = "modern-encoder";
-	private final Connection connection;
-
-	public ModernPacketReader(final Connection connection) {
-		this.connection = connection;
-	}
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
+		final Connection connection = context.channel().attr(Connection.KEY).get();
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {
-			final ModernRecordPacket<?> packet = ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), packetData);
-			out.add(packet);
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
 			packetData.release();
-		} catch (Exception exception) {
+		} catch (final Exception exception) {
 			packetData.release();
-			LOGGER.info("Failed to decode modern packet in state {}", this.connection.getState());
 			throw new RuntimeException(exception);
 		}
 	}
