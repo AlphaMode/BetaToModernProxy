@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
@@ -176,10 +177,14 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 			});
 
 			this.serverChannel = realServerConnection.getChannel();
-			this.serverChannel.pipeline().addLast(new SimpleChannelInboundHandler<>() {
+
+			final ChannelPipeline serverPipeline = this.serverChannel.pipeline();
+			serverPipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder(this));
+			serverPipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+			serverPipeline.addLast(new SimpleChannelInboundHandler<>() {
 				@Override
 				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
-					LOGGER.info(data);
+					BrodernProxy.LOGGER.info("Sending Data to Server: {}", data);
 					clientChannel.writeAndFlush(data).syncUninterruptibly();
 				}
 
@@ -188,10 +193,6 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 					context.close();
 				}
 			});
-
-			final ChannelPipeline serverPipeline = this.serverChannel.pipeline();
-			serverPipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder(this));
-			serverPipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 		}
 	}
 

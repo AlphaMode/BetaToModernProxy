@@ -113,7 +113,6 @@ public final class DecoderRewriter extends Rewriter {
 
 		this.registerServerboundRewriter(C2SFinishConfigurationPacket.class, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
-			//connection.kick("meow meow mrrp :3 nyaaa uwu");
 			return null;
 		});
 
@@ -129,6 +128,8 @@ public final class DecoderRewriter extends Rewriter {
 	}
 
 	private void sendTags(final Connection connection) {
+		LOGGER.info("Sending Tags");
+
 		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
 		this.defaultTags.forEach(entry -> {
 			final Map<Identifier, IntList> map = new HashMap<>();
@@ -148,6 +149,8 @@ public final class DecoderRewriter extends Rewriter {
 	}
 
 	private void sendRegistries(final Connection connection) {
+		LOGGER.info("Sending Registries");
+
 		this.defaultRegistries.forEach(entry -> {
 			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 

@@ -1,9 +1,6 @@
 package me.alphamode.beta.proxy.rewriter;
 
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
