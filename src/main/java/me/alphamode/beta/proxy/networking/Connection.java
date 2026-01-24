@@ -222,6 +222,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
+		LOGGER.warn("Proxy Connection Became Inactive, Disconnecting...");
 		this.disconnect();
 	}
 
