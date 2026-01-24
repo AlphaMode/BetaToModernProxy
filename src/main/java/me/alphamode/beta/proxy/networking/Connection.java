@@ -83,13 +83,15 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	}
 
 	public void disconnect() {
-		if (this.isConnectedToServer()) {
-			this.serverChannel.closeFuture();
+		if (this.serverChannel != null) {
+			LOGGER.info("Disconnected from real server!");
+			this.serverChannel.close();
 			this.serverChannel = null;
 		}
 
-		if (this.isConnected()) {
-			this.clientChannel.closeFuture();
+		if (this.clientChannel != null) {
+			LOGGER.info("Disconnected proxy {}!", LAST_CONNECTION_ID);
+			this.clientChannel.close();
 			this.clientChannel = null;
 		}
 	}
@@ -164,26 +166,31 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
-		LOGGER.info("Connection acquired!");
-
 		// Inbound
 		// Outbound -> ModernRecordPacket<T> -> Write Modern Packets
 		this.clientChannel = context.channel();
 		this.clientChannel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
-		if (this.serverChannel == null) {
-			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
+		LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 
-			final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
-			realServerConnection.connect(this.serverAddress).addListener(future -> {
-				if (!future.isSuccess()) {
-					LOGGER.info("Failed to connect to real server!");
-					future.cause().printStackTrace();
-					context.channel().closeFuture();
-				}
-			});
+		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
+		realServerConnection.connect(this.serverAddress).addListener(future -> {
+			if (!future.isSuccess()) {
+				LOGGER.info("Failed to connect to real server!");
+				future.cause().printStackTrace();
+				this.disconnect();
+				return;
+			}
+
+			if (!this.isConnected()) {
+				LOGGER.info("Client already has disconnected, closing the server connection!");
+				realServerConnection.getChannel().close();
+				return;
+			}
+
+			LOGGER.info("Connected to real server!");
 			this.serverChannel = realServerConnection.getChannel();
-		}
+		});
 	}
 
 	// Out channel (Writing from Proxy to Serer)
@@ -198,7 +205,7 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
 		LAST_CONNECTION_ID--;
-		LOGGER.info("Connection lost!");
+		this.disconnect();
 	}
 
 	@Override
