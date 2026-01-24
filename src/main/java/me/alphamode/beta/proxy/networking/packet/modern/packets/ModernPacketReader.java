@@ -24,7 +24,8 @@ public class ModernPacketReader extends ByteToMessageDecoder {
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {
-			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), packetData));
+			final ModernRecordPacket<?> packet = ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), packetData);
+			out.add(packet);
 		} catch (Exception exception) {
 			LOGGER.info("Failed to decode modern packet in state {}", this.connection.getState());
 			throw new RuntimeException(exception);
