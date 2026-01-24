@@ -7,6 +7,7 @@ build/
 
 logs/
 config.json
+data-gen/run/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
