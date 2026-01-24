@@ -17,7 +17,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 		try {
 			final BetaRecordPacket packet = BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), null /* Unused */, null /* unused */, buf);
 			out.add(packet);
-		} catch (Exception exception) {
+		} catch (final Exception exception) {
 			LOGGER.info("Failed to decode beta packet");
 			throw new RuntimeException(exception);
 		}
