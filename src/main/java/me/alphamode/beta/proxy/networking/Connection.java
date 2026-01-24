@@ -224,6 +224,5 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
 		LOGGER.error("Caught exception in connection ({})", this.username, cause);
-		this.kick(cause.getMessage());
 	}
 }
