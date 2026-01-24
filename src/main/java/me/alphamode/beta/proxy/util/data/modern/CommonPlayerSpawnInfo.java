@@ -1,7 +1,11 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
+import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
-import me.alphamode.beta.proxy.util.data.modern.registry.Registry;
+import me.alphamode.beta.proxy.util.data.modern.registry.Registries;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -10,9 +14,9 @@ import java.util.Optional;
 
 public record CommonPlayerSpawnInfo(
 		Holder<DimensionType> dimensionType,
-		ResourceKey<Registry<Identifier>> dimension,
+		ResourceKey<Identifier> dimension,
 		long seed,
-		GameMode gameType,
+		GameMode gameMode,
 		@Nullable GameMode previousGameType,
 		boolean isDebug,
 		boolean isFlat,
@@ -20,27 +24,27 @@ public record CommonPlayerSpawnInfo(
 		int portalCooldown,
 		int seaLevel
 ) {
-//	public static final StreamCodec<ByteBuf, CommonPlayerSpawnInfo> CODEC = StreamCodec.composite(
-//			DimensionType.CODEC,
-//			CommonPlayerSpawnInfo::dimensionType,
-//			ResourceKey.streamCodec(Registries.DIMENSION),
-//			CommonPlayerSpawnInfo::dimension,
-//			BasicStreamCodecs.LONG,
-//			CommonPlayerSpawnInfo::seed,
-//			GameType.STREAM_CODEC_BYTE,
-//			CommonPlayerSpawnInfo::gameType,
-//			ModernStreamCodecs.nullable(GameType.STREAM_CODEC_BYTE),
-//			CommonPlayerSpawnInfo::gameType,
-//			BasicStreamCodecs.BOOL,
-//			CommonPlayerSpawnInfo::isDebug,
-//			BasicStreamCodecs.BOOL,
-//			CommonPlayerSpawnInfo::isFlat,
-//			ModernStreamCodecs.optional(GlobalPos.CODEC),
-//			CommonPlayerSpawnInfo::lastDeathLocation,
-//			BasicStreamCodecs.INT,
-//			CommonPlayerSpawnInfo::portalCooldown,
-//			BasicStreamCodecs.INT,
-//			CommonPlayerSpawnInfo::seaLevel,
-//			CommonPlayerSpawnInfo::new
-//	);
+	public static final StreamCodec<ByteBuf, CommonPlayerSpawnInfo> CODEC = StreamCodec.composite(
+			DimensionType.CODEC,
+			CommonPlayerSpawnInfo::dimensionType,
+			ResourceKey.streamCodec(Registries.DIMENSION),
+			CommonPlayerSpawnInfo::dimension,
+			BasicStreamCodecs.LONG,
+			CommonPlayerSpawnInfo::seed,
+			GameMode.CODEC,
+			CommonPlayerSpawnInfo::gameMode,
+			ModernStreamCodecs.nullable(GameMode.CODEC),
+			CommonPlayerSpawnInfo::gameMode,
+			BasicStreamCodecs.BOOL,
+			CommonPlayerSpawnInfo::isDebug,
+			BasicStreamCodecs.BOOL,
+			CommonPlayerSpawnInfo::isFlat,
+			ModernStreamCodecs.optional(GlobalPos.CODEC),
+			CommonPlayerSpawnInfo::lastDeathLocation,
+			BasicStreamCodecs.INT,
+			CommonPlayerSpawnInfo::portalCooldown,
+			BasicStreamCodecs.INT,
+			CommonPlayerSpawnInfo::seaLevel,
+			CommonPlayerSpawnInfo::new
+	);
 }
