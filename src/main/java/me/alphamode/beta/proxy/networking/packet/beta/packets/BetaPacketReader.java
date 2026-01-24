@@ -10,10 +10,11 @@ import java.util.List;
 
 public final class BetaPacketReader extends ReplayingDecoder<Void> {
 	private static final Logger LOGGER = LogManager.getLogger(BetaPacketReader.class);
-	public static final String KEY = "beta-decoder";
+	public static final String KEY = "beta-packet-reader";
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
+		LOGGER.info("Reading Beta Packet");
 		try {
 			out.add(BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), null /* Unused */, null /* unused */, buf));
 		} catch (Exception exception) {

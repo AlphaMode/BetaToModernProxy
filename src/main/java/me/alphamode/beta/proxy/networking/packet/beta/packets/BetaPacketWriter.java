@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 public final class BetaPacketWriter extends MessageToByteEncoder<BetaRecordPacket> {
 	private static final Logger LOGGER = LogManager.getLogger(BetaPacketWriter.class);
-	public static final String KEY = "beta-encoder";
+	public static final String KEY = "beta-packet-writer";
 
 	@Override
 	protected void encode(final ChannelHandlerContext context, final BetaRecordPacket packet, final ByteBuf buf) throws Exception {

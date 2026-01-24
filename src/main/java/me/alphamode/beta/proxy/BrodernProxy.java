@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy;
 
 import me.alphamode.beta.proxy.config.Config;
-import me.alphamode.beta.proxy.networking.ProxyChannel;
+import me.alphamode.beta.proxy.networking.Client2ProxyChannel;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -27,8 +27,8 @@ public record BrodernProxy(Config config) {
 		return INSTANCE;
 	}
 
-	private static final CompoundTag DEFAULT_TAGS;
-	private static final CompoundTag DEFAULT_REGISTRIES;
+	public static final CompoundTag DEFAULT_TAGS;
+	public static final CompoundTag DEFAULT_REGISTRIES;
 
 	static {
 		CompoundTag tag;
@@ -61,7 +61,7 @@ public record BrodernProxy(Config config) {
 		final int serverPort = this.config.getServerPort();
 
 		LOGGER.info("Listening on {}:{} -> {}:{}", bindAddress, bindPort, serverAddress, serverPort);
-		new NetServer(new ProxyChannel(MinecraftServerAddress.ofResolved(serverAddress, serverPort), DEFAULT_TAGS, DEFAULT_REGISTRIES))
+		new NetServer(new Client2ProxyChannel(MinecraftServerAddress.ofResolved(serverAddress, serverPort), DEFAULT_TAGS, DEFAULT_REGISTRIES))
 				.bind(new InetSocketAddress(bindAddress, bindPort));
 	}
 }
