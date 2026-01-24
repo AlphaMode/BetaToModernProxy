@@ -63,7 +63,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		} else if (this.isConnected() && !serverbound) {
 			this.clientChannel.writeAndFlush(buf);
 		} else {
-			throw new RuntimeException("Cannot write to dead connection!");
+			throw new RuntimeException("Cannot write to dead " + (serverbound ? "server" : "client") + " connection!");
 		}
 	}
 
@@ -71,7 +71,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		if (this.isConnectedToServer()) {
 			this.serverChannel.writeAndFlush(packet);
 		} else {
-			throw new RuntimeException("Cannot write to dead connection!");
+			throw new RuntimeException("Cannot write to dead server connection!");
 		}
 	}
 
@@ -83,11 +83,12 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 			this.clientChannel.writeAndFlush(packet);
 		} else {
-			throw new RuntimeException("Cannot write to dead connection!");
+			throw new RuntimeException("Cannot write to dead client connection!");
 		}
 	}
 
 	public void kick(final TextComponent message) {
+		LOGGER.error("Kicking client with reason: {}", message.toString());
 		if (this.protocolVersion == BetaRecordPacket.PROTOCOL_VERSION) {
 			this.sendToServer(new DisconnectPacket(message.asLegacyFormatString()));
 		} else {
@@ -101,20 +102,19 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	}
 
 	public void kick(final String message) {
-		LOGGER.error("Kicking client with reason: {}", message);
 		this.kick(TextComponent.of(message));
 	}
 
 	public void disconnect() {
 		LAST_CONNECTION_ID--;
 		if (this.serverChannel != null) {
-			LOGGER.info("Disconnected from real server!");
+			LOGGER.info("Disconnected Proxy #{} from real server!", this.id);
 			this.serverChannel.close();
 			this.serverChannel = null;
 		}
 
 		if (this.clientChannel != null) {
-			LOGGER.info("Disconnected proxy {}!", this.id);
+			LOGGER.info("Disconnected Proxy #{}!", this.id);
 			this.clientChannel.close();
 			this.clientChannel = null;
 		}
@@ -133,7 +133,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	}
 
 	public void setState(final PacketState state) {
-		LOGGER.info("Switching to state {}", state);
+		LOGGER.info("Switching Proxy #{} to state {}", this.id, state);
 		this.state = state;
 	}
 
@@ -207,7 +207,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 				return;
 			}
 
-			LOGGER.info("Proxy {} connected to {}", this.id, this.serverAddress);
+			LOGGER.info("Proxy #{} connected to {}", this.id, this.serverAddress);
 			this.serverChannel = realServerConnection.getChannel();
 		}).syncUninterruptibly();
 	}

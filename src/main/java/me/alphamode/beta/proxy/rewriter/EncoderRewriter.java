@@ -28,6 +28,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 				connection.kick("Online mode isn't supported!");
 				return;
 			}
+
 			connection.sendToClient(new S2CHelloPacket("", new byte[0], new byte[0], false));
 		});
 
