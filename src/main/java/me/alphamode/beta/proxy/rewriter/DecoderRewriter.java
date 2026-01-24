@@ -10,10 +10,10 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Keep
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonCustomPayloadPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
@@ -84,7 +84,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 			connection.send(new S2CStatusPongResponsePacket(0L));
 		});
 
-		this.registerServerboundRewriter(C2SCommonKeepAlivePacket.class, (connection, _) -> connection.send(new KeepAlivePacket()));
+		this.registerServerboundRewriter(C2SKeepAlivePacket.class, (connection, _) -> connection.send(new KeepAlivePacket()));
 
 		this.registerServerboundRewriter(C2SLoginAcknowledgedPacket.class, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
@@ -108,7 +108,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 		});
 
 		// Cancel
-		this.registerServerboundRewriter(C2SCommonCustomPayloadPacket.class, (_, _) -> {
+		this.registerServerboundRewriter(C2SConfigurationCustomPayloadPacket.class, (_, _) -> {
 		});
 		this.registerServerboundRewriter(C2SCustomQueryAnswerPacket.class, (_, _) -> {
 		});
