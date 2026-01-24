@@ -14,9 +14,10 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
-		LOGGER.info("Reading Beta Packet");
 		try {
-			out.add(BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), null /* Unused */, null /* unused */, buf));
+			final BetaRecordPacket packet = (BetaRecordPacket) BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), null /* Unused */, null /* unused */, buf);
+			LOGGER.info("Reading Beta Packet {}", packet.getType());
+			out.add(packet);
 		} catch (Exception exception) {
 			LOGGER.info("Failed to decode beta packet");
 			throw new RuntimeException(exception);
