@@ -34,6 +34,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 
 		this.registerClientboundRewriter(ChatPacket.class, (connection, packet) -> {
 			// connection.sendToClient(new S2CPlayerChatPacket());
+			LOGGER.info("{}", packet.message());
 		});
 
 		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {
