@@ -62,8 +62,9 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
             connection.send(new HandshakePacket(packet.username()));
 			connection.setUsername(packet.username());
 			connection.setId(packet.profileId());
-			connection.send(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
-			connection.send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0));
+			connection.sendToServer(new HandshakePacket("-"));
+			connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, packet.username(), 0L, (byte) 0));
+			connection.sendToClient(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
 		});
 
 		this.registerServerboundRewriter(C2SStatusRequestPacket.class, (connection, _) -> {
@@ -75,14 +76,14 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 					Optional.empty(),
 					false
 			);
-			connection.send(new S2CStatusResponsePacket(serverStatus));
+			connection.sendToClient(new S2CStatusResponsePacket(serverStatus));
 		});
 
 		this.registerServerboundRewriter(C2SStatusPingRequestPacket.class, (connection, _) -> {
-			connection.send(new S2CStatusPongResponsePacket(0L));
+			connection.sendToClient(new S2CStatusPongResponsePacket(0L));
 		});
 
-		this.registerServerboundRewriter(C2SKeepAlivePacket.class, (connection, _) -> connection.send(new KeepAlivePacket()));
+		this.registerServerboundRewriter(C2SKeepAlivePacket.class, (connection, _) -> connection.sendToServer(new KeepAlivePacket()));
 
 		this.registerServerboundRewriter(C2SLoginAcknowledgedPacket.class, (connection, _) -> {
 			connection.setState(PacketState.CONFIGURATION);
@@ -93,12 +94,12 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 			// Send Registries
 			this.sendRegistries(connection);
 
-			connection.send(S2CFinishConfigurationPacket.INSTANCE);
+			connection.sendToClient(S2CFinishConfigurationPacket.INSTANCE);
 		});
 
 		this.registerServerboundRewriter(C2SFinishConfigurationPacket.class, (connection, _) -> {
 			connection.setState(PacketState.PLAY);
-			connection.send(new S2CLevelChunkPacketData());
+			connection.sendToClient(new S2CLevelChunkPacketData());
 		});
 
 		this.registerServerboundRewriter(C2SConfigurationAcknowledgedPacket.class, (connection, packet) -> {
@@ -132,7 +133,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 			tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
 		});
 
-		connection.send(new S2CUpdateTagsPacket(tags));
+		connection.sendToClient(new S2CUpdateTagsPacket(tags));
 	}
 
 	private void sendRegistries(final Connection connection) {
@@ -150,7 +151,7 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 				));
 			});
 
-			connection.send(new S2CRegistryDataPacket(
+			connection.sendToClient(new S2CRegistryDataPacket(
 					ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
 					entries
 			));

@@ -16,7 +16,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 		this.registerClientboundRewriter(KeepAlivePacket.class, (connection, _) -> {
 			final long lastMs = connection.getLastKeepAliveMS();
 			connection.setLastKeepAliveMS(System.currentTimeMillis());
-			connection.send(connection.createKeepAlivePacket(lastMs));
+			connection.sendToClient(connection.createKeepAlivePacket(lastMs));
 		});
 
 		this.registerClientboundRewriter(HandshakePacket.class, (connection, packet) -> {
@@ -51,7 +51,7 @@ public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 
 		this.registerClientboundRewriter(SetTimePacket.class, (connection, packet) -> {
 			final long time = packet.time();
-			connection.send(new S2CSetTimePacket(time, time, time > -1));
+			connection.sendToClient(new S2CSetTimePacket(time, time, time > -1));
 		});
 
 		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {

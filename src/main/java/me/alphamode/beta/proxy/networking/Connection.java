@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -56,7 +57,17 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		return this.encoderRewriter;
 	}
 
-	public void send(final BetaRecordPacket packet) {
+	public void write(final ByteBuf buf, final boolean serverbound) {
+		if (this.isConnectedToServer() && serverbound) {
+			this.serverChannel.writeAndFlush(buf);
+		} else if (this.isConnected() && !serverbound) {
+			this.clientChannel.writeAndFlush(buf);
+		} else {
+			throw new RuntimeException("Cannot write to dead connection!");
+		}
+	}
+
+	public void sendToServer(final BetaRecordPacket packet) {
 		if (this.isConnectedToServer()) {
 			this.serverChannel.writeAndFlush(packet);
 		} else {
@@ -64,7 +75,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		}
 	}
 
-	public void send(final ModernRecordPacket<?> packet) {
+	public void sendToClient(final ModernRecordPacket<?> packet) {
 		if (this.isConnected()) {
 			if (packet.getState() != this.state) {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + packet.getState());
@@ -78,11 +89,11 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	public void kick(final TextComponent message) {
 		if (this.protocolVersion == BetaRecordPacket.PROTOCOL_VERSION) {
-			this.send(new DisconnectPacket(message.asLegacyFormatString()));
+			this.sendToServer(new DisconnectPacket(message.asLegacyFormatString()));
 		} else {
 			final S2CCommonDisconnectPacket<?> disconnectPacket = this.createDisconnectPacket(message);
 			if (disconnectPacket != null) {
-				this.send(disconnectPacket);
+				this.sendToClient(disconnectPacket);
 			}
 		}
 
@@ -211,6 +222,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
+		LOGGER.warn("Proxy Connection Became Inactive, Disconnecting...");
 		this.disconnect();
 	}
 
