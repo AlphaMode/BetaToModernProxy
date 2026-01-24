@@ -83,6 +83,7 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 	}
 
 	public void disconnect() {
+		LAST_CONNECTION_ID--;
 		if (this.serverChannel != null) {
 			LOGGER.info("Disconnected from real server!");
 			this.serverChannel.close();
@@ -204,7 +205,6 @@ public final class Connection extends SimpleChannelInboundHandler<ByteBuf> imple
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		LAST_CONNECTION_ID--;
 		this.disconnect();
 	}
 

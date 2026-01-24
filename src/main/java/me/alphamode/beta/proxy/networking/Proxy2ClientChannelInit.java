@@ -3,6 +3,8 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,16 +24,15 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 		// ByteBuf -> BetaPacket
 		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
 
-//		// ModernPacket -> BetaPacket
-//		pipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder(this.connection));
-//
-//		// BetaPacket -> ByteBuf
-//		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+		// BetaPacket -> ModernPacket
+		pipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder(this.connection));
+
+		// ModernPacket -> ByteBuf
+		pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
 		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
-				LOGGER.error("meow meow");
 				context.channel().writeAndFlush(buf);
 			}
 		});
