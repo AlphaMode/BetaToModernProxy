@@ -28,7 +28,7 @@ public class ModernPacketReader extends ByteToMessageDecoder {
 			LOGGER.info("Reading Modern Packet {}", packet.getType());
 			out.add(packet);
 		} catch (Exception exception) {
-			LOGGER.info("Failed to encode modern packet in state {}", this.connection.getState());
+			LOGGER.info("Failed to decode modern packet in state {}", this.connection.getState());
 			throw new RuntimeException(exception);
 		}
 	}

@@ -2,18 +2,13 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
-import io.netty.util.AttributeKey;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 // Packets
 public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
-	private static final Logger LOGGER = LogManager.getLogger(Client2ProxyChannel.class);
-	public static final AttributeKey<Connection> CONNECTION_KEY = AttributeKey.newInstance("connection");
 	private final MinecraftServerAddress address;
 
 	public Client2ProxyChannel(final MinecraftServerAddress address) {
@@ -24,7 +19,6 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 	@Override
 	protected void initChannel(final Channel channel) {
 		final Connection connection = new Connection(this.address);
-		channel.attr(CONNECTION_KEY).set(connection);
 
 		final ChannelPipeline pipeline = channel.pipeline();
 
@@ -36,13 +30,14 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 
         pipeline.addLast(connection);
 
-		// BetaPacket -> ByteBuf
-		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+        pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+
+        pipeline.addLast(new PacketSizer());
 
 		// _
         pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
             @Override
-            protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+            protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
                 ctx.channel().writeAndFlush(msg);
             }
         });

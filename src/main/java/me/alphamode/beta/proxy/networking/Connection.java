@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 
 // Proxy -> Client
-public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?>> implements PacketHandler {
+public final class Connection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
@@ -51,6 +51,14 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		this.encoderRewriter.registerPackets();
 		this.id = LAST_CONNECTION_ID++;
 	}
+
+    public DecoderRewriter getDecoderRewriter() {
+        return this.decoderRewriter;
+    }
+
+    public EncoderRewriter getEncoderRewriter() {
+        return this.encoderRewriter;
+    }
 
 	public void send(final BetaRecordPacket packet) {
 		if (this.isConnectedToServer()) {
@@ -178,7 +186,6 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 		// Inbound
 		// Outbound -> ModernRecordPacket<T> -> Write Modern Packets
 		this.clientChannel = context.channel();
-		this.clientChannel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
 		LOGGER.info("Proxy {} connected to {}", this.id, this.serverAddress);
 
@@ -204,15 +211,9 @@ public final class Connection extends SimpleChannelInboundHandler<RecordPacket<?
 
 	// Out channel (Writing from Proxy to Serer)
 	@Override
-	protected void channelRead0(final ChannelHandlerContext context, final RecordPacket<?> packet) {
+	protected void channelRead0(final ChannelHandlerContext context, final ModernRecordPacket<?> packet) {
 		if (this.isConnectedToServer()) {
-			if (packet instanceof BetaRecordPacket betaPacket) {
-				this.encoderRewriter.rewrite(this, betaPacket);
-			} else if (packet instanceof ModernRecordPacket<?> modernPacket) {
-				this.decoderRewriter.rewrite(this, modernPacket);
-			} else {
-				LOGGER.warn("Skipping packet {} as it was not rewritten", packet.getType());
-			}
+            this.decoderRewriter.rewrite(this, packet);
 		}
 	}
 

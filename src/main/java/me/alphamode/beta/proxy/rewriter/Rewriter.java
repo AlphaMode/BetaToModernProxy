@@ -18,11 +18,11 @@ public abstract class Rewriter<S extends RecordPacket<?>> {
 	public abstract void rewrite(final Connection connection, final S packet);
 
 	public <K extends ModernRecordPacket<?>, V extends K> void registerServerboundRewriter(final Class<V> clazz, final RewriterFactory<K> factory) {
-
+        b2mRewriters.put(clazz, (RewriterFactory<ModernRecordPacket<?>>) factory);
 	}
 
 	public <K extends BetaRecordPacket, V extends K> void registerClientboundRewriter(final Class<V> clazz, final RewriterFactory<K> factory) {
-
+        m2bRewriters.put(clazz, (RewriterFactory<BetaRecordPacket>) factory);
 	}
 
 	public <T extends ModernRecordPacket<?>> RewriterFactory<ModernRecordPacket<?>> getServerboundRewriter(final Class<T> clazz) {

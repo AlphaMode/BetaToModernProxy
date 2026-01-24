@@ -27,8 +27,8 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
         // Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
         pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
             @Override
-            protected void channelRead0(ChannelHandlerContext ctx, BetaRecordPacket msg) throws Exception {
-                connection.rewritePacketB2C(msg);
+            protected void channelRead0(ChannelHandlerContext ctx, BetaRecordPacket msg) {
+                connection.getEncoderRewriter().rewrite(connection, msg);
             }
         });
 
