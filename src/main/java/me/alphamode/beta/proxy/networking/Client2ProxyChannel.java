@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
@@ -14,38 +15,41 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // Packets
-public final class ProxyChannel extends ChannelInitializer<Channel> {
-	private static final Logger LOGGER = LogManager.getLogger(ProxyChannel.class);
+public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
+	private static final Logger LOGGER = LogManager.getLogger(Client2ProxyChannel.class);
 	public static final AttributeKey<Connection> CONNECTION_KEY = AttributeKey.newInstance("connection");
 	private final MinecraftServerAddress address;
 	private final CompoundTag defaultTags;
 	private final CompoundTag defaultRegistries;
 
-	public ProxyChannel(final MinecraftServerAddress address, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+	public Client2ProxyChannel(final MinecraftServerAddress address, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
 		this.address = address;
 		this.defaultTags = defaultTags;
 		this.defaultRegistries = defaultRegistries;
 	}
 
-	// Client -> Proxy -> Server
+	// Client -> Proxy
 	@Override
 	protected void initChannel(final Channel channel) {
 		final Connection connection = new Connection(this.address);
+		channel.attr(CONNECTION_KEY).set(connection);
+
+		final ChannelPipeline pipeline = channel.pipeline();
 
 		// Reads Prefixed Length & Splits Packets
-		channel.pipeline().addLast(new PacketSizer());
+		pipeline.addLast(new PacketSizer());
 
 		// ByteBuf -> ModernPacket
-		channel.pipeline().addLast(ModernPacketReader.KEY, new ModernPacketReader(connection));
+		pipeline.addLast(ModernPacketReader.KEY, new ModernPacketReader(connection));
 
 		// ModernPacket -> BetaPacket (Rewriting)
-		channel.pipeline().addLast(PacketRewriterDecoder.KEY, new PacketRewriterDecoder(connection, this.defaultTags, this.defaultRegistries));
+		pipeline.addLast(PacketRewriterDecoder.KEY, new PacketRewriterDecoder(connection, this.defaultTags, this.defaultRegistries));
 
 		// BetaPacket -> ByteBuf
-		channel.pipeline().addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 
-		channel.pipeline().addLast(connection);
-		channel.attr(CONNECTION_KEY).set(connection);
+		// _
+		pipeline.addLast(connection);
 	}
 
 	@Override

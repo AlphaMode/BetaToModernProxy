@@ -3,12 +3,9 @@ package me.alphamode.beta.proxy.networking;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.RecordPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWriter;
@@ -21,7 +18,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
-import me.alphamode.beta.proxy.rewriter.PacketRewriterEncoder;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
@@ -31,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 
 // Proxy -> Client
-public final class Connection extends SimpleChannelInboundHandler<Object> implements PacketHandler {
+public final class Connection extends SimpleChannelInboundHandler<ByteBuf> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
@@ -161,13 +157,16 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 	public void channelActive(final ChannelHandlerContext context) {
 		LOGGER.info("Connection acquired!");
 
+		// Inbound
+		// Outbound -> ModernRecordPacket<T> -> Write Modern Packets
 		this.clientChannel = context.channel();
 		this.clientChannel.pipeline().addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
 		if (this.serverChannel == null) {
 			LOGGER.info("Proxy {} connected to {}", LAST_CONNECTION_ID++, this.serverAddress);
 
-			final NetClient realServerConnection = new NetClient(new RelayChannel(this));
+			final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
+			this.serverChannel = realServerConnection.getChannel();
 			realServerConnection.connect(this.serverAddress).addListener(future -> {
 				if (!future.isSuccess()) {
 					LOGGER.info("Failed to connect to real server!");
@@ -175,34 +174,16 @@ public final class Connection extends SimpleChannelInboundHandler<Object> implem
 					context.channel().closeFuture();
 				}
 			});
-
-			this.serverChannel = realServerConnection.getChannel();
-
-			final ChannelPipeline serverPipeline = this.serverChannel.pipeline();
-			serverPipeline.addLast(PacketRewriterEncoder.KEY, new PacketRewriterEncoder(this));
-			serverPipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
-			serverPipeline.addLast(new SimpleChannelInboundHandler<>() {
-				@Override
-				protected void channelRead0(final ChannelHandlerContext ctx, final Object data) {
-					BrodernProxy.LOGGER.info("Sending Data to Server: {}", data);
-					clientChannel.writeAndFlush(data).syncUninterruptibly();
-				}
-
-				@Override
-				public void channelInactive(final ChannelHandlerContext ctx) {
-					context.close();
-				}
-			});
 		}
 	}
 
 	// Out channel (Writing from Proxy to Serer)
 	@Override
-	protected void channelRead0(final ChannelHandlerContext context, final Object object) {
-		LOGGER.info("Sending Packet to Server: {}", object);
-		if (this.isConnectedToServer()) {
-			this.serverChannel.writeAndFlush(io.netty.util.ReferenceCountUtil.retain(object));
-		}
+	protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
+		LOGGER.info("Sending Packet to Server: {}", buf);
+		/*if (this.isConnectedToServer()) {
+			this.serverChannel.writeAndFlush(buf.retain());
+		}*/
 	}
 
 	@Override
