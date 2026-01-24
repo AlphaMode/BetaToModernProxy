@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.rewriter;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPackets;
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 // Client -> Proxy
-public final class PacketRewriterM2B extends MessageToMessageDecoder<ModernRecordPacket<? extends ModernPackets>> {
+public final class PacketRewriterM2B extends MessageToMessageEncoder<ModernRecordPacket<? extends ModernPackets>> {
 	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterM2B.class);
 	public static final String KEY = "packet-rewriter-decoder";
 
@@ -27,7 +27,8 @@ public final class PacketRewriterM2B extends MessageToMessageDecoder<ModernRecor
 
 	// P -> C
 	@Override
-	protected void decode(final ChannelHandlerContext context, final ModernRecordPacket<? extends ModernPackets> packet, final List<Object> out) throws Exception {
+	protected void encode(final ChannelHandlerContext context, final ModernRecordPacket<? extends ModernPackets> packet, final List<Object> out) throws Exception {
+		LOGGER.warn("Encoding Modern to Beta Packet ({})", packet.getType());
 		for (final Class<?> clazz : this.rewriter.serverboundRewriters.keySet()) {
 			if (clazz.isAssignableFrom(packet.getClass())) {
 				final BetaRecordPacket betaPacket = this.rewriter.serverboundRewriters.get(clazz).apply(this.connection, packet);

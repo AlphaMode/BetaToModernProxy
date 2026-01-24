@@ -17,13 +17,9 @@ public final class EncoderRewriter extends Rewriter {
 			return connection.createKeepAlivePacket(lastMs);
 		});
 
-		this.registerClientboundRewriter(HandshakePacket.class, (_, _) -> {
-			LOGGER.info("Encoding Handshake Packet to Modern");
-			return new S2CHelloPacket("_", new byte[0], new byte[0], false);
-		});
+		this.registerClientboundRewriter(HandshakePacket.class, (_, _) -> new S2CHelloPacket("_", new byte[0], new byte[0], false));
 
 		this.registerClientboundRewriter(LoginPacket.class, (_, _) -> {
-			LOGGER.info("Encoding Login Packet to Modern");
 			return null;
 		});
 
