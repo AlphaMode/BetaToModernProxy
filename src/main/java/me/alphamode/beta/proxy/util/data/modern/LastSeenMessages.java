@@ -6,6 +6,7 @@ import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.List;
 
 public record LastSeenMessages(List<MessageSignature> signatures) {
@@ -29,7 +30,7 @@ public record LastSeenMessages(List<MessageSignature> signatures) {
 		);
 	}
 
-	public record Packed(List<MessageSignature.Packed> entries) {
+	public record Packed(Collection<MessageSignature.Packed> entries) {
 		public static final StreamCodec<ByteBuf, Packed> CODEC = StreamCodec.composite(
 				ModernStreamCodecs.collection(MessageSignature.Packed.CODEC),
 				Packed::entries,

@@ -8,9 +8,9 @@ import me.alphamode.beta.proxy.util.data.modern.FilterMask;
 import me.alphamode.beta.proxy.util.data.modern.MessageSignature;
 import me.alphamode.beta.proxy.util.data.modern.chat.ChatType;
 import me.alphamode.beta.proxy.util.data.modern.chat.SignedMessageBody;
+import net.lenni0451.mcstructs.text.TextComponent;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.UUID;
 
 public record S2CPlayerChatPacket(
