@@ -12,14 +12,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 // Client -> Proxy
-public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernRecordPacket<? extends ModernPackets>> {
-	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterDecoder.class);
+public final class PacketRewriterM2B extends MessageToMessageDecoder<ModernRecordPacket<? extends ModernPackets>> {
+	private static final Logger LOGGER = LogManager.getLogger(PacketRewriterM2B.class);
 	public static final String KEY = "packet-rewriter-decoder";
 
 	private final Connection connection;
 	private final DecoderRewriter rewriter;
 
-	public PacketRewriterDecoder(final Connection connection) {
+	public PacketRewriterM2B(final Connection connection) {
 		this.connection = connection;
 		this.rewriter = new DecoderRewriter();
 		this.rewriter.registerPackets();

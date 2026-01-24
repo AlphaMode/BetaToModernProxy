@@ -6,7 +6,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.util.AttributeKey;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketReader;
-import me.alphamode.beta.proxy.rewriter.PacketRewriterDecoder;
+import me.alphamode.beta.proxy.rewriter.PacketRewriterM2B;
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +37,7 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 		pipeline.addLast(ModernPacketReader.KEY, new ModernPacketReader(connection));
 
 		// ModernPacket -> BetaPacket (Rewriting)
-		pipeline.addLast(PacketRewriterDecoder.KEY, new PacketRewriterDecoder(connection));
+		pipeline.addLast(PacketRewriterM2B.KEY, new PacketRewriterM2B(connection));
 
 		// BetaPacket -> ByteBuf
 		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
