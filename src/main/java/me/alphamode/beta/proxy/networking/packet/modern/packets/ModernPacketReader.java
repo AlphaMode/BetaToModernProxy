@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import me.alphamode.beta.proxy.networking.Connection;
-import me.alphamode.beta.proxy.util.DebugUtil;
 import net.raphimc.netminecraft.packet.PacketTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

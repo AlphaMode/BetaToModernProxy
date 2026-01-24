@@ -1,15 +1,15 @@
 package me.alphamode.beta.proxy.util;
 
 public interface ARGB {
-    static int alpha(final int color) {
-        return color >>> 24;
-    }
+	static int alpha(final int color) {
+		return color >>> 24;
+	}
 
-    static int opaque(final int color) {
-        return color | 0xFF000000;
-    }
+	static int opaque(final int color) {
+		return color | 0xFF000000;
+	}
 
-    static int transparent(final int color) {
-        return color & 16777215;
-    }
+	static int transparent(final int color) {
+		return color & 16777215;
+	}
 }

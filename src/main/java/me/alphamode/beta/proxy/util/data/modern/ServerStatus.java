@@ -26,7 +26,7 @@ public record ServerStatus(TextComponent description,
 						   boolean enforcesSecureChat) {
 	public static final Codec<ServerStatus> CODEC = MapCodecMerger.codec(
 			TextComponentCodec.LATEST.getTextCodec().mapCodec("description").required(), ServerStatus::description,
-            ModernCodecs.optional("players", Players.CODEC), ServerStatus::players,
+			ModernCodecs.optional("players", Players.CODEC), ServerStatus::players,
 			ModernCodecs.optional("version", Version.CODEC), ServerStatus::version,
 			ModernCodecs.optional("favicon", Favicon.CODEC), ServerStatus::favicon,
 			Codec.BOOLEAN.mapCodec("enforcesSecureChat").optional().defaulted(false), ServerStatus::enforcesSecureChat,

@@ -16,18 +16,18 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 public interface NbtDataProvider extends DataProvider {
-    Logger LOGGER = LogUtils.getLogger();
+	Logger LOGGER = LogUtils.getLogger();
 
-    static CompletableFuture<?> saveStable(final CachedOutput cache, final CompoundTag root, final Path path) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                HashingOutputStream hashedBytes = new HashingOutputStream(Hashing.sha1(), bytes);
-                NbtIo.writeCompressed(root, hashedBytes);
-                cache.writeIfNeeded(path, bytes.toByteArray(), hashedBytes.hash());
-            } catch (IOException var10) {
-                LOGGER.error("Failed to save file to {}", path, var10);
-            }
-        }, Util.backgroundExecutor().forName("saveStable"));
-    }
+	static CompletableFuture<?> saveStable(final CachedOutput cache, final CompoundTag root, final Path path) {
+		return CompletableFuture.runAsync(() -> {
+			try {
+				ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+				HashingOutputStream hashedBytes = new HashingOutputStream(Hashing.sha1(), bytes);
+				NbtIo.writeCompressed(root, hashedBytes);
+				cache.writeIfNeeded(path, bytes.toByteArray(), hashedBytes.hash());
+			} catch (IOException var10) {
+				LOGGER.error("Failed to save file to {}", path, var10);
+			}
+		}, Util.backgroundExecutor().forName("saveStable"));
+	}
 }

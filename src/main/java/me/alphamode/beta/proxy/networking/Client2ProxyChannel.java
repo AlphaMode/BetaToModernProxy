@@ -28,9 +28,9 @@ public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
 
 		pipeline.addLast(connection);
 
-        pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
+		pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
-        pipeline.addLast(new PacketSizer());
+		pipeline.addLast(new PacketSizer());
 
 		// _
 		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
