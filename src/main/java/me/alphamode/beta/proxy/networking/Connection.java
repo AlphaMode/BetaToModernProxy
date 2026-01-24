@@ -18,13 +18,12 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlay
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.rewriter.DecoderRewriter;
 import me.alphamode.beta.proxy.rewriter.EncoderRewriter;
+import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.UUID;
 
 public final class Connection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
@@ -37,8 +36,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	private Channel serverChannel;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
-	private UUID uuid;
-	private String username;
+	private GameProfile profile;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveMS = 0L;
 
@@ -141,20 +139,12 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		this.state = state;
 	}
 
-	public UUID getUUID() {
-		return this.uuid;
+	public GameProfile getProfile() {
+		return this.profile;
 	}
 
-	public void setUUID(final UUID uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getUsername() {
-		return this.username;
-	}
-
-	public void setUsername(final String username) {
-		this.username = username;
+	public void setProfile(final GameProfile profile) {
+		this.profile = profile;
 	}
 
 	public int getProtocolVersion() {
@@ -232,7 +222,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
-		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.username, cause);
+		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.profile.name(), cause);
 	}
 
 	public void debug() {

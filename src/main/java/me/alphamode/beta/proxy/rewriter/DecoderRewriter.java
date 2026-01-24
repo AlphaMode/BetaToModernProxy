@@ -58,9 +58,10 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 
 		this.registerServerboundRewriter(C2SHelloPacket.class, (connection, packet) -> {
 			connection.sendToServer(new HandshakePacket(packet.username()));
-			connection.setUsername(packet.username());
-			connection.setUUID(packet.profileId());
-			connection.sendToClient(new S2CLoginFinishedPacket(new GameProfile(packet.profileId(), packet.username(), new HashMap<>())));
+
+			final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
+			connection.setProfile(profile);
+			connection.sendToClient(new S2CLoginFinishedPacket(profile));
 		});
 
 		this.registerServerboundRewriter(C2SStatusRequestPacket.class, (connection, _) -> {
