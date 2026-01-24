@@ -162,11 +162,10 @@ public final class DecoderRewriter extends Rewriter<ModernRecordPacket<?>> {
 	@Override
 	public void rewrite(final Connection connection, final ModernRecordPacket<?> packet) {
 		LOGGER.warn("Encoding Modern to Beta Packet ({})", packet.getType());
-		for (final Class<?> clazz : this.serverboundRewriters.keySet()) {
-			if (clazz.isAssignableFrom(packet.getClass())) {
-				this.serverboundRewriters.get(clazz).rewrite(connection, packet);
-				return;
-			}
+
+		final Rewriter<ModernRecordPacket<?>> rewriter = this.getClientboundRewriter(packet.getClass());
+		if (rewriter != null) {
+			rewriter.rewrite(connection, packet);
 		}
 	}
 }

@@ -9,20 +9,40 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPack
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Rewriter<T extends RecordPacket<?>> {
-	public final Map<Class<? extends ModernRecordPacket<?>>, RewriterFactory<ModernRecordPacket<?>>> serverboundRewriters = new HashMap<>();
-	public final Map<Class<? extends BetaRecordPacket>, RewriterFactory<BetaRecordPacket>> clientboundRewriters = new HashMap<>();
+public abstract class Rewriter<S extends RecordPacket<?>> {
+	private final Map<Class<? extends ModernRecordPacket<?>>, RewriterFactory<ModernRecordPacket<?>>> b2mRewriters = new HashMap<>();
+	private final Map<Class<? extends BetaRecordPacket>, RewriterFactory<BetaRecordPacket>> m2bRewriters = new HashMap<>();
 
 	public abstract void registerPackets();
 
-	public abstract void rewrite(final Connection connection, final T packet);
+	public abstract void rewrite(final Connection connection, final S packet);
 
-	public <T extends ModernRecordPacket<?>> void registerServerboundRewriter(final Class<T> clazz, final RewriterFactory<T> factory) {
-		serverboundRewriters.put(clazz, (RewriterFactory<ModernRecordPacket<?>>) factory);
+	public <K extends ModernRecordPacket<?>, V extends K> void registerServerboundRewriter(final Class<V> clazz, final RewriterFactory<K> factory) {
+
 	}
 
-	public <T extends BetaRecordPacket> void registerClientboundRewriter(final Class<T> clazz, final RewriterFactory<T> factory) {
-		clientboundRewriters.put(clazz, (RewriterFactory<BetaRecordPacket>) factory);
+	public <K extends BetaRecordPacket, V extends K> void registerClientboundRewriter(final Class<V> clazz, final RewriterFactory<K> factory) {
+
+	}
+
+	public <T extends ModernRecordPacket<?>> RewriterFactory<ModernRecordPacket<?>> getServerboundRewriter(final Class<T> clazz) {
+		for (final Class<?> rewriterClazz : this.b2mRewriters.keySet()) {
+			if (rewriterClazz.isAssignableFrom(clazz)) {
+				return this.b2mRewriters.get(rewriterClazz);
+			}
+		}
+
+		return null;
+	}
+
+	public <T extends BetaRecordPacket> RewriterFactory<BetaRecordPacket> getClientboundRewriter(final Class<T> clazz) {
+		for (final Class<?> rewriterClazz : this.m2bRewriters.keySet()) {
+			if (rewriterClazz.isAssignableFrom(clazz)) {
+				return this.m2bRewriters.get(rewriterClazz);
+			}
+		}
+
+		return null;
 	}
 
 	@FunctionalInterface
