@@ -1,12 +1,14 @@
 package me.alphamode.beta.proxy.rewriter;
 
+import me.alphamode.beta.proxy.networking.Connection;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetTimePacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class EncoderRewriter extends Rewriter {
+public final class EncoderRewriter extends Rewriter<BetaRecordPacket> {
 	private static final Logger LOGGER = LogManager.getLogger(EncoderRewriter.class);
 
 	@Override
@@ -47,5 +49,16 @@ public final class EncoderRewriter extends Rewriter {
 		this.registerClientboundRewriter(DisconnectPacket.class, (connection, packet) -> {
 			connection.kick(packet.reason());
 		});
+	}
+
+	@Override
+	public void rewrite(final Connection connection, final BetaRecordPacket packet) {
+		LOGGER.warn("Encoding Beta to Modern Packet ({})", packet.getType());
+		for (final Class<?> clazz : this.clientboundRewriters.keySet()) {
+			if (clazz.isAssignableFrom(packet.getClass())) {
+				this.clientboundRewriters.get(clazz).rewrite(connection, packet);
+				return;
+			}
+		}
 	}
 }
