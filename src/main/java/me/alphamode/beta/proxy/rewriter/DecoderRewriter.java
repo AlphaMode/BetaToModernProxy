@@ -45,15 +45,6 @@ import java.util.*;
 public final class DecoderRewriter extends Rewriter {
 	private static final Logger LOGGER = LogManager.getLogger(DecoderRewriter.class);
 
-	private final CompoundTag defaultTags;
-	private final CompoundTag defaultRegistries;
-
-	public DecoderRewriter(final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
-		// TODO: find better way to handle data like this
-		this.defaultTags = defaultTags;
-		this.defaultRegistries = defaultRegistries;
-	}
-
 	@Override
 	public void registerPackets() {
 		this.registerServerboundRewriter(C2SIntentionRecordPacket.class, (connection, packet) -> {
@@ -131,7 +122,7 @@ public final class DecoderRewriter extends Rewriter {
 		LOGGER.info("Sending Tags");
 
 		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
-		this.defaultTags.forEach(entry -> {
+		BrodernProxy.getDefaultTags().forEach(entry -> {
 			final Map<Identifier, IntList> map = new HashMap<>();
 
 			entry.getValue().asCompoundTag().forEach(tag -> {
@@ -151,7 +142,7 @@ public final class DecoderRewriter extends Rewriter {
 	private void sendRegistries(final Connection connection) {
 		LOGGER.info("Sending Registries");
 
-		this.defaultRegistries.forEach(entry -> {
+		BrodernProxy.getDefaultRegistries().forEach(entry -> {
 			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 
 			final CompoundTag tag = entry.getValue().asCompoundTag();

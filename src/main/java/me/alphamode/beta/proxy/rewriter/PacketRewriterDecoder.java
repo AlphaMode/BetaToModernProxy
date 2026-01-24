@@ -6,7 +6,6 @@ import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
-import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,9 +19,9 @@ public final class PacketRewriterDecoder extends MessageToMessageDecoder<ModernR
 	private final Connection connection;
 	private final DecoderRewriter rewriter;
 
-	public PacketRewriterDecoder(final Connection connection, final CompoundTag defaultTags, final CompoundTag defaultRegistries) {
+	public PacketRewriterDecoder(final Connection connection) {
 		this.connection = connection;
-		this.rewriter = new DecoderRewriter(defaultTags, defaultRegistries);
+		this.rewriter = new DecoderRewriter();
 		this.rewriter.registerPackets();
 	}
 
