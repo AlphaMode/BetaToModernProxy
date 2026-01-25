@@ -5,71 +5,83 @@ import io.netty.channel.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
+import net.raphimc.netminecraft.netty.connection.NetClient;
+import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class ServerConnection extends ChannelInitializer<Channel> {
+public final class ServerConnection extends NetClient {
 	private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class);
 	private final ClientConnection connection;
-	private Channel serverChannel;
 
-	ServerConnection(final ClientConnection connection) {
+	ServerConnection(final MinecraftServerAddress address, final ClientConnection connection) {
 		this.connection = connection;
+		super(new ChannelInitializer<>() {
+			@Override
+			protected void initChannel(final Channel channel) {
+				final ChannelPipeline pipeline = channel.pipeline();
+
+				// ByteBuf -> BetaPacket
+				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
+
+				// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
+				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
+					@Override
+					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
+						connection.getActivePipeline().handleServer(connection, msg);
+					}
+				});
+
+				// BetaPacket -> ByteBuf
+				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+
+				pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
+					@Override
+					protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
+						context.channel().writeAndFlush(buf);
+					}
+				});
+			}
+
+			@Override
+			public void channelInactive(final ChannelHandlerContext context) {
+				LOGGER.warn("Real Server for Proxy #{} Became Inactive, Disconnecting client...", connection.getId());
+				connection.disconnect();
+			}
+		});
+
+		this.connect(address).addListener(future -> {
+			if (!future.isSuccess()) {
+				LOGGER.info("Failed to connect proxy #{} to real server!", this.connection.getId());
+				future.cause().printStackTrace();
+				connection.disconnect();
+				return;
+			}
+
+			if (!this.isConnected()) {
+				LOGGER.info("Client #{} already has disconnected, closing the server connection!", this.connection.getId());
+				this.disconnect();
+				return;
+			}
+
+			LOGGER.info("Proxy #{} connected to {}", this.connection.getId(), address);
+		}).syncUninterruptibly();
 	}
 
 	public void send(final BetaPacket packet) {
 		if (this.isConnected()) {
-			this.serverChannel.writeAndFlush(packet);
+			this.getChannel().writeAndFlush(packet);
 		} else {
 			throw new RuntimeException("Cannot write to dead server connection!");
 		}
 	}
 
 	public void disconnect() {
-		if (this.serverChannel != null) {
-			LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
-			this.serverChannel.close();
-			this.serverChannel = null;
-		}
+		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
+		this.getChannel().close();
 	}
 
 	public boolean isConnected() {
-		return this.serverChannel != null && this.serverChannel.isActive();
-	}
-
-	// Proxy -> Client
-	@Override
-	protected void initChannel(final Channel channel) {
-		this.serverChannel = channel;
-
-		final ChannelPipeline pipeline = channel.pipeline();
-
-		// ByteBuf -> BetaPacket
-		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
-
-		// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
-		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
-			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
-				connection.getActivePipeline().handleServer(connection, msg);
-			}
-		});
-
-		// BetaPacket -> ByteBuf
-		pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
-
-		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
-				context.channel().writeAndFlush(buf);
-			}
-		});
-	}
-
-	@Override
-	public void channelInactive(final ChannelHandlerContext context) {
-		LOGGER.warn("Real Server for Proxy #{} Became Inactive, Disconnecting client...", this.connection.getId());
-		this.connection.disconnect();
-		this.disconnect();
+		return this.getChannel().isActive();
 	}
 }

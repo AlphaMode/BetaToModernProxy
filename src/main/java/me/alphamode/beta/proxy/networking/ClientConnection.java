@@ -19,7 +19,6 @@ import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.LoginPipeline;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import net.lenni0451.mcstructs.text.TextComponent;
-import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -162,26 +161,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
-
-		this.serverConnection = new ServerConnection(this);
-
-		final NetClient realServerConnection = new NetClient(this.serverConnection);
-		realServerConnection.connect(this.address).addListener(future -> {
-			if (!future.isSuccess()) {
-				LOGGER.info("Failed to connect proxy #{} to real server!", this.id);
-				future.cause().printStackTrace();
-				this.disconnect();
-				return;
-			}
-
-			if (!this.isConnected()) {
-				LOGGER.info("Client #{} already has disconnected, closing the server connection!", this.id);
-				realServerConnection.getChannel().close();
-				return;
-			}
-
-			LOGGER.info("Proxy #{} connected to {}", this.id, this.address);
-		}).syncUninterruptibly();
+		this.serverConnection = new ServerConnection(this.address, this);
 	}
 
 	// Out channel (Writing from Proxy to Serer)
