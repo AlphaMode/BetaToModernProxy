@@ -28,7 +28,7 @@ public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
 		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final BetaRecordPacket msg) {
-				connection.getEncoderRewriter().rewrite(connection, msg);
+                connection.getActivePipeline().handleServer(connection, msg);
 			}
 		});
 

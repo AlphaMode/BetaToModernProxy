@@ -18,8 +18,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlay
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.LoginPipeline;
-import me.alphamode.beta.proxy.rewriter.DecoderRewriter;
-import me.alphamode.beta.proxy.rewriter.EncoderRewriter;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.netty.connection.NetClient;
@@ -34,19 +32,12 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	private final MinecraftServerAddress serverAddress;
 	private final int id;
 	private ActivePipeline<?> pipeline = new ActivePipeline<>(LoginPipeline.PIPELINE, new LoginPipeline());
-	private final DecoderRewriter decoderRewriter = new DecoderRewriter();
-	private final EncoderRewriter encoderRewriter = new EncoderRewriter();
 	private Channel serverChannel;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
 	private GameProfile profile;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveMS = 0L;
-
-	@Deprecated
-	public EncoderRewriter getEncoderRewriter() {
-		return this.encoderRewriter;
-	}
 
 	public Connection(final MinecraftServerAddress serverAddress) {
 		this.serverAddress = serverAddress;
@@ -127,6 +118,10 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	public int getId() {
 		return this.id;
 	}
+
+    public ActivePipeline<?> getActivePipeline() {
+        return this.pipeline;
+    }
 
 	public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
 		this.pipeline = new ActivePipeline<>(pipeline, handler);
@@ -212,7 +207,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final ModernRecordPacket<?> packet) {
 		if (this.isConnected()) {
-			this.decoderRewriter.rewrite(this, packet);
+			this.pipeline.handleClient(this, packet);
 		}
 	}
 
@@ -237,5 +232,12 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	}
 
 	public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {
+        public void handleClient(final Connection connection, final ModernRecordPacket<?> packet) {
+            pipeline.handleClient(handler, connection, packet);
+        }
+
+        public void handleServer(final Connection connection, final BetaRecordPacket packet) {
+            pipeline.handleServer(handler, connection, packet);
+        }
 	}
 }
