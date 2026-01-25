@@ -23,6 +23,9 @@ import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.BitSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class PlayPipeline {
@@ -64,8 +67,19 @@ public class PlayPipeline {
 
 		connection.send(new S2CLevelChunkWithLightPacket(
 				0, 0,
-				new ClientboundLevelChunkPacketData(),
-				new ClientboundLightUpdatePacketData()
+				new ClientboundLevelChunkPacketData(
+						Map.of(),
+						new byte[0],
+						List.of()
+				),
+				new ClientboundLightUpdatePacketData(
+						new BitSet(),
+						new BitSet(),
+						new BitSet(),
+						new BitSet(),
+						List.of(),
+						List.of()
+				)
 		));
 	}
 

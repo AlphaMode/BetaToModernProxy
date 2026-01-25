@@ -456,4 +456,11 @@ public interface ModernStreamCodecs {
 			}
 		};
 	}
+
+	static <T> void writeCollection(final ByteBuf buf, final Collection<T> collection, final StreamEncoder<? super ByteBuf, T> encoder) {
+		VAR_INT.encode(buf, collection.size());
+		for (final T element : collection) {
+			encoder.encode(buf, element);
+		}
+	}
 }

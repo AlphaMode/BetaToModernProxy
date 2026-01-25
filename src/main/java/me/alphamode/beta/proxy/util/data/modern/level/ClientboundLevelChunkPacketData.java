@@ -22,6 +22,16 @@ public class ClientboundLevelChunkPacketData {
 	private final byte[] buffer;
 	private final List<BlockEntityInfo> blockEntitiesData;
 
+	public ClientboundLevelChunkPacketData(
+			final Map<Heightmap.Types, long[]> heightmaps,
+			final byte[] buffer,
+			final List<BlockEntityInfo> blockEntitiesData
+	) {
+		this.heightmaps = heightmaps;
+		this.buffer = buffer;
+		this.blockEntitiesData = blockEntitiesData;
+	}
+
 	public ClientboundLevelChunkPacketData(final ByteBuf buf) {
 		this.heightmaps = HEIGHTMAPS_STREAM_CODEC.decode(buf);
 
@@ -50,7 +60,7 @@ public class ClientboundLevelChunkPacketData {
 		return this.heightmaps;
 	}
 
-	private static class BlockEntityInfo {
+	public static class BlockEntityInfo {
 		public static final StreamCodec<ByteBuf, ClientboundLevelChunkPacketData.BlockEntityInfo> STREAM_CODEC = StreamCodec.ofMember(ClientboundLevelChunkPacketData.BlockEntityInfo::write, ClientboundLevelChunkPacketData.BlockEntityInfo::new);
 		public static final StreamCodec<ByteBuf, List<ClientboundLevelChunkPacketData.BlockEntityInfo>> LIST_STREAM_CODEC = STREAM_CODEC.apply(ModernStreamCodecs.list());
 		private final int packedXZ;
