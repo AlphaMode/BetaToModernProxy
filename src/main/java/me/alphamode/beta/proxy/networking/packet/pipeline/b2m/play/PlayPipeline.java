@@ -6,6 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.ChatPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetSpawnPositionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayLoginPacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
@@ -25,6 +26,7 @@ public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
 	public static final PacketPipeline<PlayPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<PlayPipeline>builder()
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
+			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.serverHandler(SetSpawnPositionPacket.class, PlayPipeline::handleS2CSetSpawnPosition)
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
@@ -67,6 +69,10 @@ public class PlayPipeline {
 	}
 
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
+	}
+
+	public void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
+		connection.getServerConnection().send(new ChatPacket(packet.message()));
 	}
 
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
