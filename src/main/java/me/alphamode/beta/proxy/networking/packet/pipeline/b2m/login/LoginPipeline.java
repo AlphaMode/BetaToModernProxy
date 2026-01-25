@@ -74,17 +74,17 @@ public class LoginPipeline {
     public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
         final BrodernProxy proxy = BrodernProxy.getProxy();
         final ServerStatus serverStatus = new ServerStatus(
-                proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.isConnectedToServer())),
+                proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
                 Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
                 Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernRecordPacket.PROTOCOL_VERSION)),
                 Optional.empty(),
                 false
         );
-        connection.sendToClient(new S2CStatusResponsePacket(serverStatus));
+        connection.send(new S2CStatusResponsePacket(serverStatus));
     }
 
     public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
-        connection.sendToClient(new S2CStatusPongResponsePacket(packet.time()));
+        connection.send(new S2CStatusPongResponsePacket(packet.time()));
         connection.disconnect();
     }
 
@@ -93,11 +93,13 @@ public class LoginPipeline {
         connection.setState(PacketState.LOGIN);
         if (packet.protocolVersion() != ModernRecordPacket.PROTOCOL_VERSION) {
             connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernRecordPacket.PROTOCOL_VERSION);
-        }
+        } else if (!connection.getServerConnection().isConnected()) {
+			connection.kick("Server is not connected!");
+		}
     }
 
     public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
-        connection.sendToServer(new HandshakePacket(packet.username()));
+        connection.getServerConnection().send(new HandshakePacket(packet.username()));
 
         final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
         connection.setProfile(profile);
@@ -105,8 +107,8 @@ public class LoginPipeline {
 
     public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
         if (packet.username().equals("-")) {
-            connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getProfile().name()));
-            connection.sendToClient(new S2CLoginFinishedPacket(connection.getProfile()));
+            connection.getServerConnection().send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getProfile().name()));
+            connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
         } else {
             connection.kick("Online mode isn't supported!");
         }
@@ -122,7 +124,7 @@ public class LoginPipeline {
         // Send Registries
         this.sendRegistries(connection);
 
-        connection.sendToClient(S2CFinishConfigurationPacket.INSTANCE);
+        connection.send(S2CFinishConfigurationPacket.INSTANCE);
     }
 
     private void sendTags(final ClientConnection connection) {
@@ -143,7 +145,7 @@ public class LoginPipeline {
             tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
         });
 
-        connection.sendToClient(new S2CUpdateTagsPacket(tags));
+        connection.send(new S2CUpdateTagsPacket(tags));
     }
 
     private void sendRegistries(final ClientConnection connection) {
@@ -161,7 +163,7 @@ public class LoginPipeline {
                 ));
             });
 
-            connection.sendToClient(new S2CRegistryDataPacket(
+            connection.send(new S2CRegistryDataPacket(
                     ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
                     entries
             ));

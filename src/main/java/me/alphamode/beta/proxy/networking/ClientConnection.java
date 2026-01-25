@@ -6,7 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
@@ -32,7 +31,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 	private final MinecraftServerAddress address;
 	private final int id;
 	private ActivePipeline<?> pipeline = new ActivePipeline<>(LoginPipeline.PIPELINE, new LoginPipeline());
-	private Channel serverChannel;
+	private ServerConnection serverConnection;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
 	private GameProfile profile;
@@ -44,25 +43,15 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 		this.id = LAST_CONNECTION_ID++;
 	}
 
-	public void write(final ByteBuf buf, final boolean serverbound) {
-		if (this.isConnectedToServer() && serverbound) {
-			this.serverChannel.writeAndFlush(buf);
-		} else if (this.isConnected() && !serverbound) {
+	public void write(final ByteBuf buf) {
+		if (this.isConnected()) {
 			this.clientChannel.writeAndFlush(buf);
 		} else {
-			throw new RuntimeException("Cannot write to dead " + (serverbound ? "server" : "client") + " connection!");
+			throw new RuntimeException("Cannot write to dead client connection!");
 		}
 	}
 
-	public void sendToServer(final BetaRecordPacket packet) {
-		if (this.isConnectedToServer()) {
-			this.serverChannel.writeAndFlush(packet);
-		} else {
-			throw new RuntimeException("Cannot write to dead server connection!");
-		}
-	}
-
-	public void sendToClient(final ModernRecordPacket<?> packet) {
+	public void send(final ModernRecordPacket<?> packet) {
 		if (this.isConnected()) {
 			if (packet.getState() != this.state) {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + packet.getState() + " for packet " + packet);
@@ -76,13 +65,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 
 	public void kick(final TextComponent message) {
 		LOGGER.error("Kicking client with reason: {}", message.toString());
-		if (this.protocolVersion == BetaRecordPacket.PROTOCOL_VERSION) {
-			this.sendToServer(new DisconnectPacket(message.asLegacyFormatString()));
-		} else {
-			final S2CCommonDisconnectPacket<?> disconnectPacket = this.createDisconnectPacket(message);
-			if (disconnectPacket != null) {
-				this.sendToClient(disconnectPacket);
-			}
+
+		final S2CCommonDisconnectPacket<?> disconnectPacket = this.createDisconnectPacket(message);
+		if (disconnectPacket != null) {
+			this.send(disconnectPacket);
 		}
 
 		this.disconnect();
@@ -94,12 +80,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 
 	public void disconnect() {
 		LAST_CONNECTION_ID--;
-		if (this.serverChannel != null) {
-			LOGGER.info("Disconnected Proxy #{} from real server!", this.id);
-			this.serverChannel.close();
-			this.serverChannel = null;
-		}
-
+		this.serverConnection.disconnect();
 		if (this.clientChannel != null) {
 			LOGGER.info("Disconnected Proxy #{}!", this.id);
 			this.clientChannel.close();
@@ -109,10 +90,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 
 	public boolean isConnected() {
 		return this.clientChannel != null && this.clientChannel.isActive();
-	}
-
-	public boolean isConnectedToServer() {
-		return this.serverChannel != null && this.serverChannel.isActive();
 	}
 
 	public int getId() {
@@ -125,6 +102,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 
 	public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
 		this.pipeline = new ActivePipeline<>(pipeline, handler);
+	}
+
+	public ServerConnection getServerConnection() {
+		return serverConnection;
 	}
 
 	public PacketState getState() {
@@ -183,7 +164,9 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
 
-		final NetClient realServerConnection = new NetClient(new ServerConnection(this));
+		this.serverConnection = new ServerConnection(this);
+
+		final NetClient realServerConnection = new NetClient(this.serverConnection);
 		realServerConnection.connect(this.address).addListener(future -> {
 			if (!future.isSuccess()) {
 				LOGGER.info("Failed to connect proxy #{} to real server!", this.id);
@@ -199,7 +182,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 			}
 
 			LOGGER.info("Proxy #{} connected to {}", this.id, this.address);
-			this.serverChannel = realServerConnection.getChannel();
 		}).syncUninterruptibly();
 	}
 
@@ -220,15 +202,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
 		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.profile.name(), cause);
-	}
-
-	public void debug() {
-		System.out.println("-------------------------------------------------------------------");
-		System.out.printf("-     PROXY %s     -%n", this.id);
-		System.out.printf("Client connected? %s%n", this.isConnected());
-		System.out.printf("Server connected? %s%n", this.isConnectedToServer());
-		System.out.printf("State: %s%n", this.state);
-		System.out.println("-------------------------------------------------------------------");
 	}
 
 	public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {

@@ -31,7 +31,7 @@ public class PlayPipeline {
 		final String repeatCommand = "p!repeat";
 		if (BrodernProxy.getProxy().isDebug() && message.contains(repeatCommand)) {
 			final int index = message.indexOf(repeatCommand);
-			connection.sendToServer(new ChatPacket(message.substring(index + repeatCommand.length()).trim()));
+			connection.getServerConnection().send(new ChatPacket(message.substring(index + repeatCommand.length()).trim()));
 		}
 	}
 

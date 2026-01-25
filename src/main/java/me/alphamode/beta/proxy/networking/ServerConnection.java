@@ -11,9 +11,30 @@ import org.apache.logging.log4j.Logger;
 public final class ServerConnection extends ChannelInitializer<Channel> {
 	private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class);
 	private final ClientConnection connection;
+	private Channel serverChannel;
 
 	ServerConnection(final ClientConnection connection) {
 		this.connection = connection;
+	}
+
+	public void send(final BetaRecordPacket packet) {
+		if (this.isConnected()) {
+			this.serverChannel.writeAndFlush(packet);
+		} else {
+			throw new RuntimeException("Cannot write to dead server connection!");
+		}
+	}
+
+	public void disconnect() {
+		if (this.serverChannel != null) {
+			LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
+			this.serverChannel.close();
+			this.serverChannel = null;
+		}
+	}
+
+	public boolean isConnected() {
+		return this.serverChannel != null && this.serverChannel.isActive();
 	}
 
 	// Proxy -> Client
@@ -28,7 +49,7 @@ public final class ServerConnection extends ChannelInitializer<Channel> {
 		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
 			@Override
 			protected void channelRead0(final ChannelHandlerContext context, final BetaRecordPacket msg) {
-                connection.getActivePipeline().handleServer(connection, msg);
+				connection.getActivePipeline().handleServer(connection, msg);
 			}
 		});
 
