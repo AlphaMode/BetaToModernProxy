@@ -7,16 +7,20 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWrit
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
-public final class Client2ProxyChannel extends ChannelInitializer<Channel> {
+public final class ProxyConnection extends ChannelInitializer<Channel> {
 	private final MinecraftServerAddress address;
 
-	public Client2ProxyChannel(final MinecraftServerAddress address) {
+	public ProxyConnection(final MinecraftServerAddress address) {
 		this.address = address;
+	}
+
+	public MinecraftServerAddress getAddress() {
+		return address;
 	}
 
 	@Override
 	protected void initChannel(final Channel channel) {
-		final Connection connection = new Connection(this.address);
+		final ClientConnection connection = new ClientConnection(this.address);
 		final ChannelPipeline pipeline = channel.pipeline();
 
 		// Reads Prefixed Length & Splits Packets

@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play;
 
 import me.alphamode.beta.proxy.BrodernProxy;
-import me.alphamode.beta.proxy.networking.Connection;
+import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.ChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
@@ -20,11 +20,11 @@ public class PlayPipeline {
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
 
-	public void handleC2SConfigurationAcknowledged(final Connection connection, final C2SConfigurationAcknowledgedPacket packet) {
+	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 
 	}
 
-	private void handleS2CChat(final Connection connection, final ChatPacket packet) {
+	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
 		final String message = packet.message();
 		LOGGER.info("{}", message);
 
@@ -35,9 +35,9 @@ public class PlayPipeline {
 		}
 	}
 
-	private void passClientToNextPipeline(final Connection connection, final ModernRecordPacket<?> packet) {
+	private void passClientToNextPipeline(final ClientConnection connection, final ModernRecordPacket<?> packet) {
 	}
 
-	private void passServerToNextPipeline(final Connection connection, final BetaRecordPacket packet) {
+	private void passServerToNextPipeline(final ClientConnection connection, final BetaRecordPacket packet) {
 	}
 }

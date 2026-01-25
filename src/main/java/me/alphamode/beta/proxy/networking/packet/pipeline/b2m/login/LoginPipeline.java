@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
-import me.alphamode.beta.proxy.networking.Connection;
+import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
@@ -60,7 +60,7 @@ public class LoginPipeline {
             .build();
 
     // Handshake
-    public void handleClientIntent(final Connection connection, final C2SIntentionPacket packet) {
+    public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
         switch (packet.intention()) {
             case LOGIN -> handleLogin(connection, packet);
             case STATUS -> connection.setState(PacketState.STATUS);
@@ -71,7 +71,7 @@ public class LoginPipeline {
     }
 
     // Status
-    public void handleC2SStatusRequest(final Connection connection, final C2SStatusRequestPacket packet) {
+    public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
         final BrodernProxy proxy = BrodernProxy.getProxy();
         final ServerStatus serverStatus = new ServerStatus(
                 proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.isConnectedToServer())),
@@ -83,27 +83,27 @@ public class LoginPipeline {
         connection.sendToClient(new S2CStatusResponsePacket(serverStatus));
     }
 
-    public void handleC2SStatusPingRequest(final Connection connection, final C2SStatusPingRequestPacket packet) {
+    public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
         connection.sendToClient(new S2CStatusPongResponsePacket(packet.time()));
         connection.disconnect();
     }
 
     // Login
-    public void handleLogin(final Connection connection, final C2SIntentionPacket packet) {
+    public void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
         connection.setState(PacketState.LOGIN);
         if (packet.protocolVersion() != ModernRecordPacket.PROTOCOL_VERSION) {
             connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernRecordPacket.PROTOCOL_VERSION);
         }
     }
 
-    public void handleC2SHello(final Connection connection, final C2SHelloPacket packet) {
+    public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
         connection.sendToServer(new HandshakePacket(packet.username()));
 
         final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
         connection.setProfile(profile);
     }
 
-    public void handleS2CHandshake(final Connection connection, final HandshakePacket packet) {
+    public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
         if (packet.username().equals("-")) {
             connection.sendToServer(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getProfile().name()));
             connection.sendToClient(new S2CLoginFinishedPacket(connection.getProfile()));
@@ -113,7 +113,7 @@ public class LoginPipeline {
     }
 
     // Configuration
-    public void handleC2SLoginAcknowledged(final Connection connection, final C2SLoginAcknowledgedPacket packet) {
+    public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
         connection.setState(PacketState.CONFIGURATION);
 
         // Send Tags
@@ -125,7 +125,7 @@ public class LoginPipeline {
         connection.sendToClient(S2CFinishConfigurationPacket.INSTANCE);
     }
 
-    private void sendTags(final Connection connection) {
+    private void sendTags(final ClientConnection connection) {
         LOGGER.info("Sending Tags");
 
         final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
@@ -146,7 +146,7 @@ public class LoginPipeline {
         connection.sendToClient(new S2CUpdateTagsPacket(tags));
     }
 
-    private void sendRegistries(final Connection connection) {
+    private void sendRegistries(final ClientConnection connection) {
         LOGGER.info("Sending Registries");
 
         BrodernProxy.getDefaultRegistries().forEach(entry -> {
@@ -168,18 +168,18 @@ public class LoginPipeline {
         });
     }
 
-    public void handleC2SFinishConfiguration(final Connection connection, final C2SFinishConfigurationPacket packet) {
+    public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
         connection.setState(PacketState.PLAY);
         connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
     }
 
-    public void handleS2CLogin(final Connection connection, final LoginPacket packet) {
+    public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
         // Do nothing currently
     }
 
-    public void passClientToNextPipeline(final Connection connection, final ModernRecordPacket<?> packet) {
+    public void passClientToNextPipeline(final ClientConnection connection, final ModernRecordPacket<?> packet) {
     }
 
-    public void passServerToNextPipeline(final Connection connection, final BetaRecordPacket packet) {
+    public void passServerToNextPipeline(final ClientConnection connection, final BetaRecordPacket packet) {
     }
 }

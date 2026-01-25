@@ -8,11 +8,11 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class Proxy2ClientChannelInit extends ChannelInitializer<Channel> {
-	private static final Logger LOGGER = LogManager.getLogger(Proxy2ClientChannelInit.class);
-	private final Connection connection;
+public final class ServerConnection extends ChannelInitializer<Channel> {
+	private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class);
+	private final ClientConnection connection;
 
-	Proxy2ClientChannelInit(final Connection connection) {
+	ServerConnection(final ClientConnection connection) {
 		this.connection = connection;
 	}
 

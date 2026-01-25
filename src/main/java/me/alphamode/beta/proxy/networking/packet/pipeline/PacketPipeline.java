@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.networking.packet.pipeline;
 
-import me.alphamode.beta.proxy.networking.Connection;
+import me.alphamode.beta.proxy.networking.ClientConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ public record PacketPipeline<H, S, C>(Map<Class<? extends S>, PipelineHandler<H,
         return new Builder<>();
     }
 
-    public void handleClient(H handler, final Connection connection, final C packet) {
+    public void handleClient(H handler, final ClientConnection connection, final C packet) {
         for (final var entry : clientboundPipelines().entrySet()) {
             final Class<? extends C> packetClass = entry.getKey();
             final PacketPipeline.PipelineHandler<H, C> pipelineHandler = (PacketPipeline.PipelineHandler<H, C>) entry.getValue();
@@ -26,7 +26,7 @@ public record PacketPipeline<H, S, C>(Map<Class<? extends S>, PipelineHandler<H,
         unhandledClientHandler().handle(handler, connection, packet);
     }
 
-    public void handleServer(H handler, final Connection connection, final S packet) {
+    public void handleServer(H handler, final ClientConnection connection, final S packet) {
         for (final var entry : serverboundPipelines().entrySet()) {
             final Class<? extends S> packetClass = entry.getKey();
             final PacketPipeline.PipelineHandler<H, S> pipelineHandler = (PacketPipeline.PipelineHandler<H, S>) entry.getValue();
@@ -76,6 +76,6 @@ public record PacketPipeline<H, S, C>(Map<Class<? extends S>, PipelineHandler<H,
 
     @FunctionalInterface
     public interface PipelineHandler<H, T> {
-        void handle(H handler, final Connection connection, final T packet);
+        void handle(H handler, final ClientConnection connection, final T packet);
     }
 }

@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import me.alphamode.beta.proxy.networking.Connection;
+import me.alphamode.beta.proxy.networking.ClientConnection;
 import net.raphimc.netminecraft.packet.PacketTypes;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 public class ModernPacketReader extends ByteToMessageDecoder {
 	public static final String KEY = "modern-encoder";
 
-	private final Connection connection;
+	private final ClientConnection connection;
 
-	public ModernPacketReader(final Connection connection) {
+	public ModernPacketReader(final ClientConnection connection) {
 		this.connection = connection;
 	}
 

@@ -25,11 +25,11 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class Connection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
-	private static final Logger LOGGER = LogManager.getLogger(Connection.class);
+public final class ClientConnection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
+	private static final Logger LOGGER = LogManager.getLogger(ClientConnection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
-	private final MinecraftServerAddress serverAddress;
+	private final MinecraftServerAddress address;
 	private final int id;
 	private ActivePipeline<?> pipeline = new ActivePipeline<>(LoginPipeline.PIPELINE, new LoginPipeline());
 	private Channel serverChannel;
@@ -39,8 +39,8 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveMS = 0L;
 
-	public Connection(final MinecraftServerAddress serverAddress) {
-		this.serverAddress = serverAddress;
+	public ClientConnection(final MinecraftServerAddress address) {
+		this.address = address;
 		this.id = LAST_CONNECTION_ID++;
 	}
 
@@ -119,9 +119,9 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		return this.id;
 	}
 
-    public ActivePipeline<?> getActivePipeline() {
-        return this.pipeline;
-    }
+	public ActivePipeline<?> getActivePipeline() {
+		return this.pipeline;
+	}
 
 	public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
 		this.pipeline = new ActivePipeline<>(pipeline, handler);
@@ -183,8 +183,8 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
 
-		final NetClient realServerConnection = new NetClient(new Proxy2ClientChannelInit(this));
-		realServerConnection.connect(this.serverAddress).addListener(future -> {
+		final NetClient realServerConnection = new NetClient(new ServerConnection(this));
+		realServerConnection.connect(this.address).addListener(future -> {
 			if (!future.isSuccess()) {
 				LOGGER.info("Failed to connect proxy #{} to real server!", this.id);
 				future.cause().printStackTrace();
@@ -198,7 +198,7 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 				return;
 			}
 
-			LOGGER.info("Proxy #{} connected to {}", this.id, this.serverAddress);
+			LOGGER.info("Proxy #{} connected to {}", this.id, this.address);
 			this.serverChannel = realServerConnection.getChannel();
 		}).syncUninterruptibly();
 	}
@@ -232,12 +232,12 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	}
 
 	public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {
-        public void handleClient(final Connection connection, final ModernRecordPacket<?> packet) {
-            pipeline.handleClient(handler, connection, packet);
-        }
+		public void handleClient(final ClientConnection connection, final ModernRecordPacket<?> packet) {
+			pipeline.handleClient(handler, connection, packet);
+		}
 
-        public void handleServer(final Connection connection, final BetaRecordPacket packet) {
-            pipeline.handleServer(handler, connection, packet);
-        }
+		public void handleServer(final ClientConnection connection, final BetaRecordPacket packet) {
+			pipeline.handleServer(handler, connection, packet);
+		}
 	}
 }
