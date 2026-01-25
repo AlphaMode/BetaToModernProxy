@@ -6,6 +6,7 @@ import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatCommandPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SMovePlayerPacket;
@@ -37,6 +38,7 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
+			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.PosRot.class, PlayPipeline::handleC2SMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2SMovePlayerPos)
@@ -144,10 +146,14 @@ public class PlayPipeline {
 		connection.getServerConnection().send(new ChatPacket(packet.message()));
 	}
 
+	public void handleC2SChatCommand(final ClientConnection connection, final C2SChatCommandPacket packet) {
+		connection.getServerConnection().send(new ChatPacket("/" + packet.command()));
+	}
+
 	// TODO: double check accuracy
 	public void handleS2CMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
 		if (packet instanceof MovePlayerPacket.PosRot posRot) {
-			connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.yView, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
+			// TODO/FIX: connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.yView, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
 		} else if (packet instanceof MovePlayerPacket.Rot rot) {
 			connection.send(new C2SMovePlayerPacket.Rot(rot.yRot, rot.xRot, rot.onGround, false));
 		} else if (packet instanceof MovePlayerPacket.Pos pos) {
