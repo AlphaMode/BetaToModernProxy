@@ -141,8 +141,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	}
 
 	public void tick() {
-		if (System.currentTimeMillis() - this.lastKeepAliveMS > 20) {
+		final int keepAliveMs = (int) (System.currentTimeMillis() - this.lastKeepAliveMS);
+		if (keepAliveMs > 20) {
 			this.serverConnection.send(new KeepAlivePacket());
+			this.send(this.createKeepAlivePacket(keepAliveMs));
 		}
 	}
 
