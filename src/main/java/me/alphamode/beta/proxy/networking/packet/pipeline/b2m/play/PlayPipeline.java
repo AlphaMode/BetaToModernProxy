@@ -4,30 +4,29 @@ import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.ChatPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetSpawnPositionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CGameEventPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetChunkCacheCenterPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetChunkCacheRadiusPacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.util.data.Vec3d;
-import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
-import me.alphamode.beta.proxy.util.data.modern.LevelData;
-import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
-import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Set;
 
 public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
 	public static final PacketPipeline<PlayPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<PlayPipeline>builder()
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
-			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
-			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.serverHandler(SetSpawnPositionPacket.class, PlayPipeline::handleS2CSetSpawnPosition)
+			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
+			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
+			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
+			.clientHandler(S2CCommonDisconnectPacket.class, PlayPipeline::handleC2SDisconnect)
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
@@ -37,20 +36,20 @@ public class PlayPipeline {
 	 * This code is just for fun/to try and get into the world, it is most likely not accurate to what you are wanting to do
 	 * Sincerely, lowercase of the btw
 	 */
-	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
+	private void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
 //		TODO: S2CRecipeBookAddPacket
 
-		connection.send(new S2CPlayerPositionPacket(
-				0, // TODO
-				new PositionMoveRotation(new Vec3d(0, 63, 0), new Vec3d(0, 0, 0), 0.0F, 0.0F),
-				Set.of()
-		));
+//		connection.send(new S2CPlayerPositionPacket(
+//				0, // TODO
+//				new PositionMoveRotation(new Vec3d(0, 63, 0), new Vec3d(0, 0, 0), 0.0F, 0.0F),
+//				Set.of()
+//		));
 
 //		TODO: S2CInitializeBorderPacket
-		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
-				GlobalPos.of(Dimension.OVERWORLD, packet.position().toBlockPos()),
-				0.0F, 0.0F
-		)));
+//		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
+//				GlobalPos.of(Dimension.OVERWORLD, packet.position().toBlockPos()),
+//				0.0F, 0.0F
+//		)));
 
 		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
 		connection.send(new S2CSetChunkCacheRadiusPacket(0));
@@ -59,11 +58,7 @@ public class PlayPipeline {
 //		TODO: S2CLevelChunkWithLightPacket
 	}
 
-	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
-	}
-
-	public void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
-		connection.getServerConnection().send(new ChatPacket(packet.message()));
+	private void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 	}
 
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
@@ -75,6 +70,18 @@ public class PlayPipeline {
 			final int index = message.indexOf(repeatCommand);
 			connection.getServerConnection().send(new ChatPacket(message.substring(index + repeatCommand.length()).trim()));
 		}
+	}
+
+	private void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
+		connection.getServerConnection().send(new ChatPacket(packet.message()));
+	}
+
+	private void handleC2SDisconnect(final ClientConnection connection, final S2CCommonDisconnectPacket<?> packet) {
+		connection.getServerConnection().send(new DisconnectPacket(packet.getReason().asLegacyFormatString()));
+	}
+
+	private void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
+		connection.kick(packet.reason());
 	}
 
 	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
