@@ -7,10 +7,10 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacketWrit
 import net.raphimc.netminecraft.netty.codec.PacketSizer;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 
-public final class ProxyConnection extends ChannelInitializer<Channel> {
+public final class ProxyChannelInitializer extends ChannelInitializer<Channel> {
 	private final MinecraftServerAddress address;
 
-	public ProxyConnection(final MinecraftServerAddress address) {
+	public ProxyChannelInitializer(final MinecraftServerAddress address) {
 		this.address = address;
 	}
 

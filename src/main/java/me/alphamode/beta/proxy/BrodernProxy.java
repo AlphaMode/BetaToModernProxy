@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy;
 
 import me.alphamode.beta.proxy.config.Config;
-import me.alphamode.beta.proxy.networking.ProxyConnection;
+import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -53,7 +53,7 @@ public record BrodernProxy(Config config) {
 		final int serverPort = this.config.getServerPort();
 
 		LOGGER.info("Listening on {}:{} -> {}:{}", bindAddress, bindPort, serverAddress, serverPort);
-		new NetServer(new ProxyConnection(MinecraftServerAddress.ofResolved(serverAddress, serverPort)))
+		new NetServer(new ProxyChannelInitializer(MinecraftServerAddress.ofResolved(serverAddress, serverPort)))
 				.bind(new InetSocketAddress(bindAddress, bindPort));
 	}
 
