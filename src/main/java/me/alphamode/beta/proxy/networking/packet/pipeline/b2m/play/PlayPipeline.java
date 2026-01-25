@@ -42,7 +42,7 @@ public class PlayPipeline {
 			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2CMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2CMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2CMovePlayerPos)
-            .serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
+			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
@@ -119,18 +119,20 @@ public class PlayPipeline {
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 	}
 
-    public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
-        byte[] buffer = new byte[packet.xs() * packet.ys() * packet.zs() * 5 / 2];
-        try (Inflater inflater = new Inflater()) {
-            inflater.setInput(packet.data());
-            inflater.inflate(buffer);
-        } catch (DataFormatException e) {
-            connection.kick("Bad compressed data format");
-        }
-        if (BrodernProxy.getProxy().isDebug()) {
-            LOGGER.info("Decompressed beta block region data: {}", buffer);
-        }
-    }
+	public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
+		final byte[] buffer = new byte[packet.xs() * packet.ys() * packet.zs() * 5 / 2];
+		try (final Inflater inflater = new Inflater()) {
+			inflater.setInput(packet.data());
+			inflater.inflate(buffer);
+		} catch (final DataFormatException exception) {
+			connection.kick("Bad compressed data format");
+			return;
+		}
+
+		if (BrodernProxy.getProxy().isDebug()) {
+			LOGGER.info("Decompressed beta block region data: {}", buffer);
+		}
+	}
 
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
 		final String message = packet.message();
