@@ -13,19 +13,21 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCo
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
-import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
+import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
@@ -113,12 +115,7 @@ public class PlayPipeline {
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
 		final String message = packet.message();
 		LOGGER.info("{}", message);
-
-		final String repeatCommand = "p!repeat";
-		if (BrodernProxy.getProxy().isDebug() && message.contains(repeatCommand)) {
-			final int index = message.indexOf(repeatCommand);
-			connection.getServerConnection().send(new ChatPacket(message.substring(index + repeatCommand.length()).trim()));
-		}
+		connection.send(new S2CSystemChatPacket(TextComponent.of(message), false));
 	}
 
 	private void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
