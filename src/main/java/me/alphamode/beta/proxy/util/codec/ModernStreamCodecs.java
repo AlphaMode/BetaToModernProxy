@@ -384,21 +384,21 @@ public interface ModernStreamCodecs {
 		};
 	}
 
-	static StreamCodec<ByteBuf, JsonElement> lenientJson(final int maxLength) {
+	static <T extends JsonElement> StreamCodec<ByteBuf, T> lenientJson(final int maxLength) {
 		return new StreamCodec<>() {
 			private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
 			@Override
-			public JsonElement decode(final ByteBuf buf) {
+			public T decode(final ByteBuf buf) {
 				try {
-					return JsonParser.parseString(stringUtf8(maxLength).decode(buf));
+					return (T) JsonParser.parseString(stringUtf8(maxLength).decode(buf));
 				} catch (JsonSyntaxException e) {
 					throw new RuntimeException("Failed to parse JSON", e);
 				}
 			}
 
 			@Override
-			public void encode(final ByteBuf buf, final JsonElement value) {
+			public void encode(final ByteBuf buf, final T value) {
 				stringUtf8(maxLength).encode(buf, GSON.toJson(value));
 			}
 		};
