@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
-import me.alphamode.beta.proxy.util.data.modern.Relative;
+import me.alphamode.beta.proxy.util.data.modern.enums.Relative;
 
 import java.util.Set;
 
