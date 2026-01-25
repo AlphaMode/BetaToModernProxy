@@ -125,7 +125,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.TELEPORT_TO_ENTITY, null);
 		this.registerPacket(ServerboundPlayPackets.TEST_INSTANCE_BLOCK_ACTION, null);
 		this.registerPacket(ServerboundPlayPackets.USE_ITEM_ON, null);
-		this.registerPacket(ServerboundPlayPackets.USE_ITEM, null);
+		this.registerPacket(ServerboundPlayPackets.USE_ITEM, C2SUseItemPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CUSTOM_CLICK_ACTION, null);
 
 		// Clientbound
