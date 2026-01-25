@@ -209,7 +209,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.RESET_SCORE, null);
 		this.registerPacket(ClientboundPlayPackets.RESOURCE_PACK_POP, null);
 		this.registerPacket(ClientboundPlayPackets.RESOURCE_PACK_PUSH, null);
-		this.registerPacket(ClientboundPlayPackets.RESPAWN, null);
+		this.registerPacket(ClientboundPlayPackets.RESPAWN, S2CRespawnPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.ROTATE_HEAD, null);
 		this.registerPacket(ClientboundPlayPackets.SECTION_BLOCKS_UPDATE, null);
 		this.registerPacket(ClientboundPlayPackets.SELECT_ADVANCEMENTS_TAB, null);
