@@ -194,30 +194,30 @@ public class LoginPipeline {
 	}
 
 	private void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-		connection.send(new S2CPlayLoginPacket(
-				0, // TODO
-				false,
-				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
-				BrodernProxy.getProxy().config().getMaxPlayers(),
-				16,
-				16,
-				false,
-				false,
-				false,
-				new CommonPlayerSpawnInfo(
-						null, // TODO (Holder<DimensionType>)
-						Dimension.byLegacyId(packet.dimension()),
-						packet.seed(),
-						GameMode.SURVIVAL,
-						GameMode.SURVIVAL,
-						false,
-						false,
-						Optional.empty(),
-						300,
-						63
-				),
-				false
-		));
+//		connection.send(new S2CPlayLoginPacket(
+//				0, // TODO
+//				false,
+//				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
+//				BrodernProxy.getProxy().config().getMaxPlayers(),
+//				16,
+//				16,
+//				false,
+//				false,
+//				false,
+//				new CommonPlayerSpawnInfo(
+//						null, // TODO (Holder<DimensionType>)
+//						Dimension.byLegacyId(packet.dimension()),
+//						packet.seed(),
+//						GameMode.SURVIVAL,
+//						GameMode.SURVIVAL,
+//						false,
+//						false,
+//						Optional.empty(),
+//						300,
+//						63
+//				),
+//				false
+//		));
 	}
 
 	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
