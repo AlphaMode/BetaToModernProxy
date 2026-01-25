@@ -12,7 +12,7 @@ import net.lenni0451.mcstructs.core.Identifier;
 
 import java.util.Collection;
 
-public record S2CLoginPacket(
+public record S2CPlayLoginPacket(
 		int playerId,
 		boolean hardcore,
 		Collection<ResourceKey<Identifier>> levels,
@@ -25,30 +25,30 @@ public record S2CLoginPacket(
 		CommonPlayerSpawnInfo commonPlayerSpawnInfo,
 		boolean enforcesSecureChat
 ) implements S2CPlayPacket {
-	public static final StreamCodec<ByteBuf, S2CLoginPacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteBuf, S2CPlayLoginPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
-			S2CLoginPacket::playerId,
+			S2CPlayLoginPacket::playerId,
 			BasicStreamCodecs.BOOL,
-			S2CLoginPacket::hardcore,
+			S2CPlayLoginPacket::hardcore,
 			ModernStreamCodecs.collection(ResourceKey.streamCodec(Registries.DIMENSION)),
-			S2CLoginPacket::levels,
-			BasicStreamCodecs.INT,
-			S2CLoginPacket::maxPlayers,
-			BasicStreamCodecs.INT,
-			S2CLoginPacket::chunkRadius,
-			BasicStreamCodecs.INT,
-			S2CLoginPacket::simulationDistance,
+			S2CPlayLoginPacket::levels,
+			ModernStreamCodecs.VAR_INT,
+			S2CPlayLoginPacket::maxPlayers,
+			ModernStreamCodecs.VAR_INT,
+			S2CPlayLoginPacket::chunkRadius,
+			ModernStreamCodecs.VAR_INT,
+			S2CPlayLoginPacket::simulationDistance,
 			BasicStreamCodecs.BOOL,
-			S2CLoginPacket::reducedDebugInfo,
+			S2CPlayLoginPacket::reducedDebugInfo,
 			BasicStreamCodecs.BOOL,
-			S2CLoginPacket::showDeathScreen,
+			S2CPlayLoginPacket::showDeathScreen,
 			BasicStreamCodecs.BOOL,
-			S2CLoginPacket::doLimitedCrafting,
+			S2CPlayLoginPacket::doLimitedCrafting,
 			CommonPlayerSpawnInfo.CODEC,
-			S2CLoginPacket::commonPlayerSpawnInfo,
+			S2CPlayLoginPacket::commonPlayerSpawnInfo,
 			BasicStreamCodecs.BOOL,
-			S2CLoginPacket::enforcesSecureChat,
-			S2CLoginPacket::new
+			S2CPlayLoginPacket::enforcesSecureChat,
+			S2CPlayLoginPacket::new
 	);
 
 	@Override

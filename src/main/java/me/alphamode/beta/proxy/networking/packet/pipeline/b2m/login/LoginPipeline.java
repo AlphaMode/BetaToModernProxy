@@ -196,6 +196,7 @@ public class LoginPipeline {
 	}
 
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
+		this.seed = packet.seed();
 		// Do nothing currently
 	}
 

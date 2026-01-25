@@ -7,7 +7,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Chat
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetSpawnPositionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CRespawnPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayLoginPacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
@@ -18,6 +18,7 @@ import net.lenni0451.mcstructs.core.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Optional;
 
 public class PlayPipeline {
@@ -30,15 +31,15 @@ public class PlayPipeline {
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
 
-	private long seed;
+	private final long seed;
 
 	public PlayPipeline(final long seed) {
 		this.seed = seed;
 	}
 
 	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
-		connection.send(new S2CRespawnPacket(new CommonPlayerSpawnInfo(
-				null,
+		final CommonPlayerSpawnInfo spawnInfo = new CommonPlayerSpawnInfo(
+				null, // TODO
 				ResourceKey.create(Registries.DIMENSION, Identifier.defaultNamespace("overworld")),
 				this.seed,
 				GameMode.SURVIVAL, // TODO
@@ -46,9 +47,23 @@ public class PlayPipeline {
 				false,
 				false,
 				Optional.empty(),
-				0,
+				20,
 				63
-		), (byte) 0));
+		);
+
+		connection.send(new S2CPlayLoginPacket(
+				0,
+				false,
+				List.of(),
+				10,
+				10,
+				10,
+				false,
+				false,
+				false,
+				spawnInfo,
+				false
+		));
 	}
 
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {

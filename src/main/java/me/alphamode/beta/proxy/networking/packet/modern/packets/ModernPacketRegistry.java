@@ -73,7 +73,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CHAT_SESSION_UPDATE, C2SChatSessionUpdatePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHUNK_BATCH_RECEIVED, null);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, null);
-		this.registerPacket(ServerboundPlayPackets.CLIENT_TICK_END, null);
+		this.registerPacket(ServerboundPlayPackets.CLIENT_TICK_END, C2SClientTickEndPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_INFORMATION, null);
 		this.registerPacket(ServerboundPlayPackets.COMMAND_SUGGESTION, null);
 		this.registerPacket(ServerboundPlayPackets.CONFIGURATION_ACKNOWLEDGED, null);
@@ -177,7 +177,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.LEVEL_EVENT, null);
 		this.registerPacket(ClientboundPlayPackets.LEVEL_PARTICLES, null);
 		this.registerPacket(ClientboundPlayPackets.LIGHT_UPDATE, null);
-		this.registerPacket(ClientboundPlayPackets.LOGIN, null);
+		this.registerPacket(ClientboundPlayPackets.LOGIN, S2CPlayLoginPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.MAP_ITEM_DATA, null);
 		this.registerPacket(ClientboundPlayPackets.MERCHANT_OFFERS, null);
 		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_POS, null);
