@@ -78,7 +78,7 @@ public class LoginPipeline {
 	}
 
 	// Handshake
-	public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
+	private void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
 		switch (packet.intention()) {
 			case LOGIN -> handleLogin(connection, packet);
 			case STATUS -> connection.setState(PacketState.STATUS);
@@ -89,7 +89,7 @@ public class LoginPipeline {
 	}
 
 	// Status
-	public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
+	private void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
 		final BrodernProxy proxy = BrodernProxy.getProxy();
 		final ServerStatus serverStatus = new ServerStatus(
 				proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
@@ -101,13 +101,13 @@ public class LoginPipeline {
 		connection.send(new S2CStatusResponsePacket(serverStatus));
 	}
 
-	public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
+	private void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
 		connection.send(new S2CStatusPongResponsePacket(packet.time()));
 		connection.disconnect();
 	}
 
 	// Login
-	public void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
+	private void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
 		connection.setState(PacketState.LOGIN);
 		if (packet.protocolVersion() != ModernPacket.PROTOCOL_VERSION) {
 			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernPacket.PROTOCOL_VERSION);
@@ -116,14 +116,14 @@ public class LoginPipeline {
 		}
 	}
 
-	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
+	private void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
 		connection.getServerConnection().send(new HandshakePacket(packet.username()));
 
 		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
 		connection.setProfile(profile);
 	}
 
-	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
+	private void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
 		if (packet.username().equals("-")) {
 			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
 			connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
@@ -133,7 +133,7 @@ public class LoginPipeline {
 	}
 
 	// Configuration
-	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
+	private void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
 		connection.setState(PacketState.CONFIGURATION);
 
 		// Send Tags
@@ -188,12 +188,12 @@ public class LoginPipeline {
 		});
 	}
 
-	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
+	private void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		connection.setState(PacketState.PLAY);
 		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
 	}
 
-	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
+	private void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
 		connection.send(new S2CPlayLoginPacket(
 				0, // TODO
 				false,
@@ -220,9 +220,9 @@ public class LoginPipeline {
 		));
 	}
 
-	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
+	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}
 
-	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
+	private void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
 	}
 }
