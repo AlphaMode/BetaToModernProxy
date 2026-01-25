@@ -7,7 +7,6 @@ import me.alphamode.beta.proxy.networking.Connection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetSpawnPositionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
@@ -22,9 +21,9 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
+import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.rewriter.DecoderRewriter;
-import me.alphamode.beta.proxy.util.data.Vec3i;
+import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play.PlayPipeline;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
 import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
@@ -40,29 +39,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class LoginPipeline extends BetaToModernPipeline {
+public class LoginPipeline {
     private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
-
-    @Override
-    public void buildPipeline(final Builder<BetaRecordPacket, ModernRecordPacket<?>> builder) {
-        // Intent
-        builder.clientHandler(C2SIntentionPacket.class, this::handleClientIntent);
-
-        // Status
-        builder.clientHandler(C2SStatusRequestPacket.class, this::handleC2SStatusRequest);
-        builder.clientHandler(C2SStatusPingRequestPacket.class, this::handleC2SStatusPingRequest);
-
-        // Login
-        builder.clientHandler(C2SHelloPacket.class, this::handleC2SHello);
-        builder.serverHandler(HandshakePacket.class, this::handleS2CHandshake);
-        builder.serverHandler(LoginPacket.class, this::handleS2CLogin);
-
-        builder.clientHandler(C2SLoginAcknowledgedPacket.class, this::handleC2SLoginAcknowledged);
-        builder.clientHandler(C2SFinishConfigurationPacket.class, this::handleC2SFinishConfiguration);
-
-        builder.unhandledClient(this::passClientToNextPipeline);
-        builder.unhandledServer(this::passServerToNextPipeline);
-    }
+    public static final PacketPipeline<LoginPipeline, BetaRecordPacket, ModernRecordPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
+            // Intent
+            .clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
+            // Status
+            .clientHandler(C2SStatusRequestPacket.class, LoginPipeline::handleC2SStatusRequest)
+            .clientHandler(C2SStatusPingRequestPacket.class, LoginPipeline::handleC2SStatusPingRequest)
+            // Login
+            .clientHandler(C2SHelloPacket.class, LoginPipeline::handleC2SHello)
+            .serverHandler(HandshakePacket.class, LoginPipeline::handleS2CHandshake)
+            .serverHandler(LoginPacket.class, LoginPipeline::handleS2CLogin)
+            // Configuration
+            .clientHandler(C2SLoginAcknowledgedPacket.class, LoginPipeline::handleC2SLoginAcknowledged)
+            .clientHandler(C2SFinishConfigurationPacket.class, LoginPipeline::handleC2SFinishConfiguration)
+            // Unhandled
+            .unhandledClient(LoginPipeline::passClientToNextPipeline)
+            .unhandledServer(LoginPipeline::passServerToNextPipeline)
+            .build();
 
     // Handshake
     public void handleClientIntent(final Connection connection, final C2SIntentionPacket packet) {
@@ -175,17 +170,16 @@ public class LoginPipeline extends BetaToModernPipeline {
 
     public void handleC2SFinishConfiguration(final Connection connection, final C2SFinishConfigurationPacket packet) {
         connection.setState(PacketState.PLAY);
+        connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
     }
 
     public void handleS2CLogin(final Connection connection, final LoginPacket packet) {
         // Do nothing currently
     }
 
-    public void passClientToNextPipeline(final Connection connection, final ModernRecordPacket<?> packet) {}
+    public void passClientToNextPipeline(final Connection connection, final ModernRecordPacket<?> packet) {
+    }
 
-    public void passServerToNextPipeline(final Connection connection, final BetaRecordPacket packet) {}
-
-    public void handleS2CSetSpawnPos(final Connection connection, final SetSpawnPositionPacket packet) {
-        this.spawnPos = packet.position();
+    public void passServerToNextPipeline(final Connection connection, final BetaRecordPacket packet) {
     }
 }

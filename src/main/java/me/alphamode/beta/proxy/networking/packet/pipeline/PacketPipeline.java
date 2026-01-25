@@ -1,41 +1,54 @@
 package me.alphamode.beta.proxy.networking.packet.pipeline;
 
 import me.alphamode.beta.proxy.networking.Connection;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 
-public abstract class PacketPipeline<S, C> {
+import java.util.HashMap;
+import java.util.Map;
 
-    public abstract void buildPipeline(Builder<S, C> builder);
-
-    public abstract class Serverbound {
-        public abstract void handle(final Connection connection, final ModernRecordPacket<?> packet);
+public record PacketPipeline<H, S, C>(Map<Class<? extends S>, PipelineHandler<H, ? extends S>> serverboundPipelines,
+                                      Map<Class<? extends C>, PipelineHandler<H, ? extends C>> clientboundPipelines,
+                                      PipelineHandler<H, ? extends S> unhandledServerHandler,
+                                      PipelineHandler<H, ? extends C> unhandledClientHandler) {
+    public static <H, S, C> Builder<H, S, C> builder() {
+        return new Builder<>();
     }
 
-    public abstract class Clientbound {
-        public abstract void handle(final Connection connection, final BetaRecordPacket packet);
-    }
+    public static class Builder<H, S, C> {
+        private final Map<Class<? extends S>, PipelineHandler<H, ? extends S>> serverPipelines = new HashMap<>();
+        private final Map<Class<? extends C>, PipelineHandler<H, ? extends C>> clientPipelines = new HashMap<>();
+        private PipelineHandler<H, ? extends S> unhandledServerHandler;
+        private PipelineHandler<H, ? extends C> unhandledClientHandler;
 
-    public static class Builder<S, C> {
-        public <P> Builder<S, C> clientHandler(Class<P> clazz, PipelineHandler<P> handler) {
+        public <P extends C> Builder<H, S, C> clientHandler(Class<P> clazz, PipelineHandler<H, P> handler) {
+            this.clientPipelines.put(clazz, handler);
             return this;
         }
 
-        public <P> Builder<S, C> serverHandler(Class<P> clazz, PipelineHandler<P> handler) {
+        public <P extends S> Builder<H, S, C> serverHandler(Class<P> clazz, PipelineHandler<H, P> handler) {
+            this.serverPipelines.put(clazz, handler);
             return this;
         }
 
-        public Builder<S, C> unhandledClient(PipelineHandler<C> handler) {
+        public Builder<H, S, C> unhandledClient(PipelineHandler<H, C> handler) {
+            this.unhandledClientHandler = handler;
             return this;
         }
 
-        public Builder<S, C> unhandledServer(PipelineHandler<S> handler) {
+        public Builder<H, S, C> unhandledServer(PipelineHandler<H, S> handler) {
+            this.unhandledServerHandler = handler;
             return this;
+        }
+
+        public PacketPipeline<H, S, C> build() {
+            if (unhandledServerHandler == null || unhandledClientHandler == null) {
+                throw new IllegalStateException("Unhandled pipelines must be specified");
+            }
+            return new PacketPipeline<>(Map.copyOf(this.serverPipelines), Map.copyOf(this.clientPipelines), this.unhandledServerHandler, this.unhandledClientHandler);
         }
     }
 
     @FunctionalInterface
-    public interface PipelineHandler<T> {
-        void handle(final Connection connection, final T packet);
+    public interface PipelineHandler<H, T> {
+        void handle(H handler, final Connection connection, final T packet);
     }
 }

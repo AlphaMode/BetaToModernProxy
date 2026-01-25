@@ -16,6 +16,9 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
+import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.LoginPipeline;
 import me.alphamode.beta.proxy.rewriter.DecoderRewriter;
 import me.alphamode.beta.proxy.rewriter.EncoderRewriter;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
@@ -39,13 +42,19 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	private GameProfile profile;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveMS = 0L;
+    private ActivePipeline<?> pipeline;
 
 	public Connection(final MinecraftServerAddress serverAddress) {
 		this.serverAddress = serverAddress;
 		this.decoderRewriter.registerPackets();
 		this.encoderRewriter.registerPackets();
 		this.id = LAST_CONNECTION_ID++;
-	}
+        this.setPipeline(LoginPipeline.PIPELINE, new LoginPipeline());
+    }
+
+    public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
+        this.pipeline = new ActivePipeline<>(pipeline, handler);
+    }
 
 	public DecoderRewriter getDecoderRewriter() {
 		return this.decoderRewriter;
@@ -233,4 +242,6 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		System.out.printf("State: %s%n", this.state);
 		System.out.println("-------------------------------------------------------------------");
 	}
+
+    public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {}
 }
