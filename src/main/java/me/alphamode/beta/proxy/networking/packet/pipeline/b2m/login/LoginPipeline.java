@@ -11,6 +11,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Logi
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
@@ -44,7 +45,8 @@ public class LoginPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
 	public static final PacketPipeline<LoginPipeline, BetaRecordPacket, ModernRecordPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
 			// Keep Alive
-			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleKeepAlive)
+			.clientHandler(C2SConfigurationKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
+			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleS2CKeepAlive)
 			// Intent
 			.clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
 			// Status
@@ -64,10 +66,14 @@ public class LoginPipeline {
 
 
 	// Keep Alive (Handshake, Login, Play)
-	private void handleKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
+	private void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
 		final long lastKeepAliveMs = connection.getLastKeepAliveMS();
 		connection.setLastKeepAliveMS(System.currentTimeMillis());
 		connection.send(connection.createKeepAlivePacket(System.currentTimeMillis() - lastKeepAliveMs));
+	}
+
+	private void handleC2SKeepAlive(final ClientConnection connection, final C2SConfigurationKeepAlivePacket packet) {
+		connection.getServerConnection().send(new KeepAlivePacket());
 	}
 
 	// Handshake
