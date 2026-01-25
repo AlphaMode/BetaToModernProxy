@@ -26,7 +26,7 @@ public record S2CConfigurationKeepAlivePacket(
 	}
 
 	@Override
-	public long getTime() {
+	public long getId() {
 		return this.time;
 	}
 }

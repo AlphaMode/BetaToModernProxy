@@ -7,10 +7,10 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCo
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record S2CPlayKeepAlivePacket(long time) implements S2CCommonKeepAlivePacket<ClientboundPlayPackets> {
+public record S2CPlayKeepAlivePacket(long id) implements S2CCommonKeepAlivePacket<ClientboundPlayPackets> {
 	public static final StreamCodec<ByteBuf, S2CPlayKeepAlivePacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.LONG,
-			S2CPlayKeepAlivePacket::time,
+			S2CPlayKeepAlivePacket::id,
 			S2CPlayKeepAlivePacket::new
 	);
 
@@ -25,7 +25,7 @@ public record S2CPlayKeepAlivePacket(long time) implements S2CCommonKeepAlivePac
 	}
 
 	@Override
-	public long getTime() {
-		return this.time;
+	public long getId() {
+		return this.id;
 	}
 }
