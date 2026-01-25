@@ -90,10 +90,10 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.JIGSAW_GENERATE, null);
 		this.registerPacket(ServerboundPlayPackets.KEEP_ALIVE, C2SPlayKeepAlivePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.LOCK_DIFFICULTY, null);
-		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS, null);
-		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS_ROT, null);
-		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_ROT, null);
-		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_STATUS_ONLY, null);
+		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS, C2SMovePlayerPacket.CODEC);
+		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS_ROT, C2SMovePlayerPacket.PosRot.CODEC);
+		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_ROT, C2SMovePlayerPacket.Rot.CODEC);
+		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_STATUS_ONLY, C2SMovePlayerPacket.StatusOnly.CODEC);
 		this.registerPacket(ServerboundPlayPackets.MOVE_VEHICLE, null);
 		this.registerPacket(ServerboundPlayPackets.PADDLE_BOAT, null);
 		this.registerPacket(ServerboundPlayPackets.PICK_ITEM_FROM_BLOCK, null);
