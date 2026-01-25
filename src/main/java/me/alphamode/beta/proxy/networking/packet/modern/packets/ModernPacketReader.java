@@ -26,7 +26,7 @@ public class ModernPacketReader extends ByteToMessageDecoder {
 			packetData.release();
 		} catch (final Exception exception) {
 			packetData.release();
-			throw new RuntimeException(exception);
+			connection.kick(exception.getMessage());
 		}
 	}
 }
