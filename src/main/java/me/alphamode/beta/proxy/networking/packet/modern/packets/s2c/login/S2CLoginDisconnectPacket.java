@@ -12,7 +12,7 @@ import net.lenni0451.mcstructs.text.serializer.TextComponentSerializer;
 public record S2CLoginDisconnectPacket(
 		TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundLoginPackets> {
 	// TODO: make proper codec/cleanup
-	private static final StreamCodec<ByteBuf, TextComponent> TEXT_COMPONENT_CODEC = new StreamCodec<ByteBuf, TextComponent>() {
+	private static final StreamCodec<ByteBuf, TextComponent> TEXT_COMPONENT_CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final TextComponent component) {
 			ModernStreamCodecs.lenientJson(262144).encode(buf, TextComponentSerializer.LATEST.serializeJson(component));

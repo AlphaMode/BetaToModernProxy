@@ -6,6 +6,7 @@ import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
@@ -40,148 +41,158 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 public class LoginPipeline {
-    private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
-    public static final PacketPipeline<LoginPipeline, BetaRecordPacket, ModernRecordPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
-            // Intent
-            .clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
-            // Status
-            .clientHandler(C2SStatusRequestPacket.class, LoginPipeline::handleC2SStatusRequest)
-            .clientHandler(C2SStatusPingRequestPacket.class, LoginPipeline::handleC2SStatusPingRequest)
-            // Login
-            .clientHandler(C2SHelloPacket.class, LoginPipeline::handleC2SHello)
-            .serverHandler(HandshakePacket.class, LoginPipeline::handleS2CHandshake)
-            .serverHandler(LoginPacket.class, LoginPipeline::handleS2CLogin)
-            // Configuration
-            .clientHandler(C2SLoginAcknowledgedPacket.class, LoginPipeline::handleC2SLoginAcknowledged)
-            .clientHandler(C2SFinishConfigurationPacket.class, LoginPipeline::handleC2SFinishConfiguration)
-            // Unhandled
-            .unhandledClient(LoginPipeline::passClientToNextPipeline)
-            .unhandledServer(LoginPipeline::passServerToNextPipeline)
-            .build();
+	private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
+	public static final PacketPipeline<LoginPipeline, BetaRecordPacket, ModernRecordPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
+			// Keep Alive
+			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleKeepAlive)
+			// Intent
+			.clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
+			// Status
+			.clientHandler(C2SStatusRequestPacket.class, LoginPipeline::handleC2SStatusRequest)
+			.clientHandler(C2SStatusPingRequestPacket.class, LoginPipeline::handleC2SStatusPingRequest)
+			// Login
+			.clientHandler(C2SHelloPacket.class, LoginPipeline::handleC2SHello)
+			.serverHandler(HandshakePacket.class, LoginPipeline::handleS2CHandshake)
+			.serverHandler(LoginPacket.class, LoginPipeline::handleS2CLogin)
+			// Configuration
+			.clientHandler(C2SLoginAcknowledgedPacket.class, LoginPipeline::handleC2SLoginAcknowledged)
+			.clientHandler(C2SFinishConfigurationPacket.class, LoginPipeline::handleC2SFinishConfiguration)
+			// Unhandled
+			.unhandledClient(LoginPipeline::passClientToNextPipeline)
+			.unhandledServer(LoginPipeline::passServerToNextPipeline)
+			.build();
 
-    // Handshake
-    public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
-        switch (packet.intention()) {
-            case LOGIN -> handleLogin(connection, packet);
-            case STATUS -> connection.setState(PacketState.STATUS);
-            case TRANSFER -> throw new RuntimeException("Transfer is unsupported");
-        }
 
-        connection.setProtocolVersion(packet.protocolVersion());
-    }
+	// Keep Alive (Handshake, Login, Play)
+	private void handleKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
+		final long lastKeepAliveMs = connection.getLastKeepAliveMS();
+		connection.setLastKeepAliveMS(System.currentTimeMillis());
+		connection.send(connection.createKeepAlivePacket(System.currentTimeMillis() - lastKeepAliveMs));
+	}
 
-    // Status
-    public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
-        final BrodernProxy proxy = BrodernProxy.getProxy();
-        final ServerStatus serverStatus = new ServerStatus(
-                proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
-                Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
-                Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernRecordPacket.PROTOCOL_VERSION)),
-                Optional.empty(),
-                false
-        );
-        connection.send(new S2CStatusResponsePacket(serverStatus));
-    }
+	// Handshake
+	public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
+		switch (packet.intention()) {
+			case LOGIN -> handleLogin(connection, packet);
+			case STATUS -> connection.setState(PacketState.STATUS);
+			case TRANSFER -> throw new RuntimeException("Transfer is unsupported");
+		}
 
-    public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
-        connection.send(new S2CStatusPongResponsePacket(packet.time()));
-        connection.disconnect();
-    }
+		connection.setProtocolVersion(packet.protocolVersion());
+	}
 
-    // Login
-    public void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
-        connection.setState(PacketState.LOGIN);
-        if (packet.protocolVersion() != ModernRecordPacket.PROTOCOL_VERSION) {
-            connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernRecordPacket.PROTOCOL_VERSION);
-        } else if (!connection.getServerConnection().isConnected()) {
+	// Status
+	public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
+		final BrodernProxy proxy = BrodernProxy.getProxy();
+		final ServerStatus serverStatus = new ServerStatus(
+				proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
+				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
+				Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernRecordPacket.PROTOCOL_VERSION)),
+				Optional.empty(),
+				false
+		);
+		connection.send(new S2CStatusResponsePacket(serverStatus));
+	}
+
+	public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
+		connection.send(new S2CStatusPongResponsePacket(packet.time()));
+		connection.disconnect();
+	}
+
+	// Login
+	public void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
+		connection.setState(PacketState.LOGIN);
+		if (packet.protocolVersion() != ModernRecordPacket.PROTOCOL_VERSION) {
+			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernRecordPacket.PROTOCOL_VERSION);
+		} else if (!connection.getServerConnection().isConnected()) {
 			connection.kick("Server is not connected!");
 		}
-    }
+	}
 
-    public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
-        connection.getServerConnection().send(new HandshakePacket(packet.username()));
+	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
+		connection.getServerConnection().send(new HandshakePacket(packet.username()));
 
-        final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
-        connection.setProfile(profile);
-    }
+		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
+		connection.setProfile(profile);
+	}
 
-    public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
-        if (packet.username().equals("-")) {
-            connection.getServerConnection().send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getProfile().name()));
-            connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
-        } else {
-            connection.kick("Online mode isn't supported!");
-        }
-    }
+	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
+		if (packet.username().equals("-")) {
+			connection.getServerConnection().send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getProfile().name()));
+			connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
+		} else {
+			connection.kick("Online mode isn't supported!");
+		}
+	}
 
-    // Configuration
-    public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
-        connection.setState(PacketState.CONFIGURATION);
+	// Configuration
+	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
+		connection.setState(PacketState.CONFIGURATION);
 
-        // Send Tags
-        this.sendTags(connection);
+		// Send Tags
+		this.sendTags(connection);
 
-        // Send Registries
-        this.sendRegistries(connection);
+		// Send Registries
+		this.sendRegistries(connection);
 
-        connection.send(S2CFinishConfigurationPacket.INSTANCE);
-    }
+		connection.send(S2CFinishConfigurationPacket.INSTANCE);
+	}
 
-    private void sendTags(final ClientConnection connection) {
-        LOGGER.info("Sending Tags");
+	private void sendTags(final ClientConnection connection) {
+		LOGGER.info("Sending Tags");
 
-        final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
-        BrodernProxy.getDefaultTags().forEach(entry -> {
-            final Map<Identifier, IntList> map = new HashMap<>();
+		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
+		BrodernProxy.getDefaultTags().forEach(entry -> {
+			final Map<Identifier, IntList> map = new HashMap<>();
 
-            entry.getValue().asCompoundTag().forEach(tag -> {
-                final IntList list = new IntArrayList();
-                final IntArrayTag listTag = tag.getValue().asIntArrayTag();
-                listTag.forEach(list::add);
-                map.put(Identifier.of(tag.getKey()), list);
-            });
+			entry.getValue().asCompoundTag().forEach(tag -> {
+				final IntList list = new IntArrayList();
+				final IntArrayTag listTag = tag.getValue().asIntArrayTag();
+				listTag.forEach(list::add);
+				map.put(Identifier.of(tag.getKey()), list);
+			});
 
-            final TagNetworkSerialization.NetworkPayload payload = new TagNetworkSerialization.NetworkPayload(map);
-            tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
-        });
+			final TagNetworkSerialization.NetworkPayload payload = new TagNetworkSerialization.NetworkPayload(map);
+			tags.put(ResourceKey.createRegistryKey(Identifier.of(entry.getKey())), payload);
+		});
 
-        connection.send(new S2CUpdateTagsPacket(tags));
-    }
+		connection.send(new S2CUpdateTagsPacket(tags));
+	}
 
-    private void sendRegistries(final ClientConnection connection) {
-        LOGGER.info("Sending Registries");
+	private void sendRegistries(final ClientConnection connection) {
+		LOGGER.info("Sending Registries");
 
-        BrodernProxy.getDefaultRegistries().forEach(entry -> {
-            final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
+		BrodernProxy.getDefaultRegistries().forEach(entry -> {
+			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 
-            final CompoundTag tag = entry.getValue().asCompoundTag();
-            tag.forEach(registryEntry -> {
-                final NbtTag value = registryEntry.getValue();
-                entries.add(new RegistrySynchronization.PackedRegistryEntry(
-                        Identifier.of(registryEntry.getKey()),
-                        Optional.ofNullable(value.asCompoundTag())
-                ));
-            });
+			final CompoundTag tag = entry.getValue().asCompoundTag();
+			tag.forEach(registryEntry -> {
+				final NbtTag value = registryEntry.getValue();
+				entries.add(new RegistrySynchronization.PackedRegistryEntry(
+						Identifier.of(registryEntry.getKey()),
+						Optional.ofNullable(value.asCompoundTag())
+				));
+			});
 
-            connection.send(new S2CRegistryDataPacket(
-                    ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
-                    entries
-            ));
-        });
-    }
+			connection.send(new S2CRegistryDataPacket(
+					ResourceKey.createRegistryKey(Identifier.of(entry.getKey())),
+					entries
+			));
+		});
+	}
 
-    public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
-        connection.setState(PacketState.PLAY);
-        connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
-    }
+	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
+		connection.setState(PacketState.PLAY);
+		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
+	}
 
-    public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-        // Do nothing currently
-    }
+	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
+		// Do nothing currently
+	}
 
-    public void passClientToNextPipeline(final ClientConnection connection, final ModernRecordPacket<?> packet) {
-    }
+	public void passClientToNextPipeline(final ClientConnection connection, final ModernRecordPacket<?> packet) {
+	}
 
-    public void passServerToNextPipeline(final ClientConnection connection, final BetaRecordPacket packet) {
-    }
+	public void passServerToNextPipeline(final ClientConnection connection, final BetaRecordPacket packet) {
+	}
 }
