@@ -443,7 +443,7 @@ public interface ModernStreamCodecs {
 		};
 	}
 
-	static <T extends Enum<T>> StreamCodec<ByteBuf, T> emum(final Class<T> enumClazz) {
+	static <T extends Enum<T>> StreamCodec<ByteBuf, T> javaEnum(final Class<T> enumClazz) {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteBuf buf, final T value) {

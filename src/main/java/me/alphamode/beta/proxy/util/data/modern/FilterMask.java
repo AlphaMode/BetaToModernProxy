@@ -58,7 +58,7 @@ public record FilterMask(BitSet mask, Type type) {
 		FULLY_FILTERED("fully_filtered"),
 		PARTIALLY_FILTERED("partially_filtered");
 
-		public static final StreamCodec<ByteBuf, Type> CODEC = ModernStreamCodecs.emum(Type.class);
+		public static final StreamCodec<ByteBuf, Type> CODEC = ModernStreamCodecs.javaEnum(Type.class);
 		private final String serializedName;
 
 		Type(String serializedName) {
