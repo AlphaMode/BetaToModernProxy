@@ -7,7 +7,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCo
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record C2SConfigurationKeepAlivePacket(long id) implements C2SCommonKeepAlivePacket<ServerboundConfigurationPackets> {
+public record C2SConfigurationKeepAlivePacket(
+		long id) implements C2SCommonKeepAlivePacket<ServerboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, C2SConfigurationKeepAlivePacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.LONG,
 			C2SConfigurationKeepAlivePacket::id,
@@ -22,5 +23,10 @@ public record C2SConfigurationKeepAlivePacket(long id) implements C2SCommonKeepA
 	@Override
 	public ServerboundConfigurationPackets getType() {
 		return ServerboundConfigurationPackets.KEEP_ALIVE;
+	}
+
+	@Override
+	public long getId() {
+		return this.id;
 	}
 }

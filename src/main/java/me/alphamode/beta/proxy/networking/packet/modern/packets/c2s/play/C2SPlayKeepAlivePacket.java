@@ -25,7 +25,7 @@ public record C2SPlayKeepAlivePacket(long id) implements C2SCommonKeepAlivePacke
 	}
 
 	@Override
-	public long getTime() {
+	public long getId() {
 		return this.id;
 	}
 }
