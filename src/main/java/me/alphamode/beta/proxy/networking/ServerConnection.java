@@ -40,6 +40,8 @@ public final class ServerConnection extends ChannelInitializer<Channel> {
 	// Proxy -> Client
 	@Override
 	protected void initChannel(final Channel channel) {
+		this.serverChannel = channel;
+
 		final ChannelPipeline pipeline = channel.pipeline();
 
 		// ByteBuf -> BetaPacket
@@ -68,5 +70,6 @@ public final class ServerConnection extends ChannelInitializer<Channel> {
 	public void channelInactive(final ChannelHandlerContext context) {
 		LOGGER.warn("Real Server for Proxy #{} Became Inactive, Disconnecting client...", this.connection.getId());
 		this.connection.disconnect();
+		this.disconnect();
 	}
 }
