@@ -42,7 +42,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 			try {
 				return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
 			} catch (final Exception e) {
-				throw new RuntimeException("Failed to decode modern packet " + packetType + " in state " + state, e);
+				throw new RuntimeException("(" + state + ") Failed to decode modern " + direction + " packet " + packetType, e);
 			}
 		}
 	}
