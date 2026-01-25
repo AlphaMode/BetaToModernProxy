@@ -27,7 +27,7 @@ public record GameProfile(UUID uuid, String name, Map<String, Property> properti
 			final String name = ModernStreamCodecs.stringUtf8().decode(buf);
 
 			final Map<String, Property> properties = new HashMap<>();
-			final int propertyCount = ModernStreamCodecs.count(buf, 16);
+			final int propertyCount = ModernStreamCodecs.readCount(buf, 16);
 			for (int i = 0; i < propertyCount; i++) {
 				final Property property = Property.CODEC.decode(buf);
 				properties.put(property.name(), property);

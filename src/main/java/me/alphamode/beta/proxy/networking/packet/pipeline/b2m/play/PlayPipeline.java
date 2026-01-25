@@ -17,6 +17,8 @@ import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
 import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
+import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
+import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +62,11 @@ public class PlayPipeline {
 		connection.send(new S2CSetChunkCacheRadiusPacket(0));
 		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
 
-//		TODO: S2CLevelChunkWithLightPacket
+		connection.send(new S2CLevelChunkWithLightPacket(
+				0, 0,
+				new ClientboundLevelChunkPacketData(),
+				new ClientboundLightUpdatePacketData()
+		));
 	}
 
 	private void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {

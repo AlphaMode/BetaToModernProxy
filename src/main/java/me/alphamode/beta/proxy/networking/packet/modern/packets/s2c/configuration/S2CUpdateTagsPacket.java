@@ -15,7 +15,7 @@ import java.util.Map;
 public record S2CUpdateTagsPacket(
 		Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags) implements S2CCommonUpdateTagsPacket<ClientboundConfigurationPackets> {
 	public static final StreamCodec<ByteBuf, S2CUpdateTagsPacket> CODEC = StreamCodec.composite(
-			ModernStreamCodecs.map(ResourceKey.CODEC, TagNetworkSerialization.NetworkPayload.CODEC),
+			ModernStreamCodecs.javaMap(ResourceKey.CODEC, TagNetworkSerialization.NetworkPayload.CODEC),
 			S2CUpdateTagsPacket::tags,
 			S2CUpdateTagsPacket::new
 	);

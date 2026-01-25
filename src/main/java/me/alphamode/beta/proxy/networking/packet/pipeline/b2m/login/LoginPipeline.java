@@ -65,16 +65,16 @@ public class LoginPipeline {
 			.build();
 
 	// Keep Alive (Handshake, Login, Play)
+	private void handleC2SKeepAlive(final ClientConnection connection, final C2SCommonKeepAlivePacket<?> packet) {
+		connection.getServerConnection().send(new KeepAlivePacket());
+		LOGGER.info("Sending keep alive to server");
+	}
+
 	private void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
 		final long lastKeepAliveMs = connection.getLastKeepAliveMS();
 		connection.setLastKeepAliveMS(System.currentTimeMillis());
 		connection.send(connection.createKeepAlivePacket(System.currentTimeMillis() - lastKeepAliveMs));
 		LOGGER.info("Sending keep alive to client");
-	}
-
-	private void handleC2SKeepAlive(final ClientConnection connection, final C2SCommonKeepAlivePacket<?> packet) {
-		connection.getServerConnection().send(new KeepAlivePacket());
-		LOGGER.info("Sending keep alive to server");
 	}
 
 	// Handshake

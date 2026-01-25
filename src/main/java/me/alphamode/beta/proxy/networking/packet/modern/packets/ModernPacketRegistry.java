@@ -173,7 +173,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.HURT_ANIMATION, null);
 		this.registerPacket(ClientboundPlayPackets.INITIALIZE_BORDER, null);
 		this.registerPacket(ClientboundPlayPackets.KEEP_ALIVE, S2CPlayKeepAlivePacket.CODEC);
-		this.registerPacket(ClientboundPlayPackets.LEVEL_CHUNK_WITH_LIGHT, null);
+		this.registerPacket(ClientboundPlayPackets.LEVEL_CHUNK_WITH_LIGHT, S2CLevelChunkWithLightPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.LEVEL_EVENT, null);
 		this.registerPacket(ClientboundPlayPackets.LEVEL_PARTICLES, null);
 		this.registerPacket(ClientboundPlayPackets.LIGHT_UPDATE, null);

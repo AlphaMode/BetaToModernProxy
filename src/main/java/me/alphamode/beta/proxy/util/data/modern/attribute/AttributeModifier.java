@@ -9,7 +9,6 @@ import net.lenni0451.mcstructs.converter.codec.Codec;
 import java.util.Map;
 
 public interface AttributeModifier<Subject, Argument> {
-
 	Map<OperationId, Codec<?>> BOOLEAN_LIBRARY = Map.of(
 			AttributeModifier.OperationId.AND,
 			Codec.BOOLEAN,
