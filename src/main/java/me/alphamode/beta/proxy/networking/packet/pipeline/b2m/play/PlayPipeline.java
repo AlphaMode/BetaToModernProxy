@@ -42,6 +42,11 @@ public class PlayPipeline {
 		this.seed = seed;
 	}
 
+	/**
+	 * Dear AlphaMode
+	 * This code is just for fun/to try and get into the world, it is most likely not accurate to what you are wanting to do
+	 * Sincerely, lowercase of the btw
+	 */
 	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
 		final CommonPlayerSpawnInfo spawnInfo = new CommonPlayerSpawnInfo(
 				null, // TODO
