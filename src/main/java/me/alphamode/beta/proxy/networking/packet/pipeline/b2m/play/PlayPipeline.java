@@ -8,10 +8,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetS
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CGameEventPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayLoginPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayerPositionPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetDefaultSpawnPositionPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.data.Vec3d;
@@ -85,8 +82,8 @@ public class PlayPipeline {
 				0.0F, 0.0F
 		)));
 		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
-//		TODO: S2CSetChunkCacheRadiusPacket
-//		TODO: S2CSetChunkCacheCenterPacket
+		connection.send(new S2CSetChunkCacheRadiusPacket(0));
+		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
 //		TODO: S2CLevelChunkWithLightPacket
 	}
 

@@ -1,8 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
+import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class S2CSetChunkCacheCenterPacket implements S2CPlayPacket {
+public record S2CSetChunkCacheCenterPacket(int x, int z) implements S2CPlayPacket {
+	public static final StreamCodec<ByteBuf, S2CSetChunkCacheCenterPacket> CODEC = StreamCodec.composite(
+			ModernStreamCodecs.VAR_INT,
+			S2CSetChunkCacheCenterPacket::x,
+			ModernStreamCodecs.VAR_INT,
+			S2CSetChunkCacheCenterPacket::z,
+			S2CSetChunkCacheCenterPacket::new
+	);
+
 	@Override
 	public ClientboundPlayPackets getType() {
 		return ClientboundPlayPackets.SET_CHUNK_CACHE_CENTER;

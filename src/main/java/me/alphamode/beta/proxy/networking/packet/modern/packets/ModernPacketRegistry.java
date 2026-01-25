@@ -221,8 +221,8 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.SET_BORDER_WARNING_DELAY, null);
 		this.registerPacket(ClientboundPlayPackets.SET_BORDER_WARNING_DISTANCE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_CAMERA, null);
-		this.registerPacket(ClientboundPlayPackets.SET_CHUNK_CACHE_CENTER, null);
-		this.registerPacket(ClientboundPlayPackets.SET_CHUNK_CACHE_RADIUS, null);
+		this.registerPacket(ClientboundPlayPackets.SET_CHUNK_CACHE_CENTER, S2CSetChunkCacheCenterPacket.CODEC);
+		this.registerPacket(ClientboundPlayPackets.SET_CHUNK_CACHE_RADIUS, S2CSetChunkCacheRadiusPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_CURSOR_ITEM, null);
 		this.registerPacket(ClientboundPlayPackets.SET_DEFAULT_SPAWN_POSITION, S2CSetDefaultSpawnPositionPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_DISPLAY_OBJECTIVE, null);
