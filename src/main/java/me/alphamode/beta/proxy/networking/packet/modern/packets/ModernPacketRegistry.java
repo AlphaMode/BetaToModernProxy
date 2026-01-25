@@ -37,7 +37,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 	public ModernPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
 		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, state);
 		if (packetType == null) {
-			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
+			throw new IllegalArgumentException("Could not determine modern packet type for id " + packetId);
 		} else {
 			try {
 				return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
