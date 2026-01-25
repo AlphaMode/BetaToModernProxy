@@ -12,17 +12,13 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.data.Vec3d;
-import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
 import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
-import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class PlayPipeline {
@@ -36,59 +32,30 @@ public class PlayPipeline {
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
 
-	private final long seed;
-
-	public PlayPipeline(final long seed) {
-		this.seed = seed;
-	}
-
 	/**
 	 * Dear AlphaMode
 	 * This code is just for fun/to try and get into the world, it is most likely not accurate to what you are wanting to do
 	 * Sincerely, lowercase of the btw
 	 */
 	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
-		final CommonPlayerSpawnInfo spawnInfo = new CommonPlayerSpawnInfo(
-				null, // TODO
-				Dimension.OVERWORLD,
-				this.seed,
-				GameMode.SURVIVAL, // TODO
-				GameMode.SURVIVAL, // TODO
-				false,
-				false,
-				Optional.empty(),
-				20,
-				63
-		);
-
-		connection.send(new S2CPlayLoginPacket(
-				0,
-				false,
-				List.of(),
-				10,
-				10,
-				10,
-				false,
-				false,
-				false,
-				spawnInfo,
-				false
-		));
-
 //		TODO: S2CRecipeBookAddPacket
+
 		connection.send(new S2CPlayerPositionPacket(
 				0, // TODO
 				new PositionMoveRotation(new Vec3d(0, 63, 0), new Vec3d(0, 0, 0), 0.0F, 0.0F),
 				Set.of()
 		));
+
 //		TODO: S2CInitializeBorderPacket
 		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
 				GlobalPos.of(Dimension.OVERWORLD, packet.position().toBlockPos()),
 				0.0F, 0.0F
 		)));
+
 		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
 		connection.send(new S2CSetChunkCacheRadiusPacket(0));
 		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
+
 //		TODO: S2CLevelChunkWithLightPacket
 	}
 

@@ -21,17 +21,17 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayLoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play.PlayPipeline;
-import me.alphamode.beta.proxy.util.data.modern.GameProfile;
-import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
-import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
-import me.alphamode.beta.proxy.util.data.modern.TagNetworkSerialization;
+import me.alphamode.beta.proxy.util.data.modern.*;
+import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.registry.Registry;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
+import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -63,8 +63,6 @@ public class LoginPipeline {
 			.unhandledClient(LoginPipeline::passClientToNextPipeline)
 			.unhandledServer(LoginPipeline::passServerToNextPipeline)
 			.build();
-
-	private long seed;
 
 	// Keep Alive (Handshake, Login, Play)
 	private void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
@@ -192,12 +190,34 @@ public class LoginPipeline {
 
 	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		connection.setState(PacketState.PLAY);
-		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(this.seed)); // TODO: Pass in unhandled packets
+		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
 	}
 
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-		this.seed = packet.seed();
-		// Do nothing currently
+		connection.send(new S2CPlayLoginPacket(
+				0, // TODO
+				false,
+				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
+				BrodernProxy.getProxy().config().getMaxPlayers(),
+				16,
+				16,
+				false,
+				false,
+				false,
+				new CommonPlayerSpawnInfo(
+						null, // TODO (Holder<DimensionType>)
+						Dimension.byLegacyId(packet.dimension()),
+						packet.seed(),
+						GameMode.SURVIVAL,
+						GameMode.SURVIVAL,
+						false,
+						false,
+						Optional.empty(),
+						300,
+						63
+				),
+				false
+		));
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
