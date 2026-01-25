@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPack
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 
 public interface BetaToModernPipeline {
-    static <H> PacketPipeline.Builder<H, BetaRecordPacket, ModernRecordPacket<?>> builder() {
-        return PacketPipeline.builder();
-    }
+	static <H> PacketPipeline.Builder<H, BetaRecordPacket, ModernRecordPacket<?>> builder() {
+		return PacketPipeline.builder();
+	}
 }

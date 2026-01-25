@@ -17,7 +17,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.LoginPipeline;
 import me.alphamode.beta.proxy.rewriter.DecoderRewriter;
 import me.alphamode.beta.proxy.rewriter.EncoderRewriter;
@@ -33,35 +32,25 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 	private static int LAST_CONNECTION_ID = 0;
 
 	private final MinecraftServerAddress serverAddress;
+	private final int id;
+	private ActivePipeline<?> pipeline = new ActivePipeline<>(LoginPipeline.PIPELINE, new LoginPipeline());
 	private final DecoderRewriter decoderRewriter = new DecoderRewriter();
 	private final EncoderRewriter encoderRewriter = new EncoderRewriter();
-	private final int id;
 	private Channel serverChannel;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
 	private GameProfile profile;
 	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveMS = 0L;
-    private ActivePipeline<?> pipeline;
+
+	@Deprecated
+	public EncoderRewriter getEncoderRewriter() {
+		return this.encoderRewriter;
+	}
 
 	public Connection(final MinecraftServerAddress serverAddress) {
 		this.serverAddress = serverAddress;
-		this.decoderRewriter.registerPackets();
-		this.encoderRewriter.registerPackets();
 		this.id = LAST_CONNECTION_ID++;
-        this.setPipeline(LoginPipeline.PIPELINE, new LoginPipeline());
-    }
-
-    public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
-        this.pipeline = new ActivePipeline<>(pipeline, handler);
-    }
-
-	public DecoderRewriter getDecoderRewriter() {
-		return this.decoderRewriter;
-	}
-
-	public EncoderRewriter getEncoderRewriter() {
-		return this.encoderRewriter;
 	}
 
 	public void write(final ByteBuf buf, final boolean serverbound) {
@@ -137,6 +126,10 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 
 	public int getId() {
 		return this.id;
+	}
+
+	public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
+		this.pipeline = new ActivePipeline<>(pipeline, handler);
 	}
 
 	public PacketState getState() {
@@ -243,5 +236,6 @@ public final class Connection extends SimpleChannelInboundHandler<ModernRecordPa
 		System.out.println("-------------------------------------------------------------------");
 	}
 
-    public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {}
+	public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {
+	}
 }
