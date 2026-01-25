@@ -38,10 +38,10 @@ public class PlayPipeline {
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
-			.clientHandler(C2SMovePlayerPacket.PosRot.class, PlayPipeline::handleC2CMovePlayerPos)
-			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2CMovePlayerPos)
-			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2CMovePlayerPos)
-			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2CMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.PosRot.class, PlayPipeline::handleC2SMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2SMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2SMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
@@ -147,7 +147,7 @@ public class PlayPipeline {
 	// TODO: double check accuracy
 	public void handleS2CMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
 		if (packet instanceof MovePlayerPacket.PosRot posRot) {
-			connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.y, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
+			// TODO/FIX: connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.y, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
 		} else if (packet instanceof MovePlayerPacket.Rot rot) {
 			connection.send(new C2SMovePlayerPacket.Rot(rot.yRot, rot.xRot, rot.onGround, false));
 		} else if (packet instanceof MovePlayerPacket.Pos pos) {
@@ -156,7 +156,7 @@ public class PlayPipeline {
 	}
 
 	// TODO: double check accuracy
-	public void handleC2CMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
+	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
 		final ServerConnection serverConnection = connection.getServerConnection();
 		if (packet instanceof C2SMovePlayerPacket.PosRot(
 				double x, double y, double z, float yRot, float xRot, boolean onGround, boolean horizontalCollision
