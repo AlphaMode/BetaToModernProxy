@@ -42,7 +42,6 @@ public class PlayPipeline {
 			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2CMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2CMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2CMovePlayerPos)
-            .serverHandler(MovePlayerPacket.class, PlayPipeline::handleMovePlayer)
             .serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
