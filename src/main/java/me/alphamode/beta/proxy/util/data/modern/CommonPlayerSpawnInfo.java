@@ -33,7 +33,7 @@ public record CommonPlayerSpawnInfo(
 			CommonPlayerSpawnInfo::seed,
 			GameMode.BYTE_CODEC,
 			CommonPlayerSpawnInfo::gameMode,
-			ModernStreamCodecs.nullable(GameMode.BYTE_CODEC),
+			GameMode.NULLABLE_BYTE_CODEC,
 			CommonPlayerSpawnInfo::previousGameType,
 			BasicStreamCodecs.BOOL,
 			CommonPlayerSpawnInfo::isDebug,
