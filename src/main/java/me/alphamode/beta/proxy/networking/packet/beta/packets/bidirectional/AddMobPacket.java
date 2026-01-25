@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import me.alphamode.beta.proxy.util.entity.BetaSynchedEntityData;
+import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
 
 import java.util.List;
 

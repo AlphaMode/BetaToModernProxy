@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.util.data;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.modern.BlockPos;
 
 public record Vec3i(int x, int y, int z) {
 	public static final StreamCodec<ByteBuf, Vec3i> CODEC = new StreamCodec<>() {
@@ -76,5 +77,9 @@ public record Vec3i(int x, int y, int z) {
 
 	public static int packNibble(int x, int y, int z) {
 		return x << 11 | z << 7 | y;
+	}
+
+	public BlockPos toBlockPos() {
+		return new BlockPos(this.x, this.y, this.z);
 	}
 }

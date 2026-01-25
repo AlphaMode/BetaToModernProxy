@@ -1,11 +1,10 @@
-package me.alphamode.beta.proxy.util.entity;
+package me.alphamode.beta.proxy.util.data.beta;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -199,7 +199,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.PLAYER_INFO_REMOVE, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_INFO_UPDATE, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_LOOK_AT, null);
-		this.registerPacket(ClientboundPlayPackets.PLAYER_POSITION, null);
+		this.registerPacket(ClientboundPlayPackets.PLAYER_POSITION, S2CPlayerPositionPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_ROTATION, null);
 		this.registerPacket(ClientboundPlayPackets.RECIPE_BOOK_ADD, null);
 		this.registerPacket(ClientboundPlayPackets.RECIPE_BOOK_REMOVE, null);
@@ -224,7 +224,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.SET_CHUNK_CACHE_CENTER, null);
 		this.registerPacket(ClientboundPlayPackets.SET_CHUNK_CACHE_RADIUS, null);
 		this.registerPacket(ClientboundPlayPackets.SET_CURSOR_ITEM, null);
-		this.registerPacket(ClientboundPlayPackets.SET_DEFAULT_SPAWN_POSITION, null);
+		this.registerPacket(ClientboundPlayPackets.SET_DEFAULT_SPAWN_POSITION, S2CSetDefaultSpawnPositionPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_DISPLAY_OBJECTIVE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_DATA, null);
 		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_LINK, null);

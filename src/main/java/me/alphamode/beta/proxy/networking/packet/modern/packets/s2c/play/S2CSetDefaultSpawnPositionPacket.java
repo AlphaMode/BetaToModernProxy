@@ -1,10 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
+import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.modern.LevelData;
 
-public class S2CSetDefaultSpawnPositionPacket implements S2CPlayPacket {
+public record S2CSetDefaultSpawnPositionPacket(LevelData.RespawnData respawnData) implements S2CPlayPacket {
+	public static final StreamCodec<ByteBuf, S2CSetDefaultSpawnPositionPacket> CODEC = StreamCodec.composite(
+			LevelData.RespawnData.CODEC,
+			S2CSetDefaultSpawnPositionPacket::respawnData,
+			S2CSetDefaultSpawnPositionPacket::new
+	);
+
 	@Override
 	public ClientboundPlayPackets getType() {
-		return null;
+		return ClientboundPlayPackets.SET_DEFAULT_SPAWN_POSITION;
 	}
 }
