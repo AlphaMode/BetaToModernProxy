@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play;
 
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.ChatPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
@@ -10,7 +11,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetS
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SMovePlayerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
@@ -33,13 +34,17 @@ import java.util.Optional;
 public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
 	public static final PacketPipeline<PlayPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<PlayPipeline>builder()
-			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetSpawnPositionPacket.class, PlayPipeline::handleS2CSetSpawnPosition)
+			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
+			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
+			.clientHandler(C2SMovePlayerPacket.PosRot.class, PlayPipeline::handleC2CMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2CMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2CMovePlayerPos)
+			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2CMovePlayerPos)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
-			.clientHandler(S2CCommonDisconnectPacket.class, PlayPipeline::handleC2SDisconnect)
-            .serverHandler(MovePlayerPacket.class, PlayPipeline::handleMovePlayer)
+			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
@@ -49,7 +54,7 @@ public class PlayPipeline {
 	 * This code is just for fun/to try and get into the world, it is most likely not accurate to what you are wanting to do
 	 * Sincerely, lowercase of the btw
 	 */
-	private void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
+	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
 //		TODO: S2CRecipeBookAddPacket
 
 		connection.send(new S2CPlayLoginPacket(
@@ -111,34 +116,55 @@ public class PlayPipeline {
 		));
 	}
 
-	private void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
+	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 	}
 
-    public void handleMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
-        connection.getServerConnection().send(packet);
-    }
-
-	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
+	public void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
 		final String message = packet.message();
 		LOGGER.info("{}", message);
 		connection.send(new S2CSystemChatPacket(TextComponent.of(message), false));
 	}
 
-	private void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
+	public void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
 		connection.getServerConnection().send(new ChatPacket(packet.message()));
 	}
 
-	private void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
+	// TODO: double check accuracy
+	public void handleS2CMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
+		if (packet instanceof MovePlayerPacket.PosRot posRot) {
+			connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.y, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
+		} else if (packet instanceof MovePlayerPacket.Rot rot) {
+			connection.send(new C2SMovePlayerPacket.Rot(rot.yRot, rot.xRot, rot.onGround, false));
+		} else if (packet instanceof MovePlayerPacket.Pos pos) {
+			connection.send(new C2SMovePlayerPacket.Pos(pos.x, pos.y, pos.z, pos.yRot, pos.xRot, pos.onGround, false));
+		}
+	}
+
+	// TODO: double check accuracy
+	public void handleC2CMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
+		final ServerConnection serverConnection = connection.getServerConnection();
+		if (packet instanceof C2SMovePlayerPacket.PosRot(
+				double x, double y, double z, float yRot, float xRot, boolean onGround, boolean horizontalCollision
+		)) {
+			serverConnection.send(new MovePlayerPacket.PosRot(x, y, y, z, yRot, xRot, onGround));
+		} else if (packet instanceof C2SMovePlayerPacket.Rot(
+				float yRot, float xRot, boolean onGround, boolean horizontalCollision
+		)) {
+			serverConnection.send(new MovePlayerPacket.Rot(yRot, xRot, onGround));
+		} else if (packet instanceof C2SMovePlayerPacket.Pos(
+				double x, double y, double z, float yRot, float xRot, boolean onGround, boolean horizontalCollision
+		)) {
+			serverConnection.send(new MovePlayerPacket.PosRot(x, y, y, z, yRot, xRot, onGround));
+		}
+	}
+
+	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
 		connection.kick(packet.reason());
 	}
 
-	private void handleC2SDisconnect(final ClientConnection connection, final S2CCommonDisconnectPacket<?> packet) {
-		connection.getServerConnection().send(new DisconnectPacket(packet.getReason().asLegacyFormatString()));
+	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}
 
-	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
-	}
-
-	private void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
+	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
 	}
 }

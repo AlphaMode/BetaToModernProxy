@@ -28,7 +28,6 @@ public class MovePlayerPacket implements BetaPacket {
 
 	public void write(final ByteBuf buf) {
 		buf.writeBoolean(this.onGround);
-//		buf.writeByte(this.onGround ? 1 : 0);
 	}
 
 	@Override
