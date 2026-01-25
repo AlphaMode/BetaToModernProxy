@@ -61,8 +61,8 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 	default <O> StreamCodec<B, O> map(final Function<? super V, ? extends O> to, final Function<? super O, ? extends V> from) {
 		return new StreamCodec<>() {
 			@Override
-			public O decode(final B input) {
-				return to.apply(StreamCodec.this.decode(input));
+			public O decode(final B buf) {
+				return to.apply(StreamCodec.this.decode(buf));
 			}
 
 			@Override
