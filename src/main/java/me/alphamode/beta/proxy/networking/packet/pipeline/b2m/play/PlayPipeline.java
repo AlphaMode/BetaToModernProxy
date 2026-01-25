@@ -14,15 +14,21 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCo
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.util.data.Vec3d;
+import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
-import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
+import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
+import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
+import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
+import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Set;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
@@ -46,11 +52,36 @@ public class PlayPipeline {
 	private void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
 //		TODO: S2CRecipeBookAddPacket
 
-		connection.send(new S2CPlayerPositionPacket(
+		connection.send(new S2CPlayLoginPacket(
+				0, // TODO
+				false,
+				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
+				BrodernProxy.getProxy().config().getMaxPlayers(),
+				16,
+				16,
+				false,
+				false,
+				false,
+				new CommonPlayerSpawnInfo(
+						null, // TODO (Holder<DimensionType>)
+						Dimension.byLegacyId(0),
+						0,
+						GameMode.SURVIVAL,
+						GameMode.SURVIVAL,
+						false,
+						false,
+						Optional.empty(),
+						300,
+						63
+				),
+				false
+		));
+
+	/*	connection.send(new S2CPlayerPositionPacket(
 				0, // TODO
 				new PositionMoveRotation(new Vec3d(0, 63, 0), new Vec3d(0, 0, 0), 0.0F, 0.0F),
 				Set.of()
-		));
+		));*/
 
 //		TODO: S2CInitializeBorderPacket
 		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
@@ -62,7 +93,22 @@ public class PlayPipeline {
 		connection.send(new S2CSetChunkCacheRadiusPacket(0));
 		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
 
-//		TODO: S2CLevelChunkWithLightPacket
+		connection.send(new S2CLevelChunkWithLightPacket(
+				0, 0,
+				new ClientboundLevelChunkPacketData(
+						Map.of(),
+						new byte[1024],
+						List.of()
+				),
+				new ClientboundLightUpdatePacketData(
+						new BitSet(1024),
+						new BitSet(1024),
+						new BitSet(1024),
+						new BitSet(1024),
+						List.of(),
+						List.of()
+				)
+		));
 	}
 
 	private void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
@@ -75,24 +121,19 @@ public class PlayPipeline {
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
 		final String message = packet.message();
 		LOGGER.info("{}", message);
-
-		final String repeatCommand = "p!repeat";
-		if (BrodernProxy.getProxy().isDebug() && message.contains(repeatCommand)) {
-			final int index = message.indexOf(repeatCommand);
-			connection.getServerConnection().send(new ChatPacket(message.substring(index + repeatCommand.length()).trim()));
-		}
+		connection.send(new S2CSystemChatPacket(TextComponent.of(message), false));
 	}
 
 	private void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
 		connection.getServerConnection().send(new ChatPacket(packet.message()));
 	}
 
-	private void handleC2SDisconnect(final ClientConnection connection, final S2CCommonDisconnectPacket<?> packet) {
-		connection.getServerConnection().send(new DisconnectPacket(packet.getReason().asLegacyFormatString()));
-	}
-
 	private void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
 		connection.kick(packet.reason());
+	}
+
+	private void handleC2SDisconnect(final ClientConnection connection, final S2CCommonDisconnectPacket<?> packet) {
+		connection.getServerConnection().send(new DisconnectPacket(packet.getReason().asLegacyFormatString()));
 	}
 
 	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {

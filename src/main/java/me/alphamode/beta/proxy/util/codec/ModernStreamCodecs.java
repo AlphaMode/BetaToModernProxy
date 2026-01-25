@@ -137,7 +137,15 @@ public interface ModernStreamCodecs {
 		}
 	};
 
-	static int count(ByteBuf buf, final int max) {
+	static void writeCount(final ByteBuf buf, final int value, final int maxSize) {
+		if (value > maxSize) {
+			throw new RuntimeException("Element count exceeds max size");
+		} else {
+			VAR_INT.encode(buf, value);
+		}
+	}
+
+	static int readCount(final ByteBuf buf, final int max) {
 		final int count = VAR_INT.decode(buf);
 		if (count > max) {
 			throw new RuntimeException("Element count exceeds max size");
@@ -322,10 +330,10 @@ public interface ModernStreamCodecs {
 		};
 	}
 
-	static <T> StreamCodec<ByteBuf, Collection<T>> collection(final StreamCodec<ByteBuf, T> codec) {
+	static <T, V extends Collection<T>> StreamCodec<ByteBuf, V> collection(final StreamCodec<ByteBuf, T> codec) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteBuf buf, final Collection<T> collection) {
+			public void encode(final ByteBuf buf, final V collection) {
 				VAR_INT.encode(buf, collection.size());
 				for (final T value : collection) {
 					codec.encode(buf, value);
@@ -333,9 +341,9 @@ public interface ModernStreamCodecs {
 			}
 
 			@Override
-			public Collection<T> decode(final ByteBuf buf) {
+			public V decode(final ByteBuf buf) {
 				final int count = VAR_INT.decode(buf);
-				final Collection<T> collection = new ArrayList<>();
+				final V collection = (V) new ArrayList<>();
 				for (int i = 0; i < count; ++i) {
 					collection.add(codec.decode(buf));
 				}
@@ -343,6 +351,10 @@ public interface ModernStreamCodecs {
 				return collection;
 			}
 		};
+	}
+
+	static <V> StreamCodec.CodecOperation<ByteBuf, V, List<V>> list() {
+		return ModernStreamCodecs::collection;
 	}
 
 	static <T> StreamCodec<ByteBuf, List<T>> list(final StreamCodec<ByteBuf, T> codec) {
@@ -360,7 +372,34 @@ public interface ModernStreamCodecs {
 		};
 	}
 
-	static <T, S> StreamCodec<ByteBuf, Map<T, S>> map(final StreamCodec<ByteBuf, T> keyCodec, final StreamCodec<ByteBuf, S> valueCodec) {
+	static <B extends ByteBuf, K, V, M extends Map<K, V>> StreamCodec<B, M> map(IntFunction<? extends M> constructor, StreamCodec<? super B, K> keyCodec, StreamCodec<? super B, V> valueCodec) {
+		return map(constructor, keyCodec, valueCodec, Integer.MAX_VALUE);
+	}
+
+	static <B extends ByteBuf, K, V, M extends Map<K, V>> StreamCodec<B, M> map(final IntFunction<? extends M> constructor, final StreamCodec<? super B, K> keyCodec, final StreamCodec<? super B, V> valueCodec, final int maxSize) {
+		return new StreamCodec<>() {
+			public void encode(B output, M map) {
+				writeCount(output, map.size(), maxSize);
+				for (final var entry : map.entrySet()) {
+					keyCodec.encode(output, entry.getKey());
+					valueCodec.encode(output, entry.getValue());
+				}
+			}
+
+			public M decode(B input) {
+				final int count = readCount(input, maxSize);
+
+				final M result = constructor.apply(Math.min(count, 65536));
+				for (int i = 0; i < count; i++) {
+					result.put(keyCodec.decode(input), valueCodec.decode(input));
+				}
+
+				return result;
+			}
+		};
+	}
+
+	static <T, S> StreamCodec<ByteBuf, Map<T, S>> javaMap(final StreamCodec<ByteBuf, T> keyCodec, final StreamCodec<ByteBuf, S> valueCodec) {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteBuf buf, final Map<T, S> map) {
@@ -416,5 +455,12 @@ public interface ModernStreamCodecs {
 				return Arrays.stream(enumClazz.getEnumConstants()).filter(en -> en.name().equals(nullable(stringUtf8()).decode(buf))).findAny().orElse(null);
 			}
 		};
+	}
+
+	static <T> void writeCollection(final ByteBuf buf, final Collection<T> collection, final StreamEncoder<? super ByteBuf, T> encoder) {
+		VAR_INT.encode(buf, collection.size());
+		for (final T element : collection) {
+			encoder.encode(buf, element);
+		}
 	}
 }

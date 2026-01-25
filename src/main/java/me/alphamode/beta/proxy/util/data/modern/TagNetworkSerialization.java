@@ -11,7 +11,7 @@ import java.util.Map;
 public class TagNetworkSerialization {
 	public static final class NetworkPayload {
 		public static final StreamCodec<ByteBuf, NetworkPayload> CODEC = StreamCodec.composite(
-				ModernStreamCodecs.map(ModernStreamCodecs.IDENTIFIER, ModernStreamCodecs.INT_LIST),
+				ModernStreamCodecs.javaMap(ModernStreamCodecs.IDENTIFIER, ModernStreamCodecs.INT_LIST),
 				(payload) -> payload.tags,
 				NetworkPayload::new
 		);
