@@ -5,11 +5,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 
-public class ModernPacketWriter extends MessageToByteEncoder<ModernRecordPacket<ModernPackets>> {
+public class ModernPacketWriter extends MessageToByteEncoder<ModernPacket<ModernPackets>> {
 	public static final String KEY = "modern-decoder";
 
 	@Override
-	protected void encode(final ChannelHandlerContext context, final ModernRecordPacket<ModernPackets> packet, final ByteBuf buf) throws Exception {
+	protected void encode(final ChannelHandlerContext context, final ModernPacket<ModernPackets> packet, final ByteBuf buf) throws Exception {
 		final ModernPackets type = packet.getType();
 		ModernStreamCodecs.VAR_INT.encode(buf, type.getId());
 		try {

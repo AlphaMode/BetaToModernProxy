@@ -5,8 +5,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonKeepAlivePacket;
@@ -24,7 +24,7 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class ClientConnection extends SimpleChannelInboundHandler<ModernRecordPacket<?>> implements PacketHandler {
+public final class ClientConnection extends SimpleChannelInboundHandler<ModernPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(ClientConnection.class);
 	private static int LAST_CONNECTION_ID = 0;
 
@@ -35,7 +35,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
 	private GameProfile profile;
-	private int protocolVersion = BetaRecordPacket.PROTOCOL_VERSION; // Assume Beta?
+	private int protocolVersion = BetaPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveMS = 0L;
 
 	public ClientConnection(final MinecraftServerAddress address) {
@@ -51,7 +51,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 		}
 	}
 
-	public void send(final ModernRecordPacket<?> packet) {
+	public void send(final ModernPacket<?> packet) {
 		if (this.isConnected()) {
 			if (packet.getState() != this.state) {
 				throw new RuntimeException("Cannot write packet in state " + this.state + " as it does not match the packet's state " + packet.getState() + " for packet " + packet);
@@ -99,7 +99,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 		return this.pipeline;
 	}
 
-	public <H> void setPipeline(final PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, final H handler) {
+	public <H> void setPipeline(final PacketPipeline<H, BetaPacket, ModernPacket<?>> pipeline, final H handler) {
 		this.pipeline = new ActivePipeline<>(pipeline, handler);
 	}
 
@@ -186,7 +186,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 
 	// Out channel (Writing from Proxy to Serer)
 	@Override
-	protected void channelRead0(final ChannelHandlerContext context, final ModernRecordPacket<?> packet) {
+	protected void channelRead0(final ChannelHandlerContext context, final ModernPacket<?> packet) {
 		if (this.isConnected()) {
 			this.pipeline.handleClient(this, packet);
 		}
@@ -204,12 +204,12 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernRe
 		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.profile.name(), cause);
 	}
 
-	public record ActivePipeline<H>(PacketPipeline<H, BetaRecordPacket, ModernRecordPacket<?>> pipeline, H handler) {
-		public void handleClient(final ClientConnection connection, final ModernRecordPacket<?> packet) {
+	public record ActivePipeline<H>(PacketPipeline<H, BetaPacket, ModernPacket<?>> pipeline, H handler) {
+		public void handleClient(final ClientConnection connection, final ModernPacket<?> packet) {
 			pipeline.handleClient(handler, connection, packet);
 		}
 
-		public void handleServer(final ClientConnection connection, final BetaRecordPacket packet) {
+		public void handleServer(final ClientConnection connection, final BetaPacket packet) {
 			pipeline.handleServer(handler, connection, packet);
 		}
 	}

@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets;
 
+import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
 import me.alphamode.beta.proxy.networking.packet.Packets;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
 
-public interface ModernRecordPacket<T extends Packets> extends RecordPacket<T> {
+public interface ModernPacket<T extends Packets> extends AbstractPacket<T> {
 	int PROTOCOL_VERSION = 774;
 
 	PacketDirection getDirection();

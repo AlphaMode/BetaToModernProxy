@@ -1,13 +1,13 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 
-public record ContainerSetSlotPacket(byte containerId, short slot, BetaItemStack item) implements BetaRecordPacket {
+public record ContainerSetSlotPacket(byte containerId, short slot, BetaItemStack item) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, ContainerSetSlotPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.BYTE,
 			ContainerSetSlotPacket::containerId,

@@ -1,13 +1,13 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class MoveEntityPacket implements BetaRecordPacket {
-	public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = RecordPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
+public class MoveEntityPacket implements BetaPacket {
+	public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = AbstractPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
 	public int id;
 	public byte xa;
 	public byte ya;
@@ -39,7 +39,7 @@ public class MoveEntityPacket implements BetaRecordPacket {
 	}
 
 	public static class Pos extends MoveEntityPacket {
-		public static final StreamCodec<ByteBuf, Pos> CODEC = RecordPacket.codec(Pos::write, Pos::new);
+		public static final StreamCodec<ByteBuf, Pos> CODEC = AbstractPacket.codec(Pos::write, Pos::new);
 
 		public Pos(final ByteBuf buf) {
 			super(buf);
@@ -70,7 +70,7 @@ public class MoveEntityPacket implements BetaRecordPacket {
 	}
 
 	public static class PosRot extends MoveEntityPacket {
-		public static final StreamCodec<ByteBuf, PosRot> CODEC = RecordPacket.codec(PosRot::write, PosRot::new);
+		public static final StreamCodec<ByteBuf, PosRot> CODEC = AbstractPacket.codec(PosRot::write, PosRot::new);
 
 		public PosRot(final ByteBuf buf) {
 			super(buf);
@@ -109,7 +109,7 @@ public class MoveEntityPacket implements BetaRecordPacket {
 	}
 
 	public static class Rot extends MoveEntityPacket {
-		public static final StreamCodec<ByteBuf, Rot> CODEC = RecordPacket.codec(Rot::write, Rot::new);
+		public static final StreamCodec<ByteBuf, Rot> CODEC = AbstractPacket.codec(Rot::write, Rot::new);
 
 		public Rot(final ByteBuf buf) {
 			super(buf);

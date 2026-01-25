@@ -1,15 +1,15 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements BetaRecordPacket {
-	public static final StreamCodec<ByteBuf, ExplodePacket> CODEC = RecordPacket.codec(ExplodePacket::write, ExplodePacket::new);
+public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements BetaPacket {
+	public static final StreamCodec<ByteBuf, ExplodePacket> CODEC = AbstractPacket.codec(ExplodePacket::write, ExplodePacket::new);
 
 	public ExplodePacket(final ByteBuf buf) {
 		Vec3d pos = Vec3d.CODEC.decode(buf);

@@ -2,9 +2,9 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketWriter;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +17,7 @@ public final class ServerConnection extends ChannelInitializer<Channel> {
 		this.connection = connection;
 	}
 
-	public void send(final BetaRecordPacket packet) {
+	public void send(final BetaPacket packet) {
 		if (this.isConnected()) {
 			this.serverChannel.writeAndFlush(packet);
 		} else {
@@ -48,9 +48,9 @@ public final class ServerConnection extends ChannelInitializer<Channel> {
 		pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
 
 		// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
-		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaRecordPacket>() {
+		pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
 			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final BetaRecordPacket msg) {
+			protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
 				connection.getActivePipeline().handleServer(connection, msg);
 			}
 		});

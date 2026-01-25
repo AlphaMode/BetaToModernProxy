@@ -4,11 +4,11 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
@@ -43,7 +43,7 @@ import java.util.*;
 
 public class LoginPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
-	public static final PacketPipeline<LoginPipeline, BetaRecordPacket, ModernRecordPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
+	public static final PacketPipeline<LoginPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
 			// Keep Alive
 			.clientHandler(C2SCommonKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
 			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleS2CKeepAlive)
@@ -94,7 +94,7 @@ public class LoginPipeline {
 		final ServerStatus serverStatus = new ServerStatus(
 				proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
 				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
-				Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernRecordPacket.PROTOCOL_VERSION)),
+				Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernPacket.PROTOCOL_VERSION)),
 				Optional.empty(),
 				false
 		);
@@ -109,8 +109,8 @@ public class LoginPipeline {
 	// Login
 	public void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
 		connection.setState(PacketState.LOGIN);
-		if (packet.protocolVersion() != ModernRecordPacket.PROTOCOL_VERSION) {
-			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernRecordPacket.PROTOCOL_VERSION);
+		if (packet.protocolVersion() != ModernPacket.PROTOCOL_VERSION) {
+			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernPacket.PROTOCOL_VERSION);
 		} else if (!connection.getServerConnection().isConnected()) {
 			connection.kick("Server is not connected!");
 		}
@@ -125,7 +125,7 @@ public class LoginPipeline {
 
 	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
 		if (packet.username().equals("-")) {
-			connection.getServerConnection().send(new LoginPacket(BetaRecordPacket.PROTOCOL_VERSION, connection.getProfile().name()));
+			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
 			connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
 		} else {
 			connection.kick("Online mode isn't supported!");
@@ -197,9 +197,9 @@ public class LoginPipeline {
 		// Do nothing currently
 	}
 
-	public void passClientToNextPipeline(final ClientConnection connection, final ModernRecordPacket<?> packet) {
+	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}
 
-	public void passServerToNextPipeline(final ClientConnection connection, final BetaRecordPacket packet) {
+	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
 	}
 }

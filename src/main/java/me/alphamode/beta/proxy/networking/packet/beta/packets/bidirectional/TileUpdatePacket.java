@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record TileUpdatePacket(int x, byte y, int z, byte block, byte data) implements BetaRecordPacket {
+public record TileUpdatePacket(int x, byte y, int z, byte block, byte data) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, TileUpdatePacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
 			TileUpdatePacket::x,

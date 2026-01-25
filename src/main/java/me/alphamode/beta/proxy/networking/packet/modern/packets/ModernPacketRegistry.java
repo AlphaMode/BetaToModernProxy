@@ -26,7 +26,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 
-public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernRecordPacket<ModernPackets>> {
+public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPacket<ModernPackets>> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 
 	private ModernPacketRegistry() {
@@ -34,13 +34,13 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernRe
 	}
 
 	@Override
-	public ModernRecordPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
+	public ModernPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
 		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, state);
 		if (packetType == null) {
 			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
 		} else {
 			try {
-				return (ModernRecordPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
+				return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
 			} catch (final Exception e) {
 				throw new RuntimeException("Failed to decode modern packet " + packetType + " in state " + state, e);
 			}

@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.RecordPacket;
+import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record ChunkTilesUpdatePacket(int x,
@@ -11,8 +11,8 @@ public record ChunkTilesUpdatePacket(int x,
 									 int changes,
 									 short[] positions,
 									 byte[] blocks,
-									 byte[] data) implements BetaRecordPacket {
-	public static final StreamCodec<ByteBuf, ChunkTilesUpdatePacket> CODEC = RecordPacket.codec(ChunkTilesUpdatePacket::write, ChunkTilesUpdatePacket::new);
+									 byte[] data) implements BetaPacket {
+	public static final StreamCodec<ByteBuf, ChunkTilesUpdatePacket> CODEC = AbstractPacket.codec(ChunkTilesUpdatePacket::write, ChunkTilesUpdatePacket::new);
 
 	public ChunkTilesUpdatePacket(final ByteBuf buf) {
 		final int x = buf.readInt();

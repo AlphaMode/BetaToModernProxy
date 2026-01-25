@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPackets;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaRecordPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record SetSpawnPositionPacket(Vec3i position) implements BetaRecordPacket {
+public record SetSpawnPositionPacket(Vec3i position) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, SetSpawnPositionPacket> CODEC = StreamCodec.composite(
 			Vec3i.CODEC,
 			SetSpawnPositionPacket::position,

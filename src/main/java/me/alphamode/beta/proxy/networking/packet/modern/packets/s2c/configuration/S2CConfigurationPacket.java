@@ -1,11 +1,11 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration;
 
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundConfigurationPackets;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 
-public interface S2CConfigurationPacket extends ModernRecordPacket<ClientboundConfigurationPackets> {
+public interface S2CConfigurationPacket extends ModernPacket<ClientboundConfigurationPackets> {
 	@Override
 	default PacketDirection getDirection() {
 		return PacketDirection.CLIENTBOUND;
