@@ -122,12 +122,12 @@ public class PlayPipeline {
 		connection.getServerConnection().send(new ChatPacket(packet.message()));
 	}
 
-	private void handleC2SDisconnect(final ClientConnection connection, final S2CCommonDisconnectPacket<?> packet) {
-		connection.getServerConnection().send(new DisconnectPacket(packet.getReason().asLegacyFormatString()));
-	}
-
 	private void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
 		connection.kick(packet.reason());
+	}
+
+	private void handleC2SDisconnect(final ClientConnection connection, final S2CCommonDisconnectPacket<?> packet) {
+		connection.getServerConnection().send(new DisconnectPacket(packet.getReason().asLegacyFormatString()));
 	}
 
 	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
