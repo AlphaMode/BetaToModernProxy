@@ -12,10 +12,10 @@ import org.apache.logging.log4j.Logger;
 
 public final class ServerConnection extends NetClient {
 	private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class);
-	private final ClientConnection connection;
+	private final int connectionId;
 
 	ServerConnection(final MinecraftServerAddress address, final ClientConnection connection) {
-		this.connection = connection;
+		this.connectionId = connection.getId();
 		super(new ChannelInitializer<>() {
 			@Override
 			protected void initChannel(final Channel channel) {
@@ -52,19 +52,19 @@ public final class ServerConnection extends NetClient {
 
 		this.connect(address).addListener(future -> {
 			if (!future.isSuccess()) {
-				LOGGER.info("Failed to connect proxy #{} to real server!", this.connection.getId());
+				LOGGER.info("Failed to connect proxy #{} to real server!", connection.getId());
 				future.cause().printStackTrace();
 				connection.disconnect();
 				return;
 			}
 
 			if (!this.isConnected()) {
-				LOGGER.info("Client #{} already has disconnected, closing the server connection!", this.connection.getId());
+				LOGGER.info("Client #{} already has disconnected, closing the server connection!", connection.getId());
 				this.disconnect();
 				return;
 			}
 
-			LOGGER.info("Proxy #{} connected to {}", this.connection.getId(), address);
+			LOGGER.info("Proxy #{} connected to {}", connection.getId(), address);
 		}).syncUninterruptibly();
 	}
 
@@ -77,7 +77,7 @@ public final class ServerConnection extends NetClient {
 	}
 
 	public void disconnect() {
-		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
+		LOGGER.info("Disconnected Proxy #{} from real server!", this.connectionId);
 		this.getChannel().close();
 	}
 
