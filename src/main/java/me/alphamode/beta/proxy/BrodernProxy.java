@@ -57,6 +57,10 @@ public record BrodernProxy(Config config) {
 				.bind(new InetSocketAddress(bindAddress, bindPort));
 	}
 
+	public boolean isDebug() {
+		return this.config.isDebug();
+	}
+
 	public static CompoundTag getDefaultTags() {
 		return DEFAULT_TAGS;
 	}
