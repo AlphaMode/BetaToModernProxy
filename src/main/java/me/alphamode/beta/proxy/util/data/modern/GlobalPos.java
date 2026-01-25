@@ -6,16 +6,16 @@ import me.alphamode.beta.proxy.util.data.modern.registry.Registries;
 import me.alphamode.beta.proxy.util.data.modern.registry.ResourceKey;
 import net.lenni0451.mcstructs.core.Identifier;
 
-public record GlobalPos(ResourceKey<Identifier> dimension, BlockPos pos) {
+public record GlobalPos(ResourceKey<Identifier> dimension, BlockPos blockPos) {
 	public static final StreamCodec<ByteBuf, GlobalPos> CODEC = StreamCodec.composite(
 			ResourceKey.streamCodec(Registries.DIMENSION),
 			GlobalPos::dimension,
 			BlockPos.CODEC,
-			GlobalPos::pos,
+			GlobalPos::blockPos,
 			GlobalPos::of
 	);
 
-	public static GlobalPos of(ResourceKey<Identifier> dimension, BlockPos pos) {
-		return new GlobalPos(dimension, pos);
+	public static GlobalPos of(final ResourceKey<Identifier> dimension, final BlockPos blockPos) {
+		return new GlobalPos(dimension, blockPos);
 	}
 }

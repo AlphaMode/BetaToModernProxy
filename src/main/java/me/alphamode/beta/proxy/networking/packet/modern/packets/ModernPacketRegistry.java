@@ -245,7 +245,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.SET_TITLES_ANIMATION, null);
 		this.registerPacket(ClientboundPlayPackets.SOUND_ENTITY, null);
 		this.registerPacket(ClientboundPlayPackets.SOUND, null);
-		this.registerPacket(ClientboundPlayPackets.START_CONFIGURATION, null);
+		this.registerPacket(ClientboundPlayPackets.START_CONFIGURATION, S2CStartConfigurationPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.STOP_SOUND, null);
 		this.registerPacket(ClientboundPlayPackets.STORE_COOKIE, null);
 		this.registerPacket(ClientboundPlayPackets.SYSTEM_CHAT, S2CSystemChatPacket.CODEC);

@@ -64,6 +64,8 @@ public class LoginPipeline {
 			.unhandledServer(LoginPipeline::passServerToNextPipeline)
 			.build();
 
+	private long seed;
+
 	// Keep Alive (Handshake, Login, Play)
 	private void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
 		final long lastKeepAliveMs = connection.getLastKeepAliveMS();
@@ -190,7 +192,7 @@ public class LoginPipeline {
 
 	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		connection.setState(PacketState.PLAY);
-		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
+		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(this.seed)); // TODO: Pass in unhandled packets
 	}
 
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
