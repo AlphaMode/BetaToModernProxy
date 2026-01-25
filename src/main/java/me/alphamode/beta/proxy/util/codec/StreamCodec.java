@@ -54,6 +54,24 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 		};
 	}
 
+	default <O> StreamCodec<B, O> apply(StreamCodec.CodecOperation<B, V, O> operation) {
+		return operation.apply(this);
+	}
+
+	default <O> StreamCodec<B, O> map(final Function<? super V, ? extends O> to, final Function<? super O, ? extends V> from) {
+		return new StreamCodec<>() {
+			@Override
+			public O decode(B input) {
+				return to.apply(StreamCodec.this.decode(input));
+			}
+
+			@Override
+			public void encode(B output, O value) {
+				StreamCodec.this.encode(output, from.apply(value));
+			}
+		};
+	}
+
 	static <B, C, T1> StreamCodec<B, C> composite(
 			final StreamCodec<? super B, T1> codec1,
 			final Function<C, T1> getter1,
@@ -547,5 +565,10 @@ public interface StreamCodec<B, V> extends StreamEncoder<B, V>, StreamDecoder<B,
 				codec12.encode(buf, getter12.apply(value));
 			}
 		};
+	}
+
+	@FunctionalInterface
+	interface CodecOperation<B, S, T> {
+		StreamCodec<B, T> apply(StreamCodec<B, S> codec);
 	}
 }
