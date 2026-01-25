@@ -10,8 +10,8 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Keep
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernRecordPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
@@ -45,7 +45,7 @@ public class LoginPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
 	public static final PacketPipeline<LoginPipeline, BetaRecordPacket, ModernRecordPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
 			// Keep Alive
-			.clientHandler(C2SConfigurationKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
+			.clientHandler(C2SCommonKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
 			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleS2CKeepAlive)
 			// Intent
 			.clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
@@ -64,7 +64,6 @@ public class LoginPipeline {
 			.unhandledServer(LoginPipeline::passServerToNextPipeline)
 			.build();
 
-
 	// Keep Alive (Handshake, Login, Play)
 	private void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
 		final long lastKeepAliveMs = connection.getLastKeepAliveMS();
@@ -72,7 +71,7 @@ public class LoginPipeline {
 		connection.send(connection.createKeepAlivePacket(System.currentTimeMillis() - lastKeepAliveMs));
 	}
 
-	private void handleC2SKeepAlive(final ClientConnection connection, final C2SConfigurationKeepAlivePacket packet) {
+	private void handleC2SKeepAlive(final ClientConnection connection, final C2SCommonKeepAlivePacket<?> packet) {
 		connection.getServerConnection().send(new KeepAlivePacket());
 	}
 

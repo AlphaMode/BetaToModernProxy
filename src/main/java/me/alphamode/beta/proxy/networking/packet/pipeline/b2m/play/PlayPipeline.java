@@ -21,7 +21,6 @@ public class PlayPipeline {
 			.build();
 
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
-
 	}
 
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
