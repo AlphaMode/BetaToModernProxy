@@ -6,10 +6,7 @@ import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatCommandPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SMovePlayerPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
@@ -36,9 +33,11 @@ public class PlayPipeline {
 	public static final PacketPipeline<PlayPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<PlayPipeline>builder()
 			.serverHandler(SetSpawnPositionPacket.class, PlayPipeline::handleS2CSetSpawnPosition)
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
+			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
+			.clientHandler(C2SClientTickEndPacket.class, PlayPipeline::handleC2STickEnd)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.PosRot.class, PlayPipeline::handleC2SMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2SMovePlayerPos)
@@ -121,6 +120,10 @@ public class PlayPipeline {
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 	}
 
+	public void handleS2CSetTime(final ClientConnection connection, final SetTimePacket packet) {
+		connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
+	}
+
 	public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
 		final byte[] buffer = new byte[packet.xs() * packet.ys() * packet.zs() * 5 / 2];
 		try (final Inflater inflater = new Inflater()) {
@@ -148,6 +151,10 @@ public class PlayPipeline {
 
 	public void handleC2SChatCommand(final ClientConnection connection, final C2SChatCommandPacket packet) {
 		connection.getServerConnection().send(new ChatPacket("/" + packet.command()));
+	}
+
+	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {
+		connection.tick();
 	}
 
 	// TODO: double check accuracy
