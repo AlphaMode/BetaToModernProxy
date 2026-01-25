@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
+import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +18,11 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
 		try {
-			out.add(BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), PacketDirection.SERVERBOUND, PacketState.PLAY, buf));
+            final var packet = BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
+            if (BrodernProxy.getProxy().isDebug()) {
+                LOGGER.info("Beta Packet {} received", packet);
+            }
+			out.add(packet);
 		} catch (final Exception exception) {
 			LOGGER.info("Failed to decode beta packet");
 			throw new RuntimeException(exception);

@@ -5,6 +5,7 @@ import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.ChatPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.MovePlayerPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetSpawnPositionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
@@ -32,6 +33,7 @@ public class PlayPipeline {
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			.clientHandler(S2CCommonDisconnectPacket.class, PlayPipeline::handleC2SDisconnect)
+            .serverHandler(MovePlayerPacket.class, PlayPipeline::handleMovePlayer)
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
@@ -65,6 +67,10 @@ public class PlayPipeline {
 
 	private void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 	}
+
+    public void handleMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
+        connection.getServerConnection().send(packet);
+    }
 
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
 		final String message = packet.message();
