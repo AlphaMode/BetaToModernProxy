@@ -174,7 +174,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		LOGGER.warn("Proxy #{} Became Inactive, Disconnecting...", this.id);
 		this.disconnect();
 		this.serverConnection.disconnect();
 	}
