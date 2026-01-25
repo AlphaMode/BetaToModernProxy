@@ -15,7 +15,7 @@ public final class ProxyConnection extends ChannelInitializer<Channel> {
 	}
 
 	public MinecraftServerAddress getAddress() {
-		return address;
+		return this.address;
 	}
 
 	@Override
