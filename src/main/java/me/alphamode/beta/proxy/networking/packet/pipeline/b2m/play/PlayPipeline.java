@@ -29,8 +29,7 @@ public class PlayPipeline {
 		LOGGER.info("{}", message);
 
 		final String repeatCommand = "p!repeat";
-		if (BrodernProxy.getProxy().isDebug()
-				&& message.startsWith(repeatCommand)) {
+		if (BrodernProxy.getProxy().isDebug() && message.contains(repeatCommand)) {
 			final int index = message.indexOf(repeatCommand);
 			connection.sendToServer(new ChatPacket(message.substring(index + repeatCommand.length()).trim()));
 		}
