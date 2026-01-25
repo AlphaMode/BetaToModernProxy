@@ -9,8 +9,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
@@ -88,7 +88,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernRe
 		this.registerPacket(ServerboundPlayPackets.ENTITY_TAG_QUERY, null);
 		this.registerPacket(ServerboundPlayPackets.INTERACT, null);
 		this.registerPacket(ServerboundPlayPackets.JIGSAW_GENERATE, null);
-		this.registerPacket(ServerboundPlayPackets.KEEP_ALIVE, null);
+		this.registerPacket(ServerboundPlayPackets.KEEP_ALIVE, C2SPlayKeepAlivePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.LOCK_DIFFICULTY, null);
 		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS, null);
 		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS_ROT, null);
