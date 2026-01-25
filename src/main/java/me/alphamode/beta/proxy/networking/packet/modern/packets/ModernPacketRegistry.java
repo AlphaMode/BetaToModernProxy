@@ -37,7 +37,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 	public ModernPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
 		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, state);
 		if (packetType == null) {
-			throw new RuntimeException("Packet " + packetId + " is not registered in the packet registry");
+			throw new IllegalArgumentException("Could not determine modern packet type for id " + packetId);
 		} else {
 			try {
 				return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
@@ -89,7 +89,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.INTERACT, null);
 		this.registerPacket(ServerboundPlayPackets.JIGSAW_GENERATE, null);
 		this.registerPacket(ServerboundPlayPackets.KEEP_ALIVE, C2SPlayKeepAlivePacket.CODEC);
-		this.registerPacket(ServerboundPlayPackets.LOCK_DIFFICULTY, null);
+		this.registerPacket(ServerboundPlayPackets.LOCK_DIFFICULTY, C2SLockDifficultyPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS, C2SMovePlayerPacket.Pos.CODEC);
 		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_POS_ROT, C2SMovePlayerPacket.PosRot.CODEC);
 		this.registerPacket(ServerboundPlayPackets.MOVE_PLAYER_ROT, C2SMovePlayerPacket.Rot.CODEC);
