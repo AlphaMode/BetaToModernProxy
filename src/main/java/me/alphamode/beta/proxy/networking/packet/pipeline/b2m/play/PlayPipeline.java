@@ -3,10 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.ChatPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.MovePlayerPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetSpawnPositionPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
@@ -29,6 +26,8 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
@@ -40,6 +39,7 @@ public class PlayPipeline {
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			.clientHandler(S2CCommonDisconnectPacket.class, PlayPipeline::handleC2SDisconnect)
             .serverHandler(MovePlayerPacket.class, PlayPipeline::handleMovePlayer)
+            .serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
@@ -116,6 +116,19 @@ public class PlayPipeline {
 
     public void handleMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
         connection.getServerConnection().send(packet);
+    }
+
+    public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
+        byte[] buffer = new byte[packet.xs() * packet.ys() * packet.zs() * 5 / 2];
+        try (Inflater inflater = new Inflater()) {
+            inflater.setInput(packet.data());
+            inflater.inflate(buffer);
+        } catch (DataFormatException e) {
+            connection.kick("Bad compressed data format");
+        }
+        if (BrodernProxy.getProxy().isDebug()) {
+            LOGGER.info("Decompressed beta block region data: {}", buffer);
+        }
     }
 
 	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
