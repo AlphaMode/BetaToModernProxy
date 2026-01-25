@@ -5,6 +5,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 public class S2CSetChunkCacheCenterPacket implements S2CPlayPacket {
 	@Override
 	public ClientboundPlayPackets getType() {
-		return null;
+		return ClientboundPlayPackets.SET_CHUNK_CACHE_CENTER;
 	}
 }

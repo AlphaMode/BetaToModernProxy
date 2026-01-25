@@ -167,7 +167,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.ENTITY_POSITION_SYNC, null);
 		this.registerPacket(ClientboundPlayPackets.EXPLODE, null);
 		this.registerPacket(ClientboundPlayPackets.FORGET_LEVEL_CHUNK, null);
-		this.registerPacket(ClientboundPlayPackets.GAME_EVENT, null);
+		this.registerPacket(ClientboundPlayPackets.GAME_EVENT, S2CGameEventPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.GAME_TEST_HIGHLIGHT_POS, null);
 		this.registerPacket(ClientboundPlayPackets.MOUNT_SCREEN_OPEN, null);
 		this.registerPacket(ClientboundPlayPackets.HURT_ANIMATION, null);

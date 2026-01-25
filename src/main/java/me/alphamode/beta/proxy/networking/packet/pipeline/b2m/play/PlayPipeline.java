@@ -8,6 +8,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.SetS
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SChatPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SConfigurationAcknowledgedPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CGameEventPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayLoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayerPositionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetDefaultSpawnPositionPacket;
@@ -83,7 +84,7 @@ public class PlayPipeline {
 				GlobalPos.of(Dimension.OVERWORLD, packet.position().toBlockPos()),
 				0.0F, 0.0F
 		)));
-//		TODO: S2CGameEventPacket (LEVEL_CHUNKS_LOAD_START)
+		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
 //		TODO: S2CSetChunkCacheRadiusPacket
 //		TODO: S2CSetChunkCacheCenterPacket
 //		TODO: S2CLevelChunkWithLightPacket
