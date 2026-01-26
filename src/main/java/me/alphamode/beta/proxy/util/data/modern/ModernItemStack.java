@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 import java.util.Optional;
 
 public record ModernItemStack(Item item, int count, DataComponentPatch components) {
-	public static final ModernItemStack EMPTY = new ModernItemStack(null, 0, DataComponentPatch.EMPTY);
+	public static final ModernItemStack EMPTY = new ModernItemStack(ModernItems.AIR, 0, DataComponentPatch.EMPTY);
 	public static final StreamCodec<ByteBuf, ModernItemStack> CODEC = null;
 
 	public static final StreamCodec<ByteBuf, ModernItemStack> OPTIONAL_CODEC = new StreamCodec<>() {
