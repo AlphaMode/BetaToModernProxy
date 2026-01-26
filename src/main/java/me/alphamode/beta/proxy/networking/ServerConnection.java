@@ -31,8 +31,9 @@ public final class ServerConnection extends NetClient {
 
 			@Override
 			public void channelInactive(final ChannelHandlerContext context) {
-				LOGGER.warn("Real Server for Proxy #{} Became Inactive, Disconnecting client...", connection.getId());
-				connection.disconnect();
+				if (connection.isConnected()) {
+					connection.kick("Server disconnected");
+				}
 			}
 		});
 
@@ -64,9 +65,7 @@ public final class ServerConnection extends NetClient {
 
 	public void disconnect() {
 		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
-		if (this.connection.isConnected()) {
-			this.connection.disconnect();
-		}
+		this.getChannel().close().syncUninterruptibly();
 	}
 
 	public boolean isConnected() {
