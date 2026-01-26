@@ -74,7 +74,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CHAT, C2SChatPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHAT_SESSION_UPDATE, C2SChatSessionUpdatePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHUNK_BATCH_RECEIVED, null);
-		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, null);
+		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, C2SClientCommandPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_TICK_END, C2SClientTickEndPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_INFORMATION, C2SPlayClientInformationPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.COMMAND_SUGGESTION, null);

@@ -36,7 +36,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 				LOGGER.info("Failed to decode beta packet");
 			}
 
-			connection.kick(exception.getMessage());
+			connection.kick("Beta Exception: " + exception.getMessage());
 		}
 	}
 }
