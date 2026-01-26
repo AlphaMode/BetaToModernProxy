@@ -1,160 +1,140 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public class MovePlayerPacket implements BetaPacket {
-	public static final StreamCodec<ByteBuf, MovePlayerPacket> CODEC = AbstractPacket.codec(MovePlayerPacket::write, MovePlayerPacket::new);
-	public double x;
-	public double y;
-	public double z;
-	public double yView;
-	public float yRot;
-	public float xRot;
-	public boolean onGround;
-	public boolean hasPos;
-	public boolean hasRot;
+public interface MovePlayerPacket extends BetaPacket {
 
-	public MovePlayerPacket(ByteBuf buf) {
-		this.onGround = buf.readBoolean();
-	}
+    default double x() {
+        return 0;
+    }
 
-	public MovePlayerPacket(final boolean onGround) {
-		this.onGround = onGround;
-	}
+    default double y() {
+        return 0;
+    }
 
-	public void write(final ByteBuf buf) {
-		buf.writeBoolean(this.onGround);
-	}
+    default double z() {
+        return 0;
+    }
 
-	@Override
-	public BetaPackets getType() {
-		return BetaPackets.MOVE_PLAYER;
-	}
+    default double yView() {
+        return 0;
+    }
 
-	public static class Pos extends MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, Pos> CODEC = AbstractPacket.codec(Pos::write, Pos::new);
+    default float yRot() {
+        return 0;
+    }
 
-		public Pos(final ByteBuf buf) {
-			double x = buf.readDouble();
-			double y = buf.readDouble();
-			double yView = buf.readDouble();
-			double z = buf.readDouble();
-			super(buf);
-			this.x = x;
-			this.y = y;
-			this.yView = yView;
-			this.z = z;
-			this.hasPos = true;
-		}
+    default float xRot() {
+        return 0;
+    }
 
-		public Pos(double x, double y, double yView, double z, boolean onGround) {
-			super(onGround);
-			this.x = x;
-			this.y = y;
-			this.yView = yView;
-			this.z = z;
-			this.hasPos = true;
-		}
+    boolean onGround();
 
-		@Override
-		public void write(final ByteBuf buf) {
-			buf.writeDouble(this.x);
-			buf.writeDouble(this.y);
-			buf.writeDouble(this.yView);
-			buf.writeDouble(this.z);
-			super.write(buf);
-		}
+    boolean hasPos();
 
-		@Override
-		public BetaPackets getType() {
-			return BetaPackets.MOVE_PLAYER_POS;
-		}
-	}
+    boolean hasRot();
 
-	public static class PosRot extends MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, PosRot> CODEC = AbstractPacket.codec(PosRot::write, PosRot::new);
+    record Status(boolean onGround) implements MovePlayerPacket {
+        public static final StreamCodec<ByteBuf, MovePlayerPacket> CODEC = StreamCodec.composite(
+                BasicStreamCodecs.BOOL, MovePlayerPacket::onGround,
+                Status::new
+        );
 
-		public PosRot(ByteBuf buf) {
-			double x = buf.readDouble();
-			double y = buf.readDouble();
-			double yView = buf.readDouble();
-			double z = buf.readDouble();
-			float yRot = buf.readFloat();
-			float xRot = buf.readFloat();
-			super(buf);
-			this.x = x;
-			this.y = y;
-			this.yView = yView;
-			this.z = z;
-			this.yRot = yRot;
-			this.xRot = xRot;
-			this.hasRot = true;
-			this.hasPos = true;
-		}
+        @Override
+        public boolean hasPos() {
+            return false;
+        }
 
-		public PosRot(double x, double y, double yView, double z, float yRot, float xRot, boolean onGround) {
-			super(onGround);
-			this.x = x;
-			this.y = y;
-			this.yView = yView;
-			this.z = z;
-			this.yRot = yRot;
-			this.xRot = xRot;
-			this.onGround = onGround;
-			this.hasRot = true;
-			this.hasPos = true;
-		}
+        @Override
+        public boolean hasRot() {
+            return false;
+        }
 
-		@Override
-		public void write(final ByteBuf buf) {
-			buf.writeDouble(this.x);
-			buf.writeDouble(this.y);
-			buf.writeDouble(this.yView);
-			buf.writeDouble(this.z);
-			buf.writeFloat(this.yRot);
-			buf.writeFloat(this.xRot);
-			super.write(buf);
-		}
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER;
+        }
+    }
 
-		@Override
-		public BetaPackets getType() {
-			return BetaPackets.MOVE_PLAYER_POS_ROT;
-		}
-	}
+    record Pos(double x, double y, double yView, double z, boolean onGround) implements MovePlayerPacket {
+        public static final StreamCodec<ByteBuf, Pos> CODEC = StreamCodec.composite(
+                BasicStreamCodecs.DOUBLE, Pos::x,
+                BasicStreamCodecs.DOUBLE, Pos::y,
+                BasicStreamCodecs.DOUBLE, Pos::yView,
+                BasicStreamCodecs.DOUBLE, Pos::z,
+                BasicStreamCodecs.BOOL, Pos::onGround,
+                Pos::new
+        );
 
-	public static class Rot extends MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, Rot> CODEC = AbstractPacket.codec(Rot::write, Rot::new);
+        @Override
+        public boolean hasPos() {
+            return true;
+        }
 
-		public Rot(ByteBuf buf) {
-			float yRot = buf.readFloat();
-			float xRot = buf.readFloat();
-			super(buf);
-			this.yRot = yRot;
-			this.xRot = xRot;
-			this.hasRot = true;
-		}
+        @Override
+        public boolean hasRot() {
+            return false;
+        }
 
-		public Rot(float yRot, float xRot, boolean onGround) {
-			super(onGround);
-			this.yRot = yRot;
-			this.xRot = xRot;
-			this.hasRot = true;
-		}
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER_POS;
+        }
+    }
 
-		@Override
-		public void write(final ByteBuf buf) {
-			buf.writeFloat(this.yRot);
-			buf.writeFloat(this.xRot);
-			super.write(buf);
-		}
+    record PosRot(double x, double y, double yView, double z, float yRot, float xRot, boolean onGround) implements MovePlayerPacket {
+        public static final StreamCodec<ByteBuf, PosRot> CODEC = StreamCodec.composite(
+                BasicStreamCodecs.DOUBLE, PosRot::x,
+                BasicStreamCodecs.DOUBLE, PosRot::y,
+                BasicStreamCodecs.DOUBLE, PosRot::yView,
+                BasicStreamCodecs.DOUBLE, PosRot::z,
+                BasicStreamCodecs.FLOAT, PosRot::yRot,
+                BasicStreamCodecs.FLOAT, PosRot::xRot,
+                BasicStreamCodecs.BOOL, PosRot::onGround,
+                PosRot::new
+        );
 
-		@Override
-		public BetaPackets getType() {
-			return BetaPackets.MOVE_PLAYER_ROT;
-		}
-	}
+        @Override
+        public boolean hasPos() {
+            return true;
+        }
+
+        @Override
+        public boolean hasRot() {
+            return true;
+        }
+
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER_POS_ROT;
+        }
+    }
+
+    record Rot(float yRot, float xRot, boolean onGround) implements MovePlayerPacket {
+        public static final StreamCodec<ByteBuf, Rot> CODEC = StreamCodec.composite(
+                BasicStreamCodecs.FLOAT, Rot::yRot,
+                BasicStreamCodecs.FLOAT, Rot::xRot,
+                BasicStreamCodecs.BOOL, Rot::onGround,
+                Rot::new
+        );
+
+        @Override
+        public boolean hasPos() {
+            return false;
+        }
+
+        @Override
+        public boolean hasRot() {
+            return true;
+        }
+
+        @Override
+        public BetaPackets getType() {
+            return BetaPackets.MOVE_PLAYER_ROT;
+        }
+    }
 }
