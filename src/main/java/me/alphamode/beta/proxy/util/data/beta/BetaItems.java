@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.util.data.beta;
 
+import me.alphamode.beta.proxy.util.data.Block;
 import me.alphamode.beta.proxy.util.data.Item;
 import org.jspecify.annotations.Nullable;
 
@@ -117,7 +118,7 @@ public final class BetaItems {
 	public static final Item MUSIC_DISC_CAT = registerItem(2001, new Item());
 
 	private static Item registerItem(final int id, final Item item) {
-		REGISTRY.put(id, item);
+		REGISTRY.put(256 + id, item);
 		return item;
 	}
 
@@ -132,6 +133,34 @@ public final class BetaItems {
 	}
 
 	public static @Nullable Item byId(final int id) {
-		return REGISTRY.getOrDefault(id, null);
+		if (id < 256) {
+			throw new IllegalArgumentException("Expected id for items, not blocks");
+		} else {
+			return REGISTRY.getOrDefault(id, null);
+		}
+	}
+
+	private static void mapBlockItem(final Block block, final Item item) {
+		final int blockId = BetaBlocks.getId(block);
+		registerItem(blockId - 256, item);
+		block.setItem(item);
+	}
+
+	static {
+		mapBlockItem(BetaBlocks.CLOTH, new Item());
+		mapBlockItem(BetaBlocks.WOOD, new Item());
+		mapBlockItem(BetaBlocks.SINGLE_STAIR, new Item());
+		mapBlockItem(BetaBlocks.SAPLING, new Item());
+		mapBlockItem(BetaBlocks.LEAVES, new Item());
+		mapBlockItem(BetaBlocks.PISTON, new Item());
+		mapBlockItem(BetaBlocks.STICKY_PISTON, new Item());
+		for (int index = 0; index < 256; index++) {
+			final Block block = BetaBlocks.byId(index);
+			if (block != null && byId(index) == null) {
+				final Item item = new Item();
+				registerItem(index - 256, item);
+				block.setItem(item);
+			}
+		}
 	}
 }
