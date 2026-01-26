@@ -34,13 +34,6 @@ public final class ServerConnection extends NetClient {
 
 				// BetaPacket -> ByteBuf
 				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
-
-				pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-					@Override
-					protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
-						context.channel().writeAndFlush(buf);
-					}
-				});
 			}
 
 			@Override

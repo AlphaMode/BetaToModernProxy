@@ -34,13 +34,5 @@ public final class ProxyChannelInitializer extends ChannelInitializer<Channel> {
 		pipeline.addLast(ModernPacketWriter.KEY, new ModernPacketWriter());
 
 		pipeline.addLast(new PacketSizer());
-
-		// _
-		pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-			@Override
-			protected void channelRead0(final ChannelHandlerContext context, final ByteBuf buf) {
-				context.channel().writeAndFlush(buf);
-			}
-		});
 	}
 }
