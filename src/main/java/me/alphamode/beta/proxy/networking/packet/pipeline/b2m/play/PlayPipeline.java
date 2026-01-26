@@ -102,7 +102,6 @@ public class PlayPipeline {
 		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
 		connection.send(new S2CSetChunkCacheRadiusPacket(0));
 		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
-
 		connection.send(new S2CLevelChunkWithLightPacket(
 				0, 0,
 				new ClientboundLevelChunkPacketData(

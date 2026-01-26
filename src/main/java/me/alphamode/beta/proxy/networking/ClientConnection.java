@@ -82,7 +82,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		if (this.clientChannel != null) {
 			LAST_CONNECTION_ID--;
 			LOGGER.info("Disconnected Proxy #{}!", this.id);
-			this.clientChannel.close();
+			this.clientChannel.close().syncUninterruptibly();
 			this.clientChannel = null;
 		}
 	}

@@ -14,9 +14,9 @@ public final class ItemTranslator {
 			return ModernItemStack.EMPTY;
 		} else {
 			if (stack.item() instanceof BlockItem blockItem) {
-				return new ModernItemStack(ModernItems.POLISHED_GRANITE, stack.count(), DataComponentPatch.EMPTY);
-			} else {
 				return new ModernItemStack(ModernItems.STONE, stack.count(), DataComponentPatch.EMPTY);
+			} else {
+				return new ModernItemStack(ModernItems.DIORITE, stack.count(), DataComponentPatch.EMPTY);
 			}
 		}
 	}

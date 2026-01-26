@@ -9,7 +9,7 @@ import java.util.Map;
 
 public final class ModernItems {
 	private static final Map<Identifier, Item> REGISTRY = new HashMap<>();
-	private static int LAST_ITEM_ID = -1;
+	private static int LAST_ITEM_ID = 0;
 
 	public static final Item AIR = registerItem(Identifier.defaultNamespace("air"));
 	public static final Item STONE = registerItem(Identifier.defaultNamespace("stone"));
@@ -25,16 +25,13 @@ public final class ModernItems {
 	}
 
 	public static int getRawId(final Item item) {
-		int index = 0;
 		for (final var entry : REGISTRY.entrySet()) {
 			if (entry.getValue() == item) {
-				return index;
+				return item.id();
 			}
-
-			index++;
 		}
 
-		return -1;
+		return AIR.id();
 	}
 
 	public static @Nullable Identifier getId(final Item item) {

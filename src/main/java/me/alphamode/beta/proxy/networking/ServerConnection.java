@@ -64,7 +64,7 @@ public final class ServerConnection extends NetClient {
 
 	public void disconnect() {
 		LOGGER.info("Disconnected Proxy #{} from real server!", this.connectionId);
-		this.getChannel().close();
+		this.getChannel().close().syncUninterruptibly();
 	}
 
 	public boolean isConnected() {
