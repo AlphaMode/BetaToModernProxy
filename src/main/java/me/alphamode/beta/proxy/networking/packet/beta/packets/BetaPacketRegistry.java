@@ -35,7 +35,7 @@ public class BetaPacketRegistry extends PacketRegistry<BetaPackets, BetaPacket> 
 		this.registerPacket(BetaPackets.INTERACT, InteractPacket.CODEC);
 		this.registerPacket(BetaPackets.SET_HEALTH, SetHealthPacket.CODEC);
 		this.registerPacket(BetaPackets.PLAYER_CHANGE_DIMENSION, PlayerChangeDimensionPacket.CODEC);
-		this.registerPacket(BetaPackets.MOVE_PLAYER, MovePlayerPacket.CODEC);
+		this.registerPacket(BetaPackets.MOVE_PLAYER, MovePlayerPacket.Status.CODEC);
 		this.registerPacket(BetaPackets.MOVE_PLAYER_POS, MovePlayerPacket.Pos.CODEC);
 		this.registerPacket(BetaPackets.MOVE_PLAYER_ROT, MovePlayerPacket.Rot.CODEC);
 		this.registerPacket(BetaPackets.MOVE_PLAYER_POS_ROT, MovePlayerPacket.PosRot.CODEC);

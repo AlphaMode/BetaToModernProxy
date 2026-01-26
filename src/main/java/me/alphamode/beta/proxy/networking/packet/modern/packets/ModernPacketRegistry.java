@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.*;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SClientInformationPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationClientInformationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationCustomPayloadPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
@@ -76,7 +76,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CHUNK_BATCH_RECEIVED, null);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, null);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_TICK_END, C2SClientTickEndPacket.CODEC);
-		this.registerPacket(ServerboundPlayPackets.CLIENT_INFORMATION, null);
+		this.registerPacket(ServerboundPlayPackets.CLIENT_INFORMATION, C2SPlayClientInformationPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.COMMAND_SUGGESTION, null);
 		this.registerPacket(ServerboundPlayPackets.CONFIGURATION_ACKNOWLEDGED, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_BUTTON_CLICK, null);
@@ -301,7 +301,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 
 	private void registerConfigurationPackets() {
 		// Serverbound
-		this.registerPacket(ServerboundConfigurationPackets.CLIENT_INFORMATION, C2SClientInformationPacket.CODEC);
+		this.registerPacket(ServerboundConfigurationPackets.CLIENT_INFORMATION, C2SConfigurationClientInformationPacket.CODEC);
 		this.registerPacket(ServerboundConfigurationPackets.COOKIE_RESPONSE, null);
 		this.registerPacket(ServerboundConfigurationPackets.CUSTOM_PAYLOAD, C2SConfigurationCustomPayloadPacket.CODEC);
 		this.registerPacket(ServerboundConfigurationPackets.FINISH_CONFIGURATION, C2SFinishConfigurationPacket.CODEC);
