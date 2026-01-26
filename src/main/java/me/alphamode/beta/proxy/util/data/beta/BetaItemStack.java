@@ -71,11 +71,13 @@ public record BetaItemStack(Item item, int count, int aux) {
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
 
-			Item item;
-			if (id < 256) {
-				item = Objects.requireNonNull(BetaBlocks.byId(id)).asItem();
-			} else {
-				item = BetaItems.byId(id);
+			Item item = BetaBlocks.STONE.asItem();
+			if (id > 0) {
+				if (id < 256) {
+					item = Objects.requireNonNull(BetaBlocks.byId(id)).asItem();
+				} else {
+					item = BetaItems.byId(id);
+				}
 			}
 
 			return new BetaItemStack(item, 1, buf.readShort());
