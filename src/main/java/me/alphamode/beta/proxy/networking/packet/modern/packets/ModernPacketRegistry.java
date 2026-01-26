@@ -123,7 +123,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.SET_STRUCTURE_BLOCK, null);
 		this.registerPacket(ServerboundPlayPackets.SET_TEST_BLOCK, null);
 		this.registerPacket(ServerboundPlayPackets.SIGN_UPDATE, null);
-		this.registerPacket(ServerboundPlayPackets.SWING, null);
+		this.registerPacket(ServerboundPlayPackets.SWING, C2SSwingPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.TELEPORT_TO_ENTITY, null);
 		this.registerPacket(ServerboundPlayPackets.TEST_INSTANCE_BLOCK_ACTION, null);
 		this.registerPacket(ServerboundPlayPackets.USE_ITEM_ON, null);
