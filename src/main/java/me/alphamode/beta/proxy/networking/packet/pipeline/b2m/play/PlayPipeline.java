@@ -10,9 +10,12 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.util.ChunkTranslator;
+import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
+import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
@@ -21,10 +24,7 @@ import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.BitSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -38,11 +38,9 @@ public class PlayPipeline {
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
 			.clientHandler(C2SClientTickEndPacket.class, PlayPipeline::handleC2STickEnd)
-			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
-			.clientHandler(C2SMovePlayerPacket.PosRot.class, PlayPipeline::handleC2SMovePlayerPos)
-			.clientHandler(C2SMovePlayerPacket.Rot.class, PlayPipeline::handleC2SMovePlayerPos)
-			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2SMovePlayerPos)
-			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2SMovePlayerPos)
+//            .clientHandler(S2CPlayerPositionPacket.class, PlayPipeline::handleS2CMovePlayer)
+			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
+			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
@@ -123,7 +121,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CSetTime(final ClientConnection connection, final SetTimePacket packet) {
-		connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
+//		connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
 	}
 
 	public void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
@@ -150,9 +148,12 @@ public class PlayPipeline {
 			return;
 		}
 
+
 		if (BrodernProxy.getProxy().isDebug()) {
 			LOGGER.info("Decompressed beta block region data: {}", buffer);
 		}
+
+        ChunkTranslator.readBetaRegionData(packet.x(), packet.y(), packet.z(), packet.xs(), packet.ys(), packet.zs(), buffer);
 	}
 
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {
@@ -168,32 +169,28 @@ public class PlayPipeline {
 	}
 
 	// TODO: double check accuracy
-	public void handleS2CMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
-		if (packet instanceof MovePlayerPacket.PosRot posRot) {
-			// TODO/FIX: connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.yView, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
-		} else if (packet instanceof MovePlayerPacket.Rot rot) {
-			connection.send(new C2SMovePlayerPacket.Rot(rot.yRot, rot.xRot, rot.onGround, false));
-		} else if (packet instanceof MovePlayerPacket.Pos pos) {
-			connection.send(new C2SMovePlayerPacket.Pos(pos.x, pos.yView, pos.z, pos.yRot, pos.xRot, pos.onGround, false));
-		}
+
+	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
+        connection.send(new S2CPlayerPositionPacket(0, new PositionMoveRotation(new Vec3d(packet.x(), packet.y(), packet.z()), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
+		connection.getServerConnection().send(packet);
 	}
 
-	// TODO: double check accuracy
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
-		final ServerConnection serverConnection = connection.getServerConnection();
-		if (packet instanceof C2SMovePlayerPacket.PosRot(
-				double x, double y, double z, float yRot, float xRot, boolean onGround, boolean horizontalCollision
-		)) {
-			serverConnection.send(new MovePlayerPacket.PosRot(x, y, y, z, yRot, xRot, onGround));
-		} else if (packet instanceof C2SMovePlayerPacket.Rot(
-				float yRot, float xRot, boolean onGround, boolean horizontalCollision
-		)) {
-			serverConnection.send(new MovePlayerPacket.Rot(yRot, xRot, onGround));
-		} else if (packet instanceof C2SMovePlayerPacket.Pos(
-				double x, double y, double z, float yRot, float xRot, boolean onGround, boolean horizontalCollision
-		)) {
-			serverConnection.send(new MovePlayerPacket.PosRot(x, y, y, z, yRot, xRot, onGround));
-		}
+        final ServerConnection serverConnection = connection.getServerConnection();
+        switch (packet) {
+            case C2SMovePlayerPacket.Pos p -> {
+                serverConnection.send(new MovePlayerPacket.Pos(p.x(), p.y(), p.y() + 1.62F, p.z(), p.onGround()));
+            }
+            case C2SMovePlayerPacket.Rot p -> {
+                serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
+            }
+            case C2SMovePlayerPacket.PosRot p -> {
+                serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
+            }
+            case C2SMovePlayerPacket.StatusOnly p -> {
+                serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
+            }
+        }
 	}
 
 	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {

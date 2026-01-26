@@ -5,6 +5,10 @@ import me.alphamode.beta.proxy.util.data.Vec3i;
 import java.util.Arrays;
 
 public record BetaNibbleArray(byte[] data) {
+    public BetaNibbleArray(int size) {
+        this(new byte[size >> 1]);
+    }
+
 	public void fill(int value) {
 		Arrays.fill(this.data, (byte) value);
 	}

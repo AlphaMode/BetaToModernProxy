@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.Server
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public interface C2SMovePlayerPacket extends C2SPlayPacket {
+public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMovePlayerPacket.Pos, C2SMovePlayerPacket.PosRot, C2SMovePlayerPacket.Rot, C2SMovePlayerPacket.StatusOnly {
 	int FLAG_ON_GROUND = 1;
 	int FLAG_HORIZONTAL_COLLISION = 2;
 
@@ -54,15 +54,25 @@ public interface C2SMovePlayerPacket extends C2SPlayPacket {
 		return this.hasRotation() ? this.xRot() : fallback;
 	}
 
-	double x();
+	default double x() {
+        return 0;
+    }
 
-	double y();
+	default double y() {
+        return 0;
+    }
 
-	double z();
+	default double z() {
+        return 0;
+    }
 
-	float yRot();
+	default float yRot() {
+        return 0;
+    }
 
-	float xRot();
+	default float xRot() {
+        return 0;
+    }
 
 	boolean onGround();
 
@@ -147,21 +157,6 @@ public interface C2SMovePlayerPacket extends C2SPlayPacket {
 		}
 
 		@Override
-		public double x() {
-			return 0;
-		}
-
-		@Override
-		public double y() {
-			return 0;
-		}
-
-		@Override
-		public double z() {
-			return 0;
-		}
-
-		@Override
 		public boolean hasPosition() {
 			return false;
 		}
@@ -185,31 +180,6 @@ public interface C2SMovePlayerPacket extends C2SPlayPacket {
 
 		public StatusOnly(final byte flags) {
 			this(C2SMovePlayerPacket.unpackOnGround(flags), C2SMovePlayerPacket.unpackHorizontalCollision(flags));
-		}
-
-		@Override
-		public double x() {
-			return 0;
-		}
-
-		@Override
-		public double y() {
-			return 0;
-		}
-
-		@Override
-		public double z() {
-			return 0;
-		}
-
-		@Override
-		public float yRot() {
-			return 0;
-		}
-
-		@Override
-		public float xRot() {
-			return 0;
 		}
 
 		@Override

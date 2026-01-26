@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record Vec3d(double x, double y, double z) {
+    public static final Vec3d ZERO = new Vec3d(0, 0, 0);
 	public static final StreamCodec<ByteBuf, Vec3d> CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final Vec3d value) {

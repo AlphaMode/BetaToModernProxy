@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public interface MovePlayerPacket extends BetaPacket {
+public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPacket.Status, MovePlayerPacket.Pos, MovePlayerPacket.PosRot, MovePlayerPacket.Rot {
 
     default double x() {
         return 0;
