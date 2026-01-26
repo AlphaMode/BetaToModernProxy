@@ -44,6 +44,12 @@ public class PlayPipeline {
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
+			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSetSlot)
+			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
+			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
+			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
+			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
+			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
@@ -184,9 +190,26 @@ public class PlayPipeline {
 					serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
 			case C2SMovePlayerPacket.PosRot p ->
 					serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
-			case C2SMovePlayerPacket.StatusOnly p ->
-					serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
+			case C2SMovePlayerPacket.StatusOnly p -> serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
 		}
+	}
+
+	public void handleC2SContainerSetSlot(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {
+	}
+
+	public void handleS2CContainerSetSlot(final ClientConnection connection, final ContainerSetSlotPacket packet) {
+	}
+
+	public void handleS2CContainerSetContent(final ClientConnection connection, final ContainerSetContentPacket packet) {
+	}
+
+	public void handleS2CContainerSetData(final ClientConnection connection, final ContainerSetDataPacket packet) {
+	}
+
+	public void handleS2CContainerClose(final ClientConnection connection, final ContainerClosePacket packet) {
+	}
+
+	public void handleC2SContainerClose(final ClientConnection connection, final C2SContainerClosePacket packet) {
 	}
 
 	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {

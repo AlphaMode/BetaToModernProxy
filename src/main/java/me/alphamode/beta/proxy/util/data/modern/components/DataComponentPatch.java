@@ -16,12 +16,14 @@ public class DataComponentPatch {
 
 	public static final StreamCodec<ByteBuf, DataComponentPatch> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final DataComponentPatch value) {
-			if (value == EMPTY) {
+		public void encode(final ByteBuf buf, final DataComponentPatch patch) {
+			if (patch == EMPTY) {
 				ModernStreamCodecs.VAR_INT.encode(buf, 0);
 				ModernStreamCodecs.VAR_INT.encode(buf, 0);
 			} else {
-				// TODO
+				// TODO: actually write components
+				ModernStreamCodecs.VAR_INT.encode(buf, 0);
+				ModernStreamCodecs.VAR_INT.encode(buf, 0);
 			}
 		}
 
