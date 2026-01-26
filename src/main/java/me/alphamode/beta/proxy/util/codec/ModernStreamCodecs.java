@@ -447,12 +447,12 @@ public interface ModernStreamCodecs {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteBuf buf, final T value) {
-				nullable(stringUtf8()).encode(buf, value.name());
+				VAR_INT.encode(buf, value.ordinal());
 			}
 
 			@Override
 			public T decode(final ByteBuf buf) {
-				return Arrays.stream(enumClazz.getEnumConstants()).filter(en -> en.name().equals(nullable(stringUtf8()).decode(buf))).findAny().orElse(null);
+				return enumClazz.getEnumConstants()[VAR_INT.decode(buf)];
 			}
 		};
 	}
