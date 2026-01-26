@@ -125,7 +125,8 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CSetTime(final ClientConnection connection, final SetTimePacket packet) {
-		connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
+		// TODO/FIX
+		// connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
 	}
 
 	public void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {

@@ -122,14 +122,15 @@ public class LoginPipeline {
 	}
 
 	private void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
-		connection.getServerConnection().send(new HandshakePacket(packet.username()));
-
+		LOGGER.info("Sending Handshake Packet");
 		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
 		connection.setProfile(profile);
+		connection.getServerConnection().send(new HandshakePacket(packet.username()));
 	}
 
 	private void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
 		if (packet.username().equals("-")) {
+			LOGGER.info("Sending Login Packet & Login Finished");
 			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
 			connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
 		} else {
@@ -139,6 +140,7 @@ public class LoginPipeline {
 
 	// Configuration
 	private void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
+		LOGGER.info("Starting Configuration");
 		connection.setState(PacketState.CONFIGURATION);
 
 		// Send Tags
@@ -194,12 +196,13 @@ public class LoginPipeline {
 	}
 
 	private void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
+		LOGGER.info("Finished Configuration & Going into Play Mode");
 		connection.setState(PacketState.PLAY);
 		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
 	}
 
 	private void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-//		connection.send(new S2CPlayLoginPacket(
+// 		connection.send(new S2CPlayLoginPacket(
 //				0, // TODO
 //				false,
 //				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
