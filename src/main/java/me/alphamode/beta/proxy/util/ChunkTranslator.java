@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.util.data.beta.BetaNibbleArray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChunkTranslator {
+public final class ChunkTranslator {
 	public static List<ChunkRegion> readBetaRegionData(int x, int y, int z, int xs, int ys, int zs, byte[] buffer) {
 		int x0 = x >> 4;
 		int z0 = z >> 4;
