@@ -132,10 +132,6 @@ public final class BetaItems {
 	}
 
 	public static @Nullable Item byId(final int id) {
-		if (id < 256) {
-			throw new IllegalArgumentException("Expected id for items, not blocks");
-		} else {
-			return REGISTRY.getOrDefault(id, null);
-		}
+		return REGISTRY.getOrDefault(id, null);
 	}
 }
