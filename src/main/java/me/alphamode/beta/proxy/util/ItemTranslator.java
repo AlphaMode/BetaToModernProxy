@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.util;
 
+import me.alphamode.beta.proxy.util.data.BlockItem;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.beta.BetaItems;
 import me.alphamode.beta.proxy.util.data.modern.ModernItemStack;
@@ -12,7 +13,11 @@ public final class ItemTranslator {
 		if (stack == null) {
 			return ModernItemStack.EMPTY;
 		} else {
-			return new ModernItemStack(ModernItems.DIORITE, stack.count(), DataComponentPatch.EMPTY);
+			if (stack.item() instanceof BlockItem blockItem) {
+				return new ModernItemStack(ModernItems.POLISHED_GRANITE, stack.count(), DataComponentPatch.EMPTY);
+			} else {
+				return new ModernItemStack(ModernItems.STONE, stack.count(), DataComponentPatch.EMPTY);
+			}
 		}
 	}
 

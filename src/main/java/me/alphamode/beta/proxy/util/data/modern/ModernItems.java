@@ -9,15 +9,17 @@ import java.util.Map;
 
 public final class ModernItems {
 	private static final Map<Identifier, Item> REGISTRY = new HashMap<>();
+	private static int LAST_ITEM_ID = -1;
 
-	public static final Item AIR = registerItem(Identifier.defaultNamespace("air"), new Item());
-	public static final Item STONE = registerItem(Identifier.defaultNamespace("stone"), new Item());
-	public static final Item GRANITE = registerItem(Identifier.defaultNamespace("granite"), new Item());
-	public static final Item POLISHED_GRANITE = registerItem(Identifier.defaultNamespace("polished_granite"), new Item());
-	public static final Item DIORITE = registerItem(Identifier.defaultNamespace("diorite"), new Item());
+	public static final Item AIR = registerItem(Identifier.defaultNamespace("air"));
+	public static final Item STONE = registerItem(Identifier.defaultNamespace("stone"));
+	public static final Item GRANITE = registerItem(Identifier.defaultNamespace("granite"));
+	public static final Item POLISHED_GRANITE = registerItem(Identifier.defaultNamespace("polished_granite"));
+	public static final Item DIORITE = registerItem(Identifier.defaultNamespace("diorite"));
 	// TODO: rest of items
 
-	private static Item registerItem(final Identifier id, final Item item) {
+	private static Item registerItem(final Identifier id) {
+		final Item item = new Item(LAST_ITEM_ID++);
 		REGISTRY.put(id, item);
 		return item;
 	}
