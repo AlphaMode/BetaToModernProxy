@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound;
 
 import me.alphamode.beta.proxy.networking.packet.modern.enums.ModernServerboundPackets;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import net.lenni0451.mcstructs.core.Identifier;
 
 public enum ServerboundConfigurationPackets implements ModernServerboundPackets {

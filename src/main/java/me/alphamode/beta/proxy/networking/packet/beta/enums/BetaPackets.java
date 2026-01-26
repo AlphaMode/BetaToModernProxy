@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.networking.packet.beta.packets;
+package me.alphamode.beta.proxy.networking.packet.beta.enums;
 
 import me.alphamode.beta.proxy.networking.packet.Packets;
 

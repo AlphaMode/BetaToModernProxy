@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.networking.packet.modern.packets;
+package me.alphamode.beta.proxy.networking.packet.modern.enums;
 
 public enum PacketState {
 	HANDSHAKING,

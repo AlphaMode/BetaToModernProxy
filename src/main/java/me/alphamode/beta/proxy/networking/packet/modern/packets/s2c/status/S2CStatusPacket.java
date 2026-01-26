@@ -2,8 +2,8 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status;
 
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundStatusPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 
 public interface S2CStatusPacket extends ModernPacket<ClientboundStatusPackets> {
 	@Override

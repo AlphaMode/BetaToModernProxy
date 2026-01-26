@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configurati
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundConfigurationPackets;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonClientInformationPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ClientInformation;

@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets;
 
 import me.alphamode.beta.proxy.networking.packet.Packets;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundConfigurationPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundLoginPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;

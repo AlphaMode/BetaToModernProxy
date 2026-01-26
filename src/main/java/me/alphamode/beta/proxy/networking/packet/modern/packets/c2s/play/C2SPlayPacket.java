@@ -2,8 +2,8 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play;
 
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 
 public interface C2SPlayPacket extends ModernPacket<ServerboundPlayPackets> {
 	@Override

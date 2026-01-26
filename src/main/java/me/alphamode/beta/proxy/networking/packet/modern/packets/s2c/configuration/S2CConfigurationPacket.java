@@ -2,8 +2,8 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configurati
 
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundConfigurationPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 
 public interface S2CConfigurationPacket extends ModernPacket<ClientboundConfigurationPackets> {
 	@Override

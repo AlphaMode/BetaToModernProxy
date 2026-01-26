@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketDirection;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 import java.util.Map;

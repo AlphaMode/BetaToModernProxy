@@ -1,6 +1,5 @@
 package me.alphamode.beta.proxy.networking;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketReader;
@@ -20,20 +19,14 @@ public final class ServerConnection extends NetClient {
 			@Override
 			protected void initChannel(final Channel channel) {
 				final ChannelPipeline pipeline = channel.pipeline();
-
-				// ByteBuf -> BetaPacket
 				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
-
-				// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
+				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
 					@Override
 					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
 						connection.getActivePipeline().handleServer(connection, msg);
 					}
 				});
-
-				// BetaPacket -> ByteBuf
-				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
 			}
 
 			@Override
