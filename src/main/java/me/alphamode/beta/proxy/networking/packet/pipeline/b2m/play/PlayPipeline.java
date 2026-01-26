@@ -11,11 +11,9 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
+import me.alphamode.beta.proxy.util.ItemTranslator;
 import me.alphamode.beta.proxy.util.data.Vec3d;
-import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
-import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
-import me.alphamode.beta.proxy.util.data.modern.LevelData;
-import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
+import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
@@ -44,7 +42,7 @@ public class PlayPipeline {
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
-			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSetSlot)
+			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSlotStateChanged)
 			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
 			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
 			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
@@ -194,17 +192,24 @@ public class PlayPipeline {
 		}
 	}
 
-	public void handleC2SContainerSetSlot(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {
-
+	public void handleC2SContainerSlotStateChanged(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {
 	}
 
 	public void handleS2CContainerSetSlot(final ClientConnection connection, final ContainerSetSlotPacket packet) {
 	}
 
 	public void handleS2CContainerSetContent(final ClientConnection connection, final ContainerSetContentPacket packet) {
+		connection.send(new S2CContainerSetContentPacket(
+				packet.containerId(),
+				0,
+				Arrays.stream(packet.items()).map(ItemTranslator::toModernStack).toList(),
+				ModernItemStack.EMPTY
+		));
+		LOGGER.warn("Sending container content");
 	}
 
 	public void handleS2CContainerSetData(final ClientConnection connection, final ContainerSetDataPacket packet) {
+		connection.send(new S2CContainerSetDataPacket(packet.containerId(), packet.id(), packet.value()));
 	}
 
 	public void handleS2CContainerClose(final ClientConnection connection, final ContainerClosePacket packet) {

@@ -18,8 +18,8 @@ public record ModernItemStack(Item item, int count, DataComponentPatch component
 			ModernStreamCodecs.VAR_INT.encode(buf, stack.count);
 			if (stack.count > 0) {
 				final int id = ModernItems.getRawId(stack.item);
-				ModernStreamCodecs.optional(ModernStreamCodecs.VAR_INT).encode(buf, id == 0 ? Optional.empty() : Optional.of(id));
-				ModernStreamCodecs.optional(DataComponentPatch.CODEC).encode(buf, stack.components == DataComponentPatch.EMPTY ? Optional.empty() : Optional.of(stack.components));
+				ModernStreamCodecs.VAR_INT.encode(buf, id);
+				DataComponentPatch.CODEC.encode(buf, stack.components);
 			}
 		}
 
