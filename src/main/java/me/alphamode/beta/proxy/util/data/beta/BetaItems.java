@@ -128,7 +128,7 @@ public final class BetaItems {
 			}
 		}
 
-		return -1;
+		return 0;
 	}
 
 	public static @Nullable Item byId(final int id) {

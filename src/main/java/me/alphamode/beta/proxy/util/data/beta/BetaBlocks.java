@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.util.data.beta;
 
+import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.data.Block;
 import org.jspecify.annotations.Nullable;
 
@@ -111,20 +112,11 @@ public final class BetaBlocks {
 		return block;
 	}
 
-	public static int getId(final Block block) {
-		for (final var entry : REGISTRY.entrySet()) {
-			if (entry.getValue() == block) {
-				return entry.getKey();
-			}
-		}
-
-		return -1;
-	}
-
 	public static @Nullable Block byId(final int id) {
 		if (id > 256) {
 			throw new IllegalArgumentException("Expected id for blocks, not items");
 		} else {
+			BrodernProxy.LOGGER.warn("Got block with id {}", id);
 			return REGISTRY.getOrDefault(id, null);
 		}
 	}
