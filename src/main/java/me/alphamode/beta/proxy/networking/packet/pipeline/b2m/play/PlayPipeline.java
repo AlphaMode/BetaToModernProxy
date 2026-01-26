@@ -178,18 +178,14 @@ public class PlayPipeline {
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
 		final ServerConnection serverConnection = connection.getServerConnection();
 		switch (packet) {
-			case C2SMovePlayerPacket.Pos p -> {
-				serverConnection.send(new MovePlayerPacket.Pos(p.x(), p.y(), p.y() + 1.62F, p.z(), p.onGround()));
-			}
-			case C2SMovePlayerPacket.Rot p -> {
-				serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
-			}
-			case C2SMovePlayerPacket.PosRot p -> {
-				serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
-			}
-			case C2SMovePlayerPacket.StatusOnly p -> {
-				serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
-			}
+			case C2SMovePlayerPacket.Pos p ->
+					serverConnection.send(new MovePlayerPacket.Pos(p.x(), p.y(), p.y() + 1.62F, p.z(), p.onGround()));
+			case C2SMovePlayerPacket.Rot p ->
+					serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
+			case C2SMovePlayerPacket.PosRot p ->
+					serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
+			case C2SMovePlayerPacket.StatusOnly p ->
+					serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
 		}
 	}
 

@@ -149,9 +149,9 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.COMMAND_SUGGESTIONS, null);
 		this.registerPacket(ClientboundPlayPackets.COMMANDS, null);
 		this.registerPacket(ClientboundPlayPackets.CONTAINER_CLOSE, S2CContainerClosePacket.CODEC);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_CONTENT, null);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_DATA, null);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_SLOT, null);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_CONTENT, S2CContainerSetContentPacket.CODEC);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_DATA, S2CContainerSetDataPacket.CODEC);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_SLOT, S2CContainerSetSlotPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.COOKIE_REQUEST, null);
 		this.registerPacket(ClientboundPlayPackets.COOLDOWN, null);
 		this.registerPacket(ClientboundPlayPackets.CUSTOM_CHAT_COMPLETIONS, null);
