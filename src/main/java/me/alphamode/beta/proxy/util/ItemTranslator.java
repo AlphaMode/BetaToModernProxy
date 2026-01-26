@@ -10,7 +10,7 @@ import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 public final class ItemTranslator {
 	public static ModernItemStack toModernStack(final BetaItemStack stack) {
 		if (stack == null) {
-			return new ModernItemStack(ModernItems.GRANITE, 1, DataComponentPatch.EMPTY);
+			return ModernItemStack.EMPTY;
 		} else {
 			return new ModernItemStack(ModernItems.DIORITE, stack.count(), DataComponentPatch.EMPTY);
 		}

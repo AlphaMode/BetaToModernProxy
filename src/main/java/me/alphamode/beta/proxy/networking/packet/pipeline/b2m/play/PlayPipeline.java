@@ -154,7 +154,7 @@ public class PlayPipeline {
 
 
 		if (BrodernProxy.getProxy().isDebug()) {
-			LOGGER.info("Decompressed beta block region data: {}", buffer);
+			// LOGGER.info("Decompressed beta block region data: {}", buffer);
 		}
 
 		ChunkTranslator.readBetaRegionData(packet.x(), packet.y(), packet.z(), packet.xs(), packet.ys(), packet.zs(), buffer);
