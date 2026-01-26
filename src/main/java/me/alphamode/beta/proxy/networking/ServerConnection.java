@@ -11,10 +11,10 @@ import org.apache.logging.log4j.Logger;
 
 public final class ServerConnection extends NetClient {
 	private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class);
-	private final int connectionId;
+	private final ClientConnection connection;
 
 	ServerConnection(final MinecraftServerAddress address, final ClientConnection connection) {
-		this.connectionId = connection.getId();
+		this.connection = connection;
 		super(new ChannelInitializer<>() {
 			@Override
 			protected void initChannel(final Channel channel) {
@@ -63,8 +63,10 @@ public final class ServerConnection extends NetClient {
 	}
 
 	public void disconnect() {
-		LOGGER.info("Disconnected Proxy #{} from real server!", this.connectionId);
-		this.getChannel().close().syncUninterruptibly();
+		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
+		if (this.connection.isConnected()) {
+			this.connection.disconnect();
+		}
 	}
 
 	public boolean isConnected() {
