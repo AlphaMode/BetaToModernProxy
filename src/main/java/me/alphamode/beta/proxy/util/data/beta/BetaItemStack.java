@@ -8,7 +8,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 	public static final StreamCodec<ByteBuf, BetaItemStack> CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack stack) {
-			buf.writeShort(stack.item.id());
+			buf.writeShort(BetaItems.getId(stack.item));
 			buf.writeByte(stack.count);
 			buf.writeShort(stack.aux);
 		}
@@ -25,7 +25,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 			if (stack == null) {
 				buf.writeShort(-1);
 			} else {
-				buf.writeShort(stack.item.id());
+				buf.writeShort(BetaItems.getId(stack.item));
 				buf.writeByte(stack.count);
 				buf.writeShort(stack.aux);
 			}
@@ -41,7 +41,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 	public static final StreamCodec<ByteBuf, BetaItemStack> NO_DATA_CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack stack) {
-			buf.writeShort(stack.item().id());
+			buf.writeShort(BetaItems.getId(stack.item()));
 			buf.writeShort(stack.aux());
 		}
 
