@@ -55,24 +55,24 @@ public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMov
 	}
 
 	default double x() {
-        return 0;
-    }
+		return 0;
+	}
 
 	default double y() {
-        return 0;
-    }
+		return 0;
+	}
 
 	default double z() {
-        return 0;
-    }
+		return 0;
+	}
 
 	default float yRot() {
-        return 0;
-    }
+		return 0;
+	}
 
 	default float xRot() {
-        return 0;
-    }
+		return 0;
+	}
 
 	boolean onGround();
 

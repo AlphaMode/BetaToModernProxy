@@ -25,7 +25,7 @@ public class Heightmap {
 		private final String serializationKey;
 		private final Heightmap.Usage usage;
 
-		private Types(int id, String serializationKey, Heightmap.Usage usage) {
+		Types(int id, String serializationKey, Heightmap.Usage usage) {
 			this.id = id;
 			this.serializationKey = serializationKey;
 			this.usage = usage;
@@ -52,6 +52,6 @@ public class Heightmap {
 	public enum Usage {
 		WORLDGEN,
 		LIVE_WORLD,
-		CLIENT;
+		CLIENT
 	}
 }

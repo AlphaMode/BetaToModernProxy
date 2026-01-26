@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
+import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;

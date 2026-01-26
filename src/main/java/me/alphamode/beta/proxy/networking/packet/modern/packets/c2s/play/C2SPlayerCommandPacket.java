@@ -28,6 +28,6 @@ public record C2SPlayerCommandPacket(int id, Action action, int data) implements
 		START_RIDING_JUMP,
 		STOP_RIDING_JUMP,
 		OPEN_INVENTORY,
-		START_FALL_FLYING;
+		START_FALL_FLYING
 	}
 }
