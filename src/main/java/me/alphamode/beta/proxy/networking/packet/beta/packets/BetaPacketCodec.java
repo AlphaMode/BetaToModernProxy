@@ -2,9 +2,10 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ReplayingDecoder;
+import io.netty.handler.codec.ByteToMessageCodec;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import org.apache.logging.log4j.LogManager;
@@ -12,18 +13,31 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public final class BetaPacketReader extends ReplayingDecoder<Void> {
-	private static final Logger LOGGER = LogManager.getLogger(BetaPacketReader.class);
-	public static final String KEY = "beta-packet-reader";
+public final class BetaPacketCodec extends ByteToMessageCodec<BetaPacket> {
+	private static final Logger LOGGER = LogManager.getLogger(BetaPacketCodec.class);
+	public static final String KEY = "beta-packet-codec";
 
 	private final ClientConnection connection;
 
-	public BetaPacketReader(final ClientConnection connection) {
+	public BetaPacketCodec(final ClientConnection connection) {
 		this.connection = connection;
 	}
 
 	@Override
-	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
+	protected void encode(final ChannelHandlerContext context, final BetaPacket packet, final ByteBuf buf) throws Exception {
+		final BetaPackets type = packet.getType();
+		buf.writeByte(type.getId());
+		try {
+			BetaPacketRegistry.INSTANCE.getCodec(type).encode(buf, packet);
+		} catch (Exception exception) {
+			LOGGER.info("Failed to encode beta packet");
+			throw new RuntimeException(exception);
+		}
+	}
+
+	// TODO: Split Packets?
+	@Override
+	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
 		try {
 			final var packet = BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
 			if (BrodernProxy.getProxy().isDebug()) {

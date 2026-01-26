@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPackets>> {
+public final class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPackets>> {
 	private static final Logger LOGGER = LogManager.getLogger(ModernPacketCodec.class);
 	public static final String KEY = "modern-packet-codec";
 
