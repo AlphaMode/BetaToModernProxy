@@ -133,13 +133,7 @@ public class PlayPipeline {
 	}
 
 	public void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
-		final String message = packet.message();
-		if (message.contains("demo")) {
-			connection.send(new S2CGameEventPacket(S2CGameEventPacket.DEMO_EVENT, 0.0F));
-			return;
-		}
-
-		connection.getServerConnection().send(new ChatPacket(message));
+		connection.getServerConnection().send(new ChatPacket(packet.message()));
 	}
 
 	public void handleC2SChatCommand(final ClientConnection connection, final C2SChatCommandPacket packet) {
@@ -157,7 +151,7 @@ public class PlayPipeline {
 		}
 
 		if (BrodernProxy.getProxy().isDebug()) {
-			connection.debug("Decompressed beta block region data: {}", buffer);
+			LOGGER.info("Decompressed beta block region data: {}", buffer);
 		}
 	}
 
