@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.util.data.modern.level;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import me.alphamode.beta.proxy.util.ChunkTranslator;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -21,6 +22,13 @@ public class ClientboundLevelChunkPacketData {
 	private final Map<Heightmap.Types, long[]> heightmaps;
 	private final byte[] buffer;
 	private final List<BlockEntityInfo> blockEntitiesData;
+
+    public ClientboundLevelChunkPacketData(ChunkTranslator.ModernChunk chunk) {
+        this.heightmaps = chunk.heightmaps();
+        this.buffer = new byte[calculateChunkSize(chunk)];
+        extractChunkData(this.getWriteBuffer(), chunk);
+        this.blockEntitiesData = List.of();
+    }
 
 	public ClientboundLevelChunkPacketData(
 			final Map<Heightmap.Types, long[]> heightmaps,
@@ -51,6 +59,32 @@ public class ClientboundLevelChunkPacketData {
 		buf.writeBytes(this.buffer);
 		BlockEntityInfo.LIST_STREAM_CODEC.encode(buf, this.blockEntitiesData);
 	}
+
+    private static int calculateChunkSize(final ChunkTranslator.ModernChunk chunk) {
+        int total = 0;
+
+        for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
+            total += section.getSerializedSize();
+        }
+
+        return total;
+    }
+
+    private ByteBuf getWriteBuffer() {
+        ByteBuf buffer = Unpooled.wrappedBuffer(this.buffer);
+        buffer.writerIndex(0);
+        return buffer;
+    }
+
+    public static void extractChunkData(final ByteBuf buffer, final ChunkTranslator.ModernChunk chunk) {
+        for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
+            section.write(buffer);
+        }
+
+        if (buffer.writerIndex() != buffer.capacity()) {
+            throw new IllegalStateException("Didn't fill chunk buffer: expected " + buffer.capacity() + " bytes, got " + buffer.writerIndex());
+        }
+    }
 
 	public ByteBuf getReadBuffer() {
 		return Unpooled.wrappedBuffer(this.buffer);

@@ -148,12 +148,7 @@ public class PlayPipeline {
 			return;
 		}
 
-
-		if (BrodernProxy.getProxy().isDebug()) {
-			LOGGER.info("Decompressed beta block region data: {}", buffer);
-		}
-
-		ChunkTranslator.readBetaRegionData(packet.x(), packet.y(), packet.z(), packet.xs(), packet.ys(), packet.zs(), buffer);
+		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), packet.xs(), packet.ys(), packet.zs(), buffer);
 	}
 
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {

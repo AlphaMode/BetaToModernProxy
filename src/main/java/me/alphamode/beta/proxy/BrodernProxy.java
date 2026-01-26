@@ -2,6 +2,8 @@ package me.alphamode.beta.proxy;
 
 import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
+import me.alphamode.beta.proxy.util.BlockTranslator;
+import me.alphamode.beta.proxy.util.NbtUtil;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -11,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
@@ -21,6 +24,7 @@ public record BrodernProxy(Config config) {
 	private static BrodernProxy INSTANCE;
 	private static final CompoundTag DEFAULT_TAGS;
 	private static final CompoundTag DEFAULT_REGISTRIES;
+    private static final BlockTranslator BLOCK_TRANSLATOR;
 
 	static {
 		CompoundTag tag;
@@ -39,7 +43,13 @@ public record BrodernProxy(Config config) {
 		}
 
 		DEFAULT_REGISTRIES = tag;
-	}
+
+        try {
+            BLOCK_TRANSLATOR = new BlockTranslator(NbtUtil.readCompressed(Main.class.getResourceAsStream("/beta_to_modern_blocks.nbt")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	public BrodernProxy {
 		INSTANCE = this;
@@ -68,6 +78,10 @@ public record BrodernProxy(Config config) {
 	public static CompoundTag getDefaultRegistries() {
 		return DEFAULT_REGISTRIES;
 	}
+
+    public static BlockTranslator getBlockTranslator() {
+        return BLOCK_TRANSLATOR;
+    }
 
 	public static BrodernProxy getProxy() {
 		if (INSTANCE == null) {

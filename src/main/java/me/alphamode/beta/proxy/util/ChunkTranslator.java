@@ -1,12 +1,27 @@
 package me.alphamode.beta.proxy.util;
 
+import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLevelChunkWithLightPacket;
 import me.alphamode.beta.proxy.util.data.beta.BetaNibbleArray;
+import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
+import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
+import me.alphamode.beta.proxy.util.data.modern.level.Heightmap;
+import me.alphamode.beta.proxy.util.data.modern.level.block.BlockState;
+import me.alphamode.beta.proxy.util.data.modern.level.chunk.palette.PalettedContainer;
+import me.alphamode.beta.proxy.util.data.modern.registry.biome.Biome;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
+import java.util.Map;
 
 public class ChunkTranslator {
-	public static List<ChunkRegion> readBetaRegionData(int x, int y, int z, int xs, int ys, int zs, byte[] buffer) {
+    public static final int SECTION_SIZE = 16;
+    public static final int BETA_CHUNK_Y_SIZE = 128;
+    public static final int BETA_CHUNK_SECTION_SIZE = BETA_CHUNK_Y_SIZE / SECTION_SIZE;
+	public static List<ChunkRegion> readBetaRegionData(ClientConnection connection, int x, int y, int z, int xs, int ys, int zs, byte[] buffer) {
 		int x0 = x >> 4;
 		int z0 = z >> 4;
 		int x1 = x + xs - 1 >> 4;
@@ -25,12 +40,52 @@ public class ChunkTranslator {
 
 				final BetaChunk chunk = BetaChunk.temp();
 				size = setBlocksAndData(chunk, buffer, minBlockX, y0, minBlockZ, maxBlockX, y1, maxBlockZ, size);
-				regions.add(new ChunkRegion(chunk, chunkX, chunkZ, minBlockX, y0, minBlockZ, maxBlockX, y1, maxBlockZ));
+                translateAndSend(connection, chunkX, chunkZ, chunk);
+//				regions.add(new ChunkRegion(chunk, chunkX, chunkZ, minBlockX, y0, minBlockZ, maxBlockX, y1, maxBlockZ));
 			}
 		}
 
 		return regions;
 	}
+
+    public static void translateAndSend(final ClientConnection connection, final int x, final int z, final BetaChunk betaChunk) {
+        ModernChunk chunk = translate(betaChunk);
+
+        ClientboundLevelChunkPacketData chunkData = new ClientboundLevelChunkPacketData(chunk);
+        ClientboundLightUpdatePacketData lightData = new ClientboundLightUpdatePacketData(
+                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+                List.of(), List.of()
+        );
+
+        connection.send(new S2CLevelChunkWithLightPacket(x, z, chunkData, lightData));
+    }
+
+    public static ModernChunk translate(BetaChunk chunk) {
+        BlockTranslator translator = BrodernProxy.getBlockTranslator();
+        ModernChunkSection[] sections = new ModernChunkSection[24];
+        for (int sectionY = 0; sectionY < 24; sectionY++) {
+            PalettedContainer<BlockState> states = PalettedContainer.blockStates();
+            int nonEmptyBlockCount = 0;
+
+            if (sectionY < BETA_CHUNK_SECTION_SIZE) {
+                for (int x = 0; x < SECTION_SIZE; x++) {
+                    for (int y = 0; y < SECTION_SIZE; y++) {
+                        for (int z = 0; z < SECTION_SIZE; z++) {
+                            int blockY = sectionY * 16 + y;
+                            BlockState state = translator.translate(chunk.getTile(x, blockY + y, z), chunk.getData(x, blockY, z));
+                            states.set(x, y, z, state);
+                            if (!state.isAir())
+                                nonEmptyBlockCount++;
+                        }
+                    }
+                }
+            }
+            ModernChunkSection section = new ModernChunkSection(nonEmptyBlockCount, states, PalettedContainer.biomes());
+            sections[sectionY] = section;
+        }
+
+        return new ModernChunk(sections, Map.of());
+    }
 
 	public record ChunkRegion(BetaChunk chunk, int x, int z, int minX, int minY, int minZ, int maxX, int maxY,
 							  int maxZ) {
@@ -38,6 +93,26 @@ public class ChunkTranslator {
 			return x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ && z <= maxZ;
 		}
 	}
+
+    public record ModernChunk(ModernChunkSection[] sections, Map<Heightmap.Types, long[]> heightmaps) {
+
+    }
+
+    public record ModernChunkSection(int nonEmptyBlockCount, PalettedContainer<BlockState> blockStates, PalettedContainer<Object> biomes) {
+        public void setBlockState(int x, int y, int z, BlockState state) {
+            blockStates.set(x, y, z, state);
+        }
+
+        public void write(final ByteBuf buffer) {
+            buffer.writeShort(this.nonEmptyBlockCount);
+            this.blockStates.write(buffer);
+            this.biomes.write(buffer);
+        }
+
+        public int getSerializedSize() {
+            return 2 + this.blockStates.getSerializedSize() + this.biomes.getSerializedSize();
+        }
+    }
 
 	public record BetaChunk(byte[] blocks, BetaNibbleArray data, BetaNibbleArray blockLight, BetaNibbleArray skyLight) {
 		public static final int DATA_SIZE = 32768;

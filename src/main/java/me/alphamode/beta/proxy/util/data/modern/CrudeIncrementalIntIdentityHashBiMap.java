@@ -1,0 +1,179 @@
+package me.alphamode.beta.proxy.util.data.modern;
+
+import me.alphamode.beta.proxy.util.Mth;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Iterator;
+
+public class CrudeIncrementalIntIdentityHashBiMap<K> implements IdMap<K> {
+    private static final int NOT_FOUND = -1;
+    private static final Object EMPTY_SLOT = null;
+    private static final float LOADFACTOR = 0.8F;
+    private K[] keys;
+    private int[] values;
+    private K[] byId;
+    private int nextId;
+    private int size;
+
+    private CrudeIncrementalIntIdentityHashBiMap(final int capacity) {
+        this.keys = (K[])(new Object[capacity]);
+        this.values = new int[capacity];
+        this.byId = (K[])(new Object[capacity]);
+    }
+
+    private CrudeIncrementalIntIdentityHashBiMap(final K[] keys, final int[] values, final K[] byId, final int nextId, final int size) {
+        this.keys = keys;
+        this.values = values;
+        this.byId = byId;
+        this.nextId = nextId;
+        this.size = size;
+    }
+
+    public static <A> CrudeIncrementalIntIdentityHashBiMap<A> create(final int initialCapacity) {
+        return new CrudeIncrementalIntIdentityHashBiMap<>((int)(initialCapacity / LOADFACTOR));
+    }
+
+    @Override
+    public int getId(@Nullable final K thing) {
+        return this.getValue(this.indexOf(thing, this.hash(thing)));
+    }
+
+    @Nullable
+    @Override
+    public K byId(final int id) {
+        return id >= 0 && id < this.byId.length ? this.byId[id] : null;
+    }
+
+    private int getValue(final int index) {
+        return index == NOT_FOUND ? NOT_FOUND : this.values[index];
+    }
+
+    public boolean contains(final K key) {
+        return this.getId(key) != NOT_FOUND;
+    }
+
+    public boolean contains(final int id) {
+        return this.byId(id) != EMPTY_SLOT;
+    }
+
+    public int add(final K key) {
+        int value = this.nextId();
+        this.addMapping(key, value);
+        return value;
+    }
+
+    private int nextId() {
+        while (this.nextId < this.byId.length && this.byId[this.nextId] != null) {
+            this.nextId++;
+        }
+
+        return this.nextId;
+    }
+
+    private void grow(final int newSize) {
+        K[] oldKeys = this.keys;
+        int[] oldValues = this.values;
+        CrudeIncrementalIntIdentityHashBiMap<K> resized = new CrudeIncrementalIntIdentityHashBiMap<>(newSize);
+
+        for (int i = 0; i < oldKeys.length; i++) {
+            if (oldKeys[i] != null) {
+                resized.addMapping(oldKeys[i], oldValues[i]);
+            }
+        }
+
+        this.keys = resized.keys;
+        this.values = resized.values;
+        this.byId = resized.byId;
+        this.nextId = resized.nextId;
+        this.size = resized.size;
+    }
+
+    public void addMapping(final K key, final int id) {
+        int minSize = Math.max(id, this.size + 1);
+        if (minSize >= this.keys.length * LOADFACTOR) {
+            int newSize = this.keys.length << 1;
+
+            while (newSize < id) {
+                newSize <<= 1;
+            }
+
+            this.grow(newSize);
+        }
+
+        int index = this.findEmpty(this.hash(key));
+        this.keys[index] = key;
+        this.values[index] = id;
+        this.byId[id] = key;
+        this.size++;
+        if (id == this.nextId) {
+            this.nextId++;
+        }
+    }
+
+    private int hash(@Nullable final K key) {
+        return (Mth.murmurHash3Mixer(System.identityHashCode(key)) & 2147483647) % this.keys.length;
+    }
+
+    private int indexOf(@Nullable final K key, final int startFrom) {
+        for (int i = startFrom; i < this.keys.length; i++) {
+            if (this.keys[i] == key) {
+                return i;
+            }
+
+            if (this.keys[i] == EMPTY_SLOT) {
+                return NOT_FOUND;
+            }
+        }
+
+        for (int i = 0; i < startFrom; i++) {
+            if (this.keys[i] == key) {
+                return i;
+            }
+
+            if (this.keys[i] == EMPTY_SLOT) {
+                return NOT_FOUND;
+            }
+        }
+
+        return NOT_FOUND;
+    }
+
+    private int findEmpty(final int startFrom) {
+        for (int i = startFrom; i < this.keys.length; i++) {
+            if (this.keys[i] == EMPTY_SLOT) {
+                return i;
+            }
+        }
+
+        for (int ix = 0; ix < startFrom; ix++) {
+            if (this.keys[ix] == EMPTY_SLOT) {
+                return ix;
+            }
+        }
+
+        throw new RuntimeException("Overflowed :(");
+    }
+
+    public Iterator<K> iterator() {
+        return null;//Iterators.filter(Iterators.forArray(this.byId), Predicates.notNull());
+    }
+
+    public void clear() {
+        Arrays.fill(this.keys, EMPTY_SLOT);
+        Arrays.fill(this.byId, EMPTY_SLOT);
+        this.nextId = 0;
+        this.size = 0;
+    }
+
+    @Override
+    public int size() {
+        return this.size;
+    }
+
+    public CrudeIncrementalIntIdentityHashBiMap<K> copy() {
+        return new CrudeIncrementalIntIdentityHashBiMap<>(
+                this.keys.clone(), this.values.clone(), this.byId.clone(), this.nextId, this.size
+        );
+    }
+}

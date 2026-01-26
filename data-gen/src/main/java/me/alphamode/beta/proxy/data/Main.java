@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.data;
 
 import com.mojang.serialization.DynamicOps;
+import me.alphamode.beta.proxy.data.block.BetaToModernBlocks;
 import me.alphamode.beta.proxy.data.registries.BetaRegistries;
 import me.alphamode.beta.proxy.data.tags.TagProvider;
 import net.minecraft.SharedConstants;
@@ -28,6 +29,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
 		Path registryDataPath = outputDir.resolve("beta_registries.nbt");
+        Path blocksTranslationPath = outputDir.resolve("beta_to_modern_blocks.nbt");
 		Path tagDataPath = outputDir.resolve("beta_tags.nbt");
 
 		SharedConstants.tryDetectVersion();
@@ -58,6 +60,11 @@ public class Main {
 
 		});
 		NbtIo.writeCompressed(registryTag, registryDataPath);
+
+        BetaToModernBlocks translator = new BetaToModernBlocks();
+        translator.translate();
+        translator.save(blocksTranslationPath);
+
 		Util.shutdownExecutors();
 	}
 

@@ -5,6 +5,14 @@ public class Mth {
 			0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
 	};
 
+    public static int murmurHash3Mixer(int hash) {
+        hash ^= hash >>> 16;
+        hash *= -2048144789;
+        hash ^= hash >>> 13;
+        hash *= -1028477387;
+        return hash ^ hash >>> 16;
+    }
+
 	public static boolean isPowerOfTwo(final int input) {
 		return input != 0 && (input & input - 1) == 0;
 	}
