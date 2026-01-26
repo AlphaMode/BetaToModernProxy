@@ -169,13 +169,7 @@ public class PlayPipeline {
 
 	// TODO: double check accuracy
 	public void handleS2CMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
-		if (packet instanceof MovePlayerPacket.PosRot posRot) {
-			// TODO/FIX: connection.send(new C2SMovePlayerPacket.PosRot(posRot.x, posRot.yView, posRot.z, posRot.yRot, posRot.xRot, posRot.onGround, false));
-		} else if (packet instanceof MovePlayerPacket.Rot rot) {
-			connection.send(new C2SMovePlayerPacket.Rot(rot.yRot, rot.xRot, rot.onGround, false));
-		} else if (packet instanceof MovePlayerPacket.Pos pos) {
-			connection.send(new C2SMovePlayerPacket.Pos(pos.x, pos.yView, pos.z, pos.yRot, pos.xRot, pos.onGround, false));
-		}
+		connection.getServerConnection().send(packet);
 	}
 
 	// TODO: double check accuracy
