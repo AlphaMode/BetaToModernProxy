@@ -165,7 +165,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.DELETE_CHAT, null);
 		this.registerPacket(ClientboundPlayPackets.DISCONNECT, S2CPlayDisconnectPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.DISGUISED_CHAT, null);
-		this.registerPacket(ClientboundPlayPackets.ENTITY_EVENT, null);
+		this.registerPacket(ClientboundPlayPackets.ENTITY_EVENT, S2CEntityEventPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.ENTITY_POSITION_SYNC, null);
 		this.registerPacket(ClientboundPlayPackets.EXPLODE, null);
 		this.registerPacket(ClientboundPlayPackets.FORGET_LEVEL_CHUNK, null);
