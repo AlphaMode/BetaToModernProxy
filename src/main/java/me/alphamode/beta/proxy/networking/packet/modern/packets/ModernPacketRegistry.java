@@ -82,7 +82,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_BUTTON_CLICK, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLICK, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLOSE, C2SContainerClosePacket.CODEC);
-		this.registerPacket(ServerboundPlayPackets.CONTAINER_SLOT_STATE_CHANGED, null);
+		this.registerPacket(ServerboundPlayPackets.CONTAINER_SLOT_STATE_CHANGED, C2SContainerSlotStateChangedPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.COOKIE_RESPONSE, null);
 		this.registerPacket(ServerboundPlayPackets.CUSTOM_PAYLOAD, null);
 		this.registerPacket(ServerboundPlayPackets.DEBUG_SUBSCRIPTION_REQUEST, null);

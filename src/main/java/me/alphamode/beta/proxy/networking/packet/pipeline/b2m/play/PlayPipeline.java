@@ -195,6 +195,7 @@ public class PlayPipeline {
 	}
 
 	public void handleC2SContainerSetSlot(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {
+
 	}
 
 	public void handleS2CContainerSetSlot(final ClientConnection connection, final ContainerSetSlotPacket packet) {
