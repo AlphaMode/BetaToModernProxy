@@ -32,6 +32,7 @@ public class PlayPipeline {
 			.serverHandler(SetSpawnPositionPacket.class, PlayPipeline::handleS2CSetSpawnPosition)
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
+			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
@@ -126,6 +127,10 @@ public class PlayPipeline {
 	public void handleS2CSetTime(final ClientConnection connection, final SetTimePacket packet) {
 		// TODO/FIX
 		// connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
+	}
+
+	public void handleS2CSetHealth(final ClientConnection connection, final SetHealthPacket packet) {
+		connection.send(new S2CSetHealthPacket(packet.health()));
 	}
 
 	public void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {

@@ -1,7 +1,6 @@
 package me.alphamode.beta.proxy.util.data.beta;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Item;
 
@@ -71,10 +70,6 @@ public record BetaItemStack(Item item, int count, int aux) {
 		@Override
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
-			if (id == -1) {
-				// ???
-				BrodernProxy.LOGGER.warn("e");
-			}
 
 			Item item;
 			if (id < 256) {
