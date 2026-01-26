@@ -1,14 +1,12 @@
 package me.alphamode.beta.proxy.util.data.beta;
 
-import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.data.Block;
-import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class BetaBlocks {
-	private static final Map<Integer, Block> REGISTRY = new HashMap<>();
+	private static final Set<? super Block> REGISTRY = new HashSet<>();
 
 	public static final Block STONE = registerBlock(new Block(1));
 	public static final Block GRASS = registerBlock(new Block(2));
@@ -107,17 +105,11 @@ public final class BetaBlocks {
 	public static final Block LOCKED_CHEST = registerBlock(new Block(95));
 	public static final Block TRAPDOOR = registerBlock(new Block(96));
 
-	public static Block registerBlock(final Block block) {
-		REGISTRY.put(block.id(), block);
-		return block;
+	public static void bootstrap() {
 	}
 
-	public static @Nullable Block byId(final int id) {
-		if (id > 256) {
-			throw new IllegalArgumentException("Expected id for blocks, not items");
-		} else {
-			BrodernProxy.LOGGER.warn("Got block with id {}", id);
-			return REGISTRY.getOrDefault(id, null);
-		}
+	public static <T extends Block> Block registerBlock(final T block) {
+		REGISTRY.add(block);
+		return block;
 	}
 }

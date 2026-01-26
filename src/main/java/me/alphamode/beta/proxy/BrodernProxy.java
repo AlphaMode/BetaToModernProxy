@@ -2,6 +2,8 @@ package me.alphamode.beta.proxy;
 
 import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
+import me.alphamode.beta.proxy.util.data.beta.BetaBlocks;
+import me.alphamode.beta.proxy.util.data.beta.BetaItems;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -47,6 +49,9 @@ public record BrodernProxy(Config config) {
 	}
 
 	public void listen() {
+		BetaItems.bootstrap();
+		BetaBlocks.bootstrap();
+
 		final String bindAddress = this.config.getBindAddress();
 		final int bindPort = this.config.getBindPort();
 		final String serverAddress = this.config.getServerAddress();

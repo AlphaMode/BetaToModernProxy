@@ -8,7 +8,7 @@ public final class Block implements ItemContainer {
 
 	public Block(final int id) {
 		this.id = id;
-		this.item = (BlockItem) BetaItems.registerItem(new BlockItem(256 - id));
+		this.item = (BlockItem) BetaItems.registerItem(new BlockItem(id));
 	}
 
 	public int id() {
@@ -16,7 +16,7 @@ public final class Block implements ItemContainer {
 	}
 
 	@Override
-	public Item asItem() {
+	public BlockItem asItem() {
 		return this.item;
 	}
 }
