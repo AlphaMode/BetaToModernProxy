@@ -15,6 +15,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSystemChatPacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.LoginPipeline;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
@@ -22,6 +23,7 @@ import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.Message;
 
 public final class ClientConnection extends SimpleChannelInboundHandler<ModernPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(ClientConnection.class);
@@ -184,6 +186,12 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
 		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.profile.name(), cause);
+	}
+
+	public void debug(final String message, final Object... objects) {
+		final Message formattedMessage = LOGGER.getMessageFactory().newMessage(message, objects);
+		LOGGER.debug(formattedMessage);
+		this.send(new S2CSystemChatPacket(TextComponent.of(formattedMessage.getFormattedMessage()), false));
 	}
 
 	public record ActivePipeline<H>(PacketPipeline<H, BetaPacket, ModernPacket<?>> pipeline, H handler) {
