@@ -1,4 +1,4 @@
 package me.alphamode.beta.proxy.util.data;
 
-public record Item() {
+public record Item(int id) {
 }
