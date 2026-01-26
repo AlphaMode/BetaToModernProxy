@@ -1,8 +1,42 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
+import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Item;
-import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 
-// TODO: item components
-public record ModernItemStack(Item item, CompoundTag data) {
+import java.util.Optional;
+
+public record ModernItemStack(Item item, int count, DataComponentPatch components) {
+	public static final ModernItemStack EMPTY = new ModernItemStack(ModernItems.AIR, 0, DataComponentPatch.EMPTY);
+	public static final StreamCodec<ByteBuf, ModernItemStack> CODEC = null;
+
+	public static final StreamCodec<ByteBuf, ModernItemStack> OPTIONAL_CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final ModernItemStack stack) {
+			ModernStreamCodecs.VAR_INT.encode(buf, stack.count);
+			if (stack.count > 0) {
+				final int id = ModernItems.getRawId(stack.item);
+				ModernStreamCodecs.VAR_INT.encode(buf, id);
+				DataComponentPatch.CODEC.encode(buf, stack.components);
+			}
+		}
+
+		@Override
+		public ModernItemStack decode(final ByteBuf buf) {
+			final int count = ModernStreamCodecs.VAR_INT.decode(buf);
+			if (count <= 0) {
+				return ModernItemStack.EMPTY;
+			} else {
+				final Optional<Integer> id = ModernStreamCodecs.optional(ModernStreamCodecs.VAR_INT).decode(buf);
+				final Optional<DataComponentPatch> components = ModernStreamCodecs.optional(DataComponentPatch.CODEC).decode(buf);
+				return new ModernItemStack(ModernItems.byRawId(id.orElse(0)), count, components.orElse(DataComponentPatch.EMPTY));
+			}
+		}
+	};
+
+	public boolean isEmpty() {
+		return this == EMPTY || this.item == ModernItems.AIR || this.count <= 0;
+	}
 }

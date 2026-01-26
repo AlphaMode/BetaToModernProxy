@@ -11,32 +11,33 @@ loom {
         datagen {
             environment("client")
             mainClass = "me.alphamode.beta.proxy.data.Main"
-
             name "Data Generation"
             vmArg "-Ddatagen.output-dir=${rootProject.file("src/generated/resources")}"
-
             runDir "build/datagen"
         }
 
         vanilla {
             environment("client")
             mainClass = "net.minecraft.client.main.Main"
-
             name "Vanilla"
-
             programArgs "--accessToken", "Proxy", "--version", "Proxy"
-
-            runDir "build/vanilla"
         }
     }
 
     runs {
-
+        fabric {
+            environment("client")
+            mainClass = "net.fabricmc.loader.launch.knot.KnotClient"
+            name "Fabric"
+            vmArgs "-Ddevauth.enabled=true", "-Ddevauth.account=main"
+        }
     }
 }
 
 repositories {
     mavenCentral()
+
+    maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }// DevAuth
 
     maven {
         url "https://maven.lenni0451.net/releases"
@@ -45,6 +46,8 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:1.21.11_unobfuscated"
+
+    implementation "me.djtheredstoner:DevAuth-fabric:1.2.2"
 
     implementation "net.fabricmc:fabric-loader:0.18.2"
 }

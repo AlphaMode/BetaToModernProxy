@@ -27,7 +27,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 		try {
 			final var packet = BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
 			if (BrodernProxy.getProxy().isDebug()) {
-//				LOGGER.info("Beta Packet {} received", packet);
+				LOGGER.info("Beta Packet {} received", packet);
 			}
 
 			out.add(packet);
@@ -36,7 +36,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 				LOGGER.info("Failed to decode beta packet");
 			}
 
-			connection.kick(exception.getMessage());
+			connection.kick("Beta Exception: " + exception.getMessage());
 		}
 	}
 }

@@ -74,7 +74,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CHAT, C2SChatPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHAT_SESSION_UPDATE, C2SChatSessionUpdatePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CHUNK_BATCH_RECEIVED, null);
-		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, null);
+		this.registerPacket(ServerboundPlayPackets.CLIENT_COMMAND, C2SClientCommandPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_TICK_END, C2SClientTickEndPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CLIENT_INFORMATION, C2SPlayClientInformationPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.COMMAND_SUGGESTION, null);
@@ -82,7 +82,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_BUTTON_CLICK, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLICK, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLOSE, C2SContainerClosePacket.CODEC);
-		this.registerPacket(ServerboundPlayPackets.CONTAINER_SLOT_STATE_CHANGED, null);
+		this.registerPacket(ServerboundPlayPackets.CONTAINER_SLOT_STATE_CHANGED, C2SContainerSlotStateChangedPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.COOKIE_RESPONSE, null);
 		this.registerPacket(ServerboundPlayPackets.CUSTOM_PAYLOAD, null);
 		this.registerPacket(ServerboundPlayPackets.DEBUG_SUBSCRIPTION_REQUEST, null);
@@ -133,7 +133,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		// Clientbound
 		this.registerPacket(ClientboundPlayPackets.BUNDLE_DELIMITER, null);
 		this.registerPacket(ClientboundPlayPackets.ADD_ENTITY, null);
-		this.registerPacket(ClientboundPlayPackets.ANIMATE, null);
+		this.registerPacket(ClientboundPlayPackets.ANIMATE, S2CAnimatePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.AWARD_STATS, null);
 		this.registerPacket(ClientboundPlayPackets.BLOCK_CHANGED_ACK, null);
 		this.registerPacket(ClientboundPlayPackets.BLOCK_DESTRUCTION, null);
@@ -149,9 +149,9 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.COMMAND_SUGGESTIONS, null);
 		this.registerPacket(ClientboundPlayPackets.COMMANDS, null);
 		this.registerPacket(ClientboundPlayPackets.CONTAINER_CLOSE, S2CContainerClosePacket.CODEC);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_CONTENT, null);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_DATA, null);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_SLOT, null);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_CONTENT, S2CContainerSetContentPacket.CODEC);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_DATA, S2CContainerSetDataPacket.CODEC);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_SLOT, S2CContainerSetSlotPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.COOKIE_REQUEST, null);
 		this.registerPacket(ClientboundPlayPackets.COOLDOWN, null);
 		this.registerPacket(ClientboundPlayPackets.CUSTOM_CHAT_COMPLETIONS, null);
@@ -165,7 +165,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.DELETE_CHAT, null);
 		this.registerPacket(ClientboundPlayPackets.DISCONNECT, S2CPlayDisconnectPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.DISGUISED_CHAT, null);
-		this.registerPacket(ClientboundPlayPackets.ENTITY_EVENT, null);
+		this.registerPacket(ClientboundPlayPackets.ENTITY_EVENT, S2CEntityEventPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.ENTITY_POSITION_SYNC, null);
 		this.registerPacket(ClientboundPlayPackets.EXPLODE, null);
 		this.registerPacket(ClientboundPlayPackets.FORGET_LEVEL_CHUNK, null);
@@ -233,7 +233,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_MOTION, null);
 		this.registerPacket(ClientboundPlayPackets.SET_EQUIPMENT, null);
 		this.registerPacket(ClientboundPlayPackets.SET_EXPERIENCE, null);
-		this.registerPacket(ClientboundPlayPackets.SET_HEALTH, null);
+		this.registerPacket(ClientboundPlayPackets.SET_HEALTH, S2CSetHealthPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_HELD_SLOT, null);
 		this.registerPacket(ClientboundPlayPackets.SET_OBJECTIVE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_PASSENGERS, null);
