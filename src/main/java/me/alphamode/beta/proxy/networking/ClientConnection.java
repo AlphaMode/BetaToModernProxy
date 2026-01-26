@@ -6,7 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
@@ -141,11 +140,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	}
 
 	public void tick() {
-		final int keepAliveMs = (int) (System.currentTimeMillis() - this.lastKeepAliveMS);
-		if (keepAliveMs > 20) {
-			this.serverConnection.send(new KeepAlivePacket());
-			this.send(this.createKeepAlivePacket(keepAliveMs));
-		}
 	}
 
 	@Override

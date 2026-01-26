@@ -22,7 +22,7 @@ public final class ServerConnection extends NetClient {
 				final ChannelPipeline pipeline = channel.pipeline();
 
 				// ByteBuf -> BetaPacket
-				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader());
+				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
 
 				// Connection consumes BetaPacket and rewrites to a modern packet and sends it to the client
 				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
