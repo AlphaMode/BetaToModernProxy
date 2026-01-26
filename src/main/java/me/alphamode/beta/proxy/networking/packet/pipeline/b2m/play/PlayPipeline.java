@@ -207,9 +207,11 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CContainerClose(final ClientConnection connection, final ContainerClosePacket packet) {
+		connection.send(new S2CContainerClosePacket(packet.containerId()));
 	}
 
 	public void handleC2SContainerClose(final ClientConnection connection, final C2SContainerClosePacket packet) {
+		connection.getServerConnection().send(new ContainerClosePacket((byte) packet.containerId()));
 	}
 
 	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
