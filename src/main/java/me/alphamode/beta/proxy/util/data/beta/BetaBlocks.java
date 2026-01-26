@@ -32,7 +32,7 @@ public final class BetaBlocks {
 	public static final Block LAPIS_BLOCk = registerBlock(new Block(22));
 	public static final Block DISPENSER = registerBlock(new Block(23));
 	public static final Block SANDSTONE = registerBlock(new Block(24));
-	public static final Block NOTEBLOCk = registerBlock(new Block(25));
+	public static final Block NOTEBLOCK = registerBlock(new Block(25));
 	public static final Block BED = registerBlock(new Block(26));
 	public static final Block POWERED_RAIL = registerBlock(new Block(27));
 	public static final Block DETECTOR_RAIL = registerBlock(new Block(28));
@@ -48,8 +48,8 @@ public final class BetaBlocks {
 	public static final Block POPPY = registerBlock(new Block(38));
 	public static final Block BROWN_MUSHROOM = registerBlock(new Block(39));
 	public static final Block RED_MUSHROOM = registerBlock(new Block(40));
-	public static final Block GOLDEN_BLOCK = registerBlock(new Block(41));
-	public static final Block IRON_BLOCk = registerBlock(new Block(42));
+	public static final Block GOLD_BLOCK = registerBlock(new Block(41));
+	public static final Block IRON_BLOCK = registerBlock(new Block(42));
 	public static final Block DOUBLE_STAIR = registerBlock(new Block(43));
 	public static final Block SINGLE_STAIR = registerBlock(new Block(44));
 	public static final Block BRICK = registerBlock(new Block(45));

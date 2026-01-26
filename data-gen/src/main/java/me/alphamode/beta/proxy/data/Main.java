@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.data;
 
 import com.mojang.serialization.DynamicOps;
+import me.alphamode.beta.proxy.data.item.ItemMapper;
 import me.alphamode.beta.proxy.data.registries.BetaRegistries;
 import me.alphamode.beta.proxy.data.tags.TagProvider;
 import net.minecraft.SharedConstants;
@@ -25,40 +26,46 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
-		Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
-		Path registryDataPath = outputDir.resolve("beta_registries.nbt");
-		Path tagDataPath = outputDir.resolve("beta_tags.nbt");
+	static void main(final String[] args) throws IOException {
+		bootstrap(() -> {
+			final Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
 
+			var lookup = BetaRegistries.createLookup();
+
+			final DataGenerator generator = new DataGenerator(outputDir, SharedConstants.getCurrentVersion(), true);
+			generator.getVanillaPack(true).addProvider(o -> new TagProvider(outputDir.resolve("beta_tags.nbt"), lookup));
+			try {
+				generator.run();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			try {
+				outputRegistries(lookup, outputDir.resolve("beta_registries.nbt"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			ItemMapper.bootstrap();
+		});
+	}
+
+	private static void bootstrap(final Runnable runnable) {
 		SharedConstants.tryDetectVersion();
 		Bootstrap.bootStrap();
+		runnable.run();
+		Util.shutdownExecutors();
+	}
 
-		var lookup = BetaRegistries.createLookup();
-
-		DataGenerator generator = new DataGenerator(outputDir, SharedConstants.getCurrentVersion(), true);
-
-		DataGenerator.PackGenerator pack = generator.getVanillaPack(true);
-		pack.addProvider(o -> new TagProvider(tagDataPath, lookup));
-
-		generator.run();
-
+	private static void outputRegistries(final HolderLookup.Provider lookup, final Path outputPath) throws IOException {
 		var ops = lookup.createSerializationContext(NbtOps.INSTANCE);
 		CompoundTag registryTag = new CompoundTag();
-		RegistryDataLoader.SYNCHRONIZED_REGISTRIES.forEach(registryData -> {
-			packRegistry(ops, registryData, lookup, (resourceKey, entries) -> {
-				CompoundTag registry = new CompoundTag();
-				entries.forEach(entry -> {
-					entry.data().ifPresent(tag -> {
-						registry.put(entry.id().toString(), tag);
-					});
-				});
-				registryTag.put(resourceKey.identifier().toString(), registry);
-			});
-
-
-		});
-		NbtIo.writeCompressed(registryTag, registryDataPath);
-		Util.shutdownExecutors();
+		RegistryDataLoader.SYNCHRONIZED_REGISTRIES.forEach(registryData -> packRegistry(ops, registryData, lookup, (resourceKey, entries) -> {
+			CompoundTag registry = new CompoundTag();
+			entries.forEach(entry -> entry.data().ifPresent(tag -> registry.put(entry.id().toString(), tag)));
+			registryTag.put(resourceKey.identifier().toString(), registry);
+		}));
+		NbtIo.writeCompressed(registryTag, outputPath);
 	}
 
 	private static <T> void packRegistry(
