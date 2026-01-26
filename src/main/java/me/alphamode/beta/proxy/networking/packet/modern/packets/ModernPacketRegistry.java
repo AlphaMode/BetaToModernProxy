@@ -81,7 +81,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CONFIGURATION_ACKNOWLEDGED, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_BUTTON_CLICK, null);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLICK, null);
-		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLOSE, null);
+		this.registerPacket(ServerboundPlayPackets.CONTAINER_CLOSE, C2SContainerClosePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.CONTAINER_SLOT_STATE_CHANGED, null);
 		this.registerPacket(ServerboundPlayPackets.COOKIE_RESPONSE, null);
 		this.registerPacket(ServerboundPlayPackets.CUSTOM_PAYLOAD, null);
@@ -148,7 +148,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.CLEAR_TITLES, null);
 		this.registerPacket(ClientboundPlayPackets.COMMAND_SUGGESTIONS, null);
 		this.registerPacket(ClientboundPlayPackets.COMMANDS, null);
-		this.registerPacket(ClientboundPlayPackets.CONTAINER_CLOSE, null);
+		this.registerPacket(ClientboundPlayPackets.CONTAINER_CLOSE, S2CContainerClosePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_CONTENT, null);
 		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_DATA, null);
 		this.registerPacket(ClientboundPlayPackets.CONTAINER_SET_SLOT, null);
