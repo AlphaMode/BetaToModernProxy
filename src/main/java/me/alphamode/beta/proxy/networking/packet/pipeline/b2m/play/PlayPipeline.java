@@ -196,6 +196,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CContainerSetSlot(final ClientConnection connection, final ContainerSetSlotPacket packet) {
+		connection.send(new S2CContainerSetSlotPacket(packet.containerId(), 0, packet.slot(), ItemTranslator.toModernStack(packet.item())));
 	}
 
 	public void handleS2CContainerSetContent(final ClientConnection connection, final ContainerSetContentPacket packet) {
