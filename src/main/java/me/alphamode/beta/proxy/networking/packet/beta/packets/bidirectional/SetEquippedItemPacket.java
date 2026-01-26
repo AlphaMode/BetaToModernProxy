@@ -8,25 +8,12 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 
 public record SetEquippedItemPacket(int entityId, short slot, BetaItemStack item) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, BetaItemStack> EQUIPPED_ITEM_CODEC = new StreamCodec<>() {
-		@Override
-		public void encode(final ByteBuf buf, final BetaItemStack item) {
-			buf.writeShort(item.id());
-			buf.writeShort(item.aux());
-		}
-
-		@Override
-		public BetaItemStack decode(final ByteBuf buf) {
-			return new BetaItemStack(buf.readShort(), 1, buf.readShort());
-		}
-	};
-
 	public static final StreamCodec<ByteBuf, SetEquippedItemPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
 			SetEquippedItemPacket::entityId,
 			BasicStreamCodecs.SHORT,
 			SetEquippedItemPacket::slot,
-			EQUIPPED_ITEM_CODEC,
+			BetaItemStack.NO_DATA_CODEC,
 			SetEquippedItemPacket::item,
 			SetEquippedItemPacket::new
 	);
