@@ -44,6 +44,8 @@ public class PlayPipeline {
 			.clientHandler(C2SMovePlayerPacket.Pos.class, PlayPipeline::handleC2SMovePlayerPos)
 			.clientHandler(C2SMovePlayerPacket.StatusOnly.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
+			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
+			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
@@ -124,6 +126,20 @@ public class PlayPipeline {
 		connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
 	}
 
+	public void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
+		final String message = packet.message();
+		LOGGER.info("{}", message);
+		connection.send(new S2CSystemChatPacket(TextComponent.of(message), false));
+	}
+
+	public void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
+		connection.getServerConnection().send(new ChatPacket(packet.message()));
+	}
+
+	public void handleC2SChatCommand(final ClientConnection connection, final C2SChatCommandPacket packet) {
+		connection.getServerConnection().send(new ChatPacket("/" + packet.command()));
+	}
+
 	public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
 		final byte[] buffer = new byte[packet.xs() * packet.ys() * packet.zs() * 5 / 2];
 		try (final Inflater inflater = new Inflater()) {
@@ -139,18 +155,12 @@ public class PlayPipeline {
 		}
 	}
 
-	private void handleS2CChat(final ClientConnection connection, final ChatPacket packet) {
-		final String message = packet.message();
-		LOGGER.info("{}", message);
-		connection.send(new S2CSystemChatPacket(TextComponent.of(message), false));
+	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {
+		connection.send(new C2SSetCarriedItemPacket(packet.slot()));
 	}
 
-	public void handleC2SChat(final ClientConnection connection, final C2SChatPacket packet) {
-		connection.getServerConnection().send(new ChatPacket(packet.message()));
-	}
-
-	public void handleC2SChatCommand(final ClientConnection connection, final C2SChatCommandPacket packet) {
-		connection.getServerConnection().send(new ChatPacket("/" + packet.command()));
+	public void handleC2SSetCarriedItem(final ClientConnection connection, final C2SSetCarriedItemPacket packet) {
+		connection.getServerConnection().send(new SetCarriedItemPacket(packet.slot()));
 	}
 
 	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {

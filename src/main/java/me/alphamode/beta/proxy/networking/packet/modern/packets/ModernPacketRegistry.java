@@ -115,7 +115,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.SEEN_ADVANCEMENTS, null);
 		this.registerPacket(ServerboundPlayPackets.SELECT_TRADE, null);
 		this.registerPacket(ServerboundPlayPackets.SET_BEACON, null);
-		this.registerPacket(ServerboundPlayPackets.SET_CARRIED_ITEM, null);
+		this.registerPacket(ServerboundPlayPackets.SET_CARRIED_ITEM, C2SSetCarriedItemPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.SET_COMMAND_BLOCK, null);
 		this.registerPacket(ServerboundPlayPackets.SET_COMMAND_MINECART, null);
 		this.registerPacket(ServerboundPlayPackets.SET_CREATIVE_MODE_SLOT, null);
