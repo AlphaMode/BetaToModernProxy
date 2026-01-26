@@ -2,7 +2,8 @@ package me.alphamode.beta.proxy.networking;
 
 import io.netty.channel.*;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketCodec;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketDecoder;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacketEncoder;
 import net.raphimc.netminecraft.netty.connection.NetClient;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,8 @@ public final class ServerConnection extends NetClient {
 			@Override
 			protected void initChannel(final Channel channel) {
 				final ChannelPipeline pipeline = channel.pipeline();
-				pipeline.addLast(BetaPacketCodec.KEY, new BetaPacketCodec(connection));
+				pipeline.addLast(BetaPacketDecoder.KEY, new BetaPacketDecoder(connection));
+				pipeline.addLast(BetaPacketEncoder.KEY, new BetaPacketEncoder());
 				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
 					@Override
 					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
