@@ -1,8 +1,10 @@
 package me.alphamode.beta.proxy.data.item;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtIo;
+import com.google.gson.*;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.nbt.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -12,13 +14,14 @@ import java.util.Optional;
 
 public class ItemMapper {
 	private static void put(final int betaId, final CompoundTag tag, final ItemFactory factory) {
-		final Optional<Item> optionalItem = factory.getItem();
+		final Optional<ItemRef> optionalItem = factory.reference();
+		final String key = String.valueOf(betaId);
 		if (optionalItem.isPresent()) {
-			tag.putInt(String.valueOf(betaId), Item.getId(optionalItem.get()));
+			tag.put(key, optionalItem.get().encode());
 		} else {
 			final CompoundTag mapping = new CompoundTag();
 			for (var entry : factory.auxMapping().entrySet()) {
-				mapping.putInt(String.valueOf(entry.getKey()), Item.getId(entry.getValue()));
+				mapping.put(key, entry.getValue().encode());
 			}
 
 			tag.put(String.valueOf(betaId), mapping);
@@ -28,12 +31,12 @@ public class ItemMapper {
 	private static ItemFactory item(final Item item) {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
-				return Optional.of(item);
+			public Optional<ItemRef> reference() {
+				return Optional.of(ItemRef.of(item));
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
+			public Map<Integer, ItemRef> auxMapping() {
 				return Map.of();
 			}
 		};
@@ -42,16 +45,16 @@ public class ItemMapper {
 	private static ItemFactory sapling() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.OAK_SAPLING)
-						.put(1, Items.SPRUCE_SAPLING)
-						.put(2, Items.BIRCH_SAPLING)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.OAK_SAPLING))
+						.put(1, ItemRef.of(Items.SPRUCE_SAPLING))
+						.put(2, ItemRef.of(Items.BIRCH_SAPLING))
 						.build();
 			}
 		};
@@ -60,16 +63,16 @@ public class ItemMapper {
 	private static ItemFactory logs() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.OAK_LOG)
-						.put(1, Items.SPRUCE_LOG)
-						.put(2, Items.BIRCH_LOG)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.OAK_LOG))
+						.put(1, ItemRef.of(Items.SPRUCE_LOG))
+						.put(2, ItemRef.of(Items.BIRCH_LOG))
 						.build();
 			}
 		};
@@ -78,16 +81,16 @@ public class ItemMapper {
 	private static ItemFactory leaves() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
-				return Optional.of(Items.OAK_LEAVES);
+			public Optional<ItemRef> reference() {
+				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.OAK_LEAVES)
-						.put(1, Items.SPRUCE_LEAVES)
-						.put(2, Items.BIRCH_LEAVES)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.OAK_LEAVES))
+						.put(1, ItemRef.of(Items.SPRUCE_LEAVES))
+						.put(2, ItemRef.of(Items.BIRCH_LEAVES))
 						.build();
 			}
 		};
@@ -96,16 +99,16 @@ public class ItemMapper {
 	private static ItemFactory bush() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.DEAD_BUSH)
-						.put(1, Items.SHORT_GRASS)
-						.put(2, Items.FERN)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.DEAD_BUSH))
+						.put(1, ItemRef.of(Items.SHORT_GRASS))
+						.put(2, ItemRef.of(Items.FERN))
 						.build();
 			}
 		};
@@ -114,29 +117,29 @@ public class ItemMapper {
 	private static ItemFactory wool() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.WHITE_WOOL)
-						.put(1, Items.ORANGE_WOOL)
-						.put(2, Items.MAGENTA_WOOL)
-						.put(3, Items.LIGHT_BLUE_WOOL)
-						.put(4, Items.YELLOW_WOOL)
-						.put(5, Items.LIME_WOOL)
-						.put(6, Items.PINK_WOOL)
-						.put(7, Items.GRAY_WOOL)
-						.put(8, Items.LIGHT_GRAY_WOOL)
-						.put(9, Items.CYAN_WOOL)
-						.put(10, Items.PURPLE_WOOL)
-						.put(11, Items.BLUE_WOOL)
-						.put(12, Items.BROWN_WOOL)
-						.put(13, Items.GREEN_WOOL)
-						.put(14, Items.RED_WOOL)
-						.put(15, Items.BLACK_WOOL)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.WHITE_WOOL))
+						.put(1, ItemRef.of(Items.ORANGE_WOOL))
+						.put(2, ItemRef.of(Items.MAGENTA_WOOL))
+						.put(3, ItemRef.of(Items.LIGHT_BLUE_WOOL))
+						.put(4, ItemRef.of(Items.YELLOW_WOOL))
+						.put(5, ItemRef.of(Items.LIME_WOOL))
+						.put(6, ItemRef.of(Items.PINK_WOOL))
+						.put(7, ItemRef.of(Items.GRAY_WOOL))
+						.put(8, ItemRef.of(Items.LIGHT_GRAY_WOOL))
+						.put(9, ItemRef.of(Items.CYAN_WOOL))
+						.put(10, ItemRef.of(Items.PURPLE_WOOL))
+						.put(11, ItemRef.of(Items.BLUE_WOOL))
+						.put(12, ItemRef.of(Items.BROWN_WOOL))
+						.put(13, ItemRef.of(Items.GREEN_WOOL))
+						.put(14, ItemRef.of(Items.RED_WOOL))
+						.put(15, ItemRef.of(Items.BLACK_WOOL))
 						.build();
 			}
 		};
@@ -145,18 +148,18 @@ public class ItemMapper {
 	private static ItemFactory doubleSlab() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			// NOTE: closest mapping
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.SMOOTH_STONE)
-						.put(1, Items.SANDSTONE)
-						.put(2, Items.OAK_PLANKS)
-						.put(3, Items.COBBLESTONE)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.SMOOTH_STONE))
+						.put(1, ItemRef.of(Items.SANDSTONE))
+						.put(2, ItemRef.of(Items.OAK_PLANKS))
+						.put(3, ItemRef.of(Items.COBBLESTONE))
 						.build();
 			}
 		};
@@ -165,17 +168,17 @@ public class ItemMapper {
 	private static ItemFactory slab() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.SMOOTH_STONE_SLAB)
-						.put(1, Items.SANDSTONE_SLAB)
-						.put(2, Items.OAK_SLAB)
-						.put(3, Items.COBBLESTONE_SLAB)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.SMOOTH_STONE_SLAB))
+						.put(1, ItemRef.of(Items.SANDSTONE_SLAB))
+						.put(2, ItemRef.of(Items.OAK_SLAB))
+						.put(3, ItemRef.of(Items.COBBLESTONE_SLAB))
 						.build();
 			}
 		};
@@ -184,29 +187,29 @@ public class ItemMapper {
 	private static ItemFactory dye() {
 		return new ItemFactory() {
 			@Override
-			public Optional<Item> getItem() {
+			public Optional<ItemRef> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, Item> auxMapping() {
-				return ImmutableMap.<Integer, Item>builder()
-						.put(0, Items.INK_SAC)
-						.put(1, Items.RED_DYE)
-						.put(2, Items.GREEN_DYE)
-						.put(3, Items.BROWN_DYE)
-						.put(4, Items.LAPIS_LAZULI)
-						.put(5, Items.MAGENTA_DYE)
-						.put(6, Items.CYAN_DYE)
-						.put(7, Items.LIGHT_GRAY_DYE)
-						.put(8, Items.GRAY_DYE)
-						.put(9, Items.PINK_DYE)
-						.put(10, Items.LIME_DYE)
-						.put(11, Items.YELLOW_DYE)
-						.put(12, Items.LIGHT_BLUE_DYE)
-						.put(13, Items.PINK_DYE)
-						.put(14, Items.ORANGE_DYE)
-						.put(15, Items.BONE_MEAL)
+			public Map<Integer, ItemRef> auxMapping() {
+				return ImmutableMap.<Integer, ItemRef>builder()
+						.put(0, ItemRef.of(Items.INK_SAC))
+						.put(1, ItemRef.of(Items.RED_DYE))
+						.put(2, ItemRef.of(Items.GREEN_DYE))
+						.put(3, ItemRef.of(Items.BROWN_DYE))
+						.put(4, ItemRef.of(Items.LAPIS_LAZULI))
+						.put(5, ItemRef.of(Items.MAGENTA_DYE))
+						.put(6, ItemRef.of(Items.CYAN_DYE))
+						.put(7, ItemRef.of(Items.LIGHT_GRAY_DYE))
+						.put(8, ItemRef.of(Items.GRAY_DYE))
+						.put(9, ItemRef.of(Items.PINK_DYE))
+						.put(10, ItemRef.of(Items.LIME_DYE))
+						.put(11, ItemRef.of(Items.YELLOW_DYE))
+						.put(12, ItemRef.of(Items.LIGHT_BLUE_DYE))
+						.put(13, ItemRef.of(Items.PINK_DYE))
+						.put(14, ItemRef.of(Items.ORANGE_DYE))
+						.put(15, ItemRef.of(Items.BONE_MEAL))
 						.build();
 			}
 		};
@@ -423,9 +426,71 @@ public class ItemMapper {
 		}
 	}
 
-	public interface ItemFactory {
-		Optional<Item> getItem();
+	public record ItemRef(Item item, DataComponentMap components) {
+		public static ItemRef of(final Item item) {
+			return new ItemRef(item, DataComponentMap.EMPTY);
+		}
 
-		Map<Integer, Item> auxMapping();
+		public CompoundTag encode() {
+			final CompoundTag refTag = new CompoundTag();
+			refTag.putInt("id", Item.getId(item));
+
+			final CompoundTag componentsTag = new CompoundTag();
+			for (var entry : components) {
+				final Tag tag = jsonToTag(entry.encodeValue(JsonOps.INSTANCE).getOrThrow());
+				if (tag != null) {
+					componentsTag.put(entry.type().toString(), tag);
+				}
+			}
+
+			refTag.put("default_components", componentsTag);
+			return refTag;
+		}
+	}
+
+	public interface ItemFactory {
+		Optional<ItemRef> reference();
+
+		Map<Integer, ItemRef> auxMapping();
+	}
+
+	private static Tag jsonToTag(final JsonElement element) {
+		switch (element) {
+			case JsonObject object -> {
+				final CompoundTag tag = new CompoundTag();
+				for (final var entry : object.entrySet()) {
+					tag.put(entry.getKey(), jsonToTag(entry.getValue()));
+				}
+
+				return tag;
+			}
+
+			case JsonArray array -> {
+				final ListTag tags = new ListTag();
+				for (final var value : array) {
+					tags.add(jsonToTag(value));
+				}
+
+				return tags;
+			}
+
+			case JsonPrimitive primitive -> {
+				if (primitive.isNumber()) {
+					return new DoubleTag(primitive.getAsNumber().doubleValue());
+				} else if (primitive.isBoolean()) {
+					return new IntTag(primitive.getAsBoolean() ? 1 : 0);
+				} else if (primitive.isString()) {
+					return new StringTag(primitive.getAsString());
+				} else {
+					throw new UnsupportedOperationException();
+				}
+			}
+
+			case JsonNull jsonNull -> {
+				return null;
+			}
+
+			case null, default -> throw new UnsupportedOperationException();
+		}
 	}
 }

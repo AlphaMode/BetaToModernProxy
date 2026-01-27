@@ -31,9 +31,6 @@ public class Main {
 		bootstrap(() -> {
 			final Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
 
-			SharedConstants.tryDetectVersion();
-			Bootstrap.bootStrap();
-
 			var lookup = BetaRegistries.createLookup();
 
 			final DataGenerator generator = new DataGenerator(outputDir, SharedConstants.getCurrentVersion(), true);
