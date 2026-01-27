@@ -52,7 +52,7 @@ public class DataComponentPatch {
 
 	private final Reference2ObjectMap<DataComponentType<?>, Optional<?>> map;
 
-	DataComponentPatch(Reference2ObjectMap<DataComponentType<?>, Optional<?>> map) {
+	public DataComponentPatch(Reference2ObjectMap<DataComponentType<?>, Optional<?>> map) {
 		this.map = map;
 	}
 
