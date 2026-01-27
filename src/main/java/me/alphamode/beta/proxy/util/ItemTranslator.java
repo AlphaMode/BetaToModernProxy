@@ -1,37 +1,44 @@
 package me.alphamode.beta.proxy.util;
 
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
-import me.alphamode.beta.proxy.util.data.modern.components.DataItemComponents;
+import me.alphamode.beta.proxy.util.data.modern.components.DataComponentType;
+import me.alphamode.beta.proxy.util.data.modern.components.DataComponents;
+import net.lenni0451.mcstructs.converter.model.Either;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class ItemTranslator {
 	public static ModernItemStack toModernStack(final BetaItemStack stack) {
 		if (stack == null) {
 			return ModernItemStack.EMPTY;
 		} else {
-			final ItemTranslation translation = getTranslation(stack);
-
-			DataComponentPatch patch = DataComponentPatch.EMPTY;
+			final DataComponentPatch.Builder builder = DataComponentPatch.builder();
 			if (isDamagable(stack.item().id())) {
-				patch = new DataComponentPatch(Reference2ObjectMaps.singleton(DataItemComponents.DAMAGE, Optional.of(stack.aux())));
+				builder.set(DataComponents.DAMAGE, stack.aux());
 			}
 
-			int modernId;
-			if (!translation.auxMapping.isEmpty()) {
-				modernId = translation.auxMapping.getOrDefault(stack.aux(), 0);
+			int modernId = 0;
+			final Either<ItemTranslation, ItemTranslations> either = getTranslation(stack);
+			if (either.isLeft()) {
+				final ItemTranslation translation = either.getLeft();
+				modernId = translation.modernId();
+				translation.apply(builder);
 			} else {
-				modernId = translation.modernId;
+				final ItemTranslations translations = either.getRight();
+				final ItemTranslation translation = translations.auxMapping.getOrDefault(stack.aux(), null);
+				if (translation != null) {
+					modernId = translation.modernId();
+					translation.apply(builder);
+				}
 			}
 
-			return new ModernItemStack(modernId, stack.count(), patch);
+			return new ModernItemStack(modernId, stack.count(), builder.build());
 		}
 	}
 
@@ -47,20 +54,47 @@ public final class ItemTranslator {
 				|| (id >= 298 && id <= 317); // Armor
 	}
 
-	private static ItemTranslation getTranslation(final BetaItemStack stack) {
+	private static Either<ItemTranslation, ItemTranslations> getTranslation(final BetaItemStack stack) {
 		final NbtTag tag = BrodernProxy.getBetaToModernItems().get(String.valueOf(stack.item().id()));
-		if (tag != null && tag.isIntTag()) {
-			return new ItemTranslation(tag.asIntTag().intValue(), new Int2IntArrayMap());
-		} else if (tag != null && tag.isCompoundTag()) {
-			final Int2IntArrayMap auxMapping = new Int2IntArrayMap();
-			final CompoundTag mapping = tag.asCompoundTag();
-			mapping.forEach(entry -> auxMapping.put(Integer.parseInt(entry.getKey()), entry.getValue().asIntTag().intValue()));
-			return new ItemTranslation(0, auxMapping);
-		} else {
+		if (tag == null) {
 			throw new UnsupportedOperationException();
+		}
+
+		if (tag instanceof CompoundTag compoundTag) {
+			return Either.left(ItemTranslation.read(compoundTag));
+		} else if (tag.isListTag()) {
+			final Map<Integer, ItemTranslation> auxMapping = new HashMap<>();
+			for (final var entry : tag.asListTag()) {
+				final CompoundTag compoundTag = entry.asCompoundTag();
+				for (var listEntry : compoundTag) {
+					auxMapping.put(Integer.parseInt(listEntry.getKey()), ItemTranslation.read(compoundTag));
+				}
+			}
+
+			return Either.right(new ItemTranslations(auxMapping));
+		}
+
+		throw new UnsupportedOperationException();
+	}
+
+	private record ItemTranslation(int modernId, DataComponentPatch patch) {
+		public static ItemTranslation read(final CompoundTag tag) {
+			final int id = tag.getInt("id");
+
+			final DataComponentPatch.Builder builder = DataComponentPatch.builder();
+			final CompoundTag defaultComponents = tag.getCompound("default_components");
+			// TODO
+
+			return new ItemTranslation(id, builder.build());
+		}
+
+		public <T> void apply(final DataComponentPatch.Builder builder) {
+			for (final var entry : this.patch.entrySet()) {
+				builder.set((DataComponentType<T>) entry.getKey(), (T) entry.getValue().orElseThrow());
+			}
 		}
 	}
 
-	private record ItemTranslation(int modernId, Int2IntArrayMap auxMapping) {
+	private record ItemTranslations(Map<Integer, ItemTranslation> auxMapping) {
 	}
 }

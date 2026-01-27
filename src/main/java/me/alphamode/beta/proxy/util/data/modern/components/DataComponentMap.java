@@ -1,0 +1,164 @@
+package me.alphamode.beta.proxy.util.data.modern.components;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+public interface DataComponentMap extends Iterable<TypedDataComponent<?>>, DataComponentGetter {
+	DataComponentMap EMPTY = new DataComponentMap() {
+		@Override
+		public <T> @Nullable T get(DataComponentType<? extends T> type) {
+			return null;
+		}
+
+		@Override
+		public Set<DataComponentType<?>> keySet() {
+			return Set.of();
+		}
+
+		@Override
+		public Iterator<TypedDataComponent<?>> iterator() {
+			return Collections.emptyIterator();
+		}
+	};
+
+	static DataComponentMap composite(final DataComponentMap prototype, final DataComponentMap overrides) {
+		return new DataComponentMap() {
+			@Override
+			public <T> @Nullable T get(DataComponentType<? extends T> type) {
+				T value = overrides.get(type);
+				return value != null ? value : prototype.get(type);
+			}
+
+			@Override
+			public Set<DataComponentType<?>> keySet() {
+				return Sets.union(prototype.keySet(), overrides.keySet());
+			}
+		};
+	}
+
+	static DataComponentMap.Builder builder() {
+		return new DataComponentMap.Builder();
+	}
+
+	Set<DataComponentType<?>> keySet();
+
+	default boolean has(DataComponentType<?> type) {
+		return this.get(type) != null;
+	}
+
+	@Override
+	default Iterator<TypedDataComponent<?>> iterator() {
+		return Iterators.transform(this.keySet().iterator(), type -> Objects.requireNonNull(this.getTyped(type)));
+	}
+
+	default Stream<TypedDataComponent<?>> stream() {
+		return StreamSupport.stream(Spliterators.spliterator(this.iterator(), this.size(), Spliterator.DISTINCT | Spliterator.SIZED | Spliterator.NONNULL | Spliterator.IMMUTABLE), false);
+	}
+
+	default int size() {
+		return this.keySet().size();
+	}
+
+	default boolean isEmpty() {
+		return this.size() == 0;
+	}
+
+	default DataComponentMap filter(final Predicate<DataComponentType<?>> predicate) {
+		return new DataComponentMap() {
+			@Override
+			public <T> @Nullable T get(DataComponentType<? extends T> type) {
+				return predicate.test(type) ? DataComponentMap.this.get(type) : null;
+			}
+
+			@Override
+			public Set<DataComponentType<?>> keySet() {
+				return Sets.filter(DataComponentMap.this.keySet(), predicate::test);
+			}
+		};
+	}
+
+	class Builder {
+		private final Reference2ObjectMap<DataComponentType<?>, Object> map = new Reference2ObjectArrayMap();
+
+		private Builder() {
+		}
+
+		public <T> DataComponentMap.Builder set(DataComponentType<T> type, @Nullable T value) {
+			this.setUnchecked(type, value);
+			return this;
+		}
+
+		<T> void setUnchecked(DataComponentType<T> type, @Nullable Object value) {
+			if (value != null) {
+				this.map.put(type, value);
+			} else {
+				this.map.remove(type);
+			}
+		}
+
+		public DataComponentMap.Builder addAll(DataComponentMap map) {
+			for (TypedDataComponent<?> entry : map) {
+				this.map.put(entry.type(), entry.value());
+			}
+
+			return this;
+		}
+
+		public DataComponentMap build() {
+			return buildFromMapTrusted(this.map);
+		}
+
+		private static DataComponentMap buildFromMapTrusted(Map<DataComponentType<?>, Object> map) {
+			if (map.isEmpty()) {
+				return DataComponentMap.EMPTY;
+			} else {
+				return map.size() < 8
+						? new DataComponentMap.Builder.SimpleMap(new Reference2ObjectArrayMap(map))
+						: new DataComponentMap.Builder.SimpleMap(new Reference2ObjectOpenHashMap(map));
+			}
+		}
+
+		private record SimpleMap(Reference2ObjectMap<DataComponentType<?>, Object> map) implements DataComponentMap {
+			@Override
+			public <T> @Nullable T get(DataComponentType<? extends T> type) {
+				return (T) this.map.get(type);
+			}
+
+			@Override
+			public boolean has(DataComponentType<?> type) {
+				return this.map.containsKey(type);
+			}
+
+			@Override
+			public Set<DataComponentType<?>> keySet() {
+				return this.map.keySet();
+			}
+
+			@Override
+			public Iterator<TypedDataComponent<?>> iterator() {
+				return Iterators.transform(Reference2ObjectMaps.fastIterator(this.map), TypedDataComponent::fromEntryUnchecked);
+			}
+
+			@Override
+			public int size() {
+				return this.map.size();
+			}
+
+			@Override
+			public @NonNull String toString() {
+				return this.map.toString();
+			}
+		}
+	}
+}

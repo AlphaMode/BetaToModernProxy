@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
-public final class DataItemComponents {
+public final class DataComponents {
 	private static final Map<Identifier, DataComponentType<?>> REGISTRY = new HashMap<>();
 
 //	public static final DataComponentType<CustomData> CUSTOM_DATA = register("custom_data", b -> b);
