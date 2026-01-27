@@ -1,211 +1,16 @@
 package me.alphamode.beta.proxy.data.item;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
+import java.nio.file.Path;
+
 public class ItemMapper {
-	private static ItemFactory STONE = map(1, item(Items.STONE));
-	private static ItemFactory GRASS = map(2, item(Items.GRASS_BLOCK));
-	private static ItemFactory DIRT = map(3, item(Items.DIRT));
-	private static ItemFactory COBBLESTONE = map(4, item(Items.COBBLESTONE));
-	private static ItemFactory PLANKS = map(5, item(Items.OAK_PLANKS));  // TODO
-	private static ItemFactory SAPLING = map(6, item(Items.OAK_SAPLING));  // TODO
-	private static ItemFactory BEDROCK = map(7, item(Items.BEDROCK));
-	private static ItemFactory FLOWING_WATER = map(8, item(Items.WATER_BUCKET));
-	private static ItemFactory STILL_WATER = map(9, item(Items.WATER_BUCKET));
-	private static ItemFactory FLOWING_LAVA = map(10, item(Items.LAVA_BUCKET));
-	private static ItemFactory STILL_LAVA = map(11, item(Items.LAVA_BUCKET));
-	private static ItemFactory SAND = map(12, item(Items.SAND));
-	private static ItemFactory GRAVEL = map(13, item(Items.GRAVEL));
-	private static ItemFactory GOLDEN_ORE = map(14, item(Items.GOLD_ORE));
-	private static ItemFactory IRON_ORE = map(15, item(Items.IRON_ORE));
-	private static ItemFactory COAL_ORE = map(16, item(Items.COAL_ORE));
-	private static ItemFactory WOOD = map(17, item(Items.OAK_LOG)); // TODO
-	private static ItemFactory LEAVES = map(18, item(Items.OAK_LEAVES)); // TODO
-	private static ItemFactory SPONGE = map(19, item(Items.SPONGE));
-	private static ItemFactory GLASS = map(20, item(Items.GLASS));
-	private static ItemFactory LAPIS_ORE = map(21, item(Items.LAPIS_ORE));
-	private static ItemFactory LAPIS_BLOCK = map(22, item(Items.LAPIS_BLOCK));
-	private static ItemFactory DISPENSER = map(23, item(Items.DISPENSER));
-	private static ItemFactory SANDSTONE = map(24, item(Items.SANDSTONE));
-	private static ItemFactory NOTEBLOCk = map(25, item(Items.NOTE_BLOCK));
-	private static ItemFactory BED = map(26, item(Items.RED_BED));
-	private static ItemFactory POWERED_RAIL = map(27, item(Items.POWERED_RAIL));
-	private static ItemFactory DETECTOR_RAIL = map(28, item(Items.DETECTOR_RAIL));
-	private static ItemFactory STICKY_PISTON = map(29, item(Items.STICKY_PISTON));
-	private static ItemFactory WEB = map(30, item(Items.COBWEB));
-	private static ItemFactory TALL_GRASS = map(31, item(Items.TALL_GRASS));
-	private static ItemFactory DEAD_BUSH = map(32, item(Items.DEAD_BUSH));
-	private static ItemFactory PISTON = map(33, item(Items.PISTON));
-	private static ItemFactory PISTON_EXTENDED = map(34, item(Items.PISTON));
-	private static ItemFactory CLOTH = map(35, item(Items.WHITE_WOOL)); // TODO
-	private static ItemFactory MOVING_PISTON = map(36, item(Items.PISTON));
-	private static ItemFactory YELLOW_PLANT = map(37, item(Items.DANDELION));
-	private static ItemFactory POPPY = map(38, item(Items.POPPY));
-	private static ItemFactory BROWN_MUSHROOM = map(39, item(Items.BROWN_MUSHROOM));
-	private static ItemFactory RED_MUSHROOM = map(40, item(Items.RED_MUSHROOM));
-	private static ItemFactory GOLD_BLOCK = map(41, item(Items.GOLD_BLOCK));
-	private static ItemFactory IRON_BLOCK = map(42, item(Items.IRON_BLOCK));
-	private static ItemFactory DOUBLE_STAIR = map(43, item(Items.OAK_STAIRS)); // TODO
-	private static ItemFactory SINGLE_STAIR = map(44, item(Items.OAK_STAIRS)); // TODO
-	private static ItemFactory BRICK = map(45, item(Items.BRICKS));
-	private static ItemFactory TNT = map(46, item(Items.TNT));
-	private static ItemFactory BOOKSHELF = map(47, item(Items.BOOKSHELF));
-	private static ItemFactory MOSSY_COBBLESTONE = map(48, item(Items.MOSSY_COBBLESTONE));
-	private static ItemFactory OBSIDIAN = map(49, item(Items.OBSIDIAN));
-	private static ItemFactory TORCH = map(50, item(Items.TORCH));
-	private static ItemFactory FIRE = map(51, item(Items.FLINT_AND_STEEL));
-	private static ItemFactory MOB_SPAWNER = map(52, item(Items.SPAWNER));
-	private static ItemFactory OAK_STAIRS = map(53, item(Items.OAK_STAIRS));
-	private static ItemFactory CHEST = map(54, item(Items.CHEST));
-	private static ItemFactory REDSTONE_DUST = map(55, item(Items.REDSTONE));
-	private static ItemFactory DIAMOND_ORE = map(56, item(Items.DIAMOND_ORE));
-	private static ItemFactory DIAMOND_BLOCK = map(57, item(Items.DIAMOND_BLOCK));
-	private static ItemFactory CRAFTING_TABLE = map(58, item(Items.CRAFTING_TABLE));
-	private static ItemFactory CROPS = map(59, item(Items.WHEAT_SEEDS));
-	private static ItemFactory TILLED_FARMLAND = map(60, item(Items.FARMLAND)); // TODO (tilled)
-	private static ItemFactory FURNACE = map(61, item(Items.FURNACE));
-	private static ItemFactory FURNACE_ACTIVE = map(62, item(Items.FURNACE)); // todo (active)
-	private static ItemFactory SIGN = map(63, item(Items.OAK_SIGN));
-	private static ItemFactory OAK_DOOR = map(64, item(Items.OAK_DOOR));
-	private static ItemFactory LADDER = map(65, item(Items.LADDER));
-	private static ItemFactory RAIL = map(66, item(Items.RAIL));
-	private static ItemFactory COBBLESTONE_STAIRS = map(67, item(Items.COBBLESTONE_STAIRS));
-	private static ItemFactory WALL_SIGN = map(68, item(Items.OAK_SIGN));
-	private static ItemFactory LEVER = map(69, item(Items.LEVER));
-	private static ItemFactory STONE_PRESSURE_PLATE = map(70, item(Items.STONE_PRESSURE_PLATE));
-	private static ItemFactory IRON_DOOR = map(71, item(Items.IRON_DOOR));
-	private static ItemFactory OAK_PRESSURE_PLATE = map(72, item(Items.OAK_PRESSURE_PLATE));
-	private static ItemFactory REDSTONE_ORE = map(73, item(Items.REDSTONE_ORE));
-	private static ItemFactory REDSTONE_ORE_ACTIVE = map(74, item(Items.REDSTONE_ORE));
-	private static ItemFactory REDSTONE_TORCH = map(75, item(Items.REDSTONE_TORCH));
-	private static ItemFactory REDSTONE_TORCH_ACTIVE = map(76, item(Items.REDSTONE_TORCH));
-	private static ItemFactory BUTTON = map(77, item(Items.OAK_BUTTON)); // todo?
-	private static ItemFactory SNOW = map(78, item(Items.SNOW));
-	private static ItemFactory ICE = map(79, item(Items.ICE));
-	private static ItemFactory SNOW_BLOCK = map(80, item(Items.SNOW_BLOCK));
-	private static ItemFactory CACTUS = map(81, item(Items.CACTUS));
-	private static ItemFactory CLAY = map(82, item(Items.CLAY));
-	private static ItemFactory REED = map(83, item(Items.SUGAR_CANE));
-	private static ItemFactory JUKEBOX = map(84, item(Items.JUKEBOX));
-	private static ItemFactory FENCE = map(85, item(Items.OAK_FENCE)); // todo
-	private static ItemFactory PUMPKIN = map(86, item(Items.PUMPKIN));
-	private static ItemFactory NETHERRACK = map(87, item(Items.NETHERRACK));
-	private static ItemFactory SOUL_SAND = map(88, item(Items.SOUL_SAND));
-	private static ItemFactory GLOWSTONE = map(89, item(Items.GLOWSTONE));
-	private static ItemFactory PORTAL = map(90, item(Items.PURPLE_WOOL)); // todo
-	private static ItemFactory LANTERN = map(91, item(Items.LANTERN));
-	private static ItemFactory CAKE = map(92, item(Items.CAKE));
-	private static ItemFactory REDSTONE_REPEATER = map(93, item(Items.REPEATER));
-	private static ItemFactory REDSTONE_REPEATER_ACTIVE = map(94, item(Items.REPEATER)); // TODO: active
-	private static ItemFactory LOCKED_CHEST = map(95, item(Items.CHEST));
-	private static ItemFactory TRAPDOOR = map(96, item(Items.OAK_TRAPDOOR)); // todo: was there iron?
-	private static ItemFactory IRON_SHOVEL = map(256, item(Items.IRON_SHOVEL));
-	private static ItemFactory IRON_PICKAXE = map(256 + 1, item(Items.IRON_PICKAXE));
-	private static ItemFactory IRON_AXE = map(256 + 2, item(Items.IRON_AXE));
-	private static ItemFactory FLINT_AND_STEEL = map(256 + 3, item(Items.FLINT_AND_STEEL));
-	private static ItemFactory APPLE = map(256 + 4, item(Items.APPLE));
-	private static ItemFactory BOW = map(256 + 5, item(Items.BOW));
-	private static ItemFactory ARROW = map(256 + 6, item(Items.ARROW));
-	private static ItemFactory COAL = map(256 + 7, item(Items.COAL));
-	private static ItemFactory DIAMOND = map(256 + 8, item(Items.DIAMOND));
-	private static ItemFactory IRON_INGOT = map(256 + 9, item(Items.IRON_INGOT));
-	private static ItemFactory GOLD_INGOT = map(256 + 10, item(Items.GOLD_INGOT));
-	private static ItemFactory IRON_SWORD = map(256 + 11, item(Items.IRON_SWORD));
-	private static ItemFactory WOODEN_SWORD = map(256 + 12, item(Items.WOODEN_SWORD));
-	private static ItemFactory WOODEN_SHOVEL = map(256 + 13, item(Items.WOODEN_SHOVEL));
-	private static ItemFactory WOODEN_PICKAXE = map(256 + 14, item(Items.WOODEN_PICKAXE));
-	private static ItemFactory WOODEN_AXE = map(256 + 15, item(Items.WOODEN_AXE));
-	private static ItemFactory STONE_SWORD = map(256 + 16, item(Items.STONE_SWORD));
-	private static ItemFactory STONE_SHOVEL = map(256 + 17, item(Items.STONE_SHOVEL));
-	private static ItemFactory STONE_PICKAXE = map(256 + 18, item(Items.STONE_PICKAXE));
-	private static ItemFactory STONE_AXE = map(256 + 19, item(Items.STONE_AXE));
-	private static ItemFactory DIAMOND_SWORD = map(256 + 20, item(Items.DIAMOND_SWORD));
-	private static ItemFactory DIAMOND_SHOVEL = map(256 + 21, item(Items.DIAMOND_SHOVEL));
-	private static ItemFactory DIAMOND_PICKAXE = map(256 + 22, item(Items.DIAMOND_PICKAXE));
-	private static ItemFactory DIAMOND_AXE = map(256 + 23, item(Items.DIAMOND_AXE));
-	private static ItemFactory STICK = map(256 + 24, item(Items.STICK));
-	private static ItemFactory BOWL = map(256 + 25, item(Items.BOWL));
-	private static ItemFactory STEW = map(256 + 26, item(Items.MUSHROOM_STEW));
-	private static ItemFactory GOLDEN_SWORD = map(256 + 27, item(Items.GOLDEN_SWORD));
-	private static ItemFactory GOLDEN_SHOVEL = map(256 + 28, item(Items.GOLDEN_SHOVEL));
-	private static ItemFactory GOLDEN_PICKAXE = map(256 + 29, item(Items.GOLDEN_PICKAXE));
-	private static ItemFactory GOLDEN_AXE = map(256 + 30, item(Items.GOLDEN_AXE));
-	private static ItemFactory STRING = map(256 + 31, item(Items.STRING));
-	private static ItemFactory FEATHER = map(256 + 32, item(Items.FEATHER));
-	private static ItemFactory GUN_POWDER = map(256 + 33, item(Items.GUNPOWDER));
-	private static ItemFactory WOODEN_HOE = map(256 + 34, item(Items.WOODEN_HOE));
-	private static ItemFactory STONE_HOE = map(256 + 35, item(Items.STONE_HOE));
-	private static ItemFactory IRON_HOE = map(256 + 36, item(Items.IRON_HOE));
-	private static ItemFactory DIAMOND_HOE = map(256 + 37, item(Items.DIAMOND_HOE));
-	private static ItemFactory GOLDEN_HOE = map(256 + 38, item(Items.GOLDEN_HOE));
-	private static ItemFactory SEEDS = map(256 + 39, item(Items.WHEAT_SEEDS));
-	private static ItemFactory WHEAT = map(256 + 40, item(Items.WHEAT));
-	private static ItemFactory BREAD = map(256 + 41, item(Items.BREAD));
-	private static ItemFactory LEATHER_HELMET = map(256 + 42, item(Items.LEATHER_HELMET));
-	private static ItemFactory LEATHER_CHESTPLATE = map(256 + 43, item(Items.LEATHER_CHESTPLATE));
-	private static ItemFactory LEATHER_LEGGINGS = map(256 + 44, item(Items.LEATHER_LEGGINGS));
-	private static ItemFactory LEATHER_BOOTS = map(256 + 45, item(Items.LEATHER_BOOTS));
-	private static ItemFactory CHAIN_HELMET = map(256 + 46, item(Items.CHAINMAIL_HELMET));
-	private static ItemFactory CHAIN_CHESTPLATE = map(256 + 47, item(Items.CHAINMAIL_CHESTPLATE));
-	private static ItemFactory CHAIN_LEGGINGS = map(256 + 48, item(Items.CHAINMAIL_LEGGINGS));
-	private static ItemFactory CHAIN_BOOTS = map(256 + 49, item(Items.CHAINMAIL_BOOTS));
-	private static ItemFactory IRON_HELMET = map(256 + 50, item(Items.IRON_HELMET));
-	private static ItemFactory IRON_CHESTPLATE = map(256 + 51, item(Items.IRON_CHESTPLATE));
-	private static ItemFactory IRON_LEGGINGS = map(256 + 52, item(Items.IRON_LEGGINGS));
-	private static ItemFactory IRON_BOOTS = map(256 + 53, item(Items.IRON_BOOTS));
-	private static ItemFactory DIAMOND_HELMET = map(256 + 54, item(Items.DIAMOND_HELMET));
-	private static ItemFactory DIAMOND_CHESTPLATE = map(256 + 55, item(Items.DIAMOND_CHESTPLATE));
-	private static ItemFactory DIAMOND_LEGGINGS = map(256 + 56, item(Items.DIAMOND_LEGGINGS));
-	private static ItemFactory DIAMOND_BOOTS = map(256 + 57, item(Items.DIAMOND_BOOTS));
-	private static ItemFactory GOLDEN_HELMET = map(256 + 58, item(Items.GOLDEN_HELMET));
-	private static ItemFactory GOLDEN_CHESTPLATE = map(256 + 59, item(Items.GOLDEN_CHESTPLATE));
-	private static ItemFactory GOLDEN_LEGGINGS = map(256 + 60, item(Items.GOLDEN_LEGGINGS));
-	private static ItemFactory GOLDEN_BOOTS = map(256 + 61, item(Items.GOLDEN_BOOTS));
-	private static ItemFactory FLINT = map(256 + 62, item(Items.FLINT));
-	private static ItemFactory RAW_PORKCHOP = map(256 + 63, item(Items.PORKCHOP));
-	private static ItemFactory COOKED_PORKCHOP = map(256 + 64, item(Items.COOKED_PORKCHOP));
-	private static ItemFactory PAINTING = map(256 + 65, item(Items.PAINTING));
-	private static ItemFactory GOLDEN_APPLE = map(256 + 66, item(Items.GOLDEN_APPLE));
-	private static ItemFactory SIGN_ITEM = map(256 + 67, item(Items.OAK_SIGN));
-	private static ItemFactory WOODEN_DOOR = map(256 + 68, item(Items.OAK_DOOR));
-	private static ItemFactory BUCKET = map(256 + 69, item(Items.BUCKET));
-	private static ItemFactory WATER_BUCKET = map(256 + 70, item(Items.WATER_BUCKET));
-	private static ItemFactory LAVA_BUCKET = map(256 + 71, item(Items.LAVA_BUCKET));
-	private static ItemFactory MINECART = map(256 + 72, item(Items.MINECART));
-	private static ItemFactory SADDLE = map(256 + 73, item(Items.SADDLE));
-	private static ItemFactory IRON_DOOR_ITEM = map(256 + 74, item(Items.IRON_DOOR));
-	private static ItemFactory REDSTONE = map(256 + 75, item(Items.REDSTONE));
-	private static ItemFactory SNOWBALL = map(256 + 76, item(Items.SNOWBALL));
-	private static ItemFactory BOAT = map(256 + 77, item(Items.OAK_BOAT));
-	private static ItemFactory LEATHER = map(256 + 78, item(Items.LEATHER));
-	private static ItemFactory MILK_BUCKET = map(256 + 79, item(Items.MILK_BUCKET));
-	private static ItemFactory BRICK_ITEM = map(256 + 80, item(Items.BRICK));
-	private static ItemFactory CLAY_ITEM = map(256 + 81, item(Items.CLAY_BALL));
-	private static ItemFactory SUGAR_CANE = map(256 + 82, item(Items.SUGAR_CANE));
-	private static ItemFactory PAPER = map(256 + 83, item(Items.PAPER));
-	private static ItemFactory BOOK = map(256 + 84, item(Items.BOOK));
-	private static ItemFactory SLIMEBALL = map(256 + 85, item(Items.SLIME_BALL));
-	private static ItemFactory CHEST_MINECART = map(256 + 86, item(Items.CHEST_MINECART));
-	private static ItemFactory FURNACE_MINECART = map(256 + 87, item(Items.FURNACE_MINECART));
-	private static ItemFactory EGG = map(256 + 88, item(Items.EGG));
-	private static ItemFactory COMPASS = map(256 + 89, item(Items.COMPASS));
-	private static ItemFactory FISHING_ROD = map(256 + 90, item(Items.FISHING_ROD));
-	private static ItemFactory CLOCK = map(256 + 91, item(Items.CLOCK));
-	private static ItemFactory GLOWSTONE_DUST = map(256 + 92, item(Items.GLOWSTONE_DUST));
-	private static ItemFactory RAW_FISH = map(256 + 93, item(Items.COD)); // TODO
-	private static ItemFactory COOKED_FISH = map(256 + 94, item(Items.COOKED_COD)); // TODO
-	private static ItemFactory DYE_POWDER = map(256 + 95, item(Items.WHITE_DYE)); // TODO
-	private static ItemFactory BONE = map(256 + 96, item(Items.BONE));
-	private static ItemFactory SUGAR = map(256 + 97, item(Items.SUGAR));
-	private static ItemFactory CAKE_ITEM = map(256 + 98, item(Items.CAKE));
-	private static ItemFactory BED_ITEM = map(256 + 99, item(Items.RED_BED));
-	private static ItemFactory REDSTONE_REPEATER_ITEM = map(256 + 100, item(Items.REPEATER));
-	private static ItemFactory COOKIE = map(256 + 101, item(Items.COOKIE));
-	private static ItemFactory MAP = map(256 + 102, item(Items.MAP));
-	private static ItemFactory SHEARS = map(256 + 103, item(Items.SHEARS));
-	private static ItemFactory MUSIC_DISC_13 = map(256 + 2000, item(Items.MUSIC_DISC_13));
-	private static ItemFactory MUSIC_DISC_CAT = map(256 + 2001, item(Items.MUSIC_DISC_CAT));
+	private static void put(final int betaId, final CompoundTag tag, final ItemFactory factory) {
+
+	}
 
 	private static ItemFactory item(final Item item) {
 		return () -> item;
@@ -215,13 +20,219 @@ public class ItemMapper {
 		return factory;
 	}
 
-	public static void bootstrap() {
-
+	public static void writeItems(final Path outputPath) {
+		final CompoundTag tag = new CompoundTag();
+		put(ItemsStuff.STONE, tag, item(Items.STONE));
+		put(ItemsStuff.GRASS, tag, item(Items.GRASS_BLOCK));
+		put(ItemsStuff.DIRT, tag, item(Items.DIRT));
+		put(ItemsStuff.COBBLESTONE, tag, item(Items.COBBLESTONE));
+		put(ItemsStuff.PLANKS, tag, item(Items.OAK_PLANKS));  // TODO
+		put(ItemsStuff.SAPLING, tag, item(Items.OAK_SAPLING));  // TODO
+		put(ItemsStuff.BEDROCK, tag, item(Items.BEDROCK));
+		put(ItemsStuff.FLOWING_WATER, tag, item(Items.WATER_BUCKET));
+		put(ItemsStuff.STILL_WATER, tag, item(Items.WATER_BUCKET));
+		put(ItemsStuff.FLOWING_LAVA, tag, item(Items.LAVA_BUCKET));
+		put(ItemsStuff.STILL_LAVA, tag, item(Items.LAVA_BUCKET));
+		put(ItemsStuff.SAND, tag, item(Items.SAND));
+		put(ItemsStuff.GRAVEL, tag, item(Items.GRAVEL));
+		put(ItemsStuff.GOLDEN_ORE, tag, item(Items.GOLD_ORE));
+		put(ItemsStuff.IRON_ORE, tag, item(Items.IRON_ORE));
+		put(ItemsStuff.COAL_ORE, tag, item(Items.COAL_ORE));
+		put(ItemsStuff.WOOD, tag, item(Items.OAK_LOG)); // TODO
+		put(ItemsStuff.LEAVES, tag, item(Items.OAK_LEAVES)); // TODO
+		put(ItemsStuff.SPONGE, tag, item(Items.SPONGE));
+		put(ItemsStuff.GLASS, tag, item(Items.GLASS));
+		put(ItemsStuff.LAPIS_ORE, tag, item(Items.LAPIS_ORE));
+		put(ItemsStuff.LAPIS_BLOCK, tag, item(Items.LAPIS_BLOCK));
+		put(ItemsStuff.DISPENSER, tag, item(Items.DISPENSER));
+		put(ItemsStuff.SANDSTONE, tag, item(Items.SANDSTONE));
+		put(ItemsStuff.NOTEBLOCk, tag, item(Items.NOTE_BLOCK));
+		put(ItemsStuff.BED, tag, item(Items.RED_BED));
+		put(ItemsStuff.POWERED_RAIL, tag, item(Items.POWERED_RAIL));
+		put(ItemsStuff.DETECTOR_RAIL, tag, item(Items.DETECTOR_RAIL));
+		put(ItemsStuff.STICKY_PISTON, tag, item(Items.STICKY_PISTON));
+		put(ItemsStuff.WEB, tag, item(Items.COBWEB));
+		put(ItemsStuff.TALL_GRASS, tag, item(Items.TALL_GRASS));
+		put(ItemsStuff.DEAD_BUSH, tag, item(Items.DEAD_BUSH));
+		put(ItemsStuff.PISTON, tag, item(Items.PISTON));
+		put(ItemsStuff.PISTON_EXTENDED, tag, item(Items.PISTON));
+		put(ItemsStuff.CLOTH, tag, item(Items.WHITE_WOOL)); // TODO
+		put(ItemsStuff.MOVING_PISTON, tag, item(Items.PISTON));
+		put(ItemsStuff.YELLOW_PLANT, tag, item(Items.DANDELION));
+		put(ItemsStuff.POPPY, tag, item(Items.POPPY));
+		put(ItemsStuff.BROWN_MUSHROOM, tag, item(Items.BROWN_MUSHROOM));
+		put(ItemsStuff.RED_MUSHROOM, tag, item(Items.RED_MUSHROOM));
+		put(ItemsStuff.GOLDEN_BLOCK, tag, item(Items.GOLD_BLOCK));
+		put(ItemsStuff.IRON_BLOCK, tag, item(Items.IRON_BLOCK));
+		put(ItemsStuff.DOUBLE_STAIR, tag, item(Items.OAK_STAIRS)); // TODO
+		put(ItemsStuff.SINGLE_STAIR, tag, item(Items.OAK_STAIRS)); // TODO
+		put(ItemsStuff.BRICK, tag, item(Items.BRICKS));
+		put(ItemsStuff.TNT, tag, item(Items.TNT));
+		put(ItemsStuff.BOOKSHELF, tag, item(Items.BOOKSHELF));
+		put(ItemsStuff.MOSSY_COBBLESTONE, tag, item(Items.MOSSY_COBBLESTONE));
+		put(ItemsStuff.OBSIDIAN, tag, item(Items.OBSIDIAN));
+		put(ItemsStuff.TORCH, tag, item(Items.TORCH));
+		put(ItemsStuff.FIRE, tag, item(Items.FLINT_AND_STEEL));
+		put(ItemsStuff.MOB_SPAWNER, tag, item(Items.SPAWNER));
+		put(ItemsStuff.OAK_STAIRS, tag, item(Items.OAK_STAIRS));
+		put(ItemsStuff.CHEST, tag, item(Items.CHEST));
+		put(ItemsStuff.REDSTONE_DUST, tag, item(Items.REDSTONE));
+		put(ItemsStuff.DIAMOND_ORE, tag, item(Items.DIAMOND_ORE));
+		put(ItemsStuff.DIAMOND_BLOCK, tag, item(Items.DIAMOND_BLOCK));
+		put(ItemsStuff.CRAFTING_TABLE, tag, item(Items.CRAFTING_TABLE));
+		put(ItemsStuff.CROPS, tag, item(Items.WHEAT_SEEDS));
+		put(ItemsStuff.TILLED_FARMLAND, tag, item(Items.FARMLAND)); // TODO (tilled)
+		put(ItemsStuff.FURNACE, tag, item(Items.FURNACE));
+		put(ItemsStuff.FURNACE_ACTIVE, tag, item(Items.FURNACE)); // todo (active)
+		put(ItemsStuff.SIGN, tag, item(Items.OAK_SIGN));
+		put(ItemsStuff.OAK_DOOR, tag, item(Items.OAK_DOOR));
+		put(ItemsStuff.LADDER, tag, item(Items.LADDER));
+		put(ItemsStuff.RAIL, tag, item(Items.RAIL));
+		put(ItemsStuff.COBBLESTONE_STAIRS, tag, item(Items.COBBLESTONE_STAIRS));
+		put(ItemsStuff.WALL_SIGN, tag, item(Items.OAK_SIGN));
+		put(ItemsStuff.LEVER, tag, item(Items.LEVER));
+		put(ItemsStuff.STONE_PRESSURE_PLATE, tag, item(Items.STONE_PRESSURE_PLATE));
+		put(ItemsStuff.IRON_DOOR, tag, item(Items.IRON_DOOR));
+		put(ItemsStuff.OAK_PRESSURE_PLATE, tag, item(Items.OAK_PRESSURE_PLATE));
+		put(ItemsStuff.REDSTONE_ORE, tag, item(Items.REDSTONE_ORE));
+		put(ItemsStuff.REDSTONE_ORE_ACTIVE, tag, item(Items.REDSTONE_ORE));
+		put(ItemsStuff.REDSTONE_TORCH, tag, item(Items.REDSTONE_TORCH));
+		put(ItemsStuff.REDSTONE_TORCH_ACTIVE, tag, item(Items.REDSTONE_TORCH));
+		put(ItemsStuff.BUTTON, tag, item(Items.OAK_BUTTON)); // todo?
+		put(ItemsStuff.SNOW, tag, item(Items.SNOW));
+		put(ItemsStuff.ICE, tag, item(Items.ICE));
+		put(ItemsStuff.SNOW_BLOCK, tag, item(Items.SNOW_BLOCK));
+		put(ItemsStuff.CACTUS, tag, item(Items.CACTUS));
+		put(ItemsStuff.CLAY, tag, item(Items.CLAY));
+		put(ItemsStuff.REED, tag, item(Items.SUGAR_CANE));
+		put(ItemsStuff.JUKEBOX, tag, item(Items.JUKEBOX));
+		put(ItemsStuff.FENCE, tag, item(Items.OAK_FENCE)); // todo
+		put(ItemsStuff.PUMPKIN, tag, item(Items.PUMPKIN));
+		put(ItemsStuff.NETHERRACK, tag, item(Items.NETHERRACK));
+		put(ItemsStuff.SOUL_SAND, tag, item(Items.SOUL_SAND));
+		put(ItemsStuff.GLOWSTONE, tag, item(Items.GLOWSTONE));
+		put(ItemsStuff.PORTAL, tag, item(Items.PURPLE_WOOL)); // todo
+		put(ItemsStuff.LANTERN, tag, item(Items.LANTERN));
+		put(ItemsStuff.CAKE, tag, item(Items.CAKE));
+		put(ItemsStuff.REDSTONE_REPEATER, tag, item(Items.REPEATER));
+		put(ItemsStuff.REDSTONE_REPEATER_ACTIVE, tag, item(Items.REPEATER)); // TODO: active
+		put(ItemsStuff.LOCKED_CHEST, tag, item(Items.CHEST));
+		put(ItemsStuff.TRAPDOOR, tag, item(Items.OAK_TRAPDOOR)); // todo: was there iron?
+		put(ItemsStuff.IRON_SHOVEL, tag, item(Items.IRON_SHOVEL));
+		put(ItemsStuff.IRON_PICKAXE, tag, item(Items.IRON_PICKAXE));
+		put(ItemsStuff.IRON_AXE, tag, item(Items.IRON_AXE));
+		put(ItemsStuff.FLINT_AND_STEEL, tag, item(Items.FLINT_AND_STEEL));
+		put(ItemsStuff.APPLE, tag, item(Items.APPLE));
+		put(ItemsStuff.BOW, tag, item(Items.BOW));
+		put(ItemsStuff.ARROW, tag, item(Items.ARROW));
+		put(ItemsStuff.COAL, tag, item(Items.COAL));
+		put(ItemsStuff.DIAMOND, tag, item(Items.DIAMOND));
+		put(ItemsStuff.IRON_INGOT, tag, item(Items.IRON_INGOT));
+		put(ItemsStuff.GOLD_INGOT, tag, item(Items.GOLD_INGOT));
+		put(ItemsStuff.IRON_SWORD, tag, item(Items.IRON_SWORD));
+		put(ItemsStuff.WOODEN_SWORD, tag, item(Items.WOODEN_SWORD));
+		put(ItemsStuff.WOODEN_SHOVEL, tag, item(Items.WOODEN_SHOVEL));
+		put(ItemsStuff.WOODEN_PICKAXE, tag, item(Items.WOODEN_PICKAXE));
+		put(ItemsStuff.WOODEN_AXE, tag, item(Items.WOODEN_AXE));
+		put(ItemsStuff.STONE_SWORD, tag, item(Items.STONE_SWORD));
+		put(ItemsStuff.STONE_SHOVEL, tag, item(Items.STONE_SHOVEL));
+		put(ItemsStuff.STONE_PICKAXE, tag, item(Items.STONE_PICKAXE));
+		put(ItemsStuff.STONE_AXE, tag, item(Items.STONE_AXE));
+		put(ItemsStuff.DIAMOND_SWORD, tag, item(Items.DIAMOND_SWORD));
+		put(ItemsStuff.DIAMOND_SHOVEL, tag, item(Items.DIAMOND_SHOVEL));
+		put(ItemsStuff.DIAMOND_PICKAXE, tag, item(Items.DIAMOND_PICKAXE));
+		put(ItemsStuff.DIAMOND_AXE, tag, item(Items.DIAMOND_AXE));
+		put(ItemsStuff.STICK, tag, item(Items.STICK));
+		put(ItemsStuff.BOWL, tag, item(Items.BOWL));
+		put(ItemsStuff.STEW, tag, item(Items.MUSHROOM_STEW));
+		put(ItemsStuff.GOLDEN_SWORD, tag, item(Items.GOLDEN_SWORD));
+		put(ItemsStuff.GOLDEN_SHOVEL, tag, item(Items.GOLDEN_SHOVEL));
+		put(ItemsStuff.GOLDEN_PICKAXE, tag, item(Items.GOLDEN_PICKAXE));
+		put(ItemsStuff.GOLDEN_AXE, tag, item(Items.GOLDEN_AXE));
+		put(ItemsStuff.STRING, tag, item(Items.STRING));
+		put(ItemsStuff.FEATHER, tag, item(Items.FEATHER));
+		put(ItemsStuff.GUN_POWDER, tag, item(Items.GUNPOWDER));
+		put(ItemsStuff.WOODEN_HOE, tag, item(Items.WOODEN_HOE));
+		put(ItemsStuff.STONE_HOE, tag, item(Items.STONE_HOE));
+		put(ItemsStuff.IRON_HOE, tag, item(Items.IRON_HOE));
+		put(ItemsStuff.DIAMOND_HOE, tag, item(Items.DIAMOND_HOE));
+		put(ItemsStuff.GOLDEN_HOE, tag, item(Items.GOLDEN_HOE));
+		put(ItemsStuff.SEEDS, tag, item(Items.WHEAT_SEEDS));
+		put(ItemsStuff.WHEAT, tag, item(Items.WHEAT));
+		put(ItemsStuff.BREAD, tag, item(Items.BREAD));
+		put(ItemsStuff.LEATHER_HELMET, tag, item(Items.LEATHER_HELMET));
+		put(ItemsStuff.LEATHER_CHESTPLATE, tag, item(Items.LEATHER_CHESTPLATE));
+		put(ItemsStuff.LEATHER_LEGGINGS, tag, item(Items.LEATHER_LEGGINGS));
+		put(ItemsStuff.LEATHER_BOOTS, tag, item(Items.LEATHER_BOOTS));
+		put(ItemsStuff.CHAIN_HELMET, tag, item(Items.CHAINMAIL_HELMET));
+		put(ItemsStuff.CHAIN_CHESTPLATE, tag, item(Items.CHAINMAIL_CHESTPLATE));
+		put(ItemsStuff.CHAIN_LEGGINGS, tag, item(Items.CHAINMAIL_LEGGINGS));
+		put(ItemsStuff.CHAIN_BOOTS, tag, item(Items.CHAINMAIL_BOOTS));
+		put(ItemsStuff.IRON_HELMET, tag, item(Items.IRON_HELMET));
+		put(ItemsStuff.IRON_CHESTPLATE, tag, item(Items.IRON_CHESTPLATE));
+		put(ItemsStuff.IRON_LEGGINGS, tag, item(Items.IRON_LEGGINGS));
+		put(ItemsStuff.IRON_BOOTS, tag, item(Items.IRON_BOOTS));
+		put(ItemsStuff.DIAMOND_HELMET, tag, item(Items.DIAMOND_HELMET));
+		put(ItemsStuff.DIAMOND_CHESTPLATE, tag, item(Items.DIAMOND_CHESTPLATE));
+		put(ItemsStuff.DIAMOND_LEGGINGS, tag, item(Items.DIAMOND_LEGGINGS));
+		put(ItemsStuff.DIAMOND_BOOTS, tag, item(Items.DIAMOND_BOOTS));
+		put(ItemsStuff.GOLDEN_HELMET, tag, item(Items.GOLDEN_HELMET));
+		put(ItemsStuff.GOLDEN_CHESTPLATE, tag, item(Items.GOLDEN_CHESTPLATE));
+		put(ItemsStuff.GOLDEN_LEGGINGS, tag, item(Items.GOLDEN_LEGGINGS));
+		put(ItemsStuff.GOLDEN_BOOTS, tag, item(Items.GOLDEN_BOOTS));
+		put(ItemsStuff.FLINT, tag, item(Items.FLINT));
+		put(ItemsStuff.RAW_PORKCHOP, tag, item(Items.PORKCHOP));
+		put(ItemsStuff.COOKED_PORKCHOP, tag, item(Items.COOKED_PORKCHOP));
+		put(ItemsStuff.PAINTING, tag, item(Items.PAINTING));
+		put(ItemsStuff.GOLDEN_APPLE, tag, item(Items.GOLDEN_APPLE));
+		put(ItemsStuff.SIGN_ITEM, tag, item(Items.OAK_SIGN));
+		put(ItemsStuff.WOODEN_DOOR, tag, item(Items.OAK_DOOR));
+		put(ItemsStuff.BUCKET, tag, item(Items.BUCKET));
+		put(ItemsStuff.WATER_BUCKET, tag, item(Items.WATER_BUCKET));
+		put(ItemsStuff.LAVA_BUCKET, tag, item(Items.LAVA_BUCKET));
+		put(ItemsStuff.MINECART, tag, item(Items.MINECART));
+		put(ItemsStuff.SADDLE, tag, item(Items.SADDLE));
+		put(ItemsStuff.IRON_DOOR_ITEM, tag, item(Items.IRON_DOOR));
+		put(ItemsStuff.REDSTONE, tag, item(Items.REDSTONE));
+		put(ItemsStuff.SNOWBALL, tag, item(Items.SNOWBALL));
+		put(ItemsStuff.BOAT, tag, item(Items.OAK_BOAT));
+		put(ItemsStuff.LEATHER, tag, item(Items.LEATHER));
+		put(ItemsStuff.MILK_BUCKET, tag, item(Items.MILK_BUCKET));
+		put(ItemsStuff.BRICK_ITEM, tag, item(Items.BRICK));
+		put(ItemsStuff.CLAY_ITEM, tag, item(Items.CLAY_BALL));
+		put(ItemsStuff.SUGAR_CANE, tag, item(Items.SUGAR_CANE));
+		put(ItemsStuff.PAPER, tag, item(Items.PAPER));
+		put(ItemsStuff.BOOK, tag, item(Items.BOOK));
+		put(ItemsStuff.SLIMEBALL, tag, item(Items.SLIME_BALL));
+		put(ItemsStuff.CHEST_MINECART, tag, item(Items.CHEST_MINECART));
+		put(ItemsStuff.FURNACE_MINECART, tag, item(Items.FURNACE_MINECART));
+		put(ItemsStuff.EGG, tag, item(Items.EGG));
+		put(ItemsStuff.COMPASS, tag, item(Items.COMPASS));
+		put(ItemsStuff.FISHING_ROD, tag, item(Items.FISHING_ROD));
+		put(ItemsStuff.CLOCK, tag, item(Items.CLOCK));
+		put(ItemsStuff.GLOWSTONE_DUST, tag, item(Items.GLOWSTONE_DUST));
+		put(ItemsStuff.RAW_FISH, tag, item(Items.COD)); // TODO
+		put(ItemsStuff.COOKED_FISH, tag, item(Items.COOKED_COD)); // TODO
+		put(ItemsStuff.DYE_POWDER, tag, item(Items.WHITE_DYE)); // TODO
+		put(ItemsStuff.BONE, tag, item(Items.BONE));
+		put(ItemsStuff.SUGAR, tag, item(Items.SUGAR));
+		put(ItemsStuff.CAKE_ITEM, tag, item(Items.CAKE));
+		put(ItemsStuff.BED_ITEM, tag, item(Items.RED_BED));
+		put(ItemsStuff.REDSTONE_REPEATER_ITEM, tag, item(Items.REPEATER));
+		put(ItemsStuff.COOKIE, tag, item(Items.COOKIE));
+		put(ItemsStuff.MAP, tag, item(Items.MAP));
+		put(ItemsStuff.SHEARS, tag, item(Items.SHEARS));
+		put(ItemsStuff.MUSIC_DISC_13, tag, item(Items.MUSIC_DISC_13));
+		put(ItemsStuff.MUSIC_DISC_CAT, tag, item(Items.MUSIC_DISC_CAT));
+		try {
+			NbtIo.writeCompressed(tag, outputPath);
+		} catch (final Exception exception) {
+			exception.printStackTrace();
+		}
 	}
 
 	@FunctionalInterface
 	public interface ItemFactory {
 		Item getItem();
 	}
-
 }

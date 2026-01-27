@@ -46,7 +46,7 @@ public class Main {
 				e.printStackTrace();
 			}
 
-			ItemMapper.bootstrap();
+			ItemMapper.writeItems(outputDir.resolve("beta_to_modern_items.nbt"));
 		});
 	}
 

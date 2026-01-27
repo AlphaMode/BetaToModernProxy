@@ -22,7 +22,7 @@ public interface ItemsStuff {
 	int SPONGE = 19;
 	int GLASS = 20;
 	int LAPIS_ORE = 21;
-	int LAPIS_BLOCk = 22;
+	int LAPIS_BLOCK = 22;
 	int DISPENSER = 23;
 	int SANDSTONE = 24;
 	int NOTEBLOCk = 25;
@@ -42,7 +42,7 @@ public interface ItemsStuff {
 	int BROWN_MUSHROOM = 39;
 	int RED_MUSHROOM = 40;
 	int GOLDEN_BLOCK = 41;
-	int IRON_BLOCk = 42;
+	int IRON_BLOCK = 42;
 	int DOUBLE_STAIR = 43;
 	int SINGLE_STAIR = 44;
 	int BRICK = 45;
