@@ -5,6 +5,8 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Item;
 
 public record BetaItemStack(Item item, int count, int aux) {
+	public static final BetaItemStack EMPTY = new BetaItemStack(new Item(0), 0, 0);
+
 	public static final StreamCodec<ByteBuf, BetaItemStack> CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack stack) {
