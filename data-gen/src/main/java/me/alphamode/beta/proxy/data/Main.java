@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class Main {
-	static void main(final String[] args) throws IOException {
+	public static void main(final String[] args) throws IOException {
 		bootstrap(() -> {
 			final Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
 

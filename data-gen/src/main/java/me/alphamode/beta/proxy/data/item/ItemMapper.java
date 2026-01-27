@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.data.item;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -9,7 +10,7 @@ import java.nio.file.Path;
 
 public class ItemMapper {
 	private static void put(final int betaId, final CompoundTag tag, final ItemFactory factory) {
-
+		tag.put(String.valueOf(betaId), new IntTag(Item.getId(factory.getItem())));
 	}
 
 	private static ItemFactory item(final Item item) {
