@@ -12,6 +12,7 @@ import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
+import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
@@ -41,6 +42,7 @@ public class PlayPipeline {
 //            .clientHandler(S2CPlayerPositionPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
+			.serverHandler(ChunkVisibilityPacket.class, PlayPipeline::handleS2CChunkVisibility)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 //			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 //			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
@@ -156,6 +158,12 @@ public class PlayPipeline {
 
 	public void handleC2SChatCommand(final ClientConnection connection, final C2SChatCommandPacket packet) {
 		connection.getServerConnection().send(new ChatPacket("/" + packet.command()));
+	}
+
+	public void handleS2CChunkVisibility(final ClientConnection connection, final ChunkVisibilityPacket packet) {
+		if (!packet.visible()) {
+			connection.send(new S2CForgetLevelChunkPacket(new ChunkPos(packet.x(), packet.z())));
+		}
 	}
 
 	public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {

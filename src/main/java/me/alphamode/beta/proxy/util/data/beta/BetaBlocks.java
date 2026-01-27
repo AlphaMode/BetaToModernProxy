@@ -1,14 +1,12 @@
 package me.alphamode.beta.proxy.util.data.beta;
 
-import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.data.Block;
-import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class BetaBlocks {
-	private static final Map<Integer, Block> REGISTRY = new HashMap<>();
+	private static final Set<? super Block> REGISTRY = new HashSet<>();
 
 	public static final Block STONE = registerBlock(new Block(1));
 	public static final Block GRASS = registerBlock(new Block(2));
@@ -34,7 +32,7 @@ public final class BetaBlocks {
 	public static final Block LAPIS_BLOCk = registerBlock(new Block(22));
 	public static final Block DISPENSER = registerBlock(new Block(23));
 	public static final Block SANDSTONE = registerBlock(new Block(24));
-	public static final Block NOTEBLOCk = registerBlock(new Block(25));
+	public static final Block NOTEBLOCK = registerBlock(new Block(25));
 	public static final Block BED = registerBlock(new Block(26));
 	public static final Block POWERED_RAIL = registerBlock(new Block(27));
 	public static final Block DETECTOR_RAIL = registerBlock(new Block(28));
@@ -50,10 +48,10 @@ public final class BetaBlocks {
 	public static final Block POPPY = registerBlock(new Block(38));
 	public static final Block BROWN_MUSHROOM = registerBlock(new Block(39));
 	public static final Block RED_MUSHROOM = registerBlock(new Block(40));
-	public static final Block GOLDEN_BLOCK = registerBlock(new Block(41));
-	public static final Block IRON_BLOCk = registerBlock(new Block(42));
-	public static final Block DOUBLE_STAIR = registerBlock(new Block(43));
-	public static final Block SINGLE_STAIR = registerBlock(new Block(44));
+	public static final Block GOLD_BLOCK = registerBlock(new Block(41));
+	public static final Block IRON_BLOCK = registerBlock(new Block(42));
+	public static final Block DOUBLE_SLAB = registerBlock(new Block(43));
+	public static final Block HALF_SLAB = registerBlock(new Block(44));
 	public static final Block BRICK = registerBlock(new Block(45));
 	public static final Block TNT = registerBlock(new Block(46));
 	public static final Block BOOKSHELF = registerBlock(new Block(47));
@@ -107,17 +105,11 @@ public final class BetaBlocks {
 	public static final Block LOCKED_CHEST = registerBlock(new Block(95));
 	public static final Block TRAPDOOR = registerBlock(new Block(96));
 
-	public static Block registerBlock(final Block block) {
-		REGISTRY.put(block.id(), block);
-		return block;
+	public static void bootstrap() {
 	}
 
-	public static @Nullable Block byId(final int id) {
-		if (id > 256) {
-			throw new IllegalArgumentException("Expected id for blocks, not items");
-		} else {
-			BrodernProxy.LOGGER.warn("Got block with id {}", id);
-			return REGISTRY.getOrDefault(id, null);
-		}
+	public static <T extends Block> Block registerBlock(final T block) {
+		REGISTRY.add(block);
+		return block;
 	}
 }

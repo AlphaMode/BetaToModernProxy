@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +27,13 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
 		try {
 			final var packet = BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
-			if (BrodernProxy.getProxy().isDebug()) {
+			if (BrodernProxy.getProxy().isDebug() && !(
+					packet.getType() == BetaPackets.MOVE_PLAYER
+							|| packet.getType() == BetaPackets.MOVE_PLAYER_POS
+							|| packet.getType() == BetaPackets.MOVE_PLAYER_POS_ROT
+							|| packet.getType() == BetaPackets.MOVE_ENTITY_POS
+							|| packet.getType() == BetaPackets.MOVE_ENTITY_POS_ROT
+							|| packet.getType() == BetaPackets.SET_TIME)) {
 				LOGGER.info("Beta Packet {} received", packet);
 			}
 

@@ -4,8 +4,6 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Item;
 
-import java.util.Objects;
-
 public record BetaItemStack(Item item, int count, int aux) {
 	public static final StreamCodec<ByteBuf, BetaItemStack> CODEC = new StreamCodec<>() {
 		@Override
@@ -18,15 +16,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 		@Override
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
-
-			Item item;
-			if (id < 256) {
-				item = Objects.requireNonNull(BetaBlocks.byId(id)).asItem();
-			} else {
-				item = BetaItems.byId(id);
-			}
-
-			return new BetaItemStack(item, buf.readByte(), buf.readShort());
+			return new BetaItemStack(BetaItems.byId(id), buf.readByte(), buf.readShort());
 		}
 	};
 
@@ -48,14 +38,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 			if (id < 0) {
 				return null;
 			} else {
-				Item item;
-				if (id < 256) {
-					item = Objects.requireNonNull(BetaBlocks.byId(id)).asItem();
-				} else {
-					item = BetaItems.byId(id);
-				}
-
-				return new BetaItemStack(item, buf.readByte(), buf.readShort());
+				return new BetaItemStack(BetaItems.byId(id), buf.readByte(), buf.readShort());
 			}
 		}
 	};
@@ -70,17 +53,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 		@Override
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
-
-			Item item = BetaBlocks.STONE.asItem();
-			if (id > 0) {
-				if (id < 256) {
-					item = Objects.requireNonNull(BetaBlocks.byId(id)).asItem();
-				} else {
-					item = BetaItems.byId(id);
-				}
-			}
-
-			return new BetaItemStack(item, 1, buf.readShort());
+			return new BetaItemStack(BetaItems.byId(id), 1, buf.readShort());
 		}
 	};
 }

@@ -25,6 +25,7 @@ public record BrodernProxy(Config config) {
 	private static final CompoundTag DEFAULT_TAGS;
 	private static final CompoundTag DEFAULT_REGISTRIES;
     private static final BlockTranslator BLOCK_TRANSLATOR;
+	private static final CompoundTag BETA_TO_MODERN_ITEMS;
 
 	static {
 		CompoundTag tag;
@@ -49,7 +50,15 @@ public record BrodernProxy(Config config) {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+
+		try {
+			tag = NbtIO.LATEST.read(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/beta_to_modern_items.nbt")))), new NbtReadTracker()).asCompoundTag();
+		} catch (final Exception exception) {
+			tag = new CompoundTag();
+		}
+
+		BETA_TO_MODERN_ITEMS = tag;
+	}
 
 	public BrodernProxy {
 		INSTANCE = this;
@@ -57,6 +66,9 @@ public record BrodernProxy(Config config) {
 	}
 
 	public void listen() {
+		BetaItems.bootstrap();
+		BetaBlocks.bootstrap();
+
 		final String bindAddress = this.config.getBindAddress();
 		final int bindPort = this.config.getBindPort();
 		final String serverAddress = this.config.getServerAddress();
@@ -82,6 +94,10 @@ public record BrodernProxy(Config config) {
     public static BlockTranslator getBlockTranslator() {
         return BLOCK_TRANSLATOR;
     }
+
+	public static CompoundTag getBetaToModernItems() {
+		return BETA_TO_MODERN_ITEMS;
+	}
 
 	public static BrodernProxy getProxy() {
 		if (INSTANCE == null) {
