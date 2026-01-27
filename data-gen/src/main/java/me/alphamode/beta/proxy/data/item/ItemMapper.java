@@ -5,10 +5,14 @@ import com.google.gson.*;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.Consumable;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -290,7 +294,7 @@ public class ItemMapper {
 		put(tag, defaultFactory(BetaItems.LAPIS_BLOCK, Items.LAPIS_BLOCK));
 		put(tag, defaultFactory(BetaItems.DISPENSER, Items.DISPENSER));
 		put(tag, defaultFactory(BetaItems.SANDSTONE, Items.SANDSTONE));
-		put(tag, defaultFactory(BetaItems.NOTEBLOCk, Items.NOTE_BLOCK));
+		put(tag, defaultFactory(BetaItems.NOTEBLOCK, Items.NOTE_BLOCK));
 		put(tag, defaultFactory(BetaItems.BED, Items.RED_BED));
 		put(tag, defaultFactory(BetaItems.POWERED_RAIL, Items.POWERED_RAIL));
 		put(tag, defaultFactory(BetaItems.DETECTOR_RAIL, Items.DETECTOR_RAIL));
@@ -489,6 +493,14 @@ public class ItemMapper {
 				builder.set(DataComponents.MAX_DAMAGE, betaItem.maxDamage());
 			} else {
 				builder.set(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+			}
+
+			if (betaItem instanceof BetaFood) {
+				builder.set(DataComponents.CONSUMABLE, Consumable.builder()
+						.animation(ItemUseAnimation.NONE)
+						.consumeSeconds(0)
+						.sound(BuiltInRegistries.SOUND_EVENT.get(SoundEvents.EMPTY.location()).get())
+						.build());
 			}
 
 			return new ItemRef(vanillaItem, builder.build());

@@ -50,7 +50,7 @@ public interface BetaItems {
 			.build();
 	BetaItem SANDSTONE = BetaItem.builder(24)
 			.build();
-	BetaItem NOTEBLOCk = BetaItem.builder(25)
+	BetaItem NOTEBLOCK = BetaItem.builder(25)
 			.build();
 	BetaItem BED = BetaItem.builder(26)
 			.build();
@@ -195,68 +195,92 @@ public interface BetaItems {
 	BetaItem TRAPDOOR = BetaItem.builder(96)
 			.build();
 	BetaItem IRON_SHOVEL = BetaItem.builder(256)
+			.setMaxStackSize(1)
 			.build();
 
 	// Items
-	BetaItem IRON_PICKAXE = BetaItem.builder(256 + 1)
+	BetaItem IRON_PICKAXE = BetaItem.builder(257)
+			.setMaxStackSize(1)
 			.build();
-	BetaItem IRON_AXE = BetaItem.builder(256 + 2)
+	BetaItem IRON_AXE = BetaItem.builder(258)
+			.setMaxStackSize(1)
 			.build();
-	BetaItem FLINT_AND_STEEL = BetaItem.builder(256 + 3)
+	BetaItem FLINT_AND_STEEL = BetaItem.builder(259)
+			.setMaxStackSize(1)
+			.setMaxDamage(64)
 			.build();
-	BetaItem APPLE = BetaItem.builder(256 + 4)
+	BetaItem APPLE = BetaItem.builder(260)
+			.food()
 			.build();
-	BetaItem BOW = BetaItem.builder(256 + 5)
+	BetaItem BOW = BetaItem.builder(261)
 			.build();
-	BetaItem ARROW = BetaItem.builder(256 + 6)
+	BetaItem ARROW = BetaItem.builder(262)
 			.build();
-	BetaItem COAL = BetaItem.builder(256 + 7)
+	BetaItem COAL = BetaItem.builder(263)
 			.build();
-	BetaItem DIAMOND = BetaItem.builder(256 + 8)
+	BetaItem DIAMOND = BetaItem.builder(264)
 			.build();
-	BetaItem IRON_INGOT = BetaItem.builder(256 + 9)
+	BetaItem IRON_INGOT = BetaItem.builder(265)
 			.build();
-	BetaItem GOLD_INGOT = BetaItem.builder(256 + 10)
+	BetaItem GOLD_INGOT = BetaItem.builder(266)
 			.build();
 	BetaItem IRON_SWORD = BetaItem.builder(256 + 11)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem WOODEN_SWORD = BetaItem.builder(256 + 12)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem WOODEN_SHOVEL = BetaItem.builder(256 + 13)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem WOODEN_PICKAXE = BetaItem.builder(256 + 14)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem WOODEN_AXE = BetaItem.builder(256 + 15)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STONE_SWORD = BetaItem.builder(256 + 16)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STONE_SHOVEL = BetaItem.builder(256 + 17)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STONE_PICKAXE = BetaItem.builder(256 + 18)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STONE_AXE = BetaItem.builder(256 + 19)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_SWORD = BetaItem.builder(256 + 20)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_SHOVEL = BetaItem.builder(256 + 21)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_PICKAXE = BetaItem.builder(256 + 22)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_AXE = BetaItem.builder(256 + 23)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STICK = BetaItem.builder(256 + 24)
 			.build();
 	BetaItem BOWL = BetaItem.builder(256 + 25)
 			.build();
 	BetaItem STEW = BetaItem.builder(256 + 26)
+			.food()
 			.build();
 	BetaItem GOLDEN_SWORD = BetaItem.builder(256 + 27)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_SHOVEL = BetaItem.builder(256 + 28)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_PICKAXE = BetaItem.builder(256 + 29)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_AXE = BetaItem.builder(256 + 30)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STRING = BetaItem.builder(256 + 31)
 			.build();
@@ -265,14 +289,19 @@ public interface BetaItems {
 	BetaItem GUN_POWDER = BetaItem.builder(256 + 33)
 			.build();
 	BetaItem WOODEN_HOE = BetaItem.builder(256 + 34)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem STONE_HOE = BetaItem.builder(256 + 35)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem IRON_HOE = BetaItem.builder(256 + 36)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_HOE = BetaItem.builder(256 + 37)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_HOE = BetaItem.builder(256 + 38)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem SEEDS = BetaItem.builder(256 + 39)
 			.build();
@@ -323,12 +352,15 @@ public interface BetaItems {
 	BetaItem FLINT = BetaItem.builder(256 + 62)
 			.build();
 	BetaItem RAW_PORKCHOP = BetaItem.builder(256 + 63)
+			.food()
 			.build();
 	BetaItem COOKED_PORKCHOP = BetaItem.builder(256 + 64)
+			.food()
 			.build();
 	BetaItem PAINTING = BetaItem.builder(256 + 65)
 			.build();
 	BetaItem GOLDEN_APPLE = BetaItem.builder(256 + 66)
+			.food()
 			.build();
 	BetaItem SIGN_ITEM = BetaItem.builder(256 + 67)
 			.build();
@@ -377,14 +409,18 @@ public interface BetaItems {
 	BetaItem COMPASS = BetaItem.builder(256 + 89)
 			.build();
 	BetaItem FISHING_ROD = BetaItem.builder(256 + 90)
+			.setMaxStackSize(1)
+			.setMaxDamage(64)
 			.build();
 	BetaItem CLOCK = BetaItem.builder(256 + 91)
 			.build();
 	BetaItem GLOWSTONE_DUST = BetaItem.builder(256 + 92)
 			.build();
 	BetaItem RAW_FISH = BetaItem.builder(256 + 93)
+			.food()
 			.build();
 	BetaItem COOKED_FISH = BetaItem.builder(256 + 94)
+			.food()
 			.build();
 	BetaItem DYE_POWDER = BetaItem.builder(256 + 95)
 			.build();
@@ -403,6 +439,8 @@ public interface BetaItems {
 	BetaItem MAP = BetaItem.builder(256 + 102)
 			.build();
 	BetaItem SHEARS = BetaItem.builder(256 + 103)
+			.setMaxStackSize(1)
+			.setMaxDamage(238)
 			.build();
 	BetaItem MUSIC_DISC_13 = BetaItem.builder(256 + 2000)
 			.build();
