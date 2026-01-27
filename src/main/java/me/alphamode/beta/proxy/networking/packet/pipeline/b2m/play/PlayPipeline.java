@@ -30,6 +30,7 @@ import java.util.zip.Inflater;
 public class PlayPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(PlayPipeline.class);
 	public static final PacketPipeline<PlayPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<PlayPipeline>builder()
+			.clientHandler(C2SPlayKeepAlivePacket.class, PlayPipeline::handleC2SKeepAlive)
 			.serverHandler(SetSpawnPositionPacket.class, PlayPipeline::handleS2CSetSpawnPosition)
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
@@ -57,6 +58,11 @@ public class PlayPipeline {
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
+
+	public void handleC2SKeepAlive(final ClientConnection connection, final C2SPlayKeepAlivePacket packet) {
+		connection.getServerConnection().send(new KeepAlivePacket());
+		connection.setLastKeepAliveId(packet.id());
+	}
 
 	/**
 	 * Dear AlphaMode
@@ -129,7 +135,7 @@ public class PlayPipeline {
 
 	public void handleS2CSetTime(final ClientConnection connection, final SetTimePacket packet) {
 		// TODO/FIX
-		// connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
+		// connection.send(new S2CSetTimePacket(packet.id(), packet.id(), true));
 	}
 
 	public void handleS2CSetHealth(final ClientConnection connection, final SetHealthPacket packet) {
@@ -176,6 +182,8 @@ public class PlayPipeline {
 			return;
 		}
 
+		connection.send(new S2CSetChunkCacheRadiusPacket(2048));
+		connection.send(new S2CSetChunkCacheCenterPacket(packet.x(), packet.z()));
 		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), packet.xs() + 1, packet.ys() + 1, packet.zs() + 1, buffer);
 	}
 

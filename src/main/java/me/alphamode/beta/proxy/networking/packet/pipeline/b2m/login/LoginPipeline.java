@@ -10,7 +10,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.Keep
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
@@ -45,9 +45,6 @@ import java.util.*;
 public class LoginPipeline {
 	private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
 	public static final PacketPipeline<LoginPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
-			// Keep Alive
-			.clientHandler(C2SCommonKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
-			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleS2CKeepAlive)
 			// Intent
 			.clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
 			// Status
@@ -58,6 +55,8 @@ public class LoginPipeline {
 			.serverHandler(HandshakePacket.class, LoginPipeline::handleS2CHandshake)
 			.serverHandler(LoginPacket.class, LoginPipeline::handleS2CLogin)
 			// Configuration
+			.clientHandler(C2SConfigurationKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
+			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleS2CKeepAlive)
 			.clientHandler(C2SLoginAcknowledgedPacket.class, LoginPipeline::handleC2SLoginAcknowledged)
 			.clientHandler(C2SFinishConfigurationPacket.class, LoginPipeline::handleC2SFinishConfiguration)
 			// Unhandled
@@ -65,25 +64,8 @@ public class LoginPipeline {
 			.unhandledServer(LoginPipeline::passServerToNextPipeline)
 			.build();
 
-	// Keep Alive (Handshake, Login, Play)
-	private void handleC2SKeepAlive(final ClientConnection connection, final C2SCommonKeepAlivePacket<?> packet) {
-		connection.getServerConnection().send(new KeepAlivePacket());
-		LOGGER.info("Sending keep alive to server");
-	}
-
-	private void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
-		final long lastKeepAliveMs = connection.getLastKeepAliveMS();
-		connection.setLastKeepAliveMS(System.currentTimeMillis());
-
-		final S2CCommonKeepAlivePacket<?> keepAlivePacket = connection.createKeepAlivePacket(System.currentTimeMillis() - lastKeepAliveMs);
-		if (keepAlivePacket != null) {
-			LOGGER.info("Sending keep alive to client");
-			connection.send(keepAlivePacket);
-		}
-	}
-
 	// Handshake
-	private void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
+	public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
 		switch (packet.intention()) {
 			case LOGIN -> handleLogin(connection, packet);
 			case STATUS -> connection.setState(PacketState.STATUS);
@@ -94,7 +76,7 @@ public class LoginPipeline {
 	}
 
 	// Status
-	private void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
+	public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
 		final BrodernProxy proxy = BrodernProxy.getProxy();
 		final ServerStatus serverStatus = new ServerStatus(
 				proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
@@ -106,13 +88,13 @@ public class LoginPipeline {
 		connection.send(new S2CStatusResponsePacket(serverStatus));
 	}
 
-	private void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
+	public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
 		connection.send(new S2CStatusPongResponsePacket(packet.time()));
 		connection.disconnect();
 	}
 
 	// Login
-	private void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
+	public void handleLogin(final ClientConnection connection, final C2SIntentionPacket packet) {
 		connection.setState(PacketState.LOGIN);
 		if (packet.protocolVersion() != ModernPacket.PROTOCOL_VERSION) {
 			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernPacket.PROTOCOL_VERSION);
@@ -121,14 +103,14 @@ public class LoginPipeline {
 		}
 	}
 
-	private void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
+	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
 		LOGGER.info("Sending Handshake Packet");
 		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
 		connection.setProfile(profile);
 		connection.getServerConnection().send(new HandshakePacket(packet.username()));
 	}
 
-	private void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
+	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
 		if (packet.username().equals("-")) {
 			LOGGER.info("Sending Login Packet & Login Finished");
 			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
@@ -139,7 +121,21 @@ public class LoginPipeline {
 	}
 
 	// Configuration
-	private void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
+	public void handleC2SKeepAlive(final ClientConnection connection, final C2SConfigurationKeepAlivePacket packet) {
+		LOGGER.error("(Configuration) Sending keep alive to server");
+		connection.getServerConnection().send(new KeepAlivePacket());
+		connection.setLastKeepAliveId(packet.id());
+	}
+
+	public void handleS2CKeepAlive(final ClientConnection connection, final KeepAlivePacket packet) {
+		LOGGER.error("Sending keep alive to client");
+		final S2CCommonKeepAlivePacket<?> keepAlivePacket = connection.createKeepAlivePacket(connection.getLastKeepAliveId());
+		if (keepAlivePacket != null) {
+			connection.send(keepAlivePacket);
+		}
+	}
+
+	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
 		LOGGER.info("Starting Configuration");
 		connection.setState(PacketState.CONFIGURATION);
 
@@ -152,7 +148,7 @@ public class LoginPipeline {
 		connection.send(S2CFinishConfigurationPacket.INSTANCE);
 	}
 
-	private void sendTags(final ClientConnection connection) {
+	public void sendTags(final ClientConnection connection) {
 		LOGGER.info("Sending Tags");
 
 		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
@@ -173,7 +169,7 @@ public class LoginPipeline {
 		connection.send(new S2CUpdateTagsPacket(tags));
 	}
 
-	private void sendRegistries(final ClientConnection connection) {
+	public void sendRegistries(final ClientConnection connection) {
 		LOGGER.info("Sending Registries");
 
 		BrodernProxy.getDefaultRegistries().forEach(entry -> {
@@ -195,42 +191,18 @@ public class LoginPipeline {
 		});
 	}
 
-	private void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
+	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		LOGGER.info("Finished Configuration & Going into Play Mode");
 		connection.setState(PacketState.PLAY);
 		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
 	}
 
-	private void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-// 		connection.send(new S2CPlayLoginPacket(
-//				0, // TODO
-//				false,
-//				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
-//				BrodernProxy.getProxy().config().getMaxPlayers(),
-//				16,
-//				16,
-//				false,
-//				false,
-//				false,
-//				new CommonPlayerSpawnInfo(
-//						null, // TODO (Holder<DimensionType>)
-//						Dimension.byLegacyId(packet.dimension()),
-//						packet.seed(),
-//						GameMode.SURVIVAL,
-//						GameMode.SURVIVAL,
-//						false,
-//						false,
-//						Optional.empty(),
-//						300,
-//						63
-//				),
-//				false
-//		));
+	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
 	}
 
-	private void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
+	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}
 
-	private void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
+	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
 	}
 }

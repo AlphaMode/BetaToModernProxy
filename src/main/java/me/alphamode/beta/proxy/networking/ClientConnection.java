@@ -35,7 +35,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	private PacketState state = PacketState.HANDSHAKING;
 	private GameProfile profile;
 	private int protocolVersion = BetaPacket.PROTOCOL_VERSION; // Assume Beta?
-	private long lastKeepAliveMS = 0L;
+	private long lastKeepAliveId = 0L;
 
 	public ClientConnection(final MinecraftServerAddress address) {
 		this.address = address;
@@ -135,15 +135,16 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		this.protocolVersion = protocolVersion;
 	}
 
-	public long getLastKeepAliveMS() {
-		return this.lastKeepAliveMS;
+	public long getLastKeepAliveId() {
+		return this.lastKeepAliveId;
 	}
 
-	public void setLastKeepAliveMS(final long lastKeepAliveMS) {
-		this.lastKeepAliveMS = lastKeepAliveMS;
+	public void setLastKeepAliveId(final long lastKeepAliveId) {
+		this.lastKeepAliveId = lastKeepAliveId;
 	}
 
 	public void tick() {
+		this.send(this.createKeepAlivePacket(this.lastKeepAliveId));
 	}
 
 	@Override
@@ -157,11 +158,11 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	}
 
 	@Override
-	public S2CCommonKeepAlivePacket<?> createKeepAlivePacket(final long time) {
+	public S2CCommonKeepAlivePacket<?> createKeepAlivePacket(final long id) {
 		return switch (this.state) {
 			case HANDSHAKING, STATUS, LOGIN -> null;
-			case PLAY -> new S2CPlayKeepAlivePacket(time);
-			case CONFIGURATION -> new S2CConfigurationKeepAlivePacket(time);
+			case PLAY -> new S2CPlayKeepAlivePacket(id);
+			case CONFIGURATION -> new S2CConfigurationKeepAlivePacket(id);
 		};
 	}
 
