@@ -50,7 +50,7 @@ public final class BetaBlocks {
 	public static final Block RED_MUSHROOM = registerBlock(new Block(40));
 	public static final Block GOLD_BLOCK = registerBlock(new Block(41));
 	public static final Block IRON_BLOCK = registerBlock(new Block(42));
-	public static final Block DOUBLE_STAIR = registerBlock(new Block(43));
+	public static final Block DOUBLE_SLAB = registerBlock(new Block(43));
 	public static final Block HALF_SLAB = registerBlock(new Block(44));
 	public static final Block BRICK = registerBlock(new Block(45));
 	public static final Block TNT = registerBlock(new Block(46));

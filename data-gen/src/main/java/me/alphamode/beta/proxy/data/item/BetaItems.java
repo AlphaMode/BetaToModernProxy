@@ -43,7 +43,7 @@ public interface BetaItems {
 	int RED_MUSHROOM = 40;
 	int GOLDEN_BLOCK = 41;
 	int IRON_BLOCK = 42;
-	int DOUBLE_STAIR = 43;
+	int DOUBLE_SLAB = 43;
 	int HALF_SLAB = 44;
 	int BRICK = 45;
 	int TNT = 46;
