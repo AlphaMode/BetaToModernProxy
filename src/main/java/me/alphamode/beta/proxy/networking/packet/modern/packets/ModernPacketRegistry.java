@@ -44,7 +44,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 			try {
 				return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
 			} catch (final Exception exception) {
-                return null;
+				return null;
 //				throw new RuntimeException("(" + state + ") Failed to decode modern " + direction + " packet " + packetType + "\nReason: " + exception.getMessage());
 			}
 		}
@@ -255,7 +255,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.TAB_LIST, null);
 		this.registerPacket(ClientboundPlayPackets.TAG_QUERY, null);
 		this.registerPacket(ClientboundPlayPackets.TAKE_ITEM_ENTITY, null);
-		this.registerPacket(ClientboundPlayPackets.TELEPORT_ENTITY, null);
+		this.registerPacket(ClientboundPlayPackets.TELEPORT_ENTITY, S2CTeleportEntityPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.TEST_INSTANCE_BLOCK_STATUS, null);
 		this.registerPacket(ClientboundPlayPackets.TICKING_STATE, null);
 		this.registerPacket(ClientboundPlayPackets.TICKING_STEP, null);
