@@ -4,6 +4,8 @@ import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
 import me.alphamode.beta.proxy.util.BlockTranslator;
 import me.alphamode.beta.proxy.util.NbtUtil;
+import me.alphamode.beta.proxy.util.data.beta.BetaBlocks;
+import me.alphamode.beta.proxy.util.data.beta.BetaItems;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -24,8 +26,8 @@ public record BrodernProxy(Config config) {
 	private static BrodernProxy INSTANCE;
 	private static final CompoundTag DEFAULT_TAGS;
 	private static final CompoundTag DEFAULT_REGISTRIES;
-    private static final BlockTranslator BLOCK_TRANSLATOR;
 	private static final CompoundTag BETA_TO_MODERN_ITEMS;
+	private static final BlockTranslator BLOCK_TRANSLATOR;
 
 	static {
 		CompoundTag tag;
@@ -45,12 +47,6 @@ public record BrodernProxy(Config config) {
 
 		DEFAULT_REGISTRIES = tag;
 
-        try {
-            BLOCK_TRANSLATOR = new BlockTranslator(NbtUtil.readCompressed(Main.class.getResourceAsStream("/beta_to_modern_blocks.nbt")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
 		try {
 			tag = NbtIO.LATEST.read(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/beta_to_modern_items.nbt")))), new NbtReadTracker()).asCompoundTag();
 		} catch (final Exception exception) {
@@ -58,6 +54,13 @@ public record BrodernProxy(Config config) {
 		}
 
 		BETA_TO_MODERN_ITEMS = tag;
+
+		try {
+			BLOCK_TRANSLATOR = new BlockTranslator(NbtUtil.readCompressed(Main.class.getResourceAsStream("/beta_to_modern_blocks.nbt")));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	public BrodernProxy {
@@ -91,9 +94,9 @@ public record BrodernProxy(Config config) {
 		return DEFAULT_REGISTRIES;
 	}
 
-    public static BlockTranslator getBlockTranslator() {
-        return BLOCK_TRANSLATOR;
-    }
+	public static BlockTranslator getBlockTranslator() {
+		return BLOCK_TRANSLATOR;
+	}
 
 	public static CompoundTag getBetaToModernItems() {
 		return BETA_TO_MODERN_ITEMS;

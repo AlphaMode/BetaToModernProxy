@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.data;
 
 import com.mojang.serialization.DynamicOps;
 import me.alphamode.beta.proxy.data.block.BetaToModernBlocks;
+import me.alphamode.beta.proxy.data.item.ItemMapper;
 import me.alphamode.beta.proxy.data.registries.BetaRegistries;
 import me.alphamode.beta.proxy.data.tags.TagProvider;
 import net.minecraft.SharedConstants;
@@ -26,17 +27,12 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class Main {
-	public static void main(final String[] args) throws IOException {
+	public static void main(final String[] args) {
 		bootstrap(() -> {
 			final Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
-	public static void main(String[] args) throws IOException {
-		Path outputDir = Path.of(System.getProperty("datagen.output-dir"));
-		Path registryDataPath = outputDir.resolve("beta_registries.nbt");
-        Path blocksTranslationPath = outputDir.resolve("beta_to_modern_blocks.nbt");
-		Path tagDataPath = outputDir.resolve("beta_tags.nbt");
 
-		SharedConstants.tryDetectVersion();
-		Bootstrap.bootStrap();
+			SharedConstants.tryDetectVersion();
+			Bootstrap.bootStrap();
 
 			var lookup = BetaRegistries.createLookup();
 
@@ -49,7 +45,7 @@ public class Main {
 			}
 
 			try {
-				outputRegistries(lookup, outputDir.resolve("beta_registries.nbt"));
+				outputRegistries(lookup, outputDir);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -65,27 +61,19 @@ public class Main {
 		Util.shutdownExecutors();
 	}
 
-	private static void outputRegistries(final HolderLookup.Provider lookup, final Path outputPath) throws IOException {
+	private static void outputRegistries(final HolderLookup.Provider lookup, final Path outputDir) throws IOException {
 		var ops = lookup.createSerializationContext(NbtOps.INSTANCE);
 		CompoundTag registryTag = new CompoundTag();
-		RegistryDataLoader.SYNCHRONIZED_REGISTRIES.forEach(registryData -> {
-			packRegistry(ops, registryData, lookup, (resourceKey, entries) -> {
-				CompoundTag registry = new CompoundTag();
-				entries.forEach(entry -> {
-					entry.data().ifPresent(tag -> {
-						registry.put(entry.id().toString(), tag);
-					});
-				});
-				registryTag.put(resourceKey.identifier().toString(), registry);
-			});
+		RegistryDataLoader.SYNCHRONIZED_REGISTRIES.forEach(registryData -> packRegistry(ops, registryData, lookup, (resourceKey, entries) -> {
+			CompoundTag registry = new CompoundTag();
+			entries.forEach(entry -> entry.data().ifPresent(tag -> registry.put(entry.id().toString(), tag)));
+			registryTag.put(resourceKey.identifier().toString(), registry);
+		}));
+		NbtIo.writeCompressed(registryTag, outputDir.resolve("beta_registries.nbt"));
 
-
-		});
-		NbtIo.writeCompressed(registryTag, registryDataPath);
-
-        BetaToModernBlocks translator = new BetaToModernBlocks();
-        translator.translate();
-        translator.save(blocksTranslationPath);
+		final BetaToModernBlocks translator = new BetaToModernBlocks();
+		translator.translate();
+		translator.save(outputDir.resolve("beta_to_modern_blocks.nbt"));
 
 		Util.shutdownExecutors();
 	}
