@@ -27,7 +27,7 @@ public class ItemMapper {
 		} else {
 			final CompoundTag mapping = new CompoundTag();
 			for (var entry : factory.auxMapping().entrySet()) {
-				mapping.put(key, entry.getValue().encode());
+				mapping.put(String.valueOf(entry.getKey()), entry.getValue().encode());
 			}
 
 			tag.put(key, mapping);

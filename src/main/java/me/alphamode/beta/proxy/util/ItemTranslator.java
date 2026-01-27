@@ -60,18 +60,17 @@ public final class ItemTranslator {
 			throw new UnsupportedOperationException();
 		}
 
-		if (tag instanceof CompoundTag compoundTag) {
-			return Either.left(ItemTranslation.read(compoundTag));
-		} else if (tag.isListTag()) {
-			final Map<Integer, ItemTranslation> auxMapping = new HashMap<>();
-			for (final var entry : tag.asListTag()) {
-				final CompoundTag compoundTag = entry.asCompoundTag();
-				for (var listEntry : compoundTag) {
-					auxMapping.put(Integer.parseInt(listEntry.getKey()), ItemTranslation.read(compoundTag));
+		if (tag instanceof CompoundTag translationTag) {
+			if (translationTag.contains("id")) {
+				return Either.left(ItemTranslation.read(translationTag));
+			} else {
+				final Map<Integer, ItemTranslation> auxMapping = new HashMap<>();
+				for (final var entry : translationTag) {
+					auxMapping.put(Integer.parseInt(entry.getKey()), ItemTranslation.read(entry.getValue().asCompoundTag()));
 				}
-			}
 
-			return Either.right(new ItemTranslations(auxMapping));
+				return Either.right(new ItemTranslations(auxMapping));
+			}
 		}
 
 		throw new UnsupportedOperationException();
