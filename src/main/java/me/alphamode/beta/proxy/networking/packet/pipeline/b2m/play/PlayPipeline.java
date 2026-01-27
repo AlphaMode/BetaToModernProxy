@@ -12,8 +12,11 @@ import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
+import me.alphamode.beta.proxy.util.data.BlockHitResult;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.Vec3d;
+import me.alphamode.beta.proxy.util.data.Vec3i;
+import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
@@ -36,6 +39,8 @@ public class PlayPipeline {
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
+			.clientHandler(C2SUseItemPacket.class, PlayPipeline::handleC2SUseItem)
+			.clientHandler(C2SUseItemOnPacket.class, PlayPipeline::handleC2SUseItemOn)
 			.clientHandler(C2SClientCommandPacket.class, PlayPipeline::handleC2SClientCommand)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
@@ -147,7 +152,7 @@ public class PlayPipeline {
 		}
 	}
 
-	private void handleS2CGameEvent(final ClientConnection connection, final GameEventPacket packet) {
+	public void handleS2CGameEvent(final ClientConnection connection, final GameEventPacket packet) {
 		if (packet.event() == GameEventPacket.INVALID_BED) {
 			connection.send(new S2CSystemChatPacket(TextComponent.translation("block.minecraft.spawn.not_valid"), false));
 		} else if (packet.event() == GameEventPacket.BEGIN_RAINING) {
@@ -155,6 +160,23 @@ public class PlayPipeline {
 		} else if (packet.event() == GameEventPacket.END_RAINING) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.STOP_RAINING, 0.0F));
 		}
+	}
+
+	public void handleC2SUseItem(final ClientConnection connection, final C2SUseItemPacket packet) {
+		connection.getServerConnection().send(new UseItemPacket(
+				new Vec3i(-1, -1, -1),
+				(byte) 0,
+				BetaItemStack.EMPTY
+		));
+	}
+
+	public void handleC2SUseItemOn(final ClientConnection connection, final C2SUseItemOnPacket packet) {
+		final BlockHitResult result = packet.hitResult();
+		connection.getServerConnection().send(new UseItemPacket(
+				new Vec3i(result.getBlockPos().x(), result.getBlockPos().y(), result.getBlockPos().z()),
+				(byte) result.getDirection().ordinal(),
+				BetaItemStack.EMPTY
+		));
 	}
 
 	public void handleC2SClientCommand(final ClientConnection connection, final C2SClientCommandPacket packet) {

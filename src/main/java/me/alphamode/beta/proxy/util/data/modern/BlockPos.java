@@ -33,6 +33,18 @@ public record BlockPos(int x, int y, int z) {
 		return (int) (pos << 64 - Z_OFFSET - PACKED_HORIZONTAL_LENGTH >> 64 - PACKED_HORIZONTAL_LENGTH);
 	}
 
+	public int getX() {
+		return this.x;
+	}
+
+	public int getY() {
+		return this.y;
+	}
+
+	public int getZ() {
+		return this.z;
+	}
+
 	public static BlockPos unpack(final long pos) {
 		return new BlockPos(getX(pos), getY(pos), getZ(pos));
 	}
