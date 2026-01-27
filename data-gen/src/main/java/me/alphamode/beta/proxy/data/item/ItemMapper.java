@@ -6,74 +6,216 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
 
 public class ItemMapper {
 	private static void put(final int betaId, final CompoundTag tag, final ItemFactory factory) {
-		tag.putInt(String.valueOf(betaId), Item.getId(factory.getItem()));
+		final Optional<Item> optionalItem = factory.getItem();
+		if (optionalItem.isPresent()) {
+			tag.putInt(String.valueOf(betaId), Item.getId(optionalItem.get()));
+		} else {
+			final CompoundTag mapping = new CompoundTag();
+			for (var entry : factory.auxMapping().entrySet()) {
+				mapping.putInt(String.valueOf(entry.getKey()), Item.getId(entry.getValue().getItem().orElseThrow()));
+			}
+
+			tag.put(String.valueOf(betaId), mapping);
+		}
 	}
 
 	private static ItemFactory item(final Item item) {
-		return () -> item;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(item);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory planks() {
 		// TODO
-		return () -> Items.OAK_PLANKS;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_PLANKS);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory sapling() {
 		// TODO
-		return () -> Items.OAK_SAPLING;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_SAPLING);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory logs() {
 		// TODO
-		return () -> Items.OAK_LOG;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_LOG);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory leaves() {
 		// TODO
-		return () -> Items.OAK_LEAVES;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_LEAVES);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory wool() {
 		// TODO
-		return () -> Items.WHITE_WOOL;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.WHITE_WOOL);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory stairs() {
 		// TODO
-		return () -> Items.OAK_STAIRS;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_STAIRS);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory slabs() {
 		// TODO
-		return () -> Items.OAK_SLAB;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_SLAB);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory farmland() {
 		// TODO
-		return () -> Items.FARMLAND;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.FARMLAND);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory furnace() {
 		// TODO
-		return () -> Items.FURNACE;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.FURNACE);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory button() {
 		// TODO
-		return () -> Items.OAK_BUTTON;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_BUTTON);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	private static ItemFactory fence() {
 		// TODO
-		return () -> Items.OAK_FENCE;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.OAK_FENCE);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
-	private static ItemFactory dye() {
+	private static ItemFactory dye(final Map<Integer, Items> aux) {
 		// TODO
-		return () -> Items.WHITE_DYE;
+		return new ItemFactory() {
+			@Override
+			public Optional<Item> getItem() {
+				return Optional.of(Items.WHITE_DYE);
+			}
+
+			@Override
+			public Map<Integer, ItemFactory> auxMapping() {
+				return Map.of();
+			}
+		};
 	}
 
 	public static void writeItems(final Path outputPath) {
@@ -269,7 +411,7 @@ public class ItemMapper {
 		put(BetaItems.GLOWSTONE_DUST, tag, item(Items.GLOWSTONE_DUST));
 		put(BetaItems.RAW_FISH, tag, item(Items.COD));
 		put(BetaItems.COOKED_FISH, tag, item(Items.COOKED_COD));
-		put(BetaItems.DYE_POWDER, tag, dye());
+		put(BetaItems.DYE_POWDER, tag, dye(Map.of(/* TODO */)));
 		put(BetaItems.BONE, tag, item(Items.BONE));
 		put(BetaItems.SUGAR, tag, item(Items.SUGAR));
 		put(BetaItems.CAKE_ITEM, tag, item(Items.CAKE));
@@ -287,8 +429,9 @@ public class ItemMapper {
 		}
 	}
 
-	@FunctionalInterface
 	public interface ItemFactory {
-		Item getItem();
+		Optional<Item> getItem();
+
+		Map<Integer, ItemFactory> auxMapping();
 	}
 }
