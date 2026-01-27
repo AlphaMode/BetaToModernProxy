@@ -35,6 +35,7 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
+			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
 			.clientHandler(C2SClientCommandPacket.class, PlayPipeline::handleC2SClientCommand)
 			.serverHandler(ChatPacket.class, PlayPipeline::handleS2CChat)
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
@@ -143,6 +144,16 @@ public class PlayPipeline {
 		connection.send(new S2CSetHealthPacket(health));
 		if (health == 0) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.IMMEDIATE_RESPAWN, 0));
+		}
+	}
+
+	private void handleS2CGameEvent(final ClientConnection connection, final GameEventPacket packet) {
+		if (packet.event() == GameEventPacket.INVALID_BED) {
+			connection.send(new S2CSystemChatPacket(TextComponent.translation("block.minecraft.spawn.not_valid"), false));
+		} else if (packet.event() == GameEventPacket.BEGIN_RAINING) {
+			connection.send(new S2CGameEventPacket(S2CGameEventPacket.START_RAINING, 0.0F));
+		} else if (packet.event() == GameEventPacket.END_RAINING) {
+			connection.send(new S2CGameEventPacket(S2CGameEventPacket.STOP_RAINING, 0.0F));
 		}
 	}
 

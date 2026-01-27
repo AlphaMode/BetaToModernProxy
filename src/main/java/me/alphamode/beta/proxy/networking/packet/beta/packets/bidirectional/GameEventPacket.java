@@ -7,6 +7,10 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record GameEventPacket(byte event) implements BetaPacket {
+	public static final byte INVALID_BED = 0;
+	public static final byte BEGIN_RAINING = 1;
+	public static final byte END_RAINING = 2;
+
 	public static final StreamCodec<ByteBuf, GameEventPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.BYTE,
 			GameEventPacket::event,
