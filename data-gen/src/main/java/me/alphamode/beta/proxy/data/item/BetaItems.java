@@ -1,206 +1,411 @@
 package me.alphamode.beta.proxy.data.item;
 
 public interface BetaItems {
-	int STONE = 1;
-	int GRASS = 2;
-	int DIRT = 3;
-	int COBBLESTONE = 4;
-	int PLANKS = 5;
-	int SAPLING = 6;
-	int BEDROCK = 7;
-	int FLOWING_WATER = 8;
-	int STILL_WATER = 9;
-	int FLOWING_LAVA = 10;
-	int STILL_LAVA = 11;
-	int SAND = 12;
-	int GRAVEL = 13;
-	int GOLDEN_ORE = 14;
-	int IRON_ORE = 15;
-	int COAL_ORE = 16;
-	int WOOD = 17;
-	int LEAVES = 18;
-	int SPONGE = 19;
-	int GLASS = 20;
-	int LAPIS_ORE = 21;
-	int LAPIS_BLOCK = 22;
-	int DISPENSER = 23;
-	int SANDSTONE = 24;
-	int NOTEBLOCk = 25;
-	int BED = 26;
-	int POWERED_RAIL = 27;
-	int DETECTOR_RAIL = 28;
-	int STICKY_PISTON = 29;
-	int WEB = 30;
-	int TALL_GRASS = 31;
-	int DEAD_BUSH = 32;
-	int PISTON = 33;
-	int PISTON_EXTENDED = 34;
-	int CLOTH = 35;
-	int MOVING_PISTON = 36;
-	int YELLOW_PLANT = 37;
-	int POPPY = 38;
-	int BROWN_MUSHROOM = 39;
-	int RED_MUSHROOM = 40;
-	int GOLDEN_BLOCK = 41;
-	int IRON_BLOCK = 42;
-	int DOUBLE_SLAB = 43;
-	int HALF_SLAB = 44;
-	int BRICK = 45;
-	int TNT = 46;
-	int BOOKSHELF = 47;
-	int MOSSY_COBBLESTONE = 48;
-	int OBSIDIAN = 49;
-	int TORCH = 50;
-	int FIRE = 51;
-	int MOB_SPAWNER = 52;
-	int OAK_STAIRS = 53;
-	int CHEST = 54;
-	int REDSTONE_DUST = 55;
-	int DIAMOND_ORE = 56;
-	int DIAMOND_BLOCK = 57;
-	int CRAFTING_TABLE = 58;
-	int CROPS = 59;
-	int TILLED_FARMLAND = 60;
-	int FURNACE = 61;
-	int FURNACE_ACTIVE = 62;
-	int SIGN = 63;
-	int OAK_DOOR = 64;
-	int LADDER = 65;
-	int RAIL = 66;
-	int COBBLESTONE_STAIRS = 67;
-	int WALL_SIGN = 68;
-	int LEVER = 69;
-	int STONE_PRESSURE_PLATE = 70;
-	int IRON_DOOR = 71;
-	int OAK_PRESSURE_PLATE = 72;
-	int REDSTONE_ORE = 73;
-	int REDSTONE_ORE_ACTIVE = 74;
-	int REDSTONE_TORCH = 75;
-	int REDSTONE_TORCH_ACTIVE = 76;
-	int BUTTON = 77;
-	int SNOW = 78;
-	int ICE = 79;
-	int SNOW_BLOCK = 80;
-	int CACTUS = 81;
-	int CLAY = 82;
-	int REED = 83;
-	int JUKEBOX = 84;
-	int FENCE = 85;
-	int PUMPKIN = 86;
-	int NETHERRACK = 87;
-	int SOUL_SAND = 88;
-	int GLOWSTONE = 89;
-	int PORTAL = 90;
-	int LANTERN = 91;
-	int CAKE = 92;
-	int REDSTONE_REPEATER = 93;
-	int REDSTONE_REPEATER_ACTIVE = 94;
-	int LOCKED_CHEST = 95;
-	int TRAPDOOR = 96;
-	int IRON_SHOVEL = 256;
-	int IRON_PICKAXE = 256 + 1;
-	int IRON_AXE = 256 + 2;
-	int FLINT_AND_STEEL = 256 + 3;
-	int APPLE = 256 + 4;
-	int BOW = 256 + 5;
-	int ARROW = 256 + 6;
-	int COAL = 256 + 7;
-	int DIAMOND = 256 + 8;
-	int IRON_INGOT = 256 + 9;
-	int GOLD_INGOT = 256 + 10;
-	int IRON_SWORD = 256 + 11;
-	int WOODEN_SWORD = 256 + 12;
-	int WOODEN_SHOVEL = 256 + 13;
-	int WOODEN_PICKAXE = 256 + 14;
-	int WOODEN_AXE = 256 + 15;
-	int STONE_SWORD = 256 + 16;
-	int STONE_SHOVEL = 256 + 17;
-	int STONE_PICKAXE = 256 + 18;
-	int STONE_AXE = 256 + 19;
-	int DIAMOND_SWORD = 256 + 20;
-	int DIAMOND_SHOVEL = 256 + 21;
-	int DIAMOND_PICKAXE = 256 + 22;
-	int DIAMOND_AXE = 256 + 23;
-	int STICK = 256 + 24;
-	int BOWL = 256 + 25;
-	int STEW = 256 + 26;
-	int GOLDEN_SWORD = 256 + 27;
-	int GOLDEN_SHOVEL = 256 + 28;
-	int GOLDEN_PICKAXE = 256 + 29;
-	int GOLDEN_AXE = 256 + 30;
-	int STRING = 256 + 31;
-	int FEATHER = 256 + 32;
-	int GUN_POWDER = 256 + 33;
-	int WOODEN_HOE = 256 + 34;
-	int STONE_HOE = 256 + 35;
-	int IRON_HOE = 256 + 36;
-	int DIAMOND_HOE = 256 + 37;
-	int GOLDEN_HOE = 256 + 38;
-	int SEEDS = 256 + 39;
-	int WHEAT = 256 + 40;
-	int BREAD = 256 + 41;
-	int LEATHER_HELMET = 256 + 42;
-	int LEATHER_CHESTPLATE = 256 + 43;
-	int LEATHER_LEGGINGS = 256 + 44;
-	int LEATHER_BOOTS = 256 + 45;
-	int CHAIN_HELMET = 256 + 46;
-	int CHAIN_CHESTPLATE = 256 + 47;
-	int CHAIN_LEGGINGS = 256 + 48;
-	int CHAIN_BOOTS = 256 + 49;
-	int IRON_HELMET = 256 + 50;
-	int IRON_CHESTPLATE = 256 + 51;
-	int IRON_LEGGINGS = 256 + 52;
-	int IRON_BOOTS = 256 + 53;
-	int DIAMOND_HELMET = 256 + 54;
-	int DIAMOND_CHESTPLATE = 256 + 55;
-	int DIAMOND_LEGGINGS = 256 + 56;
-	int DIAMOND_BOOTS = 256 + 57;
-	int GOLDEN_HELMET = 256 + 58;
-	int GOLDEN_CHESTPLATE = 256 + 59;
-	int GOLDEN_LEGGINGS = 256 + 60;
-	int GOLDEN_BOOTS = 256 + 61;
-	int FLINT = 256 + 62;
-	int RAW_PORKCHOP = 256 + 63;
-	int COOKED_PORKCHOP = 256 + 64;
-	int PAINTING = 256 + 65;
-	int GOLDEN_APPLE = 256 + 66;
-	int SIGN_ITEM = 256 + 67;
-	int WOODEN_DOOR = 256 + 68;
-	int BUCKET = 256 + 69;
-	int WATER_BUCKET = 256 + 70;
-	int LAVA_BUCKET = 256 + 71;
-	int MINECART = 256 + 72;
-	int SADDLE = 256 + 73;
-	int IRON_DOOR_ITEM = 256 + 74;
-	int REDSTONE = 256 + 75;
-	int SNOWBALL = 256 + 76;
-	int BOAT = 256 + 77;
-	int LEATHER = 256 + 78;
-	int MILK_BUCKET = 256 + 79;
-	int BRICK_ITEM = 256 + 80;
-	int CLAY_ITEM = 256 + 81;
-	int SUGAR_CANE = 256 + 82;
-	int PAPER = 256 + 83;
-	int BOOK = 256 + 84;
-	int SLIMEBALL = 256 + 85;
-	int CHEST_MINECART = 256 + 86;
-	int FURNACE_MINECART = 256 + 87;
-	int EGG = 256 + 88;
-	int COMPASS = 256 + 89;
-	int FISHING_ROD = 256 + 90;
-	int CLOCK = 256 + 91;
-	int GLOWSTONE_DUST = 256 + 92;
-	int RAW_FISH = 256 + 93;
-	int COOKED_FISH = 256 + 94;
-	int DYE_POWDER = 256 + 95;
-	int BONE = 256 + 96;
-	int SUGAR = 256 + 97;
-	int CAKE_ITEM = 256 + 98;
-	int BED_ITEM = 256 + 99;
-	int REDSTONE_REPEATER_ITEM = 256 + 100;
-	int COOKIE = 256 + 101;
-	int MAP = 256 + 102;
-	int SHEARS = 256 + 103;
-	int MUSIC_DISC_13 = 256 + 2000;
-	int MUSIC_DISC_CAT = 256 + 2001;
+	// Blocks
+	BetaItem STONE = BetaItem.builder(1)
+			.build();
+	BetaItem GRASS = BetaItem.builder(2)
+			.build();
+	BetaItem DIRT = BetaItem.builder(3)
+			.build();
+	BetaItem COBBLESTONE = BetaItem.builder(4)
+			.build();
+	BetaItem PLANKS = BetaItem.builder(5)
+			.build();
+	BetaItem SAPLING = BetaItem.builder(6)
+			.build();
+	BetaItem BEDROCK = BetaItem.builder(7)
+			.build();
+	BetaItem FLOWING_WATER = BetaItem.builder(8)
+			.build();
+	BetaItem STILL_WATER = BetaItem.builder(9)
+			.build();
+	BetaItem FLOWING_LAVA = BetaItem.builder(10)
+			.build();
+	BetaItem STILL_LAVA = BetaItem.builder(11)
+			.build();
+	BetaItem SAND = BetaItem.builder(12)
+			.build();
+	BetaItem GRAVEL = BetaItem.builder(13)
+			.build();
+	BetaItem GOLDEN_ORE = BetaItem.builder(14)
+			.build();
+	BetaItem IRON_ORE = BetaItem.builder(15)
+			.build();
+	BetaItem COAL_ORE = BetaItem.builder(16)
+			.build();
+	BetaItem WOOD = BetaItem.builder(17)
+			.build();
+	BetaItem LEAVES = BetaItem.builder(18)
+			.build();
+	BetaItem SPONGE = BetaItem.builder(19)
+			.build();
+	BetaItem GLASS = BetaItem.builder(20)
+			.build();
+	BetaItem LAPIS_ORE = BetaItem.builder(21)
+			.build();
+	BetaItem LAPIS_BLOCK = BetaItem.builder(22)
+			.build();
+	BetaItem DISPENSER = BetaItem.builder(23)
+			.build();
+	BetaItem SANDSTONE = BetaItem.builder(24)
+			.build();
+	BetaItem NOTEBLOCk = BetaItem.builder(25)
+			.build();
+	BetaItem BED = BetaItem.builder(26)
+			.build();
+	BetaItem POWERED_RAIL = BetaItem.builder(27)
+			.build();
+	BetaItem DETECTOR_RAIL = BetaItem.builder(28)
+			.build();
+	BetaItem STICKY_PISTON = BetaItem.builder(29)
+			.build();
+	BetaItem WEB = BetaItem.builder(30)
+			.build();
+	BetaItem TALL_GRASS = BetaItem.builder(31)
+			.build();
+	BetaItem DEAD_BUSH = BetaItem.builder(32)
+			.build();
+	BetaItem PISTON = BetaItem.builder(33)
+			.build();
+	BetaItem PISTON_EXTENDED = BetaItem.builder(34)
+			.build();
+	BetaItem CLOTH = BetaItem.builder(35)
+			.build();
+	BetaItem MOVING_PISTON = BetaItem.builder(36)
+			.build();
+	BetaItem YELLOW_PLANT = BetaItem.builder(37)
+			.build();
+	BetaItem POPPY = BetaItem.builder(38)
+			.build();
+	BetaItem BROWN_MUSHROOM = BetaItem.builder(39)
+			.build();
+	BetaItem RED_MUSHROOM = BetaItem.builder(40)
+			.build();
+	BetaItem GOLDEN_BLOCK = BetaItem.builder(41)
+			.build();
+	BetaItem IRON_BLOCK = BetaItem.builder(42)
+			.build();
+	BetaItem DOUBLE_SLAB = BetaItem.builder(43)
+			.build();
+	BetaItem HALF_SLAB = BetaItem.builder(44)
+			.build();
+	BetaItem BRICK = BetaItem.builder(45)
+			.build();
+	BetaItem TNT = BetaItem.builder(46)
+			.build();
+	BetaItem BOOKSHELF = BetaItem.builder(47)
+			.build();
+	BetaItem MOSSY_COBBLESTONE = BetaItem.builder(48)
+			.build();
+	BetaItem OBSIDIAN = BetaItem.builder(49)
+			.build();
+	BetaItem TORCH = BetaItem.builder(50)
+			.build();
+	BetaItem FIRE = BetaItem.builder(51)
+			.build();
+	BetaItem MOB_SPAWNER = BetaItem.builder(52)
+			.build();
+	BetaItem OAK_STAIRS = BetaItem.builder(53)
+			.build();
+	BetaItem CHEST = BetaItem.builder(54)
+			.build();
+	BetaItem REDSTONE_DUST = BetaItem.builder(55)
+			.build();
+	BetaItem DIAMOND_ORE = BetaItem.builder(56)
+			.build();
+	BetaItem DIAMOND_BLOCK = BetaItem.builder(57)
+			.build();
+	BetaItem CRAFTING_TABLE = BetaItem.builder(58)
+			.build();
+	BetaItem CROPS = BetaItem.builder(59)
+			.build();
+	BetaItem TILLED_FARMLAND = BetaItem.builder(60)
+			.build();
+	BetaItem FURNACE = BetaItem.builder(61)
+			.build();
+	BetaItem FURNACE_ACTIVE = BetaItem.builder(62)
+			.build();
+	BetaItem SIGN = BetaItem.builder(63)
+			.build();
+	BetaItem OAK_DOOR = BetaItem.builder(64)
+			.build();
+	BetaItem LADDER = BetaItem.builder(65)
+			.build();
+	BetaItem RAIL = BetaItem.builder(66)
+			.build();
+	BetaItem COBBLESTONE_STAIRS = BetaItem.builder(67)
+			.build();
+	BetaItem WALL_SIGN = BetaItem.builder(68)
+			.build();
+	BetaItem LEVER = BetaItem.builder(69)
+			.build();
+	BetaItem STONE_PRESSURE_PLATE = BetaItem.builder(70)
+			.build();
+	BetaItem IRON_DOOR = BetaItem.builder(71)
+			.build();
+	BetaItem OAK_PRESSURE_PLATE = BetaItem.builder(72)
+			.build();
+	BetaItem REDSTONE_ORE = BetaItem.builder(73)
+			.build();
+	BetaItem REDSTONE_ORE_ACTIVE = BetaItem.builder(74)
+			.build();
+	BetaItem REDSTONE_TORCH = BetaItem.builder(75)
+			.build();
+	BetaItem REDSTONE_TORCH_ACTIVE = BetaItem.builder(76)
+			.build();
+	BetaItem BUTTON = BetaItem.builder(77)
+			.build();
+	BetaItem SNOW = BetaItem.builder(78)
+			.build();
+	BetaItem ICE = BetaItem.builder(79)
+			.build();
+	BetaItem SNOW_BLOCK = BetaItem.builder(80)
+			.build();
+	BetaItem CACTUS = BetaItem.builder(81)
+			.build();
+	BetaItem CLAY = BetaItem.builder(82)
+			.build();
+	BetaItem REED = BetaItem.builder(83)
+			.build();
+	BetaItem JUKEBOX = BetaItem.builder(84)
+			.build();
+	BetaItem FENCE = BetaItem.builder(85)
+			.build();
+	BetaItem PUMPKIN = BetaItem.builder(86)
+			.build();
+	BetaItem NETHERRACK = BetaItem.builder(87)
+			.build();
+	BetaItem SOUL_SAND = BetaItem.builder(88)
+			.build();
+	BetaItem GLOWSTONE = BetaItem.builder(89)
+			.build();
+	BetaItem PORTAL = BetaItem.builder(90)
+			.build();
+	BetaItem LANTERN = BetaItem.builder(91)
+			.build();
+	BetaItem CAKE = BetaItem.builder(92)
+			.build();
+	BetaItem REDSTONE_REPEATER = BetaItem.builder(93)
+			.build();
+	BetaItem REDSTONE_REPEATER_ACTIVE = BetaItem.builder(94)
+			.build();
+	BetaItem LOCKED_CHEST = BetaItem.builder(95)
+			.build();
+	BetaItem TRAPDOOR = BetaItem.builder(96)
+			.build();
+	BetaItem IRON_SHOVEL = BetaItem.builder(256)
+			.build();
+
+	// Items
+	BetaItem IRON_PICKAXE = BetaItem.builder(256 + 1)
+			.build();
+	BetaItem IRON_AXE = BetaItem.builder(256 + 2)
+			.build();
+	BetaItem FLINT_AND_STEEL = BetaItem.builder(256 + 3)
+			.build();
+	BetaItem APPLE = BetaItem.builder(256 + 4)
+			.build();
+	BetaItem BOW = BetaItem.builder(256 + 5)
+			.build();
+	BetaItem ARROW = BetaItem.builder(256 + 6)
+			.build();
+	BetaItem COAL = BetaItem.builder(256 + 7)
+			.build();
+	BetaItem DIAMOND = BetaItem.builder(256 + 8)
+			.build();
+	BetaItem IRON_INGOT = BetaItem.builder(256 + 9)
+			.build();
+	BetaItem GOLD_INGOT = BetaItem.builder(256 + 10)
+			.build();
+	BetaItem IRON_SWORD = BetaItem.builder(256 + 11)
+			.build();
+	BetaItem WOODEN_SWORD = BetaItem.builder(256 + 12)
+			.build();
+	BetaItem WOODEN_SHOVEL = BetaItem.builder(256 + 13)
+			.build();
+	BetaItem WOODEN_PICKAXE = BetaItem.builder(256 + 14)
+			.build();
+	BetaItem WOODEN_AXE = BetaItem.builder(256 + 15)
+			.build();
+	BetaItem STONE_SWORD = BetaItem.builder(256 + 16)
+			.build();
+	BetaItem STONE_SHOVEL = BetaItem.builder(256 + 17)
+			.build();
+	BetaItem STONE_PICKAXE = BetaItem.builder(256 + 18)
+			.build();
+	BetaItem STONE_AXE = BetaItem.builder(256 + 19)
+			.build();
+	BetaItem DIAMOND_SWORD = BetaItem.builder(256 + 20)
+			.build();
+	BetaItem DIAMOND_SHOVEL = BetaItem.builder(256 + 21)
+			.build();
+	BetaItem DIAMOND_PICKAXE = BetaItem.builder(256 + 22)
+			.build();
+	BetaItem DIAMOND_AXE = BetaItem.builder(256 + 23)
+			.build();
+	BetaItem STICK = BetaItem.builder(256 + 24)
+			.build();
+	BetaItem BOWL = BetaItem.builder(256 + 25)
+			.build();
+	BetaItem STEW = BetaItem.builder(256 + 26)
+			.build();
+	BetaItem GOLDEN_SWORD = BetaItem.builder(256 + 27)
+			.build();
+	BetaItem GOLDEN_SHOVEL = BetaItem.builder(256 + 28)
+			.build();
+	BetaItem GOLDEN_PICKAXE = BetaItem.builder(256 + 29)
+			.build();
+	BetaItem GOLDEN_AXE = BetaItem.builder(256 + 30)
+			.build();
+	BetaItem STRING = BetaItem.builder(256 + 31)
+			.build();
+	BetaItem FEATHER = BetaItem.builder(256 + 32)
+			.build();
+	BetaItem GUN_POWDER = BetaItem.builder(256 + 33)
+			.build();
+	BetaItem WOODEN_HOE = BetaItem.builder(256 + 34)
+			.build();
+	BetaItem STONE_HOE = BetaItem.builder(256 + 35)
+			.build();
+	BetaItem IRON_HOE = BetaItem.builder(256 + 36)
+			.build();
+	BetaItem DIAMOND_HOE = BetaItem.builder(256 + 37)
+			.build();
+	BetaItem GOLDEN_HOE = BetaItem.builder(256 + 38)
+			.build();
+	BetaItem SEEDS = BetaItem.builder(256 + 39)
+			.build();
+	BetaItem WHEAT = BetaItem.builder(256 + 40)
+			.build();
+	BetaItem BREAD = BetaItem.builder(256 + 41)
+			.build();
+	BetaItem LEATHER_HELMET = BetaItem.builder(256 + 42)
+			.build();
+	BetaItem LEATHER_CHESTPLATE = BetaItem.builder(256 + 43)
+			.build();
+	BetaItem LEATHER_LEGGINGS = BetaItem.builder(256 + 44)
+			.build();
+	BetaItem LEATHER_BOOTS = BetaItem.builder(256 + 45)
+			.build();
+	BetaItem CHAIN_HELMET = BetaItem.builder(256 + 46)
+			.build();
+	BetaItem CHAIN_CHESTPLATE = BetaItem.builder(256 + 47)
+			.build();
+	BetaItem CHAIN_LEGGINGS = BetaItem.builder(256 + 48)
+			.build();
+	BetaItem CHAIN_BOOTS = BetaItem.builder(256 + 49)
+			.build();
+	BetaItem IRON_HELMET = BetaItem.builder(256 + 50)
+			.build();
+	BetaItem IRON_CHESTPLATE = BetaItem.builder(256 + 51)
+			.build();
+	BetaItem IRON_LEGGINGS = BetaItem.builder(256 + 52)
+			.build();
+	BetaItem IRON_BOOTS = BetaItem.builder(256 + 53)
+			.build();
+	BetaItem DIAMOND_HELMET = BetaItem.builder(256 + 54)
+			.build();
+	BetaItem DIAMOND_CHESTPLATE = BetaItem.builder(256 + 55)
+			.build();
+	BetaItem DIAMOND_LEGGINGS = BetaItem.builder(256 + 56)
+			.build();
+	BetaItem DIAMOND_BOOTS = BetaItem.builder(256 + 57)
+			.build();
+	BetaItem GOLDEN_HELMET = BetaItem.builder(256 + 58)
+			.build();
+	BetaItem GOLDEN_CHESTPLATE = BetaItem.builder(256 + 59)
+			.build();
+	BetaItem GOLDEN_LEGGINGS = BetaItem.builder(256 + 60)
+			.build();
+	BetaItem GOLDEN_BOOTS = BetaItem.builder(256 + 61)
+			.build();
+	BetaItem FLINT = BetaItem.builder(256 + 62)
+			.build();
+	BetaItem RAW_PORKCHOP = BetaItem.builder(256 + 63)
+			.build();
+	BetaItem COOKED_PORKCHOP = BetaItem.builder(256 + 64)
+			.build();
+	BetaItem PAINTING = BetaItem.builder(256 + 65)
+			.build();
+	BetaItem GOLDEN_APPLE = BetaItem.builder(256 + 66)
+			.build();
+	BetaItem SIGN_ITEM = BetaItem.builder(256 + 67)
+			.build();
+	BetaItem WOODEN_DOOR = BetaItem.builder(256 + 68)
+			.build();
+	BetaItem BUCKET = BetaItem.builder(256 + 69)
+			.build();
+	BetaItem WATER_BUCKET = BetaItem.builder(256 + 70)
+			.build();
+	BetaItem LAVA_BUCKET = BetaItem.builder(256 + 71)
+			.build();
+	BetaItem MINECART = BetaItem.builder(256 + 72)
+			.build();
+	BetaItem SADDLE = BetaItem.builder(256 + 73)
+			.build();
+	BetaItem IRON_DOOR_ITEM = BetaItem.builder(256 + 74)
+			.build();
+	BetaItem REDSTONE = BetaItem.builder(256 + 75)
+			.build();
+	BetaItem SNOWBALL = BetaItem.builder(256 + 76)
+			.build();
+	BetaItem BOAT = BetaItem.builder(256 + 77)
+			.build();
+	BetaItem LEATHER = BetaItem.builder(256 + 78)
+			.build();
+	BetaItem MILK_BUCKET = BetaItem.builder(256 + 79)
+			.build();
+	BetaItem BRICK_ITEM = BetaItem.builder(256 + 80)
+			.build();
+	BetaItem CLAY_ITEM = BetaItem.builder(256 + 81)
+			.build();
+	BetaItem SUGAR_CANE = BetaItem.builder(256 + 82)
+			.build();
+	BetaItem PAPER = BetaItem.builder(256 + 83)
+			.build();
+	BetaItem BOOK = BetaItem.builder(256 + 84)
+			.build();
+	BetaItem SLIMEBALL = BetaItem.builder(256 + 85)
+			.build();
+	BetaItem CHEST_MINECART = BetaItem.builder(256 + 86)
+			.build();
+	BetaItem FURNACE_MINECART = BetaItem.builder(256 + 87)
+			.build();
+	BetaItem EGG = BetaItem.builder(256 + 88)
+			.build();
+	BetaItem COMPASS = BetaItem.builder(256 + 89)
+			.build();
+	BetaItem FISHING_ROD = BetaItem.builder(256 + 90)
+			.build();
+	BetaItem CLOCK = BetaItem.builder(256 + 91)
+			.build();
+	BetaItem GLOWSTONE_DUST = BetaItem.builder(256 + 92)
+			.build();
+	BetaItem RAW_FISH = BetaItem.builder(256 + 93)
+			.build();
+	BetaItem COOKED_FISH = BetaItem.builder(256 + 94)
+			.build();
+	BetaItem DYE_POWDER = BetaItem.builder(256 + 95)
+			.build();
+	BetaItem BONE = BetaItem.builder(256 + 96)
+			.build();
+	BetaItem SUGAR = BetaItem.builder(256 + 97)
+			.build();
+	BetaItem CAKE_ITEM = BetaItem.builder(256 + 98)
+			.build();
+	BetaItem BED_ITEM = BetaItem.builder(256 + 99)
+			.build();
+	BetaItem REDSTONE_REPEATER_ITEM = BetaItem.builder(256 + 100)
+			.build();
+	BetaItem COOKIE = BetaItem.builder(256 + 101)
+			.build();
+	BetaItem MAP = BetaItem.builder(256 + 102)
+			.build();
+	BetaItem SHEARS = BetaItem.builder(256 + 103)
+			.build();
+	BetaItem MUSIC_DISC_13 = BetaItem.builder(256 + 2000)
+			.build();
+	BetaItem MUSIC_DISC_CAT = BetaItem.builder(256 + 2001)
+			.build();
 }

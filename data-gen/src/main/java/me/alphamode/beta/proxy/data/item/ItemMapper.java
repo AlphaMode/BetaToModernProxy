@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.*;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -13,9 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ItemMapper {
-	private static void put(final int betaId, final CompoundTag tag, final ItemFactory factory) {
+	private static void put(final CompoundTag tag, final ItemFactory factory) {
 		final Optional<ItemRef> optionalItem = factory.reference();
-		final String key = String.valueOf(betaId);
+		final String key = String.valueOf(factory.getBetaItem().id());
 		if (optionalItem.isPresent()) {
 			tag.put(key, optionalItem.get().encode());
 		} else {
@@ -24,15 +26,20 @@ public class ItemMapper {
 				mapping.put(key, entry.getValue().encode());
 			}
 
-			tag.put(String.valueOf(betaId), mapping);
+			tag.put(key, mapping);
 		}
 	}
 
-	private static ItemFactory item(final Item item) {
+	private static ItemFactory defaultFactory(final BetaItem betaItem, final Item item) {
 		return new ItemFactory() {
 			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
+			@Override
 			public Optional<ItemRef> reference() {
-				return Optional.of(ItemRef.of(item));
+				return Optional.of(ItemRef.ofBeta(betaItem, item));
 			}
 
 			@Override
@@ -42,8 +49,13 @@ public class ItemMapper {
 		};
 	}
 
-	private static ItemFactory sapling() {
+	private static ItemFactory sapling(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -52,16 +64,21 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.OAK_SAPLING))
-						.put(1, ItemRef.of(Items.SPRUCE_SAPLING))
-						.put(2, ItemRef.of(Items.BIRCH_SAPLING))
+						.put(0, ItemRef.ofBeta(betaItem, Items.OAK_SAPLING))
+						.put(1, ItemRef.ofBeta(betaItem, Items.SPRUCE_SAPLING))
+						.put(2, ItemRef.ofBeta(betaItem, Items.BIRCH_SAPLING))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory logs() {
+	private static ItemFactory logs(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -70,16 +87,21 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.OAK_LOG))
-						.put(1, ItemRef.of(Items.SPRUCE_LOG))
-						.put(2, ItemRef.of(Items.BIRCH_LOG))
+						.put(0, ItemRef.ofBeta(betaItem, Items.OAK_LOG))
+						.put(1, ItemRef.ofBeta(betaItem, Items.SPRUCE_LOG))
+						.put(2, ItemRef.ofBeta(betaItem, Items.BIRCH_LOG))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory leaves() {
+	private static ItemFactory leaves(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -88,16 +110,21 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.OAK_LEAVES))
-						.put(1, ItemRef.of(Items.SPRUCE_LEAVES))
-						.put(2, ItemRef.of(Items.BIRCH_LEAVES))
+						.put(0, ItemRef.ofBeta(betaItem, Items.OAK_LEAVES))
+						.put(1, ItemRef.ofBeta(betaItem, Items.SPRUCE_LEAVES))
+						.put(2, ItemRef.ofBeta(betaItem, Items.BIRCH_LEAVES))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory bush() {
+	private static ItemFactory bush(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -106,16 +133,21 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.DEAD_BUSH))
-						.put(1, ItemRef.of(Items.SHORT_GRASS))
-						.put(2, ItemRef.of(Items.FERN))
+						.put(0, ItemRef.ofBeta(betaItem, Items.DEAD_BUSH))
+						.put(1, ItemRef.ofBeta(betaItem, Items.SHORT_GRASS))
+						.put(2, ItemRef.ofBeta(betaItem, Items.FERN))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory wool() {
+	private static ItemFactory wool(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -124,29 +156,34 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.WHITE_WOOL))
-						.put(1, ItemRef.of(Items.ORANGE_WOOL))
-						.put(2, ItemRef.of(Items.MAGENTA_WOOL))
-						.put(3, ItemRef.of(Items.LIGHT_BLUE_WOOL))
-						.put(4, ItemRef.of(Items.YELLOW_WOOL))
-						.put(5, ItemRef.of(Items.LIME_WOOL))
-						.put(6, ItemRef.of(Items.PINK_WOOL))
-						.put(7, ItemRef.of(Items.GRAY_WOOL))
-						.put(8, ItemRef.of(Items.LIGHT_GRAY_WOOL))
-						.put(9, ItemRef.of(Items.CYAN_WOOL))
-						.put(10, ItemRef.of(Items.PURPLE_WOOL))
-						.put(11, ItemRef.of(Items.BLUE_WOOL))
-						.put(12, ItemRef.of(Items.BROWN_WOOL))
-						.put(13, ItemRef.of(Items.GREEN_WOOL))
-						.put(14, ItemRef.of(Items.RED_WOOL))
-						.put(15, ItemRef.of(Items.BLACK_WOOL))
+						.put(0, ItemRef.ofBeta(betaItem, Items.WHITE_WOOL))
+						.put(1, ItemRef.ofBeta(betaItem, Items.ORANGE_WOOL))
+						.put(2, ItemRef.ofBeta(betaItem, Items.MAGENTA_WOOL))
+						.put(3, ItemRef.ofBeta(betaItem, Items.LIGHT_BLUE_WOOL))
+						.put(4, ItemRef.ofBeta(betaItem, Items.YELLOW_WOOL))
+						.put(5, ItemRef.ofBeta(betaItem, Items.LIME_WOOL))
+						.put(6, ItemRef.ofBeta(betaItem, Items.PINK_WOOL))
+						.put(7, ItemRef.ofBeta(betaItem, Items.GRAY_WOOL))
+						.put(8, ItemRef.ofBeta(betaItem, Items.LIGHT_GRAY_WOOL))
+						.put(9, ItemRef.ofBeta(betaItem, Items.CYAN_WOOL))
+						.put(10, ItemRef.ofBeta(betaItem, Items.PURPLE_WOOL))
+						.put(11, ItemRef.ofBeta(betaItem, Items.BLUE_WOOL))
+						.put(12, ItemRef.ofBeta(betaItem, Items.BROWN_WOOL))
+						.put(13, ItemRef.ofBeta(betaItem, Items.GREEN_WOOL))
+						.put(14, ItemRef.ofBeta(betaItem, Items.RED_WOOL))
+						.put(15, ItemRef.ofBeta(betaItem, Items.BLACK_WOOL))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory doubleSlab() {
+	private static ItemFactory doubleSlab(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -156,17 +193,22 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.SMOOTH_STONE))
-						.put(1, ItemRef.of(Items.SANDSTONE))
-						.put(2, ItemRef.of(Items.OAK_PLANKS))
-						.put(3, ItemRef.of(Items.COBBLESTONE))
+						.put(0, ItemRef.ofBeta(betaItem, Items.SMOOTH_STONE))
+						.put(1, ItemRef.ofBeta(betaItem, Items.SANDSTONE))
+						.put(2, ItemRef.ofBeta(betaItem, Items.OAK_PLANKS))
+						.put(3, ItemRef.ofBeta(betaItem, Items.COBBLESTONE))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory slab() {
+	private static ItemFactory slab(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -175,17 +217,22 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.SMOOTH_STONE_SLAB))
-						.put(1, ItemRef.of(Items.SANDSTONE_SLAB))
-						.put(2, ItemRef.of(Items.OAK_SLAB))
-						.put(3, ItemRef.of(Items.COBBLESTONE_SLAB))
+						.put(0, ItemRef.ofBeta(betaItem, Items.SMOOTH_STONE_SLAB))
+						.put(1, ItemRef.ofBeta(betaItem, Items.SANDSTONE_SLAB))
+						.put(2, ItemRef.ofBeta(betaItem, Items.OAK_SLAB))
+						.put(3, ItemRef.ofBeta(betaItem, Items.COBBLESTONE_SLAB))
 						.build();
 			}
 		};
 	}
 
-	private static ItemFactory dye() {
+	private static ItemFactory dye(final BetaItem betaItem) {
 		return new ItemFactory() {
+			@Override
+			public BetaItem getBetaItem() {
+				return betaItem;
+			}
+
 			@Override
 			public Optional<ItemRef> reference() {
 				return Optional.empty();
@@ -194,22 +241,22 @@ public class ItemMapper {
 			@Override
 			public Map<Integer, ItemRef> auxMapping() {
 				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.of(Items.INK_SAC))
-						.put(1, ItemRef.of(Items.RED_DYE))
-						.put(2, ItemRef.of(Items.GREEN_DYE))
-						.put(3, ItemRef.of(Items.BROWN_DYE))
-						.put(4, ItemRef.of(Items.LAPIS_LAZULI))
-						.put(5, ItemRef.of(Items.MAGENTA_DYE))
-						.put(6, ItemRef.of(Items.CYAN_DYE))
-						.put(7, ItemRef.of(Items.LIGHT_GRAY_DYE))
-						.put(8, ItemRef.of(Items.GRAY_DYE))
-						.put(9, ItemRef.of(Items.PINK_DYE))
-						.put(10, ItemRef.of(Items.LIME_DYE))
-						.put(11, ItemRef.of(Items.YELLOW_DYE))
-						.put(12, ItemRef.of(Items.LIGHT_BLUE_DYE))
-						.put(13, ItemRef.of(Items.PINK_DYE))
-						.put(14, ItemRef.of(Items.ORANGE_DYE))
-						.put(15, ItemRef.of(Items.BONE_MEAL))
+						.put(0, ItemRef.ofBeta(betaItem, Items.INK_SAC))
+						.put(1, ItemRef.ofBeta(betaItem, Items.RED_DYE))
+						.put(2, ItemRef.ofBeta(betaItem, Items.GREEN_DYE))
+						.put(3, ItemRef.ofBeta(betaItem, Items.BROWN_DYE))
+						.put(4, ItemRef.ofBeta(betaItem, Items.LAPIS_LAZULI))
+						.put(5, ItemRef.ofBeta(betaItem, Items.MAGENTA_DYE))
+						.put(6, ItemRef.ofBeta(betaItem, Items.CYAN_DYE))
+						.put(7, ItemRef.ofBeta(betaItem, Items.LIGHT_GRAY_DYE))
+						.put(8, ItemRef.ofBeta(betaItem, Items.GRAY_DYE))
+						.put(9, ItemRef.ofBeta(betaItem, Items.PINK_DYE))
+						.put(10, ItemRef.ofBeta(betaItem, Items.LIME_DYE))
+						.put(11, ItemRef.ofBeta(betaItem, Items.YELLOW_DYE))
+						.put(12, ItemRef.ofBeta(betaItem, Items.LIGHT_BLUE_DYE))
+						.put(13, ItemRef.ofBeta(betaItem, Items.PINK_DYE))
+						.put(14, ItemRef.ofBeta(betaItem, Items.ORANGE_DYE))
+						.put(15, ItemRef.ofBeta(betaItem, Items.BONE_MEAL))
 						.build();
 			}
 		};
@@ -217,208 +264,212 @@ public class ItemMapper {
 
 	public static void writeItems(final Path outputPath) {
 		final CompoundTag tag = new CompoundTag();
-		put(BetaItems.STONE, tag, item(Items.STONE));
-		put(BetaItems.GRASS, tag, item(Items.GRASS_BLOCK));
-		put(BetaItems.DIRT, tag, item(Items.DIRT));
-		put(BetaItems.COBBLESTONE, tag, item(Items.COBBLESTONE));
-		put(BetaItems.PLANKS, tag, item(Items.OAK_PLANKS));
-		put(BetaItems.SAPLING, tag, sapling());
-		put(BetaItems.BEDROCK, tag, item(Items.BEDROCK));
-		put(BetaItems.FLOWING_WATER, tag, item(Items.WATER_BUCKET));
-		put(BetaItems.STILL_WATER, tag, item(Items.WATER_BUCKET));
-		put(BetaItems.FLOWING_LAVA, tag, item(Items.LAVA_BUCKET));
-		put(BetaItems.STILL_LAVA, tag, item(Items.LAVA_BUCKET));
-		put(BetaItems.SAND, tag, item(Items.SAND));
-		put(BetaItems.GRAVEL, tag, item(Items.GRAVEL));
-		put(BetaItems.GOLDEN_ORE, tag, item(Items.GOLD_ORE));
-		put(BetaItems.IRON_ORE, tag, item(Items.IRON_ORE));
-		put(BetaItems.COAL_ORE, tag, item(Items.COAL_ORE));
-		put(BetaItems.WOOD, tag, logs());
-		put(BetaItems.LEAVES, tag, leaves());
-		put(BetaItems.SPONGE, tag, item(Items.SPONGE));
-		put(BetaItems.GLASS, tag, item(Items.GLASS));
-		put(BetaItems.LAPIS_ORE, tag, item(Items.LAPIS_ORE));
-		put(BetaItems.LAPIS_BLOCK, tag, item(Items.LAPIS_BLOCK));
-		put(BetaItems.DISPENSER, tag, item(Items.DISPENSER));
-		put(BetaItems.SANDSTONE, tag, item(Items.SANDSTONE));
-		put(BetaItems.NOTEBLOCk, tag, item(Items.NOTE_BLOCK));
-		put(BetaItems.BED, tag, item(Items.RED_BED));
-		put(BetaItems.POWERED_RAIL, tag, item(Items.POWERED_RAIL));
-		put(BetaItems.DETECTOR_RAIL, tag, item(Items.DETECTOR_RAIL));
-		put(BetaItems.STICKY_PISTON, tag, item(Items.STICKY_PISTON));
-		put(BetaItems.WEB, tag, item(Items.COBWEB));
-		put(BetaItems.TALL_GRASS, tag, bush());
-		put(BetaItems.DEAD_BUSH, tag, item(Items.DEAD_BUSH));
-		put(BetaItems.PISTON, tag, item(Items.PISTON));
-		put(BetaItems.PISTON_EXTENDED, tag, item(Items.PISTON));
-		put(BetaItems.CLOTH, tag, wool());
-		put(BetaItems.MOVING_PISTON, tag, item(Items.PISTON));
-		put(BetaItems.YELLOW_PLANT, tag, item(Items.DANDELION));
-		put(BetaItems.POPPY, tag, item(Items.POPPY));
-		put(BetaItems.BROWN_MUSHROOM, tag, item(Items.BROWN_MUSHROOM));
-		put(BetaItems.RED_MUSHROOM, tag, item(Items.RED_MUSHROOM));
-		put(BetaItems.GOLDEN_BLOCK, tag, item(Items.GOLD_BLOCK));
-		put(BetaItems.IRON_BLOCK, tag, item(Items.IRON_BLOCK));
-		put(BetaItems.DOUBLE_SLAB, tag, doubleSlab());
-		put(BetaItems.HALF_SLAB, tag, slab());
-		put(BetaItems.BRICK, tag, item(Items.BRICKS));
-		put(BetaItems.TNT, tag, item(Items.TNT));
-		put(BetaItems.BOOKSHELF, tag, item(Items.BOOKSHELF));
-		put(BetaItems.MOSSY_COBBLESTONE, tag, item(Items.MOSSY_COBBLESTONE));
-		put(BetaItems.OBSIDIAN, tag, item(Items.OBSIDIAN));
-		put(BetaItems.TORCH, tag, item(Items.TORCH));
-		put(BetaItems.FIRE, tag, item(Items.FLINT_AND_STEEL));
-		put(BetaItems.MOB_SPAWNER, tag, item(Items.SPAWNER));
-		put(BetaItems.OAK_STAIRS, tag, item(Items.OAK_STAIRS));
-		put(BetaItems.CHEST, tag, item(Items.CHEST));
-		put(BetaItems.REDSTONE_DUST, tag, item(Items.REDSTONE));
-		put(BetaItems.DIAMOND_ORE, tag, item(Items.DIAMOND_ORE));
-		put(BetaItems.DIAMOND_BLOCK, tag, item(Items.DIAMOND_BLOCK));
-		put(BetaItems.CRAFTING_TABLE, tag, item(Items.CRAFTING_TABLE));
-		put(BetaItems.CROPS, tag, item(Items.WHEAT_SEEDS));
-		put(BetaItems.TILLED_FARMLAND, tag, item(Items.FARMLAND));
-		put(BetaItems.FURNACE, tag, item(Items.FURNACE));
-		put(BetaItems.FURNACE_ACTIVE, tag, item(Items.FURNACE));
-		put(BetaItems.SIGN, tag, item(Items.OAK_SIGN));
-		put(BetaItems.OAK_DOOR, tag, item(Items.OAK_DOOR));
-		put(BetaItems.LADDER, tag, item(Items.LADDER));
-		put(BetaItems.RAIL, tag, item(Items.RAIL));
-		put(BetaItems.COBBLESTONE_STAIRS, tag, item(Items.COBBLESTONE_STAIRS));
-		put(BetaItems.WALL_SIGN, tag, item(Items.OAK_SIGN));
-		put(BetaItems.LEVER, tag, item(Items.LEVER));
-		put(BetaItems.STONE_PRESSURE_PLATE, tag, item(Items.STONE_PRESSURE_PLATE));
-		put(BetaItems.IRON_DOOR, tag, item(Items.IRON_DOOR));
-		put(BetaItems.OAK_PRESSURE_PLATE, tag, item(Items.OAK_PRESSURE_PLATE));
-		put(BetaItems.REDSTONE_ORE, tag, item(Items.REDSTONE_ORE));
-		put(BetaItems.REDSTONE_ORE_ACTIVE, tag, item(Items.REDSTONE_ORE));
-		put(BetaItems.REDSTONE_TORCH, tag, item(Items.REDSTONE_TORCH));
-		put(BetaItems.REDSTONE_TORCH_ACTIVE, tag, item(Items.REDSTONE_TORCH));
-		put(BetaItems.BUTTON, tag, item(Items.STONE_BUTTON));
-		put(BetaItems.SNOW, tag, item(Items.SNOW));
-		put(BetaItems.ICE, tag, item(Items.ICE));
-		put(BetaItems.SNOW_BLOCK, tag, item(Items.SNOW_BLOCK));
-		put(BetaItems.CACTUS, tag, item(Items.CACTUS));
-		put(BetaItems.CLAY, tag, item(Items.CLAY));
-		put(BetaItems.REED, tag, item(Items.SUGAR_CANE));
-		put(BetaItems.JUKEBOX, tag, item(Items.JUKEBOX));
-		put(BetaItems.FENCE, tag, item(Items.OAK_FENCE));
-		put(BetaItems.PUMPKIN, tag, item(Items.PUMPKIN));
-		put(BetaItems.NETHERRACK, tag, item(Items.NETHERRACK));
-		put(BetaItems.SOUL_SAND, tag, item(Items.SOUL_SAND));
-		put(BetaItems.GLOWSTONE, tag, item(Items.GLOWSTONE));
-		put(BetaItems.PORTAL, tag, item(Items.PURPLE_WOOL));
-		put(BetaItems.LANTERN, tag, item(Items.LANTERN));
-		put(BetaItems.CAKE, tag, item(Items.CAKE));
-		put(BetaItems.REDSTONE_REPEATER, tag, item(Items.REPEATER));
-		put(BetaItems.REDSTONE_REPEATER_ACTIVE, tag, item(Items.REPEATER));
-		put(BetaItems.LOCKED_CHEST, tag, item(Items.CHEST));
-		put(BetaItems.TRAPDOOR, tag, item(Items.OAK_TRAPDOOR)); // todo: was there iron?
-		put(BetaItems.IRON_SHOVEL, tag, item(Items.IRON_SHOVEL));
-		put(BetaItems.IRON_PICKAXE, tag, item(Items.IRON_PICKAXE));
-		put(BetaItems.IRON_AXE, tag, item(Items.IRON_AXE));
-		put(BetaItems.FLINT_AND_STEEL, tag, item(Items.FLINT_AND_STEEL));
-		put(BetaItems.APPLE, tag, item(Items.APPLE));
-		put(BetaItems.BOW, tag, item(Items.BOW));
-		put(BetaItems.ARROW, tag, item(Items.ARROW));
-		put(BetaItems.COAL, tag, item(Items.COAL));
-		put(BetaItems.DIAMOND, tag, item(Items.DIAMOND));
-		put(BetaItems.IRON_INGOT, tag, item(Items.IRON_INGOT));
-		put(BetaItems.GOLD_INGOT, tag, item(Items.GOLD_INGOT));
-		put(BetaItems.IRON_SWORD, tag, item(Items.IRON_SWORD));
-		put(BetaItems.WOODEN_SWORD, tag, item(Items.WOODEN_SWORD));
-		put(BetaItems.WOODEN_SHOVEL, tag, item(Items.WOODEN_SHOVEL));
-		put(BetaItems.WOODEN_PICKAXE, tag, item(Items.WOODEN_PICKAXE));
-		put(BetaItems.WOODEN_AXE, tag, item(Items.WOODEN_AXE));
-		put(BetaItems.STONE_SWORD, tag, item(Items.STONE_SWORD));
-		put(BetaItems.STONE_SHOVEL, tag, item(Items.STONE_SHOVEL));
-		put(BetaItems.STONE_PICKAXE, tag, item(Items.STONE_PICKAXE));
-		put(BetaItems.STONE_AXE, tag, item(Items.STONE_AXE));
-		put(BetaItems.DIAMOND_SWORD, tag, item(Items.DIAMOND_SWORD));
-		put(BetaItems.DIAMOND_SHOVEL, tag, item(Items.DIAMOND_SHOVEL));
-		put(BetaItems.DIAMOND_PICKAXE, tag, item(Items.DIAMOND_PICKAXE));
-		put(BetaItems.DIAMOND_AXE, tag, item(Items.DIAMOND_AXE));
-		put(BetaItems.STICK, tag, item(Items.STICK));
-		put(BetaItems.BOWL, tag, item(Items.BOWL));
-		put(BetaItems.STEW, tag, item(Items.MUSHROOM_STEW));
-		put(BetaItems.GOLDEN_SWORD, tag, item(Items.GOLDEN_SWORD));
-		put(BetaItems.GOLDEN_SHOVEL, tag, item(Items.GOLDEN_SHOVEL));
-		put(BetaItems.GOLDEN_PICKAXE, tag, item(Items.GOLDEN_PICKAXE));
-		put(BetaItems.GOLDEN_AXE, tag, item(Items.GOLDEN_AXE));
-		put(BetaItems.STRING, tag, item(Items.STRING));
-		put(BetaItems.FEATHER, tag, item(Items.FEATHER));
-		put(BetaItems.GUN_POWDER, tag, item(Items.GUNPOWDER));
-		put(BetaItems.WOODEN_HOE, tag, item(Items.WOODEN_HOE));
-		put(BetaItems.STONE_HOE, tag, item(Items.STONE_HOE));
-		put(BetaItems.IRON_HOE, tag, item(Items.IRON_HOE));
-		put(BetaItems.DIAMOND_HOE, tag, item(Items.DIAMOND_HOE));
-		put(BetaItems.GOLDEN_HOE, tag, item(Items.GOLDEN_HOE));
-		put(BetaItems.SEEDS, tag, item(Items.WHEAT_SEEDS));
-		put(BetaItems.WHEAT, tag, item(Items.WHEAT));
-		put(BetaItems.BREAD, tag, item(Items.BREAD));
-		put(BetaItems.LEATHER_HELMET, tag, item(Items.LEATHER_HELMET));
-		put(BetaItems.LEATHER_CHESTPLATE, tag, item(Items.LEATHER_CHESTPLATE));
-		put(BetaItems.LEATHER_LEGGINGS, tag, item(Items.LEATHER_LEGGINGS));
-		put(BetaItems.LEATHER_BOOTS, tag, item(Items.LEATHER_BOOTS));
-		put(BetaItems.CHAIN_HELMET, tag, item(Items.CHAINMAIL_HELMET));
-		put(BetaItems.CHAIN_CHESTPLATE, tag, item(Items.CHAINMAIL_CHESTPLATE));
-		put(BetaItems.CHAIN_LEGGINGS, tag, item(Items.CHAINMAIL_LEGGINGS));
-		put(BetaItems.CHAIN_BOOTS, tag, item(Items.CHAINMAIL_BOOTS));
-		put(BetaItems.IRON_HELMET, tag, item(Items.IRON_HELMET));
-		put(BetaItems.IRON_CHESTPLATE, tag, item(Items.IRON_CHESTPLATE));
-		put(BetaItems.IRON_LEGGINGS, tag, item(Items.IRON_LEGGINGS));
-		put(BetaItems.IRON_BOOTS, tag, item(Items.IRON_BOOTS));
-		put(BetaItems.DIAMOND_HELMET, tag, item(Items.DIAMOND_HELMET));
-		put(BetaItems.DIAMOND_CHESTPLATE, tag, item(Items.DIAMOND_CHESTPLATE));
-		put(BetaItems.DIAMOND_LEGGINGS, tag, item(Items.DIAMOND_LEGGINGS));
-		put(BetaItems.DIAMOND_BOOTS, tag, item(Items.DIAMOND_BOOTS));
-		put(BetaItems.GOLDEN_HELMET, tag, item(Items.GOLDEN_HELMET));
-		put(BetaItems.GOLDEN_CHESTPLATE, tag, item(Items.GOLDEN_CHESTPLATE));
-		put(BetaItems.GOLDEN_LEGGINGS, tag, item(Items.GOLDEN_LEGGINGS));
-		put(BetaItems.GOLDEN_BOOTS, tag, item(Items.GOLDEN_BOOTS));
-		put(BetaItems.FLINT, tag, item(Items.FLINT));
-		put(BetaItems.RAW_PORKCHOP, tag, item(Items.PORKCHOP));
-		put(BetaItems.COOKED_PORKCHOP, tag, item(Items.COOKED_PORKCHOP));
-		put(BetaItems.PAINTING, tag, item(Items.PAINTING));
-		put(BetaItems.GOLDEN_APPLE, tag, item(Items.GOLDEN_APPLE));
-		put(BetaItems.SIGN_ITEM, tag, item(Items.OAK_SIGN));
-		put(BetaItems.WOODEN_DOOR, tag, item(Items.OAK_DOOR));
-		put(BetaItems.BUCKET, tag, item(Items.BUCKET));
-		put(BetaItems.WATER_BUCKET, tag, item(Items.WATER_BUCKET));
-		put(BetaItems.LAVA_BUCKET, tag, item(Items.LAVA_BUCKET));
-		put(BetaItems.MINECART, tag, item(Items.MINECART));
-		put(BetaItems.SADDLE, tag, item(Items.SADDLE));
-		put(BetaItems.IRON_DOOR_ITEM, tag, item(Items.IRON_DOOR));
-		put(BetaItems.REDSTONE, tag, item(Items.REDSTONE));
-		put(BetaItems.SNOWBALL, tag, item(Items.SNOWBALL));
-		put(BetaItems.BOAT, tag, item(Items.OAK_BOAT));
-		put(BetaItems.LEATHER, tag, item(Items.LEATHER));
-		put(BetaItems.MILK_BUCKET, tag, item(Items.MILK_BUCKET));
-		put(BetaItems.BRICK_ITEM, tag, item(Items.BRICK));
-		put(BetaItems.CLAY_ITEM, tag, item(Items.CLAY_BALL));
-		put(BetaItems.SUGAR_CANE, tag, item(Items.SUGAR_CANE));
-		put(BetaItems.PAPER, tag, item(Items.PAPER));
-		put(BetaItems.BOOK, tag, item(Items.BOOK));
-		put(BetaItems.SLIMEBALL, tag, item(Items.SLIME_BALL));
-		put(BetaItems.CHEST_MINECART, tag, item(Items.CHEST_MINECART));
-		put(BetaItems.FURNACE_MINECART, tag, item(Items.FURNACE_MINECART));
-		put(BetaItems.EGG, tag, item(Items.EGG));
-		put(BetaItems.COMPASS, tag, item(Items.COMPASS));
-		put(BetaItems.FISHING_ROD, tag, item(Items.FISHING_ROD));
-		put(BetaItems.CLOCK, tag, item(Items.CLOCK));
-		put(BetaItems.GLOWSTONE_DUST, tag, item(Items.GLOWSTONE_DUST));
-		put(BetaItems.RAW_FISH, tag, item(Items.COD));
-		put(BetaItems.COOKED_FISH, tag, item(Items.COOKED_COD));
-		put(BetaItems.DYE_POWDER, tag, dye());
-		put(BetaItems.BONE, tag, item(Items.BONE));
-		put(BetaItems.SUGAR, tag, item(Items.SUGAR));
-		put(BetaItems.CAKE_ITEM, tag, item(Items.CAKE));
-		put(BetaItems.BED_ITEM, tag, item(Items.RED_BED));
-		put(BetaItems.REDSTONE_REPEATER_ITEM, tag, item(Items.REPEATER));
-		put(BetaItems.COOKIE, tag, item(Items.COOKIE));
-		put(BetaItems.MAP, tag, item(Items.MAP));
-		put(BetaItems.SHEARS, tag, item(Items.SHEARS));
-		put(BetaItems.MUSIC_DISC_13, tag, item(Items.MUSIC_DISC_13));
-		put(BetaItems.MUSIC_DISC_CAT, tag, item(Items.MUSIC_DISC_CAT));
+
+		// Blocks
+		put(tag, defaultFactory(BetaItems.STONE, Items.STONE));
+		put(tag, defaultFactory(BetaItems.GRASS, Items.GRASS_BLOCK));
+		put(tag, defaultFactory(BetaItems.DIRT, Items.DIRT));
+		put(tag, defaultFactory(BetaItems.COBBLESTONE, Items.COBBLESTONE));
+		put(tag, defaultFactory(BetaItems.PLANKS, Items.OAK_PLANKS));
+		put(tag, sapling(BetaItems.SAPLING));
+		put(tag, defaultFactory(BetaItems.BEDROCK, Items.BEDROCK));
+		put(tag, defaultFactory(BetaItems.FLOWING_WATER, Items.WATER_BUCKET));
+		put(tag, defaultFactory(BetaItems.STILL_WATER, Items.WATER_BUCKET));
+		put(tag, defaultFactory(BetaItems.FLOWING_LAVA, Items.LAVA_BUCKET));
+		put(tag, defaultFactory(BetaItems.STILL_LAVA, Items.LAVA_BUCKET));
+		put(tag, defaultFactory(BetaItems.SAND, Items.SAND));
+		put(tag, defaultFactory(BetaItems.GRAVEL, Items.GRAVEL));
+		put(tag, defaultFactory(BetaItems.GOLDEN_ORE, Items.GOLD_ORE));
+		put(tag, defaultFactory(BetaItems.IRON_ORE, Items.IRON_ORE));
+		put(tag, defaultFactory(BetaItems.COAL_ORE, Items.COAL_ORE));
+		put(tag, logs(BetaItems.WOOD));
+		put(tag, leaves(BetaItems.LEAVES));
+		put(tag, defaultFactory(BetaItems.SPONGE, Items.SPONGE));
+		put(tag, defaultFactory(BetaItems.GLASS, Items.GLASS));
+		put(tag, defaultFactory(BetaItems.LAPIS_ORE, Items.LAPIS_ORE));
+		put(tag, defaultFactory(BetaItems.LAPIS_BLOCK, Items.LAPIS_BLOCK));
+		put(tag, defaultFactory(BetaItems.DISPENSER, Items.DISPENSER));
+		put(tag, defaultFactory(BetaItems.SANDSTONE, Items.SANDSTONE));
+		put(tag, defaultFactory(BetaItems.NOTEBLOCk, Items.NOTE_BLOCK));
+		put(tag, defaultFactory(BetaItems.BED, Items.RED_BED));
+		put(tag, defaultFactory(BetaItems.POWERED_RAIL, Items.POWERED_RAIL));
+		put(tag, defaultFactory(BetaItems.DETECTOR_RAIL, Items.DETECTOR_RAIL));
+		put(tag, defaultFactory(BetaItems.STICKY_PISTON, Items.STICKY_PISTON));
+		put(tag, defaultFactory(BetaItems.WEB, Items.COBWEB));
+		put(tag, bush(BetaItems.TALL_GRASS));
+		put(tag, defaultFactory(BetaItems.DEAD_BUSH, Items.DEAD_BUSH));
+		put(tag, defaultFactory(BetaItems.PISTON, Items.PISTON));
+		put(tag, defaultFactory(BetaItems.PISTON_EXTENDED, Items.PISTON));
+		put(tag, wool(BetaItems.CLOTH));
+		put(tag, defaultFactory(BetaItems.MOVING_PISTON, Items.PISTON));
+		put(tag, defaultFactory(BetaItems.YELLOW_PLANT, Items.DANDELION));
+		put(tag, defaultFactory(BetaItems.POPPY, Items.POPPY));
+		put(tag, defaultFactory(BetaItems.BROWN_MUSHROOM, Items.BROWN_MUSHROOM));
+		put(tag, defaultFactory(BetaItems.RED_MUSHROOM, Items.RED_MUSHROOM));
+		put(tag, defaultFactory(BetaItems.GOLDEN_BLOCK, Items.GOLD_BLOCK));
+		put(tag, defaultFactory(BetaItems.IRON_BLOCK, Items.IRON_BLOCK));
+		put(tag, doubleSlab(BetaItems.DOUBLE_SLAB));
+		put(tag, slab(BetaItems.HALF_SLAB));
+		put(tag, defaultFactory(BetaItems.BRICK, Items.BRICKS));
+		put(tag, defaultFactory(BetaItems.TNT, Items.TNT));
+		put(tag, defaultFactory(BetaItems.BOOKSHELF, Items.BOOKSHELF));
+		put(tag, defaultFactory(BetaItems.MOSSY_COBBLESTONE, Items.MOSSY_COBBLESTONE));
+		put(tag, defaultFactory(BetaItems.OBSIDIAN, Items.OBSIDIAN));
+		put(tag, defaultFactory(BetaItems.TORCH, Items.TORCH));
+		put(tag, defaultFactory(BetaItems.FIRE, Items.FLINT_AND_STEEL));
+		put(tag, defaultFactory(BetaItems.MOB_SPAWNER, Items.SPAWNER));
+		put(tag, defaultFactory(BetaItems.OAK_STAIRS, Items.OAK_STAIRS));
+		put(tag, defaultFactory(BetaItems.CHEST, Items.CHEST));
+		put(tag, defaultFactory(BetaItems.REDSTONE_DUST, Items.REDSTONE));
+		put(tag, defaultFactory(BetaItems.DIAMOND_ORE, Items.DIAMOND_ORE));
+		put(tag, defaultFactory(BetaItems.DIAMOND_BLOCK, Items.DIAMOND_BLOCK));
+		put(tag, defaultFactory(BetaItems.CRAFTING_TABLE, Items.CRAFTING_TABLE));
+		put(tag, defaultFactory(BetaItems.CROPS, Items.WHEAT_SEEDS));
+		put(tag, defaultFactory(BetaItems.TILLED_FARMLAND, Items.FARMLAND));
+		put(tag, defaultFactory(BetaItems.FURNACE, Items.FURNACE));
+		put(tag, defaultFactory(BetaItems.FURNACE_ACTIVE, Items.FURNACE));
+		put(tag, defaultFactory(BetaItems.SIGN, Items.OAK_SIGN));
+		put(tag, defaultFactory(BetaItems.OAK_DOOR, Items.OAK_DOOR));
+		put(tag, defaultFactory(BetaItems.LADDER, Items.LADDER));
+		put(tag, defaultFactory(BetaItems.RAIL, Items.RAIL));
+		put(tag, defaultFactory(BetaItems.COBBLESTONE_STAIRS, Items.COBBLESTONE_STAIRS));
+		put(tag, defaultFactory(BetaItems.WALL_SIGN, Items.OAK_SIGN));
+		put(tag, defaultFactory(BetaItems.LEVER, Items.LEVER));
+		put(tag, defaultFactory(BetaItems.STONE_PRESSURE_PLATE, Items.STONE_PRESSURE_PLATE));
+		put(tag, defaultFactory(BetaItems.IRON_DOOR, Items.IRON_DOOR));
+		put(tag, defaultFactory(BetaItems.OAK_PRESSURE_PLATE, Items.OAK_PRESSURE_PLATE));
+		put(tag, defaultFactory(BetaItems.REDSTONE_ORE, Items.REDSTONE_ORE));
+		put(tag, defaultFactory(BetaItems.REDSTONE_ORE_ACTIVE, Items.REDSTONE_ORE));
+		put(tag, defaultFactory(BetaItems.REDSTONE_TORCH, Items.REDSTONE_TORCH));
+		put(tag, defaultFactory(BetaItems.REDSTONE_TORCH_ACTIVE, Items.REDSTONE_TORCH));
+		put(tag, defaultFactory(BetaItems.BUTTON, Items.STONE_BUTTON));
+		put(tag, defaultFactory(BetaItems.SNOW, Items.SNOW));
+		put(tag, defaultFactory(BetaItems.ICE, Items.ICE));
+		put(tag, defaultFactory(BetaItems.SNOW_BLOCK, Items.SNOW_BLOCK));
+		put(tag, defaultFactory(BetaItems.CACTUS, Items.CACTUS));
+		put(tag, defaultFactory(BetaItems.CLAY, Items.CLAY));
+		put(tag, defaultFactory(BetaItems.REED, Items.SUGAR_CANE));
+		put(tag, defaultFactory(BetaItems.JUKEBOX, Items.JUKEBOX));
+		put(tag, defaultFactory(BetaItems.FENCE, Items.OAK_FENCE));
+		put(tag, defaultFactory(BetaItems.PUMPKIN, Items.PUMPKIN));
+		put(tag, defaultFactory(BetaItems.NETHERRACK, Items.NETHERRACK));
+		put(tag, defaultFactory(BetaItems.SOUL_SAND, Items.SOUL_SAND));
+		put(tag, defaultFactory(BetaItems.GLOWSTONE, Items.GLOWSTONE));
+		put(tag, defaultFactory(BetaItems.PORTAL, Items.PURPLE_WOOL));
+		put(tag, defaultFactory(BetaItems.LANTERN, Items.LANTERN));
+		put(tag, defaultFactory(BetaItems.CAKE, Items.CAKE));
+		put(tag, defaultFactory(BetaItems.REDSTONE_REPEATER, Items.REPEATER));
+		put(tag, defaultFactory(BetaItems.REDSTONE_REPEATER_ACTIVE, Items.REPEATER));
+		put(tag, defaultFactory(BetaItems.LOCKED_CHEST, Items.CHEST));
+		put(tag, defaultFactory(BetaItems.TRAPDOOR, Items.OAK_TRAPDOOR)); // todo: was there iron?
+
+		// Items
+		put(tag, defaultFactory(BetaItems.IRON_SHOVEL, Items.IRON_SHOVEL));
+		put(tag, defaultFactory(BetaItems.IRON_PICKAXE, Items.IRON_PICKAXE));
+		put(tag, defaultFactory(BetaItems.IRON_AXE, Items.IRON_AXE));
+		put(tag, defaultFactory(BetaItems.FLINT_AND_STEEL, Items.FLINT_AND_STEEL));
+		put(tag, defaultFactory(BetaItems.APPLE, Items.APPLE));
+		put(tag, defaultFactory(BetaItems.BOW, Items.BOW));
+		put(tag, defaultFactory(BetaItems.ARROW, Items.ARROW));
+		put(tag, defaultFactory(BetaItems.COAL, Items.COAL));
+		put(tag, defaultFactory(BetaItems.DIAMOND, Items.DIAMOND));
+		put(tag, defaultFactory(BetaItems.IRON_INGOT, Items.IRON_INGOT));
+		put(tag, defaultFactory(BetaItems.GOLD_INGOT, Items.GOLD_INGOT));
+		put(tag, defaultFactory(BetaItems.IRON_SWORD, Items.IRON_SWORD));
+		put(tag, defaultFactory(BetaItems.WOODEN_SWORD, Items.WOODEN_SWORD));
+		put(tag, defaultFactory(BetaItems.WOODEN_SHOVEL, Items.WOODEN_SHOVEL));
+		put(tag, defaultFactory(BetaItems.WOODEN_PICKAXE, Items.WOODEN_PICKAXE));
+		put(tag, defaultFactory(BetaItems.WOODEN_AXE, Items.WOODEN_AXE));
+		put(tag, defaultFactory(BetaItems.STONE_SWORD, Items.STONE_SWORD));
+		put(tag, defaultFactory(BetaItems.STONE_SHOVEL, Items.STONE_SHOVEL));
+		put(tag, defaultFactory(BetaItems.STONE_PICKAXE, Items.STONE_PICKAXE));
+		put(tag, defaultFactory(BetaItems.STONE_AXE, Items.STONE_AXE));
+		put(tag, defaultFactory(BetaItems.DIAMOND_SWORD, Items.DIAMOND_SWORD));
+		put(tag, defaultFactory(BetaItems.DIAMOND_SHOVEL, Items.DIAMOND_SHOVEL));
+		put(tag, defaultFactory(BetaItems.DIAMOND_PICKAXE, Items.DIAMOND_PICKAXE));
+		put(tag, defaultFactory(BetaItems.DIAMOND_AXE, Items.DIAMOND_AXE));
+		put(tag, defaultFactory(BetaItems.STICK, Items.STICK));
+		put(tag, defaultFactory(BetaItems.BOWL, Items.BOWL));
+		put(tag, defaultFactory(BetaItems.STEW, Items.MUSHROOM_STEW));
+		put(tag, defaultFactory(BetaItems.GOLDEN_SWORD, Items.GOLDEN_SWORD));
+		put(tag, defaultFactory(BetaItems.GOLDEN_SHOVEL, Items.GOLDEN_SHOVEL));
+		put(tag, defaultFactory(BetaItems.GOLDEN_PICKAXE, Items.GOLDEN_PICKAXE));
+		put(tag, defaultFactory(BetaItems.GOLDEN_AXE, Items.GOLDEN_AXE));
+		put(tag, defaultFactory(BetaItems.STRING, Items.STRING));
+		put(tag, defaultFactory(BetaItems.FEATHER, Items.FEATHER));
+		put(tag, defaultFactory(BetaItems.GUN_POWDER, Items.GUNPOWDER));
+		put(tag, defaultFactory(BetaItems.WOODEN_HOE, Items.WOODEN_HOE));
+		put(tag, defaultFactory(BetaItems.STONE_HOE, Items.STONE_HOE));
+		put(tag, defaultFactory(BetaItems.IRON_HOE, Items.IRON_HOE));
+		put(tag, defaultFactory(BetaItems.DIAMOND_HOE, Items.DIAMOND_HOE));
+		put(tag, defaultFactory(BetaItems.GOLDEN_HOE, Items.GOLDEN_HOE));
+		put(tag, defaultFactory(BetaItems.SEEDS, Items.WHEAT_SEEDS));
+		put(tag, defaultFactory(BetaItems.WHEAT, Items.WHEAT));
+		put(tag, defaultFactory(BetaItems.BREAD, Items.BREAD));
+		put(tag, defaultFactory(BetaItems.LEATHER_HELMET, Items.LEATHER_HELMET));
+		put(tag, defaultFactory(BetaItems.LEATHER_CHESTPLATE, Items.LEATHER_CHESTPLATE));
+		put(tag, defaultFactory(BetaItems.LEATHER_LEGGINGS, Items.LEATHER_LEGGINGS));
+		put(tag, defaultFactory(BetaItems.LEATHER_BOOTS, Items.LEATHER_BOOTS));
+		put(tag, defaultFactory(BetaItems.CHAIN_HELMET, Items.CHAINMAIL_HELMET));
+		put(tag, defaultFactory(BetaItems.CHAIN_CHESTPLATE, Items.CHAINMAIL_CHESTPLATE));
+		put(tag, defaultFactory(BetaItems.CHAIN_LEGGINGS, Items.CHAINMAIL_LEGGINGS));
+		put(tag, defaultFactory(BetaItems.CHAIN_BOOTS, Items.CHAINMAIL_BOOTS));
+		put(tag, defaultFactory(BetaItems.IRON_HELMET, Items.IRON_HELMET));
+		put(tag, defaultFactory(BetaItems.IRON_CHESTPLATE, Items.IRON_CHESTPLATE));
+		put(tag, defaultFactory(BetaItems.IRON_LEGGINGS, Items.IRON_LEGGINGS));
+		put(tag, defaultFactory(BetaItems.IRON_BOOTS, Items.IRON_BOOTS));
+		put(tag, defaultFactory(BetaItems.DIAMOND_HELMET, Items.DIAMOND_HELMET));
+		put(tag, defaultFactory(BetaItems.DIAMOND_CHESTPLATE, Items.DIAMOND_CHESTPLATE));
+		put(tag, defaultFactory(BetaItems.DIAMOND_LEGGINGS, Items.DIAMOND_LEGGINGS));
+		put(tag, defaultFactory(BetaItems.DIAMOND_BOOTS, Items.DIAMOND_BOOTS));
+		put(tag, defaultFactory(BetaItems.GOLDEN_HELMET, Items.GOLDEN_HELMET));
+		put(tag, defaultFactory(BetaItems.GOLDEN_CHESTPLATE, Items.GOLDEN_CHESTPLATE));
+		put(tag, defaultFactory(BetaItems.GOLDEN_LEGGINGS, Items.GOLDEN_LEGGINGS));
+		put(tag, defaultFactory(BetaItems.GOLDEN_BOOTS, Items.GOLDEN_BOOTS));
+		put(tag, defaultFactory(BetaItems.FLINT, Items.FLINT));
+		put(tag, defaultFactory(BetaItems.RAW_PORKCHOP, Items.PORKCHOP));
+		put(tag, defaultFactory(BetaItems.COOKED_PORKCHOP, Items.COOKED_PORKCHOP));
+		put(tag, defaultFactory(BetaItems.PAINTING, Items.PAINTING));
+		put(tag, defaultFactory(BetaItems.GOLDEN_APPLE, Items.GOLDEN_APPLE));
+		put(tag, defaultFactory(BetaItems.SIGN_ITEM, Items.OAK_SIGN));
+		put(tag, defaultFactory(BetaItems.WOODEN_DOOR, Items.OAK_DOOR));
+		put(tag, defaultFactory(BetaItems.BUCKET, Items.BUCKET));
+		put(tag, defaultFactory(BetaItems.WATER_BUCKET, Items.WATER_BUCKET));
+		put(tag, defaultFactory(BetaItems.LAVA_BUCKET, Items.LAVA_BUCKET));
+		put(tag, defaultFactory(BetaItems.MINECART, Items.MINECART));
+		put(tag, defaultFactory(BetaItems.SADDLE, Items.SADDLE));
+		put(tag, defaultFactory(BetaItems.IRON_DOOR_ITEM, Items.IRON_DOOR));
+		put(tag, defaultFactory(BetaItems.REDSTONE, Items.REDSTONE));
+		put(tag, defaultFactory(BetaItems.SNOWBALL, Items.SNOWBALL));
+		put(tag, defaultFactory(BetaItems.BOAT, Items.OAK_BOAT));
+		put(tag, defaultFactory(BetaItems.LEATHER, Items.LEATHER));
+		put(tag, defaultFactory(BetaItems.MILK_BUCKET, Items.MILK_BUCKET));
+		put(tag, defaultFactory(BetaItems.BRICK_ITEM, Items.BRICK));
+		put(tag, defaultFactory(BetaItems.CLAY_ITEM, Items.CLAY_BALL));
+		put(tag, defaultFactory(BetaItems.SUGAR_CANE, Items.SUGAR_CANE));
+		put(tag, defaultFactory(BetaItems.PAPER, Items.PAPER));
+		put(tag, defaultFactory(BetaItems.BOOK, Items.BOOK));
+		put(tag, defaultFactory(BetaItems.SLIMEBALL, Items.SLIME_BALL));
+		put(tag, defaultFactory(BetaItems.CHEST_MINECART, Items.CHEST_MINECART));
+		put(tag, defaultFactory(BetaItems.FURNACE_MINECART, Items.FURNACE_MINECART));
+		put(tag, defaultFactory(BetaItems.EGG, Items.EGG));
+		put(tag, defaultFactory(BetaItems.COMPASS, Items.COMPASS));
+		put(tag, defaultFactory(BetaItems.FISHING_ROD, Items.FISHING_ROD));
+		put(tag, defaultFactory(BetaItems.CLOCK, Items.CLOCK));
+		put(tag, defaultFactory(BetaItems.GLOWSTONE_DUST, Items.GLOWSTONE_DUST));
+		put(tag, defaultFactory(BetaItems.RAW_FISH, Items.COD));
+		put(tag, defaultFactory(BetaItems.COOKED_FISH, Items.COOKED_COD));
+		put(tag, dye(BetaItems.DYE_POWDER));
+		put(tag, defaultFactory(BetaItems.BONE, Items.BONE));
+		put(tag, defaultFactory(BetaItems.SUGAR, Items.SUGAR));
+		put(tag, defaultFactory(BetaItems.CAKE_ITEM, Items.CAKE));
+		put(tag, defaultFactory(BetaItems.BED_ITEM, Items.RED_BED));
+		put(tag, defaultFactory(BetaItems.REDSTONE_REPEATER_ITEM, Items.REPEATER));
+		put(tag, defaultFactory(BetaItems.COOKIE, Items.COOKIE));
+		put(tag, defaultFactory(BetaItems.MAP, Items.MAP));
+		put(tag, defaultFactory(BetaItems.SHEARS, Items.SHEARS));
+		put(tag, defaultFactory(BetaItems.MUSIC_DISC_13, Items.MUSIC_DISC_13));
+		put(tag, defaultFactory(BetaItems.MUSIC_DISC_CAT, Items.MUSIC_DISC_CAT));
 		try {
 			NbtIo.writeCompressed(tag, outputPath);
 		} catch (final Exception exception) {
@@ -429,6 +480,18 @@ public class ItemMapper {
 	public record ItemRef(Item item, DataComponentMap components) {
 		public static ItemRef of(final Item item) {
 			return new ItemRef(item, DataComponentMap.EMPTY);
+		}
+
+		public static ItemRef ofBeta(final BetaItem betaItem, final Item vanillaItem) {
+			final DataComponentMap.Builder builder = DataComponentMap.builder();
+			builder.set(DataComponents.MAX_STACK_SIZE, betaItem.maxStackSize());
+			if (betaItem.maxDamage() > 0) {
+				builder.set(DataComponents.MAX_DAMAGE, betaItem.maxDamage());
+			} else {
+				builder.set(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+			}
+
+			return new ItemRef(vanillaItem, builder.build());
 		}
 
 		public CompoundTag encode() {
@@ -449,6 +512,8 @@ public class ItemMapper {
 	}
 
 	public interface ItemFactory {
+		BetaItem getBetaItem();
+
 		Optional<ItemRef> reference();
 
 		Map<Integer, ItemRef> auxMapping();
