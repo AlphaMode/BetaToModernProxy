@@ -37,7 +37,7 @@ public record BrodernProxy(Config config) {
 		DEFAULT_TAGS = tag;
 
 		try {
-			tag = NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/vanilla_registries.nbt")))), new NbtReadTracker()).getTag().asCompoundTag();
+			tag = NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/beta_registries.nbt")))), new NbtReadTracker()).getTag().asCompoundTag();
 		} catch (final Exception exception) {
 			tag = new CompoundTag();
 		}

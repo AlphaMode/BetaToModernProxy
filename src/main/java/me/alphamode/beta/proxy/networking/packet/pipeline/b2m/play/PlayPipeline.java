@@ -42,14 +42,14 @@ public class PlayPipeline {
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
-			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
-			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
-			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSlotStateChanged)
-			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
-			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
-			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
-			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
-			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
+//			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
+//			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
+//			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSlotStateChanged)
+//			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
+//			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
+//			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
+//			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
+//			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
@@ -168,7 +168,7 @@ public class PlayPipeline {
 			return;
 		}
 
-		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), packet.xs(), packet.ys(), packet.zs(), buffer);
+		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), packet.xs() + 1, packet.ys() + 1, packet.zs() + 1, buffer);
 	}
 
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {
