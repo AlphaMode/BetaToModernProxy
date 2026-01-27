@@ -23,6 +23,7 @@ public record BrodernProxy(Config config) {
 	private static BrodernProxy INSTANCE;
 	private static final CompoundTag DEFAULT_TAGS;
 	private static final CompoundTag DEFAULT_REGISTRIES;
+	private static final CompoundTag BETA_TO_MODERN_ITEMS;
 
 	static {
 		CompoundTag tag;
@@ -41,6 +42,14 @@ public record BrodernProxy(Config config) {
 		}
 
 		DEFAULT_REGISTRIES = tag;
+
+		try {
+			tag = NbtIO.LATEST.read(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/beta_to_modern_items.nbt")))), new NbtReadTracker()).asCompoundTag();
+		} catch (final Exception exception) {
+			tag = new CompoundTag();
+		}
+
+		BETA_TO_MODERN_ITEMS = tag;
 	}
 
 	public BrodernProxy {
@@ -72,6 +81,10 @@ public record BrodernProxy(Config config) {
 
 	public static CompoundTag getDefaultRegistries() {
 		return DEFAULT_REGISTRIES;
+	}
+
+	public static CompoundTag getBetaToModernItems() {
+		return BETA_TO_MODERN_ITEMS;
 	}
 
 	public static BrodernProxy getProxy() {
