@@ -315,7 +315,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 
 		// Clientbound
 		this.registerPacket(ClientboundConfigurationPackets.COOKIE_REQUEST, null);
-		this.registerPacket(ClientboundConfigurationPackets.CUSTOM_PAYLOAD, null);
+		this.registerPacket(ClientboundConfigurationPackets.CUSTOM_PAYLOAD, S2CConfigurationCustomPayloadPacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.DISCONNECT, S2CConfigurationDisconnectPacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.FINISH_CONFIGURATION, S2CFinishConfigurationPacket.CODEC);
 		this.registerPacket(ClientboundConfigurationPackets.KEEP_ALIVE, S2CConfigurationKeepAlivePacket.CODEC);
