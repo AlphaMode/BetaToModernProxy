@@ -56,6 +56,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 
 			packetData.release();
 			connection.kick(exception.getMessage());
+			throw new RuntimeException(exception);
 		}
 	}
 }

@@ -213,6 +213,7 @@ public interface BetaItems {
 			.food()
 			.build();
 	BetaItem BOW = BetaItem.builder(261)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem ARROW = BetaItem.builder(262)
 			.build();
@@ -308,46 +309,67 @@ public interface BetaItems {
 	BetaItem WHEAT = BetaItem.builder(256 + 40)
 			.build();
 	BetaItem BREAD = BetaItem.builder(256 + 41)
+			.food()
 			.build();
 	BetaItem LEATHER_HELMET = BetaItem.builder(256 + 42)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem LEATHER_CHESTPLATE = BetaItem.builder(256 + 43)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem LEATHER_LEGGINGS = BetaItem.builder(256 + 44)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem LEATHER_BOOTS = BetaItem.builder(256 + 45)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem CHAIN_HELMET = BetaItem.builder(256 + 46)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem CHAIN_CHESTPLATE = BetaItem.builder(256 + 47)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem CHAIN_LEGGINGS = BetaItem.builder(256 + 48)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem CHAIN_BOOTS = BetaItem.builder(256 + 49)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem IRON_HELMET = BetaItem.builder(256 + 50)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem IRON_CHESTPLATE = BetaItem.builder(256 + 51)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem IRON_LEGGINGS = BetaItem.builder(256 + 52)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem IRON_BOOTS = BetaItem.builder(256 + 53)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_HELMET = BetaItem.builder(256 + 54)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_CHESTPLATE = BetaItem.builder(256 + 55)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_LEGGINGS = BetaItem.builder(256 + 56)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem DIAMOND_BOOTS = BetaItem.builder(256 + 57)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_HELMET = BetaItem.builder(256 + 58)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_CHESTPLATE = BetaItem.builder(256 + 59)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_LEGGINGS = BetaItem.builder(256 + 60)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GOLDEN_BOOTS = BetaItem.builder(256 + 61)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem FLINT = BetaItem.builder(256 + 62)
 			.build();
@@ -367,10 +389,13 @@ public interface BetaItems {
 	BetaItem WOODEN_DOOR = BetaItem.builder(256 + 68)
 			.build();
 	BetaItem BUCKET = BetaItem.builder(256 + 69)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem WATER_BUCKET = BetaItem.builder(256 + 70)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem LAVA_BUCKET = BetaItem.builder(256 + 71)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem MINECART = BetaItem.builder(256 + 72)
 			.build();
@@ -387,6 +412,7 @@ public interface BetaItems {
 	BetaItem LEATHER = BetaItem.builder(256 + 78)
 			.build();
 	BetaItem MILK_BUCKET = BetaItem.builder(256 + 79)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem BRICK_ITEM = BetaItem.builder(256 + 80)
 			.build();
@@ -401,18 +427,22 @@ public interface BetaItems {
 	BetaItem SLIMEBALL = BetaItem.builder(256 + 85)
 			.build();
 	BetaItem CHEST_MINECART = BetaItem.builder(256 + 86)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem FURNACE_MINECART = BetaItem.builder(256 + 87)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem EGG = BetaItem.builder(256 + 88)
 			.build();
 	BetaItem COMPASS = BetaItem.builder(256 + 89)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem FISHING_ROD = BetaItem.builder(256 + 90)
 			.setMaxStackSize(1)
 			.setMaxDamage(64)
 			.build();
 	BetaItem CLOCK = BetaItem.builder(256 + 91)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem GLOWSTONE_DUST = BetaItem.builder(256 + 92)
 			.build();
@@ -429,21 +459,26 @@ public interface BetaItems {
 	BetaItem SUGAR = BetaItem.builder(256 + 97)
 			.build();
 	BetaItem CAKE_ITEM = BetaItem.builder(256 + 98)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem BED_ITEM = BetaItem.builder(256 + 99)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem REDSTONE_REPEATER_ITEM = BetaItem.builder(256 + 100)
 			.build();
 	BetaItem COOKIE = BetaItem.builder(256 + 101)
 			.build();
 	BetaItem MAP = BetaItem.builder(256 + 102)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem SHEARS = BetaItem.builder(256 + 103)
 			.setMaxStackSize(1)
 			.setMaxDamage(238)
 			.build();
 	BetaItem MUSIC_DISC_13 = BetaItem.builder(256 + 2000)
+			.setMaxStackSize(1)
 			.build();
 	BetaItem MUSIC_DISC_CAT = BetaItem.builder(256 + 2001)
+			.setMaxStackSize(1)
 			.build();
 }

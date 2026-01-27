@@ -44,6 +44,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 			}
 
 			connection.kick("Beta Exception: " + exception.getMessage());
+			throw new RuntimeException(exception);
 		}
 	}
 }
