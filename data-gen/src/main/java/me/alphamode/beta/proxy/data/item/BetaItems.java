@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.data.item;
 
-public interface ItemsStuff {
+public interface BetaItems {
 	int STONE = 1;
 	int GRASS = 2;
 	int DIRT = 3;
@@ -44,7 +44,7 @@ public interface ItemsStuff {
 	int GOLDEN_BLOCK = 41;
 	int IRON_BLOCK = 42;
 	int DOUBLE_STAIR = 43;
-	int SINGLE_STAIR = 44;
+	int HALF_SLAB = 44;
 	int BRICK = 45;
 	int TNT = 46;
 	int BOOKSHELF = 47;
