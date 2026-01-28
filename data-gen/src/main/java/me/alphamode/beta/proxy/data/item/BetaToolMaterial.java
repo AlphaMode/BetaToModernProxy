@@ -9,26 +9,26 @@ public enum BetaToolMaterial {
 
 	private final int harvestLevel;
 	private final int maxUses;
-	private final float efficiencyOnProperMaterial;
-	private final int damageVsEntity;
+	private final float miningSpeed;
+	private final int entityDamageAmount;
 
-	BetaToolMaterial(int i2, int i3, float f, int i4) {
-		this.harvestLevel = i2;
-		this.maxUses = i3;
-		this.efficiencyOnProperMaterial = f;
-		this.damageVsEntity = i4;
+	BetaToolMaterial(int harvestLevel, int maxUses, float miningSpeed, int entityDamageAmount) {
+		this.harvestLevel = harvestLevel;
+		this.maxUses = maxUses;
+		this.miningSpeed = miningSpeed;
+		this.entityDamageAmount = entityDamageAmount;
 	}
 
 	public int getMaxUses() {
 		return this.maxUses;
 	}
 
-	public float getEfficiencyOnProperMaterial() {
-		return this.efficiencyOnProperMaterial;
+	public float getMiningSpeed() {
+		return this.miningSpeed;
 	}
 
-	public int getDamageVsEntity() {
-		return this.damageVsEntity;
+	public int getEntityDamageAmount() {
+		return this.entityDamageAmount;
 	}
 
 	public int getHarvestLevel() {

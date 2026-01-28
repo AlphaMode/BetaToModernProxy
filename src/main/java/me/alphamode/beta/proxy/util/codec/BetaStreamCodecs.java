@@ -99,4 +99,18 @@ public interface BetaStreamCodecs {
 			}
 		};
 	}
+
+	static <T extends Enum<T>> StreamCodec<ByteBuf, T> javaEnum(final Class<T> enumClazz) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final T value) {
+				BasicStreamCodecs.BYTE.encode(buf, (byte) value.ordinal());
+			}
+
+			@Override
+			public T decode(final ByteBuf buf) {
+				return enumClazz.getEnumConstants()[BasicStreamCodecs.BYTE.decode(buf)];
+			}
+		};
+	}
 }

@@ -9,7 +9,7 @@ public record C2SPlayerCommandPacket(int id, Action action, int data) implements
 	public static final StreamCodec<ByteBuf, C2SPlayerCommandPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.VAR_INT,
 			C2SPlayerCommandPacket::id,
-			ModernStreamCodecs.javaEnum(Action.class),
+			ModernStreamCodecs.(Action.class),
 			C2SPlayerCommandPacket::action,
 			ModernStreamCodecs.VAR_INT,
 			C2SPlayerCommandPacket::data,

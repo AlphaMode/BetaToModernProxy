@@ -231,7 +231,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.SET_DISPLAY_OBJECTIVE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_DATA, S2CSetEntityDataPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_LINK, null);
-		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_MOTION, null);
+		this.registerPacket(ClientboundPlayPackets.SET_ENTITY_MOTION, S2CSetEntityMotionPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.SET_EQUIPMENT, null);
 		this.registerPacket(ClientboundPlayPackets.SET_EXPERIENCE, null);
 		this.registerPacket(ClientboundPlayPackets.SET_HEALTH, S2CSetHealthPacket.CODEC);

@@ -52,6 +52,7 @@ public class PlayPipeline {
 //            .clientHandler(S2CPlayerPositionPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
+			.serverHandler(SetEntityMotionPacket.class, PlayPipeline::handleS2CSetEntityMotion)
 			.serverHandler(ChunkVisibilityPacket.class, PlayPipeline::handleS2CChunkVisibility)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
@@ -273,6 +274,10 @@ public class PlayPipeline {
 					serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
 			case C2SMovePlayerPacket.StatusOnly p -> serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
 		}
+	}
+
+	public void handleS2CSetEntityMotion(final ClientConnection connection, final SetEntityMotionPacket packet) {
+		connection.send(new S2CSetEntityMotionPacket(packet.id(), new Vec3d(packet.deltaX(), packet.deltaY(), packet.deltaZ())));
 	}
 
 	public void handleC2SContainerSlotStateChanged(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {

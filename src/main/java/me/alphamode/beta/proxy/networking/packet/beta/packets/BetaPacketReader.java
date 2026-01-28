@@ -34,6 +34,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 							|| packet.getType() == BetaPackets.MOVE_ENTITY_POS
 							|| packet.getType() == BetaPackets.MOVE_ENTITY_POS_ROT
 							|| packet.getType() == BetaPackets.MOVE_ENTITY_ROT
+							|| packet.getType() == BetaPackets.SET_ENTITY_MOTION
 							|| packet.getType() == BetaPackets.SET_TIME)) {
 				LOGGER.info("Beta Packet {} received", packet);
 			}
