@@ -19,6 +19,7 @@ import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
+import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
@@ -38,6 +39,7 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
+			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
 			.clientHandler(C2SUseItemPacket.class, PlayPipeline::handleC2SUseItem)
@@ -150,6 +152,12 @@ public class PlayPipeline {
 		connection.send(new S2CSetHealthPacket(health));
 		if (health == 0) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.IMMEDIATE_RESPAWN, 0));
+		}
+	}
+
+	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
+		if (packet.hand() == InteractionHand.MAIN_HAND) {
+			connection.getServerConnection().send(new AnimatePacket(0, AnimatePacket.SWING_ARM));
 		}
 	}
 

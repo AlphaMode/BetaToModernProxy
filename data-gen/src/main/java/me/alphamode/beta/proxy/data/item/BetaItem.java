@@ -43,6 +43,7 @@ public record BetaItem(int id, DataComponentPatch patch) {
 
 		public Builder armor(final int armorLevel, final int armorType) {
 			// TODO: item component: attributes (damageReduceAmount)
+			// TODO: item component: equippable
 			this.damagable(ARMOR_MAX_DAMAGE[armorType] * 3 << armorLevel);
 			this.setMaxStackSize(1);
 			return this;
