@@ -9,6 +9,7 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.converter.codec.Codec;
 import net.lenni0451.mcstructs.converter.impl.v1_20_3.JavaConverter_v1_20_3;
 import net.lenni0451.mcstructs.converter.impl.v1_21_5.NbtConverter_v1_21_5;
+import net.lenni0451.mcstructs.converter.model.Result;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import org.apache.logging.log4j.LogManager;
@@ -35,8 +36,8 @@ public class DataComponentPatch {
 				if (key.removed) {
 					builder.remove(key.type);
 				} else {
-					final Object value = key.valueCodec().deserialize(NbtConverter_v1_21_5.INSTANCE, entry.getValue());
-					builder.set((DataComponentType<Object>) key.type, value);
+					final Result<?> value = key.valueCodec().deserialize(NbtConverter_v1_21_5.INSTANCE, entry.getValue());
+					builder.set((DataComponentType<Object>) key.type, value.get());
 				}
 			}
 
@@ -57,7 +58,7 @@ public class DataComponentPatch {
 					if (entry.getValue().isEmpty()) {
 						toRemove.add(DataComponents.getRawId(entry.getKey()));
 					} else {
-						toAdd.put(entry.getKey(), entry.getValue());
+						toAdd.put(entry.getKey(), entry.getValue().get());
 					}
 				}
 
@@ -66,12 +67,9 @@ public class DataComponentPatch {
 
 				// To Add
 				toAdd.forEach((type, value) -> {
-					LOGGER.info("Writing to-add id of {} ({})", DataComponents.getRawId(type), type);
+					LOGGER.info("Writing to-add id of {} ({}) with value {}", DataComponents.getRawId(type), type, value);
 					/*ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(type));
-					// TODO AHHHHHH
-					if (value instanceof Optional<?> optionalResult && optionalResult.get() instanceof Result<?> result) {
-						((StreamCodec<ByteBuf, Object>) type.streamCodec()).encode(buf, result.get());
-					}*/
+					((StreamCodec<ByteBuf, Object>) type.streamCodec()).encode(buf, result.get());*/
 				});
 
 				// To Remove

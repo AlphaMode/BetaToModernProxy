@@ -38,6 +38,7 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
+			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
 			.clientHandler(C2SUseItemPacket.class, PlayPipeline::handleC2SUseItem)
 			.clientHandler(C2SUseItemOnPacket.class, PlayPipeline::handleC2SUseItemOn)
@@ -149,6 +150,20 @@ public class PlayPipeline {
 		connection.send(new S2CSetHealthPacket(health));
 		if (health == 0) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.IMMEDIATE_RESPAWN, 0));
+		}
+	}
+
+	public void handleS2CAnimate(final ClientConnection connection, final AnimatePacket packet) {
+		switch (packet.action()) {
+			case AnimatePacket.SWING_ARM ->
+					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.SWING_MAIN_HAND));
+
+			case AnimatePacket.DAMAGE_ANIMATION -> {
+				// TODO
+			}
+
+			case AnimatePacket.LEAVE_BED ->
+					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.WAKE_UP));
 		}
 	}
 

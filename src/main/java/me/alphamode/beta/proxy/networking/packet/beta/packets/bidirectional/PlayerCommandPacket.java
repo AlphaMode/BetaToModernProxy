@@ -7,6 +7,10 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record PlayerCommandPacket(int id, byte action) implements BetaPacket {
+	public static final byte CROUCH = 1;
+	public static final byte UNCROUCH = 2;
+	public static final byte LEAVE_BED = 3;
+
 	public static final StreamCodec<ByteBuf, PlayerCommandPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
 			PlayerCommandPacket::id,
