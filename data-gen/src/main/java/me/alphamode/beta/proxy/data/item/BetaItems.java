@@ -1,5 +1,10 @@
 package me.alphamode.beta.proxy.data.item;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.Consumable;
+
 public interface BetaItems {
 	// Blocks
 	BetaItem STONE = BetaItem.builder(1)
@@ -207,7 +212,7 @@ public interface BetaItems {
 			.build();
 	BetaItem FLINT_AND_STEEL = BetaItem.builder(259)
 			.setMaxStackSize(1)
-			.setMaxDamage(64)
+			.damagable(64)
 			.build();
 	BetaItem APPLE = BetaItem.builder(260)
 			.food()
@@ -439,7 +444,7 @@ public interface BetaItems {
 			.build();
 	BetaItem FISHING_ROD = BetaItem.builder(256 + 90)
 			.setMaxStackSize(1)
-			.setMaxDamage(64)
+			.damagable(64)
 			.build();
 	BetaItem CLOCK = BetaItem.builder(256 + 91)
 			.setMaxStackSize(1)
@@ -473,7 +478,7 @@ public interface BetaItems {
 			.build();
 	BetaItem SHEARS = BetaItem.builder(256 + 103)
 			.setMaxStackSize(1)
-			.setMaxDamage(238)
+			.damagable(238)
 			.build();
 	BetaItem MUSIC_DISC_13 = BetaItem.builder(256 + 2000)
 			.setMaxStackSize(1)

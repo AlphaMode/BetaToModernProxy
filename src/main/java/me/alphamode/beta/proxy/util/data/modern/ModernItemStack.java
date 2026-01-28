@@ -17,7 +17,7 @@ public record ModernItemStack(int itemId, int count, DataComponentPatch componen
 			ModernStreamCodecs.VAR_INT.encode(buf, stack.count);
 			if (stack.count > 0) {
 				ModernStreamCodecs.VAR_INT.encode(buf, stack.itemId);
-				DataComponentPatch.CODEC.encode(buf, stack.components);
+				DataComponentPatch.STREAM_CODEC.encode(buf, stack.components);
 			}
 		}
 
@@ -28,7 +28,7 @@ public record ModernItemStack(int itemId, int count, DataComponentPatch componen
 				return ModernItemStack.EMPTY;
 			} else {
 				final Optional<Integer> id = ModernStreamCodecs.optional(ModernStreamCodecs.VAR_INT).decode(buf);
-				final Optional<DataComponentPatch> components = ModernStreamCodecs.optional(DataComponentPatch.CODEC).decode(buf);
+				final Optional<DataComponentPatch> components = ModernStreamCodecs.optional(DataComponentPatch.STREAM_CODEC).decode(buf);
 				return new ModernItemStack(id.orElse(0), count, components.orElse(DataComponentPatch.EMPTY));
 			}
 		}

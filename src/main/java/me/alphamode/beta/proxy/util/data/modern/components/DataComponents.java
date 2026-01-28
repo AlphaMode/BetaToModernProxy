@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.components;
 
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.text.TextComponent;
@@ -14,11 +15,11 @@ public final class DataComponents {
 
 //	public static final DataComponentType<CustomData> CUSTOM_DATA = register("custom_data", b -> b);
 
-	public static final DataComponentType<Integer> MAX_STACK_SIZE = register("max_stack_size", b -> b.networkSynchronized(ModernStreamCodecs.VAR_INT));
+	public static final DataComponentType<Integer> MAX_STACK_SIZE = register("max_stack_size", b -> b.persistent(ModernCodecs.intRange(1, 99)).networkSynchronized(ModernStreamCodecs.VAR_INT));
 
-	public static final DataComponentType<Integer> MAX_DAMAGE = register("max_damage", b -> b.networkSynchronized(ModernStreamCodecs.VAR_INT));
+	public static final DataComponentType<Integer> MAX_DAMAGE = register("max_damage", b -> b.persistent(ModernCodecs.POSITIVE_INT).networkSynchronized(ModernStreamCodecs.VAR_INT));
 
-	public static final DataComponentType<Integer> DAMAGE = register("damage", b -> b.networkSynchronized(ModernStreamCodecs.VAR_INT));
+	public static final DataComponentType<Integer> DAMAGE = register("damage", b -> b.persistent(ModernCodecs.NON_NEGATIVE_INT).networkSynchronized(ModernStreamCodecs.VAR_INT));
 
 //	public static final DataComponentType<Unit> UNBREAKABLE = register("unbreakable", b -> b.networkSynchronized(Unit.STREAM_CODEC));
 
@@ -224,5 +225,23 @@ public final class DataComponents {
 		final DataComponentType<T> type = builder.apply(DataComponentType.builder()).build();
 		REGISTRY.put(Identifier.defaultNamespace(id), type);
 		return type;
+	}
+
+	public static DataComponentType<?> byId(final Identifier identifier) {
+		return REGISTRY.getOrDefault(identifier, null);
+	}
+
+
+	public static int getRawId(final DataComponentType<?> type) {
+		int index = 0;
+		for (final var entry : REGISTRY.entrySet()) {
+			if (entry.getValue() == type) {
+				return index;
+			}
+
+			index++;
+		}
+
+		throw new IndexOutOfBoundsException();
 	}
 }

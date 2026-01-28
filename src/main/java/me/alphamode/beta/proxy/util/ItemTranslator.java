@@ -4,16 +4,19 @@ import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
-import me.alphamode.beta.proxy.util.data.modern.components.DataComponentType;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponents;
 import net.lenni0451.mcstructs.converter.model.Either;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public final class ItemTranslator {
+	private static final Logger LOGGER = LogManager.getLogger(ItemTranslator.class);
+
 	public static ModernItemStack toModernStack(final BetaItemStack stack) {
 		if (stack == null) {
 			return ModernItemStack.EMPTY;
@@ -79,18 +82,11 @@ public final class ItemTranslator {
 	private record ItemTranslation(int modernId, DataComponentPatch patch) {
 		public static ItemTranslation read(final CompoundTag tag) {
 			final int id = tag.getInt("id");
-
-			final DataComponentPatch.Builder builder = DataComponentPatch.builder();
-			final CompoundTag defaultComponents = tag.getCompound("default_components");
-			// TODO
-
-			return new ItemTranslation(id, builder.build());
+			return new ItemTranslation(id, DataComponentPatch.CODEC.decode(tag.getCompound("patch")));
 		}
 
-		public <T> void apply(final DataComponentPatch.Builder builder) {
-			for (final var entry : this.patch.entrySet()) {
-				builder.set((DataComponentType<T>) entry.getKey(), (T) entry.getValue().orElseThrow());
-			}
+		public void apply(final DataComponentPatch.Builder builder) {
+			builder.apply(this.patch);
 		}
 	}
 

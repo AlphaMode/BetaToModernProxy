@@ -6,10 +6,8 @@ import net.lenni0451.mcstructs.converter.codec.Codec;
 import net.lenni0451.mcstructs.converter.mapcodec.MapCodec;
 import net.lenni0451.mcstructs.converter.model.Result;
 
-import java.util.HexFormat;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
 public interface ModernCodecs {
 	Codec<Integer> STRING_RGB_COLOR = hexColor(6).map(ARGB::transparent, ARGB::opaque);
@@ -83,5 +81,20 @@ public interface ModernCodecs {
 				}
 			}
 		});
+	}
+
+	Codec<Integer> POSITIVE_INT = intRangeWithMessage(1, Integer.MAX_VALUE, n -> "Value must be positive: " + n);
+
+	Codec<Integer> NON_NEGATIVE_INT = intRangeWithMessage(0, Integer.MAX_VALUE, n -> "Value must be non-negative: " + n);
+
+	private static Codec<Integer> intRangeWithMessage(final int minInclusive, final int maxInclusive, final Function<Integer, String> error) {
+		return Codec.INTEGER.verified(value ->
+				value.compareTo(minInclusive) >= 0 && value.compareTo(maxInclusive) <= 0
+						? null
+						: Result.mergeErrors(error.apply(value), Collections.emptyList()));
+	}
+
+	static Codec<Integer> intRange(final int minInclusive, final int maxInclusive) {
+		return intRangeWithMessage(minInclusive, maxInclusive, n -> "Value must be within range [" + minInclusive + ";" + maxInclusive + "]: " + n);
 	}
 }

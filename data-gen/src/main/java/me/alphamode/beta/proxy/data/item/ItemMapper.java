@@ -2,17 +2,13 @@ package me.alphamode.beta.proxy.data.item;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.*;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.Consumable;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -20,7 +16,7 @@ import java.util.Optional;
 
 public class ItemMapper {
 	private static void put(final CompoundTag tag, final ItemFactory factory) {
-		final Optional<ItemRef> optionalItem = factory.reference();
+		final Optional<ItemTranslation> optionalItem = factory.reference();
 		final String key = String.valueOf(factory.getBetaItem().id());
 		if (optionalItem.isPresent()) {
 			tag.put(key, optionalItem.get().encode());
@@ -42,12 +38,12 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
-				return Optional.of(ItemRef.ofBeta(betaItem, item));
+			public Optional<ItemTranslation> reference() {
+				return Optional.of(ItemTranslation.ofBeta(betaItem, item));
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
+			public Map<Integer, ItemTranslation> auxMapping() {
 				return Map.of();
 			}
 		};
@@ -61,16 +57,16 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.OAK_SAPLING))
-						.put(1, ItemRef.ofBeta(betaItem, Items.SPRUCE_SAPLING))
-						.put(2, ItemRef.ofBeta(betaItem, Items.BIRCH_SAPLING))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.OAK_SAPLING))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.SPRUCE_SAPLING))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.BIRCH_SAPLING))
 						.build();
 			}
 		};
@@ -84,16 +80,16 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.OAK_LOG))
-						.put(1, ItemRef.ofBeta(betaItem, Items.SPRUCE_LOG))
-						.put(2, ItemRef.ofBeta(betaItem, Items.BIRCH_LOG))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.OAK_LOG))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.SPRUCE_LOG))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.BIRCH_LOG))
 						.build();
 			}
 		};
@@ -107,16 +103,16 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.OAK_LEAVES))
-						.put(1, ItemRef.ofBeta(betaItem, Items.SPRUCE_LEAVES))
-						.put(2, ItemRef.ofBeta(betaItem, Items.BIRCH_LEAVES))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.OAK_LEAVES))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.SPRUCE_LEAVES))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.BIRCH_LEAVES))
 						.build();
 			}
 		};
@@ -130,16 +126,16 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.DEAD_BUSH))
-						.put(1, ItemRef.ofBeta(betaItem, Items.SHORT_GRASS))
-						.put(2, ItemRef.ofBeta(betaItem, Items.FERN))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.DEAD_BUSH))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.SHORT_GRASS))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.FERN))
 						.build();
 			}
 		};
@@ -153,29 +149,29 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.WHITE_WOOL))
-						.put(1, ItemRef.ofBeta(betaItem, Items.ORANGE_WOOL))
-						.put(2, ItemRef.ofBeta(betaItem, Items.MAGENTA_WOOL))
-						.put(3, ItemRef.ofBeta(betaItem, Items.LIGHT_BLUE_WOOL))
-						.put(4, ItemRef.ofBeta(betaItem, Items.YELLOW_WOOL))
-						.put(5, ItemRef.ofBeta(betaItem, Items.LIME_WOOL))
-						.put(6, ItemRef.ofBeta(betaItem, Items.PINK_WOOL))
-						.put(7, ItemRef.ofBeta(betaItem, Items.GRAY_WOOL))
-						.put(8, ItemRef.ofBeta(betaItem, Items.LIGHT_GRAY_WOOL))
-						.put(9, ItemRef.ofBeta(betaItem, Items.CYAN_WOOL))
-						.put(10, ItemRef.ofBeta(betaItem, Items.PURPLE_WOOL))
-						.put(11, ItemRef.ofBeta(betaItem, Items.BLUE_WOOL))
-						.put(12, ItemRef.ofBeta(betaItem, Items.BROWN_WOOL))
-						.put(13, ItemRef.ofBeta(betaItem, Items.GREEN_WOOL))
-						.put(14, ItemRef.ofBeta(betaItem, Items.RED_WOOL))
-						.put(15, ItemRef.ofBeta(betaItem, Items.BLACK_WOOL))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.WHITE_WOOL))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.ORANGE_WOOL))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.MAGENTA_WOOL))
+						.put(3, ItemTranslation.ofBeta(betaItem, Items.LIGHT_BLUE_WOOL))
+						.put(4, ItemTranslation.ofBeta(betaItem, Items.YELLOW_WOOL))
+						.put(5, ItemTranslation.ofBeta(betaItem, Items.LIME_WOOL))
+						.put(6, ItemTranslation.ofBeta(betaItem, Items.PINK_WOOL))
+						.put(7, ItemTranslation.ofBeta(betaItem, Items.GRAY_WOOL))
+						.put(8, ItemTranslation.ofBeta(betaItem, Items.LIGHT_GRAY_WOOL))
+						.put(9, ItemTranslation.ofBeta(betaItem, Items.CYAN_WOOL))
+						.put(10, ItemTranslation.ofBeta(betaItem, Items.PURPLE_WOOL))
+						.put(11, ItemTranslation.ofBeta(betaItem, Items.BLUE_WOOL))
+						.put(12, ItemTranslation.ofBeta(betaItem, Items.BROWN_WOOL))
+						.put(13, ItemTranslation.ofBeta(betaItem, Items.GREEN_WOOL))
+						.put(14, ItemTranslation.ofBeta(betaItem, Items.RED_WOOL))
+						.put(15, ItemTranslation.ofBeta(betaItem, Items.BLACK_WOOL))
 						.build();
 			}
 		};
@@ -189,18 +185,18 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			// NOTE: closest mapping
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.SMOOTH_STONE))
-						.put(1, ItemRef.ofBeta(betaItem, Items.SANDSTONE))
-						.put(2, ItemRef.ofBeta(betaItem, Items.OAK_PLANKS))
-						.put(3, ItemRef.ofBeta(betaItem, Items.COBBLESTONE))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.SMOOTH_STONE))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.SANDSTONE))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.OAK_PLANKS))
+						.put(3, ItemTranslation.ofBeta(betaItem, Items.COBBLESTONE))
 						.build();
 			}
 		};
@@ -214,17 +210,17 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.SMOOTH_STONE_SLAB))
-						.put(1, ItemRef.ofBeta(betaItem, Items.SANDSTONE_SLAB))
-						.put(2, ItemRef.ofBeta(betaItem, Items.OAK_SLAB))
-						.put(3, ItemRef.ofBeta(betaItem, Items.COBBLESTONE_SLAB))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.SMOOTH_STONE_SLAB))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.SANDSTONE_SLAB))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.OAK_SLAB))
+						.put(3, ItemTranslation.ofBeta(betaItem, Items.COBBLESTONE_SLAB))
 						.build();
 			}
 		};
@@ -238,29 +234,29 @@ public class ItemMapper {
 			}
 
 			@Override
-			public Optional<ItemRef> reference() {
+			public Optional<ItemTranslation> reference() {
 				return Optional.empty();
 			}
 
 			@Override
-			public Map<Integer, ItemRef> auxMapping() {
-				return ImmutableMap.<Integer, ItemRef>builder()
-						.put(0, ItemRef.ofBeta(betaItem, Items.INK_SAC))
-						.put(1, ItemRef.ofBeta(betaItem, Items.RED_DYE))
-						.put(2, ItemRef.ofBeta(betaItem, Items.GREEN_DYE))
-						.put(3, ItemRef.ofBeta(betaItem, Items.BROWN_DYE))
-						.put(4, ItemRef.ofBeta(betaItem, Items.LAPIS_LAZULI))
-						.put(5, ItemRef.ofBeta(betaItem, Items.MAGENTA_DYE))
-						.put(6, ItemRef.ofBeta(betaItem, Items.CYAN_DYE))
-						.put(7, ItemRef.ofBeta(betaItem, Items.LIGHT_GRAY_DYE))
-						.put(8, ItemRef.ofBeta(betaItem, Items.GRAY_DYE))
-						.put(9, ItemRef.ofBeta(betaItem, Items.PINK_DYE))
-						.put(10, ItemRef.ofBeta(betaItem, Items.LIME_DYE))
-						.put(11, ItemRef.ofBeta(betaItem, Items.YELLOW_DYE))
-						.put(12, ItemRef.ofBeta(betaItem, Items.LIGHT_BLUE_DYE))
-						.put(13, ItemRef.ofBeta(betaItem, Items.PINK_DYE))
-						.put(14, ItemRef.ofBeta(betaItem, Items.ORANGE_DYE))
-						.put(15, ItemRef.ofBeta(betaItem, Items.BONE_MEAL))
+			public Map<Integer, ItemTranslation> auxMapping() {
+				return ImmutableMap.<Integer, ItemTranslation>builder()
+						.put(0, ItemTranslation.ofBeta(betaItem, Items.INK_SAC))
+						.put(1, ItemTranslation.ofBeta(betaItem, Items.RED_DYE))
+						.put(2, ItemTranslation.ofBeta(betaItem, Items.GREEN_DYE))
+						.put(3, ItemTranslation.ofBeta(betaItem, Items.BROWN_DYE))
+						.put(4, ItemTranslation.ofBeta(betaItem, Items.LAPIS_LAZULI))
+						.put(5, ItemTranslation.ofBeta(betaItem, Items.MAGENTA_DYE))
+						.put(6, ItemTranslation.ofBeta(betaItem, Items.CYAN_DYE))
+						.put(7, ItemTranslation.ofBeta(betaItem, Items.LIGHT_GRAY_DYE))
+						.put(8, ItemTranslation.ofBeta(betaItem, Items.GRAY_DYE))
+						.put(9, ItemTranslation.ofBeta(betaItem, Items.PINK_DYE))
+						.put(10, ItemTranslation.ofBeta(betaItem, Items.LIME_DYE))
+						.put(11, ItemTranslation.ofBeta(betaItem, Items.YELLOW_DYE))
+						.put(12, ItemTranslation.ofBeta(betaItem, Items.LIGHT_BLUE_DYE))
+						.put(13, ItemTranslation.ofBeta(betaItem, Items.PINK_DYE))
+						.put(14, ItemTranslation.ofBeta(betaItem, Items.ORANGE_DYE))
+						.put(15, ItemTranslation.ofBeta(betaItem, Items.BONE_MEAL))
 						.build();
 			}
 		};
@@ -481,54 +477,33 @@ public class ItemMapper {
 		}
 	}
 
-	public record ItemRef(Item item, DataComponentMap components) {
-		public static ItemRef of(final Item item) {
-			return new ItemRef(item, DataComponentMap.EMPTY);
+	public record ItemTranslation(Item item, DataComponentPatch patch) {
+		public static final Codec<Item> ITEM_ID_CODEC = Codec.INT.xmap(Item::byId, Item::getId);
+
+		public static final Codec<ItemTranslation> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+				ITEM_ID_CODEC.fieldOf("id").forGetter(ItemTranslation::item),
+				DataComponentPatch.CODEC.fieldOf("patch").forGetter(ItemTranslation::patch)
+		).apply(instance, ItemTranslation::new));
+
+		public static ItemTranslation of(final Item item) {
+			return new ItemTranslation(item, DataComponentPatch.EMPTY);
 		}
 
-		public static ItemRef ofBeta(final BetaItem betaItem, final Item vanillaItem) {
-			final DataComponentMap.Builder builder = DataComponentMap.builder();
-			builder.set(DataComponents.MAX_STACK_SIZE, betaItem.maxStackSize());
-			if (betaItem.maxDamage() > 0) {
-				builder.set(DataComponents.MAX_DAMAGE, betaItem.maxDamage());
-			} else {
-				builder.set(DataComponents.UNBREAKABLE, Unit.INSTANCE);
-			}
-
-			if (betaItem instanceof BetaFood) {
-				builder.set(DataComponents.CONSUMABLE, Consumable.builder()
-						.animation(ItemUseAnimation.NONE)
-						.consumeSeconds(0)
-						.sound(BuiltInRegistries.SOUND_EVENT.get(SoundEvents.EMPTY.location()).get())
-						.build());
-			}
-
-			return new ItemRef(vanillaItem, builder.build());
+		public static ItemTranslation ofBeta(final BetaItem betaItem, final Item vanillaItem) {
+			return new ItemTranslation(vanillaItem, betaItem.patch());
 		}
 
 		public CompoundTag encode() {
-			final CompoundTag refTag = new CompoundTag();
-			refTag.putInt("id", Item.getId(item));
-
-			final CompoundTag componentsTag = new CompoundTag();
-			for (var entry : components) {
-				final Tag tag = jsonToTag(entry.encodeValue(JsonOps.INSTANCE).getOrThrow());
-				if (tag != null) {
-					componentsTag.put(entry.type().toString(), tag);
-				}
-			}
-
-			refTag.put("default_components", componentsTag);
-			return refTag;
+			return (CompoundTag) jsonToTag(CODEC.encode(this, JsonOps.INSTANCE, null).getOrThrow());
 		}
 	}
 
 	public interface ItemFactory {
 		BetaItem getBetaItem();
 
-		Optional<ItemRef> reference();
+		Optional<ItemTranslation> reference();
 
-		Map<Integer, ItemRef> auxMapping();
+		Map<Integer, ItemTranslation> auxMapping();
 	}
 
 	private static Tag jsonToTag(final JsonElement element) {
