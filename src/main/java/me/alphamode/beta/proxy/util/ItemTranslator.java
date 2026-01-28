@@ -22,9 +22,6 @@ public final class ItemTranslator {
 			return ModernItemStack.EMPTY;
 		} else {
 			final DataComponentPatch.Builder builder = DataComponentPatch.builder();
-			if (isDamagable(stack.item().id())) {
-				builder.set(DataComponents.DAMAGE, stack.aux());
-			}
 
 			int modernId = 0;
 			final Either<ItemTranslation, ItemTranslations> either = getTranslation(stack);
@@ -39,6 +36,10 @@ public final class ItemTranslator {
 					modernId = translation.modernId();
 					translation.apply(builder);
 				}
+			}
+
+			if (isDamagable(stack.item().id())) {
+				builder.set(DataComponents.DAMAGE, stack.aux());
 			}
 
 			return new ModernItemStack(modernId, stack.count(), builder.build());

@@ -7,9 +7,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.Consumable;
-import net.minecraft.world.item.component.Tool;
 
 public record BetaItem(int id, DataComponentPatch patch) {
+	private static final int[] ARMOR_MAX_DAMAGE = new int[]{11, 16, 15, 13};
+
 	public static Builder builder(final int id) {
 		return new Builder(id);
 	}
@@ -40,8 +41,18 @@ public record BetaItem(int id, DataComponentPatch patch) {
 			return this;
 		}
 
-		public Builder tool(final Tool tool) {
-			this.component(DataComponents.TOOL, tool);
+		public Builder armor(final int armorLevel, final int armorType) {
+			// TODO: item component: attributes (damageReduceAmount)
+			this.damagable(ARMOR_MAX_DAMAGE[armorType] * 3 << armorLevel);
+			this.setMaxStackSize(1);
+			return this;
+		}
+
+		public Builder tool(final BetaToolMaterial material /*, final Tool tool*/) {
+			// TODO: item component: attributes (mining_speed, attack_damage)
+			// TODO: item component: tool
+			this.setMaxStackSize(1);
+			this.damagable(material.getMaxUses());
 			return this;
 		}
 
