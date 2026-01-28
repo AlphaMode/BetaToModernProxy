@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.codec.StreamEncoder;
 import net.lenni0451.mcstructs.converter.codec.Codec;
 import net.lenni0451.mcstructs.converter.impl.v1_20_3.JavaConverter_v1_20_3;
 import net.lenni0451.mcstructs.converter.impl.v1_21_5.NbtConverter_v1_21_5;
@@ -62,18 +63,17 @@ public class DataComponentPatch {
 					}
 				}
 
-				ModernStreamCodecs.VAR_INT.encode(buf, 0);
+				ModernStreamCodecs.VAR_INT.encode(buf, toAdd.size());
 				ModernStreamCodecs.VAR_INT.encode(buf, toRemove.size());
 
 				// To Add
 				toAdd.forEach((type, value) -> {
-					LOGGER.info("Writing to-add id of {} ({}) with value {}", DataComponents.getRawId(type), type, value);
-					/*ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(type));
-					((StreamCodec<ByteBuf, Object>) type.streamCodec()).encode(buf, result.get());*/
+					ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(type));
+					((StreamEncoder<ByteBuf, Object>) type.streamCodec()).encode(buf, value);
 				});
 
 				// To Remove
-				toRemove.forEach(value -> ModernStreamCodecs.VAR_INT.encode(buf, value));
+				toRemove.forEach(id -> ModernStreamCodecs.VAR_INT.encode(buf, id));
 			}
 		}
 

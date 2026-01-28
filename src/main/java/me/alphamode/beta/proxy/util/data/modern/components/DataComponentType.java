@@ -51,6 +51,10 @@ public interface DataComponentType<T> {
 
 		private record SimpleType<T>(@Nullable Codec<T> codec,
 									 StreamCodec<? super ByteBuf, T> streamCodec) implements DataComponentType<T> {
+			@Override
+			public String toString() {
+				return DataComponents.getId(this).get();
+			}
 		}
 	}
 }

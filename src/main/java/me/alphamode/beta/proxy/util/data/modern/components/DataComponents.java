@@ -231,11 +231,29 @@ public final class DataComponents {
 		return REGISTRY.getOrDefault(identifier, null);
 	}
 
+	public static Identifier getId(final DataComponentType<?> type) {
+		for (final var entry : REGISTRY.entrySet()) {
+			if (type == entry.getValue()) {
+				return entry.getKey();
+			}
+		}
+
+		throw new IndexOutOfBoundsException();
+	}
 
 	public static int getRawId(final DataComponentType<?> type) {
+		// TODO
+		if (type == MAX_STACK_SIZE) {
+			return 1;
+		} else if (type == MAX_DAMAGE) {
+			return 2;
+		} else if (type == DAMAGE) {
+			return 3;
+		}
+
 		int index = 0;
-		for (final var entry : REGISTRY.entrySet()) {
-			if (entry.getValue() == type) {
+		for (final var it : REGISTRY.values()) {
+			if (type == it) {
 				return index;
 			}
 
