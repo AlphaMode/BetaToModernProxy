@@ -72,11 +72,11 @@ public class PlayPipeline {
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
 
-    protected final Player player;
+	protected final Player player;
 
-    public PlayPipeline(Player player) {
-        this.player = Objects.requireNonNull(player, "Can't construct play pipeline without player");
-    }
+	public PlayPipeline(Player player) {
+		this.player = Objects.requireNonNull(player, "Can't construct play pipeline without player");
+	}
 
 	public void handleC2SKeepAlive(final ClientConnection connection, final C2SPlayKeepAlivePacket packet) {
 		connection.getServerConnection().send(new KeepAlivePacket());
@@ -132,7 +132,7 @@ public class PlayPipeline {
 		connection.send(new S2CSetChunkCacheRadiusPacket(0));
 		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
 		connection.send(new S2CLevelChunkWithLightPacket(
-				0, 0,
+				new ChunkPos(0, 0),
 				new ClientboundLevelChunkPacketData(
 						Map.of(),
 						new byte[1024],
@@ -293,13 +293,13 @@ public class PlayPipeline {
 
 	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {
 		connection.tick();
-        player.tick();
+		player.tick();
 	}
 
 	// TODO: double check accuracy
 
 	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
-        player.updateFromServer(packet);
+		player.updateFromServer(packet);
 		connection.send(new S2CPlayerPositionPacket(0, new PositionMoveRotation(new Vec3d(packet.x(), packet.y(), packet.z()), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
 		connection.getServerConnection().send(packet);
 	}
@@ -314,7 +314,8 @@ public class PlayPipeline {
 					serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
 			case C2SMovePlayerPacket.PosRot p ->
 					serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
-			case C2SMovePlayerPacket.StatusOnly p -> serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
+			case C2SMovePlayerPacket.StatusOnly p ->
+					serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
 		}
 	}
 

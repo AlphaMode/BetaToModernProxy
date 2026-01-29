@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLevelChunkWithLightPacket;
+import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.beta.BetaNibbleArray;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
@@ -192,7 +193,7 @@ public class ChunkTranslator {
                 List.of(), List.of()
         );
 
-        connection.send(new S2CLevelChunkWithLightPacket(x, z, chunkData, lightData));
+        connection.send(new S2CLevelChunkWithLightPacket(new ChunkPos(x, z), chunkData, lightData));
     }
 
     public static ModernChunk translate(BetaChunk chunk) {

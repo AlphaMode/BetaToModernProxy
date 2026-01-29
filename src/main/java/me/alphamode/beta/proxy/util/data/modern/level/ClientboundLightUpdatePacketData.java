@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ClientboundLightUpdatePacketData {
 	private static final StreamCodec<ByteBuf, byte[]> DATA_LAYER_STREAM_CODEC = ModernStreamCodecs.sizedByteArray(2048);
+	public static final StreamCodec<ByteBuf, ClientboundLightUpdatePacketData> CODEC = StreamCodec.ofMember(ClientboundLightUpdatePacketData::write, ClientboundLightUpdatePacketData::new);
 
 	private final BitSet skyYMask;
 	private final BitSet blockYMask;

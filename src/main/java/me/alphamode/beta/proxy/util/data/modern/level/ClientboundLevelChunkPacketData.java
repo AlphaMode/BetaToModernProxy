@@ -18,17 +18,18 @@ public class ClientboundLevelChunkPacketData {
 			Heightmap.Types.STREAM_CODEC,
 			ModernStreamCodecs.LONG_ARRAY
 	);
+	public static final StreamCodec<ByteBuf, ClientboundLevelChunkPacketData> CODEC = StreamCodec.ofMember(ClientboundLevelChunkPacketData::write, ClientboundLevelChunkPacketData::new);
 
 	private final Map<Heightmap.Types, long[]> heightmaps;
 	private final byte[] buffer;
 	private final List<BlockEntityInfo> blockEntitiesData;
 
-    public ClientboundLevelChunkPacketData(ChunkTranslator.ModernChunk chunk) {
-        this.heightmaps = chunk.heightmaps();
-        this.buffer = new byte[calculateChunkSize(chunk)];
-        extractChunkData(this.getWriteBuffer(), chunk);
-        this.blockEntitiesData = List.of();
-    }
+	public ClientboundLevelChunkPacketData(ChunkTranslator.ModernChunk chunk) {
+		this.heightmaps = chunk.heightmaps();
+		this.buffer = new byte[calculateChunkSize(chunk)];
+		extractChunkData(this.getWriteBuffer(), chunk);
+		this.blockEntitiesData = List.of();
+	}
 
 	public ClientboundLevelChunkPacketData(
 			final Map<Heightmap.Types, long[]> heightmaps,
@@ -60,31 +61,31 @@ public class ClientboundLevelChunkPacketData {
 		BlockEntityInfo.LIST_STREAM_CODEC.encode(buf, this.blockEntitiesData);
 	}
 
-    private static int calculateChunkSize(final ChunkTranslator.ModernChunk chunk) {
-        int total = 0;
+	private static int calculateChunkSize(final ChunkTranslator.ModernChunk chunk) {
+		int total = 0;
 
-        for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
-            total += section.getSerializedSize();
-        }
+		for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
+			total += section.getSerializedSize();
+		}
 
-        return total;
-    }
+		return total;
+	}
 
-    private ByteBuf getWriteBuffer() {
-        ByteBuf buffer = Unpooled.wrappedBuffer(this.buffer);
-        buffer.writerIndex(0);
-        return buffer;
-    }
+	private ByteBuf getWriteBuffer() {
+		ByteBuf buffer = Unpooled.wrappedBuffer(this.buffer);
+		buffer.writerIndex(0);
+		return buffer;
+	}
 
-    public static void extractChunkData(final ByteBuf buffer, final ChunkTranslator.ModernChunk chunk) {
-        for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
-            section.write(buffer);
-        }
+	public static void extractChunkData(final ByteBuf buffer, final ChunkTranslator.ModernChunk chunk) {
+		for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
+			section.write(buffer);
+		}
 
-        if (buffer.writerIndex() != buffer.capacity()) {
-            throw new IllegalStateException("Didn't fill chunk buffer: expected " + buffer.capacity() + " bytes, got " + buffer.writerIndex());
-        }
-    }
+		if (buffer.writerIndex() != buffer.capacity()) {
+			throw new IllegalStateException("Didn't fill chunk buffer: expected " + buffer.capacity() + " bytes, got " + buffer.writerIndex());
+		}
+	}
 
 	public ByteBuf getReadBuffer() {
 		return Unpooled.wrappedBuffer(this.buffer);
