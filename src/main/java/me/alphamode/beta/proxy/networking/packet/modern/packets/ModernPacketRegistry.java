@@ -104,7 +104,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.PING_REQUEST, C2SPlayPingRequestPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PLACE_RECIPE, null);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_ABILITIES, null);
-		this.registerPacket(ServerboundPlayPackets.PLAYER_ACTION, null);
+		this.registerPacket(ServerboundPlayPackets.PLAYER_ACTION, C2SPlayerActionPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_COMMAND, C2SPlayerCommandPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_INPUT, C2SPlayerInputPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.PLAYER_LOADED, C2SPlayerLoadedPacket.CODEC);
