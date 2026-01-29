@@ -131,7 +131,7 @@ public class ChunkTranslator {
 				new ChunkPos(x, z),
 				new ClientboundLevelChunkPacketData(chunk),
 				new ClientboundLightUpdatePacketData(
-						new BitSet(), new BitSet(), new BitSet(), new BitSet(),
+						skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask,
 						skyUpdates, blockUpdates
 				)));
 	}
@@ -146,11 +146,11 @@ public class ChunkTranslator {
 			final int sectionY = getMinLightSection() + (getSectionIndex(y) >> 4);
 			// TODO/FIX
 //			final ModernNibbleArray modernNibbleArray = modernArray[sectionY];
-//			for (int x = 0; x < SECTION_SIZE; x++) {
-//				for (int z = 0; z < SECTION_SIZE; z++) {
+			for (int x = 0; x < SECTION_SIZE; x++) {
+				for (int z = 0; z < SECTION_SIZE; z++) {
 //					modernNibbleArray.set(x, y & 15, z, nibbleArray.get(x, y, z));
-//				}
-//			}
+				}
+			}
 		}
 
 		return modernArray;
@@ -172,12 +172,11 @@ public class ChunkTranslator {
 	}
 
 	public static ModernChunk translate(BetaChunk chunk) {
-		BlockTranslator translator = BrodernProxy.getBlockTranslator();
-		ModernChunkSection[] sections = new ModernChunkSection[BETA_CHUNK_SECTION_SIZE];
+		final BlockTranslator translator = BrodernProxy.getBlockTranslator();
+		final ModernChunkSection[] sections = new ModernChunkSection[BETA_CHUNK_SECTION_SIZE];
 		for (int sectionY = 0; sectionY < BETA_CHUNK_SECTION_SIZE; sectionY++) {
 			PalettedContainer<BlockState> states = PalettedContainer.blockStates();
 			int nonEmptyBlockCount = 0;
-
 			for (int x = 0; x < SECTION_SIZE; x++) {
 				for (int y = 0; y < SECTION_SIZE; y++) {
 					for (int z = 0; z < SECTION_SIZE; z++) {
@@ -194,6 +193,7 @@ public class ChunkTranslator {
 			sections[sectionY] = new ModernChunkSection(nonEmptyBlockCount, states, PalettedContainer.biomes());
 		}
 
+		// TODO: heightmaps
 		return new ModernChunk(sections, Map.of());
 	}
 
