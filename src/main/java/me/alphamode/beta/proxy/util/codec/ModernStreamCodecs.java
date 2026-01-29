@@ -78,7 +78,6 @@ public interface ModernStreamCodecs {
 
 	static StreamCodec<ByteBuf, long[]> fixedLongArray(int size) {
 		return new StreamCodec<>() {
-
 			@Override
 			public void encode(ByteBuf buf, long[] value) {
 				for (final long v : value) {
