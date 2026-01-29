@@ -125,6 +125,28 @@ public interface ModernStreamCodecs {
 		};
 	}
 
+	static StreamCodec<ByteBuf, byte[]> byteArray(final int maxSize) {
+		return new StreamCodec<>() {
+			@Override
+			public byte[] decode(final ByteBuf buf) {
+				final int size = VAR_INT.decode(buf);
+				if (size > maxSize) {
+					throw new RuntimeException("ByteArray with size " + size + " is bigger than allowed " + maxSize);
+				} else {
+					final byte[] data = new byte[size];
+					buf.readBytes(data);
+					return data;
+				}
+			}
+
+			@Override
+			public void encode(final ByteBuf buf, final byte[] value) {
+				VAR_INT.encode(buf, value.length);
+				buf.writeBytes(value);
+			}
+		};
+	}
+
 	StreamCodec<ByteBuf, Integer> VAR_INT = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final Integer value) {
