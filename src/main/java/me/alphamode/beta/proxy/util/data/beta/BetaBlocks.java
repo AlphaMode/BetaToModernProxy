@@ -24,12 +24,12 @@ public final class BetaBlocks {
 	public static final Block GOLDEN_ORE = registerBlock(new Block(14));
 	public static final Block IRON_ORE = registerBlock(new Block(15));
 	public static final Block COAL_ORE = registerBlock(new Block(16));
-	public static final Block WOOD = registerBlock(new Block(17));
+	public static final Block LOG = registerBlock(new Block(17));
 	public static final Block LEAVES = registerBlock(new Block(18));
 	public static final Block SPONGE = registerBlock(new Block(19));
 	public static final Block GLASS = registerBlock(new Block(20));
 	public static final Block LAPIS_ORE = registerBlock(new Block(21));
-	public static final Block LAPIS_BLOCk = registerBlock(new Block(22));
+	public static final Block LAPIS_BLOCK = registerBlock(new Block(22));
 	public static final Block DISPENSER = registerBlock(new Block(23));
 	public static final Block SANDSTONE = registerBlock(new Block(24));
 	public static final Block NOTEBLOCK = registerBlock(new Block(25));
