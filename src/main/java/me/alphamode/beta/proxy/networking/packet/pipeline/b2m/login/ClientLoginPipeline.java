@@ -5,13 +5,10 @@ import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
-import me.alphamode.beta.proxy.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SConfigurationKeepAlivePacket;
@@ -31,7 +28,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CSt
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play.PlayPipeline;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
@@ -48,30 +44,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class LoginPipeline {
-	private static final Logger LOGGER = LogManager.getLogger(LoginPipeline.class);
-	public static final PacketPipeline<LoginPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<LoginPipeline>builder()
+public class ClientLoginPipeline {
+	private static final Logger LOGGER = LogManager.getLogger(ClientLoginPipeline.class);
+	public static final PacketPipeline<ClientLoginPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<ClientLoginPipeline>builder()
 			// Intent
-			.clientHandler(C2SIntentionPacket.class, LoginPipeline::handleClientIntent)
+			.clientHandler(C2SIntentionPacket.class, ClientLoginPipeline::handleClientIntent)
 			// Status
-			.clientHandler(C2SStatusRequestPacket.class, LoginPipeline::handleC2SStatusRequest)
-			.clientHandler(C2SStatusPingRequestPacket.class, LoginPipeline::handleC2SStatusPingRequest)
+			.clientHandler(C2SStatusRequestPacket.class, ClientLoginPipeline::handleC2SStatusRequest)
+			.clientHandler(C2SStatusPingRequestPacket.class, ClientLoginPipeline::handleC2SStatusPingRequest)
 			// Login
-			.clientHandler(C2SHelloPacket.class, LoginPipeline::handleC2SHello)
-			.serverHandler(HandshakePacket.class, LoginPipeline::handleS2CHandshake)
-			.serverHandler(LoginPacket.class, LoginPipeline::handleS2CLogin)
+			.clientHandler(C2SHelloPacket.class, ClientLoginPipeline::handleC2SHello)
 			// Configuration
-			.clientHandler(C2SConfigurationKeepAlivePacket.class, LoginPipeline::handleC2SKeepAlive)
-			.serverHandler(KeepAlivePacket.class, LoginPipeline::handleS2CKeepAlive)
-			.clientHandler(C2SLoginAcknowledgedPacket.class, LoginPipeline::handleC2SLoginAcknowledged)
-			.clientHandler(C2SFinishConfigurationPacket.class, LoginPipeline::handleC2SFinishConfiguration)
+			.clientHandler(C2SConfigurationKeepAlivePacket.class, ClientLoginPipeline::handleC2SKeepAlive)
+			.serverHandler(KeepAlivePacket.class, ClientLoginPipeline::handleS2CKeepAlive)
+			.clientHandler(C2SLoginAcknowledgedPacket.class, ClientLoginPipeline::handleC2SLoginAcknowledged)
+			.clientHandler(C2SFinishConfigurationPacket.class, ClientLoginPipeline::handleC2SFinishConfiguration)
 			// Unhandled
-			.unhandledClient(LoginPipeline::passClientToNextPipeline)
-			.unhandledServer(LoginPipeline::passServerToNextPipeline)
+			.unhandledClient(ClientLoginPipeline::passClientToNextPipeline)
+			.unhandledServer(ClientLoginPipeline::passServerToNextPipeline)
 			.build();
-
-    protected Player player;
-    protected long seed;
 
 	// Handshake
 	public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
@@ -116,17 +107,7 @@ public class LoginPipeline {
 		LOGGER.info("Sending Handshake Packet");
 		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
 		connection.setProfile(profile);
-		connection.getServerConnection().send(new HandshakePacket(packet.username()));
-	}
-
-	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
-		if (packet.username().equals("-")) {
-			LOGGER.info("Sending Login Packet & Login Finished");
-			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
-			connection.send(new S2CLoginFinishedPacket(connection.getProfile()));
-		} else {
-			connection.kick("Online mode isn't supported!");
-		}
+        connection.send(new S2CLoginFinishedPacket(profile));
 	}
 
 	// Configuration
@@ -147,6 +128,23 @@ public class LoginPipeline {
 	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
 		LOGGER.info("Starting Configuration");
 		connection.setState(PacketState.CONFIGURATION);
+
+        // Send Tags
+        this.sendTags(connection);
+
+        // Send Registries
+        this.sendRegistries(connection);
+
+        // Send Custom Brand
+        final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
+        ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
+
+        final byte[] buffer = new byte[buf.readableBytes()];
+        buf.readBytes(buffer);
+        connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
+        buf.release();
+
+        connection.send(S2CFinishConfigurationPacket.INSTANCE);
 	}
 
 	public void sendTags(final ClientConnection connection) {
@@ -195,32 +193,12 @@ public class LoginPipeline {
 	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		LOGGER.info("Finished Configuration & Going into Play Mode");
 		connection.setState(PacketState.PLAY);
-		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(this.player)); // TODO: Pass in unhandled packets
-	}
+        // Done with client login now do server login
+		connection.setPipeline(ServerLoginPipeline.PIPELINE, new ServerLoginPipeline()); // TODO: Pass in unhandled packets
+        connection.getServerConnection().send(new HandshakePacket(connection.getProfile().name()));
+    }
 
-	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-		// Send Tags
-		this.sendTags(connection);
 
-		// Send Registries
-		this.sendRegistries(connection);
-
-		// Send Custom Brand
-		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
-		ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
-
-		final byte[] buffer = new byte[buf.readableBytes()];
-		buf.readBytes(buffer);
-		connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
-		buf.release();
-
-		connection.send(S2CFinishConfigurationPacket.INSTANCE);
-
-        this.player = new Player(packet.clientVersion(), connection);
-        this.player.setDimension(packet.dimension());
-
-        this.seed = packet.seed();
-	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}

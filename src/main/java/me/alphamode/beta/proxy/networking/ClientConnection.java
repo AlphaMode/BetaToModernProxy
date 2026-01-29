@@ -16,7 +16,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.LoginPipeline;
+import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.ClientLoginPipeline;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
@@ -29,7 +29,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	private final MinecraftServerAddress address;
 	private final int id;
-	private ActivePipeline<?> pipeline = new ActivePipeline<>(LoginPipeline.PIPELINE, new LoginPipeline());
+	private ActivePipeline<?> pipeline = new ActivePipeline<>(ClientLoginPipeline.PIPELINE, new ClientLoginPipeline());
 	private ServerConnection serverConnection;
 	private Channel clientChannel;
 	private PacketState state = PacketState.HANDSHAKING;
