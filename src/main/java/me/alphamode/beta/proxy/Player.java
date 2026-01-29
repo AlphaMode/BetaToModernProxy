@@ -150,6 +150,14 @@ public class Player {
         this.setRot(yRot, xRot);
     }
 
+    public void setStarted(final boolean started) {
+        this.started = started;
+    }
+
+    public boolean isStarted() {
+        return this.started;
+    }
+
     public void updateFromClient(final C2SMovePlayerPacket packet) {
         double newX = this.x;
         double newY = this.y;
@@ -172,6 +180,36 @@ public class Player {
 //        this.onGround = packet.onGround();
         if (!this.started) {
             this.started = true;
+        }
+    }
+
+    public void updateFromServer(final MovePlayerPacket packet) {
+        double x = this.x;
+        double y = this.y;
+        double z = this.z;
+        float yRot = this.yRot;
+        float xRot = this.xRot;
+        if (packet.hasPos()) {
+            x = packet.x();
+            y = packet.y();
+            z = packet.z();
+        }
+
+        if (packet.hasRot()) {
+            yRot = packet.yRot();
+            xRot = packet.xRot();
+        }
+
+//        this.ySlideOffset = 0.0F;
+        this.xd = this.yd = this.zd = 0.0;
+        this.absMoveTo(x, y, z, yRot, xRot);
+        this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.pose.y0(), this.y, this.z, packet.onGround()));
+        if (!this.started) {
+//            this.minecraft.player.xo = this.minecraft.player.x;
+//            this.minecraft.player.yo = this.minecraft.player.y;
+//            this.minecraft.player.zo = this.minecraft.player.z;
+            this.started = true;
+//            this.minecraft.setScreen(null);
         }
     }
 }
