@@ -75,10 +75,6 @@ public record Vec3i(int x, int y, int z) {
 		return new Vec3i(0, 0, z);
 	}
 
-	public static int packNibble(int x, int y, int z) {
-		return x << 11 | z << 7 | y;
-	}
-
 	public BlockPos toBlockPos() {
 		return new BlockPos(this.x, this.y, this.z);
 	}

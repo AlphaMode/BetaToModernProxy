@@ -1,10 +1,12 @@
 package me.alphamode.beta.proxy.util;
 
+import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLevelChunkWithLightPacket;
 import me.alphamode.beta.proxy.util.data.beta.BetaNibbleArray;
+import me.alphamode.beta.proxy.util.data.modern.ModernNibbleArray;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
 import me.alphamode.beta.proxy.util.data.modern.level.Heightmap;
@@ -12,14 +14,11 @@ import me.alphamode.beta.proxy.util.data.modern.level.block.BlockState;
 import me.alphamode.beta.proxy.util.data.modern.level.chunk.palette.PalettedContainer;
 import me.alphamode.beta.proxy.util.data.modern.registry.biome.Biome;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ChunkTranslator {
-    public static final int MODERN_MIN_Y = -64;
-    public static final int MODERN_MAX_Y = 384;
+    public static final int MODERN_MIN_Y = 0;
+    public static final int MODERN_MAX_Y = 128;
 
     public static int getMinSectionY() {
         return MODERN_MIN_Y >> 4;
@@ -41,95 +40,17 @@ public class ChunkTranslator {
         return sectionY - getMinSectionY();
     }
 
+    public static int getLightSectionCount() {
+        return getSectionsCount() + 2;
+    }
+
+    public static int getMinLightSection() {
+        return getMinSectionY() - 1;
+    }
+
     public static final int SECTION_SIZE = 16;
     public static final int BETA_CHUNK_Y_SIZE = 128;
     public static final int BETA_CHUNK_SECTION_SIZE = BETA_CHUNK_Y_SIZE / SECTION_SIZE;
-
-//    public void setBlocksAndData(int x, int y, int z, int xs, int ys, int zs, byte[] buffer) {
-//        int x0 = x >> 4;
-//        int z0 = z >> 4;
-//        int x1 = x + xs - 1 >> 4;
-//        int z1 = z + zs - 1 >> 4;
-//        int size = 0;
-//        int y0 = y;
-//        int y1 = y + ys;
-//        if (y < 0) {
-//            y0 = 0;
-//        }
-//
-//        if (y1 > 128) {
-//            y1 = 128;
-//        }
-//
-//        for (int chunkX = x0; chunkX <= x1; chunkX++) {
-//            int minBlockX = x - chunkX * 16;
-//            int maxBlockX = x + xs - chunkX * 16;
-//            if (minBlockX < 0) {
-//                minBlockX = 0;
-//            }
-//
-//            if (maxBlockX > 16) {
-//                maxBlockX = 16;
-//            }
-//
-//            for (int chunkZ = z0; chunkZ <= z1; chunkZ++) {
-//                int minBlockZ = z - chunkZ * 16;
-//                int maxBlockZ = z + zs - chunkZ * 16;
-//                if (minBlockZ < 0) {
-//                    minBlockZ = 0;
-//                }
-//
-//                if (maxBlockZ > 16) {
-//                    maxBlockZ = 16;
-//                }
-//
-//                size = this.getChunk(chunkX, chunkZ).setBlocksAndData(buffer, minBlockX, y0, minBlockZ, maxBlockX, y1, maxBlockZ, size);
-//                this.setTilesDirty(chunkX * 16 + minBlockX, y0, chunkZ * 16 + minBlockZ, chunkX * 16 + maxBlockX, y1, chunkZ * 16 + maxBlockZ);
-//            }
-//        }
-//    }
-//
-//    public int setBlocksAndData(byte[] chunkData, int x0, int y0, int z0, int x1, int y1, int z1, int size) {
-//        for (int x = x0; x < x1; x++) {
-//            for (int z = z0; z < z1; z++) {
-//                int packedPos = x << 11 | z << 7 | y0;
-//                int offset = y1 - y0;
-//                System.arraycopy(chunkData, size, this.blocks, packedPos, offset);
-//                size += offset;
-//            }
-//        }
-//
-//        this.recalcHeightmapOnly();
-//
-//        for (int x = x0; x < x1; x++) {
-//            for (int z = z0; z < z1; z++) {
-//                int packedPos = (x << 11 | z << 7 | y0) >> 1;
-//                int offset = (y1 - y0) / 2;
-//                System.arraycopy(chunkData, size, this.data.data, packedPos, offset);
-//                size += offset;
-//            }
-//        }
-//
-//        for (int x = x0; x < x1; x++) {
-//            for (int z = z0; z < z1; z++) {
-//                int packedPos = (x << 11 | z << 7 | y0) >> 1;
-//                int offset = (y1 - y0) / 2;
-//                System.arraycopy(chunkData, size, this.blockLight.data, packedPos, offset);
-//                size += offset;
-//            }
-//        }
-//
-//        for (int x = x0; x < x1; x++) {
-//            for (int z = z0; z < z1; z++) {
-//                int packedPos = (x << 11 | z << 7 | y0) >> 1;
-//                int offset = (y1 - y0) / 2;
-//                System.arraycopy(chunkData, size, this.skyLight.data, packedPos, offset);
-//                size += offset;
-//            }
-//        }
-//
-//        return size;
-//    }
 
 	public static List<ChunkRegion> readBetaRegionData(ClientConnection connection, int x, int y, int z, int xs, int ys, int zs, byte[] buffer) {
 		int x0 = x >> 4;
@@ -186,13 +107,65 @@ public class ChunkTranslator {
     public static void translateAndSend(final ClientConnection connection, final int x, final int z, final BetaChunk betaChunk) {
         ModernChunk chunk = translate(betaChunk);
 
+        final BitSet skyYMask = new BitSet();
+        final BitSet blockYMask = new BitSet();
+        final BitSet emptySkyYMask = new BitSet();
+        final BitSet emptyBlockYMask = new BitSet();
+        final List<byte[]> skyUpdates = Lists.newArrayList();
+        final List<byte[]> blockUpdates = Lists.newArrayList();
+
+        ModernNibbleArray[] skyLight = fromBetaToModern(betaChunk.skyLight());
+        ModernNibbleArray[] blockLight = fromBetaToModern(betaChunk.blockLight());
+
+        for (int sectionIndex = 0; sectionIndex < getLightSectionCount(); sectionIndex++) {
+            // Sky light
+            prepareSectionData(skyLight[sectionIndex], sectionIndex, skyYMask, emptySkyYMask, skyUpdates);
+            // Block light
+            prepareSectionData(blockLight[sectionIndex], sectionIndex, blockYMask, emptyBlockYMask, blockUpdates);
+        }
+
         ClientboundLevelChunkPacketData chunkData = new ClientboundLevelChunkPacketData(chunk);
         ClientboundLightUpdatePacketData lightData = new ClientboundLightUpdatePacketData(
-                new BitSet(), new BitSet(), new BitSet(), new BitSet(),
-                List.of(), List.of()
+                skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask,
+                skyUpdates, blockUpdates
         );
 
         connection.send(new S2CLevelChunkWithLightPacket(x, z, chunkData, lightData));
+    }
+
+    private static ModernNibbleArray[] fromBetaToModern(final BetaNibbleArray nibbleArray) {
+        ModernNibbleArray[] modernArray = new ModernNibbleArray[getLightSectionCount()];
+        for (int i = 0; i < modernArray.length; i++) {
+            modernArray[i] = new ModernNibbleArray(new byte[ModernNibbleArray.SIZE]);
+        }
+        for (int y = 0; y < BETA_CHUNK_Y_SIZE; y++) {
+            int sectionY = /*getMinLightSection() + */(y >> 4);
+            ModernNibbleArray modernNibbleArray = modernArray[sectionY];
+            for (int x = 0; x < SECTION_SIZE; x++) {
+                for (int z = 0; z < SECTION_SIZE; z++) {
+                    modernNibbleArray.set(x, y & 15, z, nibbleArray.get(x, y, z));
+                }
+            }
+        }
+
+        return modernArray;
+    }
+
+    private static void prepareSectionData(
+            final ModernNibbleArray data,
+            final int sectionIndex,
+            final BitSet mask,
+            final BitSet emptyMask,
+            final List<byte[]> updates
+    ) {
+        if (data != null) {
+            if (data.isEmpty()) {
+                emptyMask.set(sectionIndex);
+            } else {
+                mask.set(sectionIndex);
+                updates.add(data.data().clone());
+            }
+        }
     }
 
     public static ModernChunk translate(BetaChunk chunk) {
