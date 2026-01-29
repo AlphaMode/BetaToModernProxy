@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ClientboundLightUpdatePacketData {
 	private static final StreamCodec<ByteBuf, byte[]> DATA_LAYER_STREAM_CODEC = ModernStreamCodecs.sizedByteArray(2048);
+	public static final StreamCodec<ByteBuf, ClientboundLightUpdatePacketData> CODEC = StreamCodec.ofMember(ClientboundLightUpdatePacketData::write, ClientboundLightUpdatePacketData::new);
 
 	private final BitSet skyYMask;
 	private final BitSet blockYMask;
@@ -38,8 +39,8 @@ public class ClientboundLightUpdatePacketData {
 		this.blockYMask = ModernStreamCodecs.BIT_SET.decode(buf);
 		this.emptySkyYMask = ModernStreamCodecs.BIT_SET.decode(buf);
 		this.emptyBlockYMask = ModernStreamCodecs.BIT_SET.decode(buf);
-		this.skyUpdates = ModernStreamCodecs.list(DATA_LAYER_STREAM_CODEC).decode(buf);
-		this.blockUpdates = ModernStreamCodecs.list(DATA_LAYER_STREAM_CODEC).decode(buf);
+		this.skyUpdates = ModernStreamCodecs.<byte[], List<byte[]>>collection(DATA_LAYER_STREAM_CODEC).decode(buf);
+		this.blockUpdates = ModernStreamCodecs.<byte[], List<byte[]>>collection(DATA_LAYER_STREAM_CODEC).decode(buf);
 	}
 
 	public void write(final ByteBuf buf) {
@@ -47,7 +48,7 @@ public class ClientboundLightUpdatePacketData {
 		ModernStreamCodecs.BIT_SET.encode(buf, this.blockYMask);
 		ModernStreamCodecs.BIT_SET.encode(buf, this.emptySkyYMask);
 		ModernStreamCodecs.BIT_SET.encode(buf, this.emptyBlockYMask);
-		ModernStreamCodecs.writeCollection(buf, this.skyUpdates, DATA_LAYER_STREAM_CODEC);
-		ModernStreamCodecs.writeCollection(buf, this.blockUpdates, DATA_LAYER_STREAM_CODEC);
+		ModernStreamCodecs.collection(DATA_LAYER_STREAM_CODEC).encode(buf, this.skyUpdates);
+		ModernStreamCodecs.collection(DATA_LAYER_STREAM_CODEC).encode(buf, this.blockUpdates);
 	}
 }
