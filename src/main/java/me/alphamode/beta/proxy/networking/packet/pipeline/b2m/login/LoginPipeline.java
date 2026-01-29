@@ -145,25 +145,6 @@ public class LoginPipeline {
 	}
 
 	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
-		LOGGER.info("Starting Configuration");
-		connection.setState(PacketState.CONFIGURATION);
-
-		// Send Tags
-		this.sendTags(connection);
-
-		// Send Registries
-		this.sendRegistries(connection);
-
-		// Send Custom Brand
-		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
-		ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
-
-		final byte[] buffer = new byte[buf.readableBytes()];
-		buf.readBytes(buffer);
-		connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
-		buf.release();
-
-		connection.send(S2CFinishConfigurationPacket.INSTANCE);
 	}
 
 	public void sendTags(final ClientConnection connection) {
@@ -216,6 +197,26 @@ public class LoginPipeline {
 	}
 
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
+		LOGGER.info("Starting Configuration");
+		connection.setState(PacketState.CONFIGURATION);
+
+		// Send Tags
+		this.sendTags(connection);
+
+		// Send Registries
+		this.sendRegistries(connection);
+
+		// Send Custom Brand
+		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
+		ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
+
+		final byte[] buffer = new byte[buf.readableBytes()];
+		buf.readBytes(buffer);
+		connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
+		buf.release();
+
+		connection.send(S2CFinishConfigurationPacket.INSTANCE);
+
         this.player = new Player(packet.clientVersion(), connection);
         this.player.setDimension(packet.dimension());
 
