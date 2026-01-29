@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play;
 
 import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
@@ -68,6 +69,12 @@ public class PlayPipeline {
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
+
+    protected final Player player;
+
+    public PlayPipeline(Player player) {
+        this.player = Objects.requireNonNull(player, "Can't construct play pipeline without player");
+    }
 
 	public void handleC2SKeepAlive(final ClientConnection connection, final C2SPlayKeepAlivePacket packet) {
 		connection.getServerConnection().send(new KeepAlivePacket());
@@ -254,6 +261,7 @@ public class PlayPipeline {
 
 	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {
 		connection.tick();
+        player.tick();
 	}
 
 	// TODO: double check accuracy
@@ -265,6 +273,7 @@ public class PlayPipeline {
 
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
 		final ServerConnection serverConnection = connection.getServerConnection();
+        player.updateFromClient(packet);
 		switch (packet) {
 			case C2SMovePlayerPacket.Pos p ->
 					serverConnection.send(new MovePlayerPacket.Pos(p.x(), p.y(), p.y() + 1.62F, p.z(), p.onGround()));
@@ -272,7 +281,7 @@ public class PlayPipeline {
 					serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
 			case C2SMovePlayerPacket.PosRot p ->
 					serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
-			case C2SMovePlayerPacket.StatusOnly p -> serverConnection.send(new MovePlayerPacket.Status(p.onGround()));
+			case C2SMovePlayerPacket.StatusOnly p -> serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
 		}
 	}
 

@@ -4,17 +4,14 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record PlayerCommandPacket(int id, byte action) implements BetaPacket {
-	public static final byte CROUCH = 1;
-	public static final byte UNCROUCH = 2;
-	public static final byte LEAVE_BED = 3;
-
+public record PlayerCommandPacket(int id, Action action) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, PlayerCommandPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
 			PlayerCommandPacket::id,
-			BasicStreamCodecs.BYTE,
+			BetaStreamCodecs.javaEnum(Action.class),
 			PlayerCommandPacket::action,
 			PlayerCommandPacket::new
 	);
@@ -23,4 +20,11 @@ public record PlayerCommandPacket(int id, byte action) implements BetaPacket {
 	public BetaPackets getType() {
 		return BetaPackets.PLAYER_COMMAND;
 	}
+
+    public enum Action {
+        NONE,
+        CROUCH,
+        UNCROUCH,
+        LEAVE_BED;
+    }
 }

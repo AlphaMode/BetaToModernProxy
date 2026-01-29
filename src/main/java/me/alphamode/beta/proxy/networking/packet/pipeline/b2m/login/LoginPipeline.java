@@ -5,7 +5,9 @@ import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
@@ -67,6 +69,9 @@ public class LoginPipeline {
 			.unhandledClient(LoginPipeline::passClientToNextPipeline)
 			.unhandledServer(LoginPipeline::passServerToNextPipeline)
 			.build();
+
+    protected Player player;
+    protected long seed;
 
 	// Handshake
 	public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
@@ -207,10 +212,14 @@ public class LoginPipeline {
 	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		LOGGER.info("Finished Configuration & Going into Play Mode");
 		connection.setState(PacketState.PLAY);
-		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline()); // TODO: Pass in unhandled packets
+		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(this.player)); // TODO: Pass in unhandled packets
 	}
 
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
+        this.player = new Player(packet.clientVersion(), connection);
+        this.player.setDimension(packet.dimension());
+
+        this.seed = packet.seed();
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {

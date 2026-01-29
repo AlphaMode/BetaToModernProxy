@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPacket.Status, MovePlayerPacket.Pos, MovePlayerPacket.PosRot, MovePlayerPacket.Rot {
+public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPacket.StatusOnly, MovePlayerPacket.Pos, MovePlayerPacket.PosRot, MovePlayerPacket.Rot {
 	default double x() {
 		return 0;
 	}
@@ -37,10 +37,10 @@ public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPa
 
 	boolean hasRot();
 
-	record Status(boolean onGround) implements MovePlayerPacket {
+	record StatusOnly(boolean onGround) implements MovePlayerPacket {
 		public static final StreamCodec<ByteBuf, MovePlayerPacket> CODEC = StreamCodec.composite(
 				BasicStreamCodecs.BOOL, MovePlayerPacket::onGround,
-				Status::new
+				StatusOnly::new
 		);
 
 		@Override
