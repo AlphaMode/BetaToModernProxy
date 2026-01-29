@@ -299,13 +299,14 @@ public class PlayPipeline {
 	// TODO: double check accuracy
 
 	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
+        player.updateFromServer(packet);
 		connection.send(new S2CPlayerPositionPacket(0, new PositionMoveRotation(new Vec3d(packet.x(), packet.y(), packet.z()), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
 		connection.getServerConnection().send(packet);
 	}
 
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
 		final ServerConnection serverConnection = connection.getServerConnection();
-        player.updateFromClient(packet);
+//        player.updateFromClient(packet);
 		switch (packet) {
 			case C2SMovePlayerPacket.Pos p ->
 					serverConnection.send(new MovePlayerPacket.Pos(p.x(), p.y(), p.y() + 1.62F, p.z(), p.onGround()));
