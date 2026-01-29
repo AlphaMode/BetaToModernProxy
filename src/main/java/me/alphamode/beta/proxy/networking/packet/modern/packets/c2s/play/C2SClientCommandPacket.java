@@ -7,7 +7,7 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record C2SClientCommandPacket(Action action) implements C2SPlayPacket {
 	public static final StreamCodec<ByteBuf, C2SClientCommandPacket> CODEC = StreamCodec.composite(
-			ModernStreamCodecs.(Action.class),
+			ModernStreamCodecs.javaEnum(Action.class),
 			C2SClientCommandPacket::action,
 			C2SClientCommandPacket::new
 	);

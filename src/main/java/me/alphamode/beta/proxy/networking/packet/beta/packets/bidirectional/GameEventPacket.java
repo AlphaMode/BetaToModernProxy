@@ -3,22 +3,24 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record GameEventPacket(byte event) implements BetaPacket {
-	public static final byte INVALID_BED = 0;
-	public static final byte BEGIN_RAINING = 1;
-	public static final byte END_RAINING = 2;
-
+public record GameEventPacket(Type type) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, GameEventPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.BYTE,
-			GameEventPacket::event,
+			BetaStreamCodecs.javaEnum(Type.class),
+			GameEventPacket::type,
 			GameEventPacket::new
 	);
 
 	@Override
 	public BetaPackets getType() {
 		return BetaPackets.GAME_EVENT;
+	}
+
+	public enum Type {
+		INVALID_BED,
+		BEGIN_RAINING,
+		END_RAINING
 	}
 }

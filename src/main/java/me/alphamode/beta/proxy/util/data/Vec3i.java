@@ -82,4 +82,8 @@ public record Vec3i(int x, int y, int z) {
 	public BlockPos toBlockPos() {
 		return new BlockPos(this.x, this.y, this.z);
 	}
+
+	public Vec3d toVec3d() {
+		return new Vec3d(this.x, this.y, this.z);
+	}
 }

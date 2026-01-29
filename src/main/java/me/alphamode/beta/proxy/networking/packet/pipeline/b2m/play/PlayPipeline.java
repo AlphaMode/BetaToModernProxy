@@ -40,6 +40,8 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
+			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
+			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
@@ -163,6 +165,36 @@ public class PlayPipeline {
 		}
 	}
 
+	public void handleS2CAddEntity(final ClientConnection connection, final AddEntityPacket packet) {
+		connection.send(new S2CAddEntityPacket(
+				packet.entityId(),
+				UUID.randomUUID(),
+				packet.type(),
+				packet.position().toVec3d(),
+				new Vec3d(packet.xd(), packet.yd(), packet.zd()),
+				(byte) 0,
+				(byte) 0,
+				(byte) 0,
+				0
+		));
+	}
+
+
+	public void handleS2CAddPlayer(final ClientConnection connection, final AddPlayerPacket packet) {
+		// Server attempted to add player prior to sending player info (Player id 21586c2d-49e7-40a8-a485-db85537d3c2b)
+		connection.send(new S2CAddEntityPacket(
+				packet.entityId(),
+				UUID.randomUUID(),
+				155,
+				packet.position().toVec3d(),
+				Vec3d.ZERO,
+				packet.pitch(),
+				packet.yaw(),
+				(byte) 0,
+				0
+		));
+	}
+
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (packet.hand() == InteractionHand.MAIN_HAND) {
 			connection.getServerConnection().send(new AnimatePacket(0, AnimatePacket.SWING_ARM));
@@ -184,11 +216,11 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CGameEvent(final ClientConnection connection, final GameEventPacket packet) {
-		if (packet.event() == GameEventPacket.INVALID_BED) {
+		if (packet.type() == GameEventPacket.Type.INVALID_BED) {
 			connection.send(new S2CSystemChatPacket(TextComponent.translation("block.minecraft.spawn.not_valid"), false));
-		} else if (packet.event() == GameEventPacket.BEGIN_RAINING) {
+		} else if (packet.type() == GameEventPacket.Type.BEGIN_RAINING) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.START_RAINING, 0.0F));
-		} else if (packet.event() == GameEventPacket.END_RAINING) {
+		} else if (packet.type() == GameEventPacket.Type.END_RAINING) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.STOP_RAINING, 0.0F));
 		}
 	}

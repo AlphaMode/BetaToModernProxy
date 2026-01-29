@@ -76,27 +76,27 @@ public interface ModernStreamCodecs {
 		}
 	};
 
-    static StreamCodec<ByteBuf, long[]> fixedLongArray(int size) {
-        return new StreamCodec<>() {
+	static StreamCodec<ByteBuf, long[]> fixedLongArray(int size) {
+		return new StreamCodec<>() {
 
-            @Override
-            public void encode(ByteBuf buf, long[] value) {
-                for (final long v : value) {
-                    buf.writeLong(v);
-                }
-            }
+			@Override
+			public void encode(ByteBuf buf, long[] value) {
+				for (final long v : value) {
+					buf.writeLong(v);
+				}
+			}
 
-            @Override
-            public long[] decode(ByteBuf buf) {
-                long[] data = new long[size];
-                for (int i = 0; i < size; i++) {
-                    data[i] = buf.readLong();
-                }
+			@Override
+			public long[] decode(ByteBuf buf) {
+				long[] data = new long[size];
+				for (int i = 0; i < size; i++) {
+					data[i] = buf.readLong();
+				}
 
-                return data;
-            }
-        };
-    }
+				return data;
+			}
+		};
+	}
 
 	StreamCodec<ByteBuf, BitSet> BIT_SET = new StreamCodec<>() {
 		@Override
@@ -475,6 +475,20 @@ public interface ModernStreamCodecs {
 			@Override
 			public T decode(final ByteBuf buf) {
 				return enumClazz.getEnumConstants()[VAR_INT.decode(buf)];
+			}
+		};
+	}
+
+	static <T extends Enum<T>> StreamCodec<ByteBuf, EnumSet<T>> enumSet(final Class<T> enumClazz) {
+		return new StreamCodec<>() {
+			@Override
+			public void encode(final ByteBuf buf, final EnumSet<T> value) {
+				// TODO
+			}
+
+			@Override
+			public EnumSet<T> decode(final ByteBuf buf) {
+				return null; // TODO
 			}
 		};
 	}

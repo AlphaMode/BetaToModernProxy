@@ -47,7 +47,7 @@ public class BlockHitResult extends HitResult {
 	}
 
 	public void write(final ByteBuf buf) {
-		BlockPos blockPos = this.getBlockPos();
+		final BlockPos blockPos = this.getBlockPos();
 		BlockPos.CODEC.encode(buf, blockPos);
 		ModernStreamCodecs.javaEnum(Direction.class).encode(buf, this.getDirection());
 
