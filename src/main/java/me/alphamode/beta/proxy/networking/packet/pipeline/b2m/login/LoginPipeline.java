@@ -145,6 +145,8 @@ public class LoginPipeline {
 	}
 
 	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {
+		LOGGER.info("Starting Configuration");
+		connection.setState(PacketState.CONFIGURATION);
 	}
 
 	public void sendTags(final ClientConnection connection) {
@@ -197,9 +199,6 @@ public class LoginPipeline {
 	}
 
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-		LOGGER.info("Starting Configuration");
-		connection.setState(PacketState.CONFIGURATION);
-
 		// Send Tags
 		this.sendTags(connection);
 
