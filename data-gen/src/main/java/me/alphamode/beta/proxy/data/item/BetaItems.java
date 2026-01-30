@@ -62,7 +62,7 @@ public interface BetaItems {
 			.build();
 	BetaItem WEB = BetaItem.builder(30)
 			.build();
-	BetaItem TALL_GRASS = BetaItem.builder(31)
+	BetaItem SHORT_GRASS = BetaItem.builder(31)
 			.build();
 	BetaItem DEAD_BUSH = BetaItem.builder(32)
 			.build();

@@ -38,7 +38,7 @@ public final class BetaBlocks {
 	public static final Block DETECTOR_RAIL = registerBlock(new Block(28));
 	public static final Block STICKY_PISTON = registerBlock(new Block(29));
 	public static final Block WEB = registerBlock(new Block(30));
-	public static final Block TALL_GRASS = registerBlock(new Block(31));
+	public static final Block SHORT_GRASS = registerBlock(new Block(31));
 	public static final Block DEAD_BUSH = registerBlock(new Block(32));
 	public static final Block PISTON = registerBlock(new Block(33));
 	public static final Block PISTON_EXTENDED = registerBlock(new Block(34));

@@ -47,7 +47,7 @@ public class BetaToModernBlocks {
 		registerTranslation(BetaTiles.DETECTOR_RAIL, single(Blocks.DETECTOR_RAIL));
 		registerTranslation(BetaTiles.STICKY_PISTON, single(Blocks.STICKY_PISTON));
 		registerTranslation(BetaTiles.WEB, single(Blocks.COBWEB));
-		registerTranslation(BetaTiles.TALL_GRASS, tallGrass());
+		registerTranslation(BetaTiles.SHORT_GRASS, shortGrass());
 		registerTranslation(BetaTiles.DEAD_BUSH, single(Blocks.DEAD_BUSH));
 		registerTranslation(BetaTiles.PISTON, single(Blocks.PISTON));
 		registerTranslation(BetaTiles.PISTON_EXTENDED, single(Blocks.PISTON_HEAD));
@@ -150,10 +150,10 @@ public class BetaToModernBlocks {
 		return data -> Blocks.OAK_LOG.defaultBlockState();
 	}
 
-	public DataToBlockFactory tallGrass() {
+	public DataToBlockFactory shortGrass() {
 		return data -> {
 			if (data == 1) {
-				return Blocks.TALL_GRASS.defaultBlockState();
+				return Blocks.SHORT_GRASS.defaultBlockState();
 			} else if (data == 2) {
 				return Blocks.FERN.defaultBlockState();
 			} else {

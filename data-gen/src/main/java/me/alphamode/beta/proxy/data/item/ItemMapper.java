@@ -296,7 +296,7 @@ public class ItemMapper {
 		put(tag, defaultFactory(BetaItems.DETECTOR_RAIL, Items.DETECTOR_RAIL));
 		put(tag, defaultFactory(BetaItems.STICKY_PISTON, Items.STICKY_PISTON));
 		put(tag, defaultFactory(BetaItems.WEB, Items.COBWEB));
-		put(tag, bush(BetaItems.TALL_GRASS));
+		put(tag, bush(BetaItems.SHORT_GRASS));
 		put(tag, defaultFactory(BetaItems.DEAD_BUSH, Items.DEAD_BUSH));
 		put(tag, defaultFactory(BetaItems.PISTON, Items.PISTON));
 		put(tag, defaultFactory(BetaItems.PISTON_EXTENDED, Items.PISTON));

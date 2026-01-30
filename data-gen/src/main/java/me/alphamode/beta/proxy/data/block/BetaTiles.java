@@ -31,7 +31,7 @@ public interface BetaTiles {
 	int DETECTOR_RAIL = 28;
 	int STICKY_PISTON = 29;
 	int WEB = 30;
-	int TALL_GRASS = 31;
+	int SHORT_GRASS = 31;
 	int DEAD_BUSH = 32;
 	int PISTON = 33;
 	int PISTON_EXTENDED = 34;
