@@ -40,6 +40,7 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
+			.serverHandler(AddMobPacket.class, PlayPipeline::handleS2CAddMob)
 			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
 			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
@@ -139,6 +140,20 @@ public class PlayPipeline {
 		}
 	}
 
+	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
+		connection.send(new S2CAddEntityPacket(
+				packet.entityId(),
+				UUID.randomUUID(),
+				packet.type(),
+				packet.position().toVec3d(),
+				Vec3d.ZERO,
+				packet.yRot(),
+				packet.xRot(),
+				(byte) 0,
+				0
+		));
+	}
+
 	public void handleS2CAddEntity(final ClientConnection connection, final AddEntityPacket packet) {
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
@@ -153,9 +168,8 @@ public class PlayPipeline {
 		));
 	}
 
-
 	public void handleS2CAddPlayer(final ClientConnection connection, final AddPlayerPacket packet) {
-		// Server attempted to add player prior to sending player info (Player id 21586c2d-49e7-40a8-a485-db85537d3c2b)
+		// Server attempted to add player prior to sending player info (Player entityId 21586c2d-49e7-40a8-a485-db85537d3c2b)
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),

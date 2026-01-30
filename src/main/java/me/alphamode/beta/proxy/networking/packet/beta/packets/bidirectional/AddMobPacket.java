@@ -10,11 +10,11 @@ import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
 
 import java.util.List;
 
-public record AddMobPacket(int id, byte type, Vec3i position, byte yRot, byte xRot,
+public record AddMobPacket(int entityId, byte type, Vec3i position, byte yRot, byte xRot,
 						   List<BetaSynchedEntityData.DataItem<?>> dataItems) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, AddMobPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
-			AddMobPacket::id,
+			AddMobPacket::entityId,
 			BasicStreamCodecs.BYTE,
 			AddMobPacket::type,
 			Vec3i.CODEC,
