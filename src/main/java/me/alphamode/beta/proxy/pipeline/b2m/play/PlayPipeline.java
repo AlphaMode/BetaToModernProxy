@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.pipeline.b2m.play;
 
 import me.alphamode.beta.proxy.BrodernProxy;
-import me.alphamode.beta.proxy.Player;
+import me.alphamode.beta.proxy.entity.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
