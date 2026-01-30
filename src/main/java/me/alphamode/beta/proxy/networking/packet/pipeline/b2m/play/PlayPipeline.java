@@ -140,11 +140,56 @@ public class PlayPipeline {
 		}
 	}
 
+	// TODO: Move to data-gen
+	private int mapBetaToModernEntityId(final int id) {
+		// Beta Ids:
+		// 50 -> Creeper (Has Metadata)
+		// 51 -> Skeleton
+		// 52 -> Spider
+		// 53 -> Giant Zombie
+		// 54 -> Zombie
+		// 55 -> Slime (Has Metadata)
+		// 56 -> Ghast (Has Metadata)
+		// 57 -> Zombie Pigman
+		// 90 -> Pig (Has Metadata)
+		// 91 -> Sheep (Has Metadata)
+		// 92 -> Cow
+		// 93 -> Hen
+		// 94 -> Squid
+		// 95 -> Wolf (Has Metadata)
+
+		// TODO: mobs w/ metadata
+		if (id == 51) {
+			return 115; // Skeleton
+		} else if (id == 52) {
+			return 124; // Spider
+		} else if (id == 53) {
+			return 59; // Giant
+		} else if (id == 54) {
+			return 150; // Zombie
+		} else if (id == 57) {
+			return 101; // Piglin
+		} else if (id == 92) {
+			return 30; // Cow
+		} else if (id == 93) {
+			return 26; // Chicken
+		} else if (id == 94) {
+			return 127; // Squid
+		}
+
+		return -1; // Unhandled
+	}
+
 	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
+		final int mappedType = mapBetaToModernEntityId(packet.type());
+		if (mappedType == -1) {
+			return;
+		}
+
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
-				packet.type(),
+				mappedType,
 				packet.position().toVec3d(),
 				Vec3d.ZERO,
 				packet.yRot(),
@@ -155,10 +200,15 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CAddEntity(final ClientConnection connection, final AddEntityPacket packet) {
+		final int mappedType = mapBetaToModernEntityId(packet.type());
+		if (mappedType == -1) {
+			return;
+		}
+
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
-				packet.type(),
+				mappedType,
 				packet.position().toVec3d(),
 				new Vec3d(packet.xd(), packet.yd(), packet.zd()),
 				(byte) 0,
