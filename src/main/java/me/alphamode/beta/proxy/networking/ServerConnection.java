@@ -28,18 +28,6 @@ public final class ServerConnection extends NetClient {
 					}
 				});
 			}
-
-			@Override
-			public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
-				super.channelUnregistered(ctx);
-			}
-
-			@Override
-			public void channelInactive(final ChannelHandlerContext context) {
-				if (connection.isConnected()) {
-					connection.kick("Server disconnected");
-				}
-			}
 		});
 
 		this.connect(address).addListener(future -> {
@@ -58,6 +46,12 @@ public final class ServerConnection extends NetClient {
 
 			LOGGER.info("Proxy #{} connected to {}", connection.getId(), address);
 		}).syncUninterruptibly();
+
+		this.getChannel().closeFuture().addListener(_ -> {
+			if (connection.isConnected()) {
+				connection.kick("Server disconnected you.");
+			}
+		});
 	}
 
 	public void send(final BetaPacket packet) {

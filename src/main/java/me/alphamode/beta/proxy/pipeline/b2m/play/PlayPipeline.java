@@ -68,6 +68,8 @@ public class PlayPipeline {
 			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
 			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
 			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
+			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
+			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
@@ -375,6 +377,10 @@ public class PlayPipeline {
 
 	public void handleC2SContainerClose(final ClientConnection connection, final C2SContainerClosePacket packet) {
 		connection.getServerConnection().send(new ContainerClosePacket((byte) packet.containerId()));
+	}
+
+	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
+		connection.kick(packet.reason());
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
