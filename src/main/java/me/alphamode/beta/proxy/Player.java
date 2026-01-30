@@ -139,9 +139,9 @@ public class Player {
         this.y = y;
         this.z = z;
 //        float f = this.bbWidth / 2.0F;
-        float g = this.bbHeight;
+        float height = this.bbHeight;
         this.pose.y0(y - this.heightOffset + this.ySlideOffset);
-        this.pose.y1(y - this.heightOffset + this.ySlideOffset + g);
+        this.pose.y1(y - this.heightOffset + this.ySlideOffset + height);
     }
 
     public void absMoveTo(double x, double y, double z, float yRot, float xRot) {
@@ -198,11 +198,11 @@ public class Player {
 
             switch (packet) {
                 case C2SMovePlayerPacket.Pos p ->
-                        serverConnection.send(new MovePlayerPacket.Pos(p.x(), this.pose.y0(), p.y(), p.z(), p.onGround()));
+                        serverConnection.send(new MovePlayerPacket.Pos(newX, this.pose.y0(), newY, newZ, p.onGround()));
                 case C2SMovePlayerPacket.Rot p ->
-                        serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
+                        serverConnection.send(new MovePlayerPacket.Rot(newYRot, newXRot, p.onGround()));
                 case C2SMovePlayerPacket.PosRot p ->
-                        serverConnection.send(new MovePlayerPacket.PosRot(p.x(), this.pose.y0(), p.y(), p.z(), p.yRot(), p.xRot(), p.onGround()));
+                        serverConnection.send(new MovePlayerPacket.PosRot(newX, this.pose.y0(),newY, newZ, newYRot, newXRot, p.onGround()));
                 case C2SMovePlayerPacket.StatusOnly p ->
                         serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
             }
