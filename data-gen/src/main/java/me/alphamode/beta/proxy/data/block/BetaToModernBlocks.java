@@ -25,10 +25,10 @@ public class BetaToModernBlocks {
 		registerTranslation(BetaTiles.LEAVES, leaves());
 		registerTranslation(BetaTiles.SAPLING, sapling());
 		registerTranslation(BetaTiles.BEDROCK, single(Blocks.BEDROCK));
-		registerTranslation(BetaTiles.FLOWING_WATER, fluid(Fluids.WATER.defaultFluidState())); // TODO
-		registerTranslation(BetaTiles.STILL_WATER, fluid(Fluids.WATER.defaultFluidState()));
-		registerTranslation(BetaTiles.FLOWING_LAVA, fluid(Fluids.LAVA.defaultFluidState())); // TODO
-		registerTranslation(BetaTiles.STILL_LAVA, fluid(Fluids.LAVA.defaultFluidState()));
+		registerTranslation(BetaTiles.FLOWING_WATER, single(Blocks.WATER.defaultBlockState())); // TODO/fix
+		registerTranslation(BetaTiles.STILL_WATER, single(Blocks.WATER.defaultBlockState()));
+		registerTranslation(BetaTiles.FLOWING_LAVA, single(Blocks.LAVA.defaultBlockState())); // TODO/fix
+		registerTranslation(BetaTiles.STILL_LAVA, single(Blocks.LAVA.defaultBlockState()));
 		registerTranslation(BetaTiles.SAND, single(Blocks.SAND));
 		registerTranslation(BetaTiles.GRAVEL, single(Blocks.GRAVEL));
 		registerTranslation(BetaTiles.GOLDEN_ORE, single(Blocks.GOLD_ORE));

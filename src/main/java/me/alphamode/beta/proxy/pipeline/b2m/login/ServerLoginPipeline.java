@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login;
+package me.alphamode.beta.proxy.pipeline.b2m.login;
 
 import me.alphamode.beta.proxy.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
@@ -6,9 +6,9 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
-import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play.PlayPipeline;
+import me.alphamode.beta.proxy.pipeline.PacketPipeline;
+import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.pipeline.b2m.play.PlayPipeline;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

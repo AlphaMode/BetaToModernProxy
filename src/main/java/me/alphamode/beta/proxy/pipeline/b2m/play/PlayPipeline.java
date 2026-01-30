@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play;
+package me.alphamode.beta.proxy.pipeline.b2m.play;
 
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.Player;
@@ -8,8 +8,8 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
-import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.pipeline.PacketPipeline;
+import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
 import me.alphamode.beta.proxy.util.data.BlockHitResult;
@@ -68,8 +68,6 @@ public class PlayPipeline {
 			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
 			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
 			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
-			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
-			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
@@ -377,10 +375,6 @@ public class PlayPipeline {
 
 	public void handleC2SContainerClose(final ClientConnection connection, final C2SContainerClosePacket packet) {
 		connection.getServerConnection().send(new ContainerClosePacket((byte) packet.containerId()));
-	}
-
-	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
-		connection.kick(packet.reason());
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {

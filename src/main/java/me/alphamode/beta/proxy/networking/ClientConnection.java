@@ -15,8 +15,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayDisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login.ClientLoginPipeline;
+import me.alphamode.beta.proxy.pipeline.PacketPipeline;
+import me.alphamode.beta.proxy.pipeline.b2m.login.ClientLoginPipeline;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;

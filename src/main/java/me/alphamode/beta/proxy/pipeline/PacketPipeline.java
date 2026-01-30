@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.networking.packet.pipeline;
+package me.alphamode.beta.proxy.pipeline;
 
 import me.alphamode.beta.proxy.networking.ClientConnection;
 

@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.login;
+package me.alphamode.beta.proxy.pipeline.b2m.login;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.KeepAlivePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
@@ -26,8 +27,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
-import me.alphamode.beta.proxy.networking.packet.pipeline.PacketPipeline;
-import me.alphamode.beta.proxy.networking.packet.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.pipeline.PacketPipeline;
+import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
@@ -59,6 +60,8 @@ public class ClientLoginPipeline {
 			.serverHandler(KeepAlivePacket.class, ClientLoginPipeline::handleS2CKeepAlive)
 			.clientHandler(C2SLoginAcknowledgedPacket.class, ClientLoginPipeline::handleC2SLoginAcknowledged)
 			.clientHandler(C2SFinishConfigurationPacket.class, ClientLoginPipeline::handleC2SFinishConfiguration)
+			.serverHandler(DisconnectPacket.class, ClientLoginPipeline::handleS2CDisconnect)
+			// there is no C2SDisconnect packet?
 			// Unhandled
 			.unhandledClient(ClientLoginPipeline::passClientToNextPipeline)
 			.unhandledServer(ClientLoginPipeline::passServerToNextPipeline)
@@ -123,6 +126,10 @@ public class ClientLoginPipeline {
 		if (keepAlivePacket != null) {
 			connection.send(keepAlivePacket);
 		}
+	}
+
+	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
+		connection.kick(packet.reason());
 	}
 
 	public void handleC2SLoginAcknowledged(final ClientConnection connection, final C2SLoginAcknowledgedPacket packet) {

@@ -30,6 +30,11 @@ public final class ServerConnection extends NetClient {
 			}
 
 			@Override
+			public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
+				super.channelUnregistered(ctx);
+			}
+
+			@Override
 			public void channelInactive(final ChannelHandlerContext context) {
 				if (connection.isConnected()) {
 					connection.kick("Server disconnected");
