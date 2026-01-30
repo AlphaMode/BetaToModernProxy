@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
@@ -21,7 +22,7 @@ public class BetaToModernBlocks {
 		registerTranslation(BetaTiles.DIRT, single(Blocks.DIRT));
 		registerTranslation(BetaTiles.COBBLESTONE, single(Blocks.COBBLESTONE));
 		registerTranslation(BetaTiles.PLANKS, single(Blocks.OAK_PLANKS));
-		registerTranslation(BetaTiles.LEAVES, single(Blocks.OAK_LEAVES));
+		registerTranslation(BetaTiles.LEAVES, leaves());
 		registerTranslation(BetaTiles.SAPLING, sapling());
 		registerTranslation(BetaTiles.BEDROCK, single(Blocks.BEDROCK));
 		registerTranslation(BetaTiles.FLOWING_WATER, fluid(Fluids.WATER.defaultFluidState())); // TODO
@@ -46,11 +47,11 @@ public class BetaToModernBlocks {
 		registerTranslation(BetaTiles.DETECTOR_RAIL, single(Blocks.DETECTOR_RAIL));
 		registerTranslation(BetaTiles.STICKY_PISTON, single(Blocks.STICKY_PISTON));
 		registerTranslation(BetaTiles.WEB, single(Blocks.COBWEB));
-		registerTranslation(BetaTiles.TALL_GRASS, single(Blocks.TALL_GRASS));
+		registerTranslation(BetaTiles.TALL_GRASS, tallGrass());
 		registerTranslation(BetaTiles.DEAD_BUSH, single(Blocks.DEAD_BUSH));
 		registerTranslation(BetaTiles.PISTON, single(Blocks.PISTON));
 		registerTranslation(BetaTiles.PISTON_EXTENDED, single(Blocks.PISTON_HEAD));
-		registerTranslation(BetaTiles.CLOTH, single(Blocks.WHITE_WOOL));
+		registerTranslation(BetaTiles.CLOTH, wool());
 		registerTranslation(BetaTiles.MOVING_PISTON, single(Blocks.MOVING_PISTON));
 		registerTranslation(BetaTiles.YELLOW_PLANT, single(Blocks.DANDELION));
 		registerTranslation(BetaTiles.POPPY, single(Blocks.POPPY));
@@ -58,8 +59,8 @@ public class BetaToModernBlocks {
 		registerTranslation(BetaTiles.RED_MUSHROOM, single(Blocks.RED_MUSHROOM));
 		registerTranslation(BetaTiles.GOLD_BLOCK, single(Blocks.GOLD_BLOCK));
 		registerTranslation(BetaTiles.IRON_BLOCK, single(Blocks.IRON_BLOCK));
-		registerTranslation(BetaTiles.DOUBLE_SLAB, single(Blocks.OAK_PLANKS));
-		registerTranslation(BetaTiles.HALF_SLAB, single(Blocks.OAK_SLAB));
+		registerTranslation(BetaTiles.DOUBLE_SLAB, doubleSlab());
+		registerTranslation(BetaTiles.HALF_SLAB, slab());
 		registerTranslation(BetaTiles.BRICK, single(Blocks.BRICKS));
 		registerTranslation(BetaTiles.TNT, single(Blocks.TNT));
 		registerTranslation(BetaTiles.BOOKSHELF, single(Blocks.BOOKSHELF));
@@ -114,6 +115,18 @@ public class BetaToModernBlocks {
 		registerTranslation(BetaTiles.TRAPDOOR, single(Blocks.OAK_TRAPDOOR));
 	}
 
+	public DataToBlockFactory leaves() {
+		return data -> {
+			if (data == 1) {
+				return Blocks.SPRUCE_LEAVES.defaultBlockState();
+			} else if (data == 2) {
+				return Blocks.BIRCH_LEAVES.defaultBlockState();
+			} else {
+				return Blocks.OAK_LEAVES.defaultBlockState();
+			}
+		};
+	}
+
 	public DataToBlockFactory sapling() {
 		return data -> {
 			int type = data & 3;
@@ -137,9 +150,87 @@ public class BetaToModernBlocks {
 		return data -> Blocks.OAK_LOG.defaultBlockState();
 	}
 
+	public DataToBlockFactory tallGrass() {
+		return data -> {
+			if (data == 1) {
+				return Blocks.TALL_GRASS.defaultBlockState();
+			} else if (data == 2) {
+				return Blocks.FERN.defaultBlockState();
+			} else {
+				return Blocks.DEAD_BUSH.defaultBlockState();
+			}
+		};
+	}
+
+	public DataToBlockFactory wool() {
+		return data -> {
+			if (data == 1) {
+				return Blocks.ORANGE_WOOL.defaultBlockState();
+			} else if (data == 2) {
+				return Blocks.MAGENTA_WOOL.defaultBlockState();
+			} else if (data == 3) {
+				return Blocks.LIGHT_BLUE_WOOL.defaultBlockState();
+			} else if (data == 4) {
+				return Blocks.YELLOW_WOOL.defaultBlockState();
+			} else if (data == 5) {
+				return Blocks.LIME_WOOL.defaultBlockState();
+			} else if (data == 6) {
+				return Blocks.PINK_WOOL.defaultBlockState();
+			} else if (data == 7) {
+				return Blocks.GRAY_WOOL.defaultBlockState();
+			} else if (data == 8) {
+				return Blocks.LIGHT_GRAY_WOOL.defaultBlockState();
+			} else if (data == 9) {
+				return Blocks.CYAN_WOOL.defaultBlockState();
+			} else if (data == 10) {
+				return Blocks.PURPLE_WOOL.defaultBlockState();
+			} else if (data == 11) {
+				return Blocks.BLUE_WOOL.defaultBlockState();
+			} else if (data == 12) {
+				return Blocks.BROWN_WOOL.defaultBlockState();
+			} else if (data == 13) {
+				return Blocks.GREEN_WOOL.defaultBlockState();
+			} else if (data == 14) {
+				return Blocks.RED_WOOL.defaultBlockState();
+			} else if (data == 15) {
+				return Blocks.BLACK_WOOL.defaultBlockState();
+			} else {
+				return Blocks.WHITE_WOOL.defaultBlockState();
+			}
+		};
+	}
+
+	public DataToBlockFactory doubleSlab() {
+		return data -> {
+			if (data == 1) {
+				return Blocks.SANDSTONE.defaultBlockState();
+			} else if (data == 2) {
+				return Blocks.OAK_PLANKS.defaultBlockState();
+			} else if (data == 3) {
+				return Blocks.COBBLESTONE.defaultBlockState();
+			} else {
+				return Blocks.SMOOTH_STONE_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.DOUBLE);
+			}
+		};
+	}
+
+	public DataToBlockFactory slab() {
+		return data -> {
+			Block block = Blocks.SMOOTH_STONE_SLAB;
+			if (data == 1) {
+				block = Blocks.SANDSTONE_SLAB;
+			} else if (data == 2) {
+				block = Blocks.OAK_SLAB;
+			} else if (data == 3) {
+				block = Blocks.COBBLESTONE_SLAB;
+			}
+
+			return block.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+		};
+	}
+
 	public DataToBlockFactory single(final Block block) {
-		final BlockState defaultState = block.defaultBlockState();
-		return _ -> defaultState;
+		return data -> block.defaultBlockState();
 	}
 
 	public DataToBlockFactory fluid(final FluidState state) {
