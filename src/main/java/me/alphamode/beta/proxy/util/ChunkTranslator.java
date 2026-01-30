@@ -143,12 +143,12 @@ public class ChunkTranslator {
 		}
 
 		for (int y = 0; y < BETA_CHUNK_Y_SIZE; y++) {
-			final int sectionY = getMinLightSection() + (getSectionIndex(y) >> 4);
+			final int sectionY = /*getMinLightSection() + */getSectionIndex(y);
 			// TODO/FIX
-//			final ModernNibbleArray modernNibbleArray = modernArray[sectionY];
+			final ModernNibbleArray modernNibbleArray = modernArray[sectionY];
 			for (int x = 0; x < SECTION_SIZE; x++) {
 				for (int z = 0; z < SECTION_SIZE; z++) {
-//					modernNibbleArray.set(x, y & 15, z, nibbleArray.get(x, y, z));
+					modernNibbleArray.set(x, y & 15, z, nibbleArray.get(x, y, z));
 				}
 			}
 		}
@@ -287,7 +287,7 @@ public class ChunkTranslator {
 			for (int z = z0; z < z1; z++) {
 				final int packedPos = (x << 11 | z << 7 | y0) >> 1;
 				final int offset = (y1 - y0) / 2;
-				// System.arraycopy(chunkData, size, chunk.skyLight.data(), packedPos, offset);
+				 System.arraycopy(chunkData, size, chunk.skyLight.data(), packedPos, offset);
 				size += offset;
 			}
 		}

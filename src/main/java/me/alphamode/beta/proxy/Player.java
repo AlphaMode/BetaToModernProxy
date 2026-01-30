@@ -6,6 +6,11 @@ import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.MovePlayerPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.PlayerCommandPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SMovePlayerPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayerPositionPacket;
+import me.alphamode.beta.proxy.util.data.Vec3d;
+import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
+
+import java.util.Collections;
 
 public class Player {
 
@@ -13,6 +18,9 @@ public class Player {
     private final ClientConnection clientConnection;
 
     private final int id;
+    public float heightOffset = 1.62F;
+    public float ySlideOffset = 0.0F;
+    public float bbHeight = 1.8F;
     private final EntityPose pose = new EntityPose();
     private int dimension;
 
@@ -116,6 +124,11 @@ public class Player {
         }
     }
 
+    protected void setSize(float width, float height) {
+//        this.bbWidth = width;
+        this.bbHeight = height;
+    }
+
     protected void setRot(float yRot, float xRot) {
         this.yRot = yRot % 360.0F;
         this.xRot = xRot % 360.0F;
@@ -126,8 +139,9 @@ public class Player {
         this.y = y;
         this.z = z;
 //        float f = this.bbWidth / 2.0F;
-//        float g = this.bbHeight;
-//        this.bb.set(x - f, y - this.heightOffset + this.ySlideOffset, z - f, x + f, y - this.heightOffset + this.ySlideOffset + g, z + f);
+        float g = this.bbHeight;
+        this.pose.y0(y - this.heightOffset + this.ySlideOffset);
+        this.pose.y1(y - this.heightOffset + this.ySlideOffset + g);
     }
 
     public void absMoveTo(double x, double y, double z, float yRot, float xRot) {
@@ -136,7 +150,7 @@ public class Player {
         /*this.zo = */this.z = z;
         /*this.yRotO = */this.yRot = yRot;
         /*this.xRotO = */this.xRot = xRot;
-//        this.ySlideOffset = 0.0F;
+        this.ySlideOffset = 0.0F;
 //        double d = this.yRotO - yRot;
 //        if (d < -180.0) {
 //            this.yRotO += 360.0F;
@@ -178,8 +192,20 @@ public class Player {
         absMoveTo(newX, newY, newZ, newYRot, newXRot);
 
 //        this.onGround = packet.onGround();
-        if (!this.started) {
-            this.started = true;
+
+        // Wait for beta server to send out pos first
+        if (this.started) {
+
+            switch (packet) {
+                case C2SMovePlayerPacket.Pos p ->
+                        serverConnection.send(new MovePlayerPacket.Pos(p.x(), this.pose.y0(), p.y(), p.z(), p.onGround()));
+                case C2SMovePlayerPacket.Rot p ->
+                        serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
+                case C2SMovePlayerPacket.PosRot p ->
+                        serverConnection.send(new MovePlayerPacket.PosRot(p.x(), this.pose.y0(), p.y(), p.z(), p.yRot(), p.xRot(), p.onGround()));
+                case C2SMovePlayerPacket.StatusOnly p ->
+                        serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
+            }
         }
     }
 
@@ -203,6 +229,7 @@ public class Player {
 //        this.ySlideOffset = 0.0F;
         this.xd = this.yd = this.zd = 0.0;
         this.absMoveTo(x, y, z, yRot, xRot);
+        this.clientConnection.send(new S2CPlayerPositionPacket(this.id, new PositionMoveRotation(new Vec3d(packet.x(), packet.y(), packet.z()), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
         this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.pose.y0(), this.y, this.z, packet.onGround()));
         if (!this.started) {
 //            this.minecraft.player.xo = this.minecraft.player.x;

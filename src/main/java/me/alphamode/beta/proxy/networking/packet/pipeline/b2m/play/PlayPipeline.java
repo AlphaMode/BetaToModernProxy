@@ -269,7 +269,10 @@ public class PlayPipeline {
 	}
 
 	public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
-		final byte[] buffer = new byte[packet.xs() * packet.ys() * packet.zs() * 5 / 2];
+        final int xs = packet.xs() + 1;
+        final int ys = packet.ys() + 1;
+        final int zs = packet.zs() + 1;
+		final byte[] buffer = new byte[xs * ys * zs * 5 / 2];
 		try (final Inflater inflater = new Inflater()) {
 			inflater.setInput(packet.data());
 			inflater.inflate(buffer);
@@ -280,7 +283,7 @@ public class PlayPipeline {
 
 		connection.send(new S2CSetChunkCacheRadiusPacket(2048));
 		connection.send(new S2CSetChunkCacheCenterPacket(packet.x(), packet.z()));
-		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), packet.xs() + 1, packet.ys() + 1, packet.zs() + 1, buffer);
+		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), xs, ys, zs, buffer);
 	}
 
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {
@@ -300,23 +303,11 @@ public class PlayPipeline {
 
 	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
 		player.updateFromServer(packet);
-		connection.send(new S2CPlayerPositionPacket(0, new PositionMoveRotation(new Vec3d(packet.x(), packet.y(), packet.z()), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
-		connection.getServerConnection().send(packet);
 	}
 
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
 		final ServerConnection serverConnection = connection.getServerConnection();
-//        player.updateFromClient(packet);
-		switch (packet) {
-			case C2SMovePlayerPacket.Pos p ->
-					serverConnection.send(new MovePlayerPacket.Pos(p.x(), p.y(), p.y() + 1.62F, p.z(), p.onGround()));
-			case C2SMovePlayerPacket.Rot p ->
-					serverConnection.send(new MovePlayerPacket.Rot(p.yRot(), p.xRot(), p.onGround()));
-			case C2SMovePlayerPacket.PosRot p ->
-					serverConnection.send(new MovePlayerPacket.PosRot(p.x(), p.y(), p.y() + 1.62F, p.z(), p.yRot(), p.xRot(), p.onGround()));
-			case C2SMovePlayerPacket.StatusOnly p ->
-					serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
-		}
+        player.updateFromClient(packet);
 	}
 
 	public void handleS2CSetEntityMotion(final ClientConnection connection, final SetEntityMotionPacket packet) {
