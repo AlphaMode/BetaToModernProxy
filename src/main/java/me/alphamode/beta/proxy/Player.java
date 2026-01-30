@@ -160,6 +160,7 @@ public class Player {
 //            this.yRotO -= 360.0F;
 //        }
 
+
         this.setPos(this.x, this.y, this.z);
         this.setRot(yRot, xRot);
     }
@@ -180,7 +181,7 @@ public class Player {
         float newXRot = this.xRot;
         if (packet.hasPosition()) {
             newX = packet.x();
-            newY = packet.y();
+            newY = packet.y() + this.heightOffset;
             newZ = packet.z();
         }
 
@@ -202,7 +203,7 @@ public class Player {
                 case C2SMovePlayerPacket.Rot p ->
                         serverConnection.send(new MovePlayerPacket.Rot(newYRot, newXRot, p.onGround()));
                 case C2SMovePlayerPacket.PosRot p ->
-                        serverConnection.send(new MovePlayerPacket.PosRot(newX, this.pose.y0(),newY, newZ, newYRot, newXRot, p.onGround()));
+                        serverConnection.send(new MovePlayerPacket.PosRot(newX, this.pose.y0(), newY, newZ, newYRot, newXRot, p.onGround()));
                 case C2SMovePlayerPacket.StatusOnly p ->
                         serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
             }
@@ -229,7 +230,7 @@ public class Player {
 //        this.ySlideOffset = 0.0F;
         this.xd = this.yd = this.zd = 0.0;
         this.absMoveTo(x, y, z, yRot, xRot);
-        this.clientConnection.send(new S2CPlayerPositionPacket(this.id, new PositionMoveRotation(new Vec3d(packet.x(), packet.y(), packet.z()), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
+        this.clientConnection.send(new S2CPlayerPositionPacket(this.id, new PositionMoveRotation(new Vec3d(this.x, this.y - this.heightOffset, this.z), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
         this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.pose.y0(), this.y, this.z, packet.onGround()));
         if (!this.started) {
 //            this.minecraft.player.xo = this.minecraft.player.x;
