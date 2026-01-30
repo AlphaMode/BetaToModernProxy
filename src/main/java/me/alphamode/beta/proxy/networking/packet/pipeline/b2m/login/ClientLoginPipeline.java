@@ -198,8 +198,6 @@ public class ClientLoginPipeline {
         connection.getServerConnection().send(new HandshakePacket(connection.getProfile().name()));
     }
 
-
-
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}
 

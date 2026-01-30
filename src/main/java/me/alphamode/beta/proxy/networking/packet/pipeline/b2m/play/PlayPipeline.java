@@ -3,7 +3,6 @@ package me.alphamode.beta.proxy.networking.packet.pipeline.b2m.play;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
-import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
@@ -18,11 +17,12 @@ import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
-import me.alphamode.beta.proxy.util.data.modern.*;
+import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
+import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
+import me.alphamode.beta.proxy.util.data.modern.LevelData;
+import me.alphamode.beta.proxy.util.data.modern.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
-import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
-import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePacketData;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +56,7 @@ public class PlayPipeline {
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(SetEntityMotionPacket.class, PlayPipeline::handleS2CSetEntityMotion)
-            .clientHandler(C2SPlayerInputPacket.class, PlayPipeline::handleC2SPlayerInput)
+			.clientHandler(C2SPlayerInputPacket.class, PlayPipeline::handleC2SPlayerInput)
 			.serverHandler(ChunkVisibilityPacket.class, PlayPipeline::handleS2CChunkVisibility)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
@@ -90,8 +90,6 @@ public class PlayPipeline {
 	 * Sincerely, lowercase of the btw
 	 */
 	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
-//		TODO: S2CRecipeBookAddPacket
-
 		connection.send(new S2CPlayLoginPacket(
 				0, // TODO
 				false,
@@ -117,12 +115,6 @@ public class PlayPipeline {
 				false
 		));
 
-	/*	connection.send(new S2CPlayerPositionPacket(
-				0, // TODO
-				new PositionMoveRotation(new Vec3d(0, 63, 0), new Vec3d(0, 0, 0), 0.0F, 0.0F),
-				Set.of()
-		));*/
-
 //		TODO: S2CInitializeBorderPacket
 		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
 				GlobalPos.of(Dimension.OVERWORLD, packet.position().toBlockPos()),
@@ -130,32 +122,13 @@ public class PlayPipeline {
 		)));
 
 		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
-		connection.send(new S2CSetChunkCacheRadiusPacket(0));
-		connection.send(new S2CSetChunkCacheCenterPacket(0, 0));
-		connection.send(new S2CLevelChunkWithLightPacket(
-				new ChunkPos(0, 0),
-				new ClientboundLevelChunkPacketData(
-						Map.of(),
-						new byte[1024],
-						List.of()
-				),
-				new ClientboundLightUpdatePacketData(
-						new BitSet(1024),
-						new BitSet(1024),
-						new BitSet(1024),
-						new BitSet(1024),
-						List.of(),
-						List.of()
-				)
-		));
 	}
 
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
 	}
 
 	public void handleS2CSetTime(final ClientConnection connection, final SetTimePacket packet) {
-		// TODO/FIX
-		// connection.send(new S2CSetTimePacket(packet.id(), packet.id(), true));
+		connection.send(new S2CSetTimePacket(packet.time(), packet.time(), true));
 	}
 
 	public void handleS2CSetHealth(final ClientConnection connection, final SetHealthPacket packet) {
@@ -270,9 +243,9 @@ public class PlayPipeline {
 	}
 
 	public void handleBlockRegionUpdate(final ClientConnection connection, final BlockRegionUpdatePacket packet) {
-        final int xs = packet.xs() + 1;
-        final int ys = packet.ys() + 1;
-        final int zs = packet.zs() + 1;
+		final int xs = packet.xs() + 1;
+		final int ys = packet.ys() + 1;
+		final int zs = packet.zs() + 1;
 		final byte[] buffer = new byte[xs * ys * zs * 5 / 2];
 		try (final Inflater inflater = new Inflater()) {
 			inflater.setInput(packet.data());
@@ -282,8 +255,6 @@ public class PlayPipeline {
 			return;
 		}
 
-		connection.send(new S2CSetChunkCacheRadiusPacket(2048));
-		connection.send(new S2CSetChunkCacheCenterPacket(packet.x(), packet.z()));
 		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), xs, ys, zs, buffer);
 	}
 
@@ -300,24 +271,21 @@ public class PlayPipeline {
 		player.tick();
 	}
 
-	// TODO: double check accuracy
-
 	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
 		player.updateFromServer(packet);
 	}
 
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
-		final ServerConnection serverConnection = connection.getServerConnection();
-        player.updateFromClient(packet);
+		player.updateFromClient(packet);
 	}
 
 	public void handleS2CSetEntityMotion(final ClientConnection connection, final SetEntityMotionPacket packet) {
 		connection.send(new S2CSetEntityMotionPacket(packet.id(), new Vec3d(packet.deltaX(), packet.deltaY(), packet.deltaZ())));
 	}
 
-    public void handleC2SPlayerInput(final ClientConnection connection, final C2SPlayerInputPacket packet) {
-        player.setSneaking(packet.input().shift());
-    }
+	public void handleC2SPlayerInput(final ClientConnection connection, final C2SPlayerInputPacket packet) {
+		player.setSneaking(packet.input().shift());
+	}
 
 	public void handleC2SContainerSlotStateChanged(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {
 	}
@@ -333,7 +301,6 @@ public class PlayPipeline {
 				Arrays.stream(packet.items()).map(ItemTranslator::toModernStack).toList(),
 				ModernItemStack.EMPTY
 		));
-		LOGGER.warn("Sending container content");
 	}
 
 	public void handleS2CContainerSetData(final ClientConnection connection, final ContainerSetDataPacket packet) {
