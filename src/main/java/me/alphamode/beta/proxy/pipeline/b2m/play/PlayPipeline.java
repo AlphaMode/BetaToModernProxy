@@ -63,6 +63,7 @@ public class PlayPipeline {
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
 			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSlotStateChanged)
+			.clientHandler(C2SContainerClickPacket.class, PlayPipeline::handleC2SC2SContainerClick)
 			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
 			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
 			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
@@ -353,6 +354,19 @@ public class PlayPipeline {
 	}
 
 	public void handleC2SContainerSlotStateChanged(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {
+		// TODO?
+	}
+
+	public void handleC2SC2SContainerClick(final ClientConnection connection, final C2SContainerClickPacket packet) {
+		LOGGER.info("Container Click: (containerId={}, slot={}, button={}, clickType={})", packet.containerId(), packet.slot(), packet.button(), packet.clickType());
+		connection.getServerConnection().send(new ContainerClickPacket(
+				(byte) packet.containerId(),
+				packet.slot(),
+				packet.button(),
+				(short) 0,// uid? TODO
+				packet.clickType() == C2SContainerClickPacket.ClickType.QUICK_MOVE,
+				null
+		));
 	}
 
 	public void handleS2CContainerSetSlot(final ClientConnection connection, final ContainerSetSlotPacket packet) {

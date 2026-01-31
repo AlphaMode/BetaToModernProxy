@@ -25,7 +25,7 @@ public class Player {
 
 	private final int id;
 	public float ySlideOffset = 0.0F;
-	private Box box;
+	private Box box = new Box(0, 0, 0, 0, 0, 0);
 	private EntityDimensions dimensions = STANDING_DIMENSIONS;
 	private int dimension;
 
@@ -52,6 +52,8 @@ public class Player {
 		this.id = id;
 		this.serverConnection = clientConnection.getServerConnection();
 		this.clientConnection = clientConnection;
+		this.setPose(Pose.STANDING);
+		this.setPos(0, 0, 0);
 	}
 
 	public void setDimension(final int dimension) {
