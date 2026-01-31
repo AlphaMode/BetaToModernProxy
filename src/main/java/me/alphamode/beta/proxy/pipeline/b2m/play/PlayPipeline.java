@@ -404,24 +404,7 @@ public class PlayPipeline {
 	// TODO: datagen?
 	private static S2COpenScreenPacket.WindowType betaToModernMenuType(final ContainerOpenPacket.MenuType type, final int size) {
 		return switch (type) {
-			case BASIC -> {
-				if (size == (3 * 3)) {
-					yield S2COpenScreenPacket.WindowType.GENERIC_3x3;
-				} else if (size == (9 * 2)) {
-					yield S2COpenScreenPacket.WindowType.GENERIC_9x2;
-				} else if (size == (9 * 3)) {
-					yield S2COpenScreenPacket.WindowType.GENERIC_9x3;
-				} else if (size == (9 * 4)) {
-					yield S2COpenScreenPacket.WindowType.GENERIC_9x4;
-				} else if (size == (9 * 5)) {
-					yield S2COpenScreenPacket.WindowType.GENERIC_9x5;
-				} else if (size == (9 * 6)) {
-					yield S2COpenScreenPacket.WindowType.GENERIC_9x6;
-				} else {
-					yield null; // Unknown?
-				}
-			}
-
+			case BASIC -> S2COpenScreenPacket.WindowType.genericBySize(size);
 			case CRAFTING -> S2COpenScreenPacket.WindowType.CRAFTING; // Crafting Table
 			case FURNACE -> S2COpenScreenPacket.WindowType.FURNACE; // Furnace
 			case DISPENSER -> S2COpenScreenPacket.WindowType.GENERIC_3x3; // Dispenser/Dropper

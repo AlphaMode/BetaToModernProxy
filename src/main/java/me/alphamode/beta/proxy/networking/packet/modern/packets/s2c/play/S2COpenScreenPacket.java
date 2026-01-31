@@ -48,6 +48,24 @@ public record S2COpenScreenPacket(int containerId, WindowType windowType,
 		SMITHING,
 		SMOKER,
 		CARTOGRAPHY_TABLE,
-		STONECUTTER
+		STONECUTTER;
+
+		public static WindowType genericBySize(final int size) {
+			if (size == (3 * 3)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_3x3;
+			} else if (size == (9 * 2)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x2;
+			} else if (size == (9 * 3)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x3;
+			} else if (size == (9 * 4)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x4;
+			} else if (size == (9 * 5)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x5;
+			} else if (size == (9 * 6)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x6;
+			} else {
+				return null;
+			}
+		}
 	}
 }
