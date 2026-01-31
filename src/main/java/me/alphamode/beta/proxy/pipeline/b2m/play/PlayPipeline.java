@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.pipeline.b2m.play;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.entity.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.networking.ServerConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
@@ -17,6 +18,7 @@ import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
+import me.alphamode.beta.proxy.util.data.modern.BlockPos;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
@@ -74,6 +76,7 @@ public class PlayPipeline {
 			.serverHandler(ContainerOpenPacket.class, PlayPipeline::handleS2CContainerOpen)
 			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
 			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
+			.clientHandler(C2SPlayerActionPacket.class, PlayPipeline::handleC2SPlayerAction)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
 			// there is no C2SDisconnect packet?
 			.unhandledClient(PlayPipeline::passClientToNextPipeline)
@@ -433,6 +436,26 @@ public class PlayPipeline {
 
 	public void handleC2SContainerClose(final ClientConnection connection, final C2SContainerClosePacket packet) {
 		connection.getServerConnection().send(new ContainerClosePacket((byte) packet.containerId()));
+	}
+
+	public void handleC2SPlayerAction(final ClientConnection connection, final C2SPlayerActionPacket packet) {
+		final ServerConnection serverConnection = connection.getServerConnection();
+		final BlockPos blockPos = packet.blockPos();
+		final Vec3i pos = new Vec3i(blockPos.x(), blockPos.y(), blockPos.z());
+		switch (packet.action()) {
+			case START_DESTROY_BLOCK ->
+					serverConnection.send(new PlayerActionPacket(PlayerActionPacket.Action.STARTED_DIGGING, pos, (byte) packet.direction().ordinal()));
+
+			case ABORT_DESTROY_BLOCK -> {
+				// TODO
+				LOGGER.info("abort destroy");
+			}
+
+			case STOP_DESTROY_BLOCK ->
+					serverConnection.send(new PlayerActionPacket(PlayerActionPacket.Action.FINISHED_DIGGING, pos, (byte) packet.direction().ordinal()));
+
+			// TODO: other actions
+		}
 	}
 
 	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
