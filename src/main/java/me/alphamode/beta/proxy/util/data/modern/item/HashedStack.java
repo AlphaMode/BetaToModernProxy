@@ -1,7 +1,10 @@
 package me.alphamode.beta.proxy.util.data.modern.item;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+
+import java.util.Optional;
 
 public interface HashedStack {
 	HashedStack EMPTY = new HashedStack() {
@@ -16,8 +19,7 @@ public interface HashedStack {
 		}
 	};
 
-	StreamCodec<ByteBuf, HashedStack> CODEC = null;
-	// TODO: StreamCodec<ByteBuf, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(HashedStack.ActualItem.STREAM_CODEC).map(actualItem -> (HashedStack) DataFixUtils.orElse(actualItem, EMPTY), hashedStack -> hashedStack instanceof HashedStack.ActualItem actualItem ? Optional.of(actualItem) : Optional.empty());
+	StreamCodec<ByteBuf, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(ActualItem.STREAM_CODEC).map(Optional::get, hashedStack -> hashedStack instanceof ActualItem actualItem ? Optional.of(actualItem) : Optional.empty());
 
 	boolean matches(ModernItemStack var1, HashedPatchMap.HashGenerator var2);
 
@@ -28,15 +30,17 @@ public interface HashedStack {
 	}
 
 	record ActualItem(int itemId, int count, HashedPatchMap components) implements HashedStack {
+		public static final StreamCodec<ByteBuf, ActualItem> STREAM_CODEC = null;
+
 		// TODO
-		/*public static final StreamCodec<ByteBuf, HashedStack.ActualItem> STREAM_CODEC = StreamCodec.composite(
+		/*public static final StreamCodec<ByteBuf, ActualItem> STREAM_CODEC = StreamCodec.composite(
 				ModernStreamCodecs.holderRegistry(Registries.ITEM),
-				HashedStack.ActualItem::item,
+				ActualItem::item,
 				ModernStreamCodecs.VAR_INT,
-				HashedStack.ActualItem::count,
+				ActualItem::count,
 				HashedPatchMap.STREAM_CODEC,
-				HashedStack.ActualItem::components,
-				HashedStack.ActualItem::new
+				ActualItem::components,
+				ActualItem::new
 		);*/
 
 		@Override

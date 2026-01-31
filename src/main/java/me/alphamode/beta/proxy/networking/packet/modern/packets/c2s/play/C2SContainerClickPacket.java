@@ -13,7 +13,7 @@ public record C2SContainerClickPacket(int containerId, int stateId, short slot, 
 									  Int2ObjectMap<HashedStack> changedSlots,
 									  HashedStack carriedItem) implements C2SPlayPacket {
 	public static final StreamCodec<ByteBuf, Int2ObjectMap<HashedStack>> SLOTS_STREAM_CODEC = ModernStreamCodecs.map(
-			Int2ObjectOpenHashMap::new, BasicStreamCodecs.SHORT.map(Short::intValue, Integer::shortValue), HashedStack.CODEC, 128
+			Int2ObjectOpenHashMap::new, BasicStreamCodecs.SHORT.map(Short::intValue, Integer::shortValue), HashedStack.STREAM_CODEC, 128
 	);
 
 	public static final StreamCodec<ByteBuf, C2SContainerClickPacket> CODEC = StreamCodec.composite(
@@ -29,7 +29,7 @@ public record C2SContainerClickPacket(int containerId, int stateId, short slot, 
 			C2SContainerClickPacket::clickType,
 			SLOTS_STREAM_CODEC,
 			C2SContainerClickPacket::changedSlots,
-			HashedStack.CODEC,
+			HashedStack.STREAM_CODEC,
 			C2SContainerClickPacket::carriedItem,
 			C2SContainerClickPacket::new
 	);
