@@ -25,8 +25,11 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
+		int id = -1;
 		try {
-			final var packet = BetaPacketRegistry.INSTANCE.createPacket(buf.readUnsignedByte(), PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
+			id = buf.readUnsignedByte();
+
+			final var packet = BetaPacketRegistry.INSTANCE.createPacket(id, PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
 			if (BrodernProxy.getProxy().isDebug() && !(
 					packet.getType() == BetaPackets.MOVE_PLAYER
 							|| packet.getType() == BetaPackets.MOVE_PLAYER_POS
@@ -42,7 +45,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 			out.add(packet);
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
-				LOGGER.info("Failed to decode beta packet");
+				LOGGER.info("Failed to decode beta packet with id {}", id);
 			}
 
 			connection.kick("Beta Exception: " + exception.getMessage());
