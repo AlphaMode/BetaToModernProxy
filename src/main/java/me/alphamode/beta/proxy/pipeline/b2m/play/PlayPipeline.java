@@ -20,9 +20,9 @@ import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
-import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
+import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
@@ -66,6 +66,7 @@ public class PlayPipeline {
 			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
 			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
 			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
+			.serverHandler(ContainerOpenPacket.class, PlayPipeline::handleS2CContainerOpen)
 			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
 			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
 			.serverHandler(DisconnectPacket.class, PlayPipeline::handleS2CDisconnect)
@@ -369,6 +370,30 @@ public class PlayPipeline {
 
 	public void handleS2CContainerSetData(final ClientConnection connection, final ContainerSetDataPacket packet) {
 		connection.send(new S2CContainerSetDataPacket(packet.containerId(), packet.id(), packet.value()));
+	}
+
+	// TODO: datagen?
+	private static S2COpenScreenPacket.WindowType betaToModernMenuType(final ContainerOpenPacket.MenuType type) {
+		if (type == ContainerOpenPacket.MenuType.BASIC) {
+			return S2COpenScreenPacket.WindowType.GENERIC_9x3; // Normal Chest (TODO/FIX: double chest)
+		} else if (type == ContainerOpenPacket.MenuType.CRAFTING) {
+			return S2COpenScreenPacket.WindowType.CRAFTING; // Crafting Table
+		} else if (type == ContainerOpenPacket.MenuType.FURNACE) {
+			return S2COpenScreenPacket.WindowType.FURNACE; // Furnace
+		} else if (type == ContainerOpenPacket.MenuType.DISPENSER) {
+			return S2COpenScreenPacket.WindowType.GENERIC_3x3; // Dispenser/Dropper
+		} else {
+			return null;
+		}
+	}
+
+	public void handleS2CContainerOpen(final ClientConnection connection, final ContainerOpenPacket packet) {
+		final S2COpenScreenPacket.WindowType windowType = betaToModernMenuType(packet.type());
+		if (windowType == null) {
+			return;
+		}
+
+		connection.send(new S2COpenScreenPacket(packet.containerId(), windowType, TextComponent.of(packet.title())));
 	}
 
 	public void handleS2CContainerClose(final ClientConnection connection, final ContainerClosePacket packet) {

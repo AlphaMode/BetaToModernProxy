@@ -189,7 +189,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_ROT, null);
 		this.registerPacket(ClientboundPlayPackets.MOVE_VEHICLE, null);
 		this.registerPacket(ClientboundPlayPackets.OPEN_BOOK, null);
-		this.registerPacket(ClientboundPlayPackets.OPEN_SCREEN, null);
+		this.registerPacket(ClientboundPlayPackets.OPEN_SCREEN, S2COpenScreenPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.OPEN_SIGN_EDITOR, null);
 		this.registerPacket(ClientboundPlayPackets.PING, null);
 		this.registerPacket(ClientboundPlayPackets.PONG_RESPONSE, null);

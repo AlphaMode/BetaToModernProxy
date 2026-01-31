@@ -7,11 +7,11 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record ContainerOpenPacket(short containerId, short type, String title, short size) implements BetaPacket {
+public record ContainerOpenPacket(short containerId, MenuType type, String title, short size) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, ContainerOpenPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.UNSIGNED_BYTE,
 			ContainerOpenPacket::containerId,
-			BasicStreamCodecs.UNSIGNED_BYTE,
+			BetaStreamCodecs.javaEnum(MenuType.class),
 			ContainerOpenPacket::type,
 			BetaStreamCodecs.stringJava(),
 			ContainerOpenPacket::title,
@@ -23,5 +23,12 @@ public record ContainerOpenPacket(short containerId, short type, String title, s
 	@Override
 	public BetaPackets getType() {
 		return BetaPackets.CONTAINER_OPEN;
+	}
+
+	public enum MenuType {
+		BASIC,
+		CRAFTING,
+		FURNACE,
+		DISPENSER,
 	}
 }
