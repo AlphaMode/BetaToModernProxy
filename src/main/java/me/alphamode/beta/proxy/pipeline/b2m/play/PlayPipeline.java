@@ -20,8 +20,11 @@ import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
 import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
 import me.alphamode.beta.proxy.util.data.modern.LevelData;
+import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
+import me.alphamode.beta.proxy.util.data.modern.item.HashedPatchMap;
+import me.alphamode.beta.proxy.util.data.modern.item.HashedStack;
 import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
 import net.lenni0451.mcstructs.text.TextComponent;
@@ -359,13 +362,25 @@ public class PlayPipeline {
 
 	public void handleC2SC2SContainerClick(final ClientConnection connection, final C2SContainerClickPacket packet) {
 		LOGGER.info("Container Click: (containerId={}, slot={}, button={}, clickType={})", packet.containerId(), packet.slot(), packet.button(), packet.clickType());
+
+		BetaItemStack stack = BetaItemStack.EMPTY;
+		if (packet.carriedItem() instanceof HashedStack.ActualItem(int itemId, int count, HashedPatchMap components)) {
+			stack = ItemTranslator.toBetaStack(new ModernItemStack(itemId, count, DataComponentPatch.EMPTY)); // TODO: components
+		}
+
+		if (packet.slot() == 45) {
+			// Cancel Offhand
+			// TODO: put item back in cursor/don't drop
+			return;
+		}
+
 		connection.getServerConnection().send(new ContainerClickPacket(
 				(byte) packet.containerId(),
 				packet.slot(),
-				packet.button(),
+				packet.button(), // TODO: map to beta button
 				(short) 0,// uid? TODO
 				packet.clickType() == C2SContainerClickPacket.ClickType.QUICK_MOVE,
-				null
+				stack
 		));
 	}
 

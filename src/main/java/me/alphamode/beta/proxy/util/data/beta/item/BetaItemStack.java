@@ -2,15 +2,14 @@ package me.alphamode.beta.proxy.util.data.beta.item;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.Item;
 
-public record BetaItemStack(Item item, int count, int aux) {
-	public static final BetaItemStack EMPTY = new BetaItemStack(new Item(0), 0, 0);
+public record BetaItemStack(int itemId, int count, int aux) {
+	public static final BetaItemStack EMPTY = new BetaItemStack(0, 0, 0);
 
 	public static final StreamCodec<ByteBuf, BetaItemStack> CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack stack) {
-			buf.writeShort(stack.item.id());
+			buf.writeShort(stack.itemId);
 			buf.writeByte(stack.count);
 			buf.writeShort(stack.aux);
 		}
@@ -18,7 +17,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 		@Override
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
-			return new BetaItemStack(BetaItems.byId(id), buf.readByte(), buf.readShort());
+			return new BetaItemStack(id, buf.readByte(), buf.readShort());
 		}
 	};
 
@@ -28,7 +27,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 			if (stack == null) {
 				buf.writeShort(-1);
 			} else {
-				buf.writeShort(stack.item.id());
+				buf.writeShort(stack.itemId);
 				buf.writeByte(stack.count);
 				buf.writeShort(stack.aux);
 			}
@@ -40,7 +39,7 @@ public record BetaItemStack(Item item, int count, int aux) {
 			if (id < 0) {
 				return null;
 			} else {
-				return new BetaItemStack(BetaItems.byId(id), buf.readByte(), buf.readShort());
+				return new BetaItemStack(id, buf.readByte(), buf.readShort());
 			}
 		}
 	};
@@ -48,14 +47,14 @@ public record BetaItemStack(Item item, int count, int aux) {
 	public static final StreamCodec<ByteBuf, BetaItemStack> NO_DATA_CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final BetaItemStack stack) {
-			buf.writeShort(stack.item.id());
+			buf.writeShort(stack.itemId);
 			buf.writeShort(stack.aux());
 		}
 
 		@Override
 		public BetaItemStack decode(final ByteBuf buf) {
 			final int id = buf.readShort();
-			return new BetaItemStack(BetaItems.byId(id), 1, buf.readShort());
+			return new BetaItemStack(id, 1, buf.readShort());
 		}
 	};
 }

@@ -2,9 +2,9 @@ package me.alphamode.beta.proxy.util;
 
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
-import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponents;
+import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import net.lenni0451.mcstructs.converter.model.Either;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -38,11 +38,24 @@ public final class ItemTranslator {
 				}
 			}
 
-			if (isDamagable(stack.item().id())) {
+			if (isDamagable(stack.itemId())) {
 				builder.set(DataComponents.DAMAGE, stack.aux());
 			}
 
 			return new ModernItemStack(modernId, stack.count(), builder.build());
+		}
+	}
+
+	public static BetaItemStack toBetaStack(final ModernItemStack stack) {
+		if (stack == null || stack.itemId() == 0 || stack.count() <= 0) {
+			return BetaItemStack.EMPTY;
+		} else {
+			int betaId;
+
+			// TODO
+			betaId = stack.itemId();
+
+			return new BetaItemStack(betaId, stack.count(), 0);
 		}
 	}
 
@@ -59,7 +72,7 @@ public final class ItemTranslator {
 	}
 
 	private static Either<ItemTranslation, ItemTranslations> getTranslation(final BetaItemStack stack) {
-		final NbtTag tag = BrodernProxy.getBetaToModernItems().get(String.valueOf(stack.item().id()));
+		final NbtTag tag = BrodernProxy.getBetaToModernItems().get(String.valueOf(stack.itemId()));
 		if (tag == null) {
 			throw new UnsupportedOperationException();
 		}
