@@ -13,34 +13,33 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ServerLoginPipeline {
-    private static final Logger LOGGER = LogManager.getLogger(ServerLoginPipeline.class);
-    public static final PacketPipeline<ServerLoginPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<ServerLoginPipeline>builder()
-            // Handshake
-            .serverHandler(HandshakePacket.class, ServerLoginPipeline::handleS2CHandshake)
-            .serverHandler(LoginPacket.class, ServerLoginPipeline::handleS2CLogin)
-            .unhandledClient(ServerLoginPipeline::passClientToNextPipeline)
-            .unhandledServer(ServerLoginPipeline::passServerToNextPipeline)
-            .build();
+	private static final Logger LOGGER = LogManager.getLogger(ServerLoginPipeline.class);
+	public static final PacketPipeline<ServerLoginPipeline, BetaPacket, ModernPacket<?>> PIPELINE = BetaToModernPipeline.<ServerLoginPipeline>builder()
+			// Handshake
+			.serverHandler(HandshakePacket.class, ServerLoginPipeline::handleS2CHandshake)
+			.serverHandler(LoginPacket.class, ServerLoginPipeline::handleS2CLogin)
+			.unhandledClient(ServerLoginPipeline::passClientToNextPipeline)
+			.unhandledServer(ServerLoginPipeline::passServerToNextPipeline)
+			.build();
 
-    public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
-        if (packet.username().equals("-")) {
-            LOGGER.info("Sending Login Packet & Login Finished");
-            connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
-        } else {
-            connection.kick("Online mode isn't supported!");
-        }
-    }
+	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
+		if (packet.username().equals("-")) {
+			LOGGER.info("Sending Login Packet & Login Finished");
+			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
+		} else {
+			connection.kick("Online mode isn't supported!");
+		}
+	}
 
-    public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
-        final Player player = new Player(packet.clientVersion(), connection);
-        player.setDimension(packet.dimension());
+	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
+		final Player player = new Player(packet.clientVersion(), connection);
+		player.setDimension(packet.dimension());
+		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(player));
+	}
 
-        connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(player));
-    }
+	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
+	}
 
-    public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
-    }
-
-    public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
-    }
+	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
+	}
 }

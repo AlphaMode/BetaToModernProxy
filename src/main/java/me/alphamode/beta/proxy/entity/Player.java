@@ -10,8 +10,16 @@ import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.modern.PositionMoveRotation;
 
 import java.util.Collections;
+import java.util.Map;
 
 public class Player {
+
+	private static final EntityDimensions STANDING_DIMENSIONS = new EntityDimensions(1.62F, 1.2F, 1.8F);
+	private static final Map<Pose, EntityDimensions> PLAYER_DIMENSION_MAP = Map.of(
+			Pose.STANDING, STANDING_DIMENSIONS,
+			Pose.CROUCHING, STANDING_DIMENSIONS.withEyeHeight(1.54F),
+			Pose.SLEEPING, STANDING_DIMENSIONS // TODO
+	);
 
 	private final ServerConnection serverConnection;
 	private final ClientConnection clientConnection;
@@ -19,8 +27,7 @@ public class Player {
 	private final int id;
 	public float ySlideOffset = 0.0F;
 	private Box box;
-	private EntityDimensions dimensions = new EntityDimensions(1.62F, 1.2F, 1.8F);
-	private final EntityPose pose = new EntityPose();
+	private EntityDimensions dimensions = STANDING_DIMENSIONS;
 	private int dimension;
 
 	private boolean started = false;
@@ -43,7 +50,7 @@ public class Player {
 	private boolean onGround;
 	private boolean lastOnGround = false;
 
-	private boolean sneaking;
+	private Pose pose;
 	private boolean lastSneaked = false;
 
 	private int noSendTime = 0;
@@ -58,16 +65,21 @@ public class Player {
 		this.dimension = dimension;
 	}
 
+	public void setPose(final Pose pose) {
+		this.pose = pose;
+		this.dimensions = PLAYER_DIMENSION_MAP.get(pose);
+	}
+
 	public void setSneaking(boolean sneaking) {
-		this.sneaking = sneaking;
+		this.setPose(sneaking ? Pose.CROUCHING : Pose.STANDING);
 	}
 
 	public boolean isSneaking() {
-		return this.sneaking;
+		return this.pose == Pose.CROUCHING;
 	}
 
 	public void tick() {
-		sendPosition();
+		this.sendPosition();
 	}
 
 	public void sendPosition() {
@@ -83,7 +95,7 @@ public class Player {
 		}
 
 		final double deltaX = this.x - this.xLast;
-		final double deltaY = this.pose.y0() - this.yLast1;
+		final double deltaY = this.box.minY() - this.yLast1;
 		final double deltaYView = this.y - this.yLast2;
 		final double deltaZ = this.z - this.zLast;
 		final double deltaYRot = this.yRot - this.yRotLast;
@@ -92,10 +104,10 @@ public class Player {
 		final boolean rotated = deltaYRot != 0.0 || deltaXRot != 0.0;
 		// TODO: riding checks
 		if (moved && rotated) {
-			this.serverConnection.send(new MovePlayerPacket.PosRot(this.x, this.pose.y0(), this.y, this.z, this.yRot, this.xRot, this.onGround));
+			this.serverConnection.send(new MovePlayerPacket.PosRot(this.x, this.box.minY(), this.y, this.z, this.yRot, this.xRot, this.onGround));
 			this.noSendTime = 0;
 		} else if (moved) {
-			this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.pose.y0(), this.y, this.z, this.onGround));
+			this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.box.minY(), this.y, this.z, this.onGround));
 			this.noSendTime = 0;
 		} else if (rotated) {
 			this.serverConnection.send(new MovePlayerPacket.Rot(this.yRot, this.xRot, this.onGround));
@@ -112,7 +124,7 @@ public class Player {
 		this.lastOnGround = this.onGround;
 		if (moved) {
 			this.xLast = this.x;
-			this.yLast1 = this.pose.y0();
+			this.yLast1 = this.box.minY();
 			this.yLast2 = this.y;
 			this.zLast = this.z;
 		}
@@ -121,11 +133,6 @@ public class Player {
 			this.yRotLast = this.yRot;
 			this.xRotLast = this.xRot;
 		}
-	}
-
-	protected void setSize(float width, float height) {
-		this.dimensions = dimensions.withSize(width, height);
-		// TODO: update box
 	}
 
 	protected void setRot(float yRot, float xRot) {
@@ -137,25 +144,31 @@ public class Player {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		// final float width = this.dimensions.width() / 2.0F;
+		final float width = this.dimensions.width() / 2.0F;
 		final float height = this.dimensions.height();
-		this.pose.y0(y - this.dimensions.eyeHeight() + this.ySlideOffset);
-		this.pose.y1(y - this.dimensions.eyeHeight() + this.ySlideOffset + height);
+		final double y0 = y - this.dimensions.eyeHeight() + this.ySlideOffset;
+		final double y1 = y - this.dimensions.eyeHeight() + this.ySlideOffset + height;
+		this.box = new Box(x - width, y0, z - width, x + width, y1, z + width);
 	}
 
 	public void absMoveTo(double x, double y, double z, float yRot, float xRot) {
-		/*this.xo = */this.x = x;
-		/*this.yo = */this.y = y;
-		/*this.zo = */this.z = z;
-		/*this.yRotO = */this.yRot = yRot;
-		/*this.xRotO = */this.xRot = xRot;
+		/*this.xo = */
+		this.x = x;
+		/*this.yo = */
+		this.y = y;
+		/*this.zo = */
+		this.z = z;
+		/*this.yRotO = */
+		this.yRot = yRot;
+		/*this.xRotO = */
+		this.xRot = xRot;
 		this.ySlideOffset = 0.0F;
-//        double d = this.yRotO - yRot;
-//        if (d < -180.0) {
+//        final double dyRot = this.yRotO - yRot;
+//        if (dyRot < -180.0) {
 //            this.yRotO += 360.0F;
 //        }
 //
-//        if (d >= 180.0) {
+//        if (dyRot >= 180.0) {
 //            this.yRotO -= 360.0F;
 //        }
 
@@ -195,11 +208,11 @@ public class Player {
 			// Wait for beta server to send out pos first
 			switch (packet) {
 				case C2SMovePlayerPacket.Pos p ->
-						serverConnection.send(new MovePlayerPacket.Pos(newX, this.pose.y0(), newY, newZ, p.onGround()));
+						serverConnection.send(new MovePlayerPacket.Pos(newX, this.box.minY(), newY, newZ, p.onGround()));
 				case C2SMovePlayerPacket.Rot p ->
 						serverConnection.send(new MovePlayerPacket.Rot(newYRot, newXRot, p.onGround()));
 				case C2SMovePlayerPacket.PosRot p ->
-						serverConnection.send(new MovePlayerPacket.PosRot(newX, this.pose.y0(), newY, newZ, newYRot, newXRot, p.onGround()));
+						serverConnection.send(new MovePlayerPacket.PosRot(newX, this.box.minY(), newY, newZ, newYRot, newXRot, p.onGround()));
 				case C2SMovePlayerPacket.StatusOnly p ->
 						serverConnection.send(new MovePlayerPacket.StatusOnly(p.onGround()));
 			}
@@ -227,7 +240,7 @@ public class Player {
 		this.xd = this.yd = this.zd = 0.0;
 		this.absMoveTo(x, y, z, yRot, xRot);
 		this.clientConnection.send(new S2CPlayerPositionPacket(this.id, new PositionMoveRotation(new Vec3d(this.x, this.y - this.dimensions.eyeHeight(), this.z), Vec3d.ZERO, packet.yRot(), packet.xRot()), Collections.emptySet()));
-		this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.pose.y0(), this.y, this.z, packet.onGround()));
+		this.serverConnection.send(new MovePlayerPacket.Pos(this.x, this.box.minY(), this.y, this.z, packet.onGround()));
 		if (!this.started) {
 			this.started = true;
 		}
