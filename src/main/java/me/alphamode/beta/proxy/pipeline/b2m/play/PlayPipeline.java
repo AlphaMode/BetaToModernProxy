@@ -70,6 +70,7 @@ public class PlayPipeline {
 			.serverHandler(ContainerSetSlotPacket.class, PlayPipeline::handleS2CContainerSetSlot)
 			.serverHandler(ContainerSetContentPacket.class, PlayPipeline::handleS2CContainerSetContent)
 			.serverHandler(ContainerSetDataPacket.class, PlayPipeline::handleS2CContainerSetData)
+			.serverHandler(ContainerAckPacket.class, PlayPipeline::handleS2CContainerAck)
 			.serverHandler(ContainerOpenPacket.class, PlayPipeline::handleS2CContainerOpen)
 			.serverHandler(ContainerClosePacket.class, PlayPipeline::handleS2CContainerClose)
 			.clientHandler(C2SContainerClosePacket.class, PlayPipeline::handleC2SContainerClose)
@@ -80,6 +81,7 @@ public class PlayPipeline {
 			.build();
 
 	protected final Player player;
+	protected short lastUid = 0;
 
 	public PlayPipeline(Player player) {
 		this.player = Objects.requireNonNull(player, "Can't construct play pipeline without player");
@@ -374,11 +376,12 @@ public class PlayPipeline {
 			return;
 		}
 
+		final short uid = lastUid++;
 		connection.getServerConnection().send(new ContainerClickPacket(
 				(byte) packet.containerId(),
 				packet.slot(),
-				packet.button(), // TODO: map to beta button
-				(short) 0,// uid? TODO
+				packet.button(),
+				uid,
 				packet.clickType() == C2SContainerClickPacket.ClickType.QUICK_MOVE,
 				stack
 		));
@@ -399,6 +402,10 @@ public class PlayPipeline {
 
 	public void handleS2CContainerSetData(final ClientConnection connection, final ContainerSetDataPacket packet) {
 		connection.send(new S2CContainerSetDataPacket(packet.containerId(), packet.id(), packet.value()));
+	}
+
+	public void handleS2CContainerAck(final ClientConnection connection, final ContainerAckPacket packet) {
+		connection.getServerConnection().send(new ContainerAckPacket(packet.containerId(), packet.uid(), true));
 	}
 
 	// TODO: datagen?
