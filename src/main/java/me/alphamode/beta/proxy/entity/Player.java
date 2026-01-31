@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Map;
 
 public class Player {
-
 	private static final EntityDimensions STANDING_DIMENSIONS = new EntityDimensions(1.62F, 1.2F, 1.8F);
 	private static final Map<Pose, EntityDimensions> PLAYER_DIMENSION_MAP = Map.of(
 			Pose.STANDING, STANDING_DIMENSIONS,
