@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.components;
 
+import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
@@ -126,6 +127,23 @@ public class DataComponentPatch {
 		return this.map.isEmpty();
 	}
 
+	public DataComponentPatch.SplitResult split() {
+		if (this.isEmpty()) {
+			return DataComponentPatch.SplitResult.EMPTY;
+		} else {
+			DataComponentMap.Builder added = DataComponentMap.builder();
+			Set<DataComponentType<?>> removed = Sets.newIdentityHashSet();
+			this.map.forEach((type, optionalValue) -> {
+				if (optionalValue.isPresent()) {
+					added.setUnchecked(type, optionalValue.get());
+				} else {
+					removed.add(type);
+				}
+			});
+			return new DataComponentPatch.SplitResult(added.build(), removed);
+		}
+	}
+
 	@Override
 	public boolean equals(final Object object) {
 		return this == object || object instanceof DataComponentPatch patch && this.map.equals(patch.map);
@@ -216,5 +234,9 @@ public class DataComponentPatch {
 		public Codec<?> valueCodec() {
 			return this.removed ? Codec.UNIT : this.type.codecOrThrow();
 		}
+	}
+
+	public record SplitResult(DataComponentMap added, Set<DataComponentType<?>> removed) {
+		public static final DataComponentPatch.SplitResult EMPTY = new DataComponentPatch.SplitResult(DataComponentMap.EMPTY, Set.of());
 	}
 }
