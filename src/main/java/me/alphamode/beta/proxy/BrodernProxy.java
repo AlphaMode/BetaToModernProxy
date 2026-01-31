@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
 import me.alphamode.beta.proxy.util.BlockTranslator;
 import me.alphamode.beta.proxy.util.NbtUtil;
 import me.alphamode.beta.proxy.util.data.beta.BetaBlocks;
-import me.alphamode.beta.proxy.util.data.beta.BetaItems;
+import me.alphamode.beta.proxy.util.data.beta.item.BetaItems;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;

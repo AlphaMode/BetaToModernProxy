@@ -5,6 +5,7 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
+import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 
 import java.util.ArrayList;
 import java.util.List;

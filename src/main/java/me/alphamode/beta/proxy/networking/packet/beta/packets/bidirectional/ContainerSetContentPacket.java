@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
+import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 
 public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, BetaItemStack[]> ITEM_STACK_ARRAY = new StreamCodec<>() {

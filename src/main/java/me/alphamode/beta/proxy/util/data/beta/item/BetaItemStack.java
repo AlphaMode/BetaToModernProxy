@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.util.data.beta;
+package me.alphamode.beta.proxy.util.data.beta.item;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;

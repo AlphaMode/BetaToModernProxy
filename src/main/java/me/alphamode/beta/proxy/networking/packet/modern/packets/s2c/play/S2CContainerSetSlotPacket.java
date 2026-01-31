@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.Client
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.modern.ModernItemStack;
+import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 
 public record S2CContainerSetSlotPacket(int containerId, int stateId, short slot,
 										ModernItemStack stack) implements S2CPlayPacket {

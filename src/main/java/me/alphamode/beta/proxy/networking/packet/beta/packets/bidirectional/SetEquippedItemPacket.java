@@ -5,7 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
-import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
+import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 
 public record SetEquippedItemPacket(int entityId, short slot, BetaItemStack item) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, SetEquippedItemPacket> CODEC = StreamCodec.composite(

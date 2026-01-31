@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.util.data.beta;
+package me.alphamode.beta.proxy.util.data.beta.item;
 
 import me.alphamode.beta.proxy.util.data.Item;
 import org.jspecify.annotations.Nullable;

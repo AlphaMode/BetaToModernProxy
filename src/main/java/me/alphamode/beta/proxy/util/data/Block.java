@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data;
 
-import me.alphamode.beta.proxy.util.data.beta.BetaItems;
+import me.alphamode.beta.proxy.util.data.beta.item.BetaItems;
 
 public final class Block implements ItemContainer {
 	private final int id;

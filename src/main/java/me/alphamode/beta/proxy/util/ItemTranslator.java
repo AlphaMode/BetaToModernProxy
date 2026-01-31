@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.util;
 
 import me.alphamode.beta.proxy.BrodernProxy;
-import me.alphamode.beta.proxy.util.data.beta.BetaItemStack;
-import me.alphamode.beta.proxy.util.data.modern.ModernItemStack;
+import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
+import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponents;
 import net.lenni0451.mcstructs.converter.model.Either;
