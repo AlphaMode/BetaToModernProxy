@@ -3,6 +3,7 @@ package me.alphamode.beta.proxy.pipeline.b2m.login;
 import me.alphamode.beta.proxy.entity.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
+import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.HandshakePacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.LoginPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.ModernPacket;
@@ -18,6 +19,9 @@ public class ServerLoginPipeline {
 			// Handshake
 			.serverHandler(HandshakePacket.class, ServerLoginPipeline::handleS2CHandshake)
 			.serverHandler(LoginPacket.class, ServerLoginPipeline::handleS2CLogin)
+			.serverHandler(DisconnectPacket.class, ServerLoginPipeline::handleS2CDisconnect)
+			// there is no C2SDisconnect packet?
+			// Unhandled
 			.unhandledClient(ServerLoginPipeline::passClientToNextPipeline)
 			.unhandledServer(ServerLoginPipeline::passServerToNextPipeline)
 			.build();
@@ -35,6 +39,10 @@ public class ServerLoginPipeline {
 		final Player player = new Player(packet.clientVersion(), connection);
 		player.setDimension(packet.dimension());
 		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(player));
+	}
+
+	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
+		connection.kick(packet.reason());
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {

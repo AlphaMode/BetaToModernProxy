@@ -110,7 +110,7 @@ public class ClientLoginPipeline {
 		LOGGER.info("Sending Handshake Packet");
 		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
 		connection.setProfile(profile);
-        connection.send(new S2CLoginFinishedPacket(profile));
+		connection.send(new S2CLoginFinishedPacket(profile));
 	}
 
 	// Configuration
@@ -136,22 +136,22 @@ public class ClientLoginPipeline {
 		LOGGER.info("Starting Configuration");
 		connection.setState(PacketState.CONFIGURATION);
 
-        // Send Tags
-        this.sendTags(connection);
+		// Send Tags
+		this.sendTags(connection);
 
-        // Send Registries
-        this.sendRegistries(connection);
+		// Send Registries
+		this.sendRegistries(connection);
 
-        // Send Custom Brand
-        final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
-        ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
+		// Send Custom Brand
+		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
+		ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
 
-        final byte[] buffer = new byte[buf.readableBytes()];
-        buf.readBytes(buffer);
-        connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
-        buf.release();
+		final byte[] buffer = new byte[buf.readableBytes()];
+		buf.readBytes(buffer);
+		connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
+		buf.release();
 
-        connection.send(S2CFinishConfigurationPacket.INSTANCE);
+		connection.send(S2CFinishConfigurationPacket.INSTANCE);
 	}
 
 	public void sendTags(final ClientConnection connection) {
@@ -200,10 +200,10 @@ public class ClientLoginPipeline {
 	public void handleC2SFinishConfiguration(final ClientConnection connection, final C2SFinishConfigurationPacket packet) {
 		LOGGER.info("Finished Configuration & Going into Play Mode");
 		connection.setState(PacketState.PLAY);
-        // Done with client login now do server login
+		// Done with client login now do server login
 		connection.setPipeline(ServerLoginPipeline.PIPELINE, new ServerLoginPipeline()); // TODO: Pass in unhandled packets
-        connection.getServerConnection().send(new HandshakePacket(connection.getProfile().name()));
-    }
+		connection.getServerConnection().send(new HandshakePacket(connection.getProfile().name()));
+	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
 	}
