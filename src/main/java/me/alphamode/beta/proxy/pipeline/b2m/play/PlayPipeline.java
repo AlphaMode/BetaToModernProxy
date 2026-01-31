@@ -403,31 +403,29 @@ public class PlayPipeline {
 
 	// TODO: datagen?
 	private static S2COpenScreenPacket.WindowType betaToModernMenuType(final ContainerOpenPacket.MenuType type, final int size) {
-		if (type == ContainerOpenPacket.MenuType.BASIC) {
-			if (size == (3 * 3)) {
-				return S2COpenScreenPacket.WindowType.GENERIC_3x3;
-			} else if (size == (9 * 2)) {
-				return S2COpenScreenPacket.WindowType.GENERIC_9x2;
-			} else if (size == (9 * 3)) {
-				return S2COpenScreenPacket.WindowType.GENERIC_9x3;
-			} else if (size == (9 * 4)) {
-				return S2COpenScreenPacket.WindowType.GENERIC_9x4;
-			} else if (size == (9 * 5)) {
-				return S2COpenScreenPacket.WindowType.GENERIC_9x5;
-			} else if (size == (9 * 6)) {
-				return S2COpenScreenPacket.WindowType.GENERIC_9x6;
-			} else {
-				return null; // Unknown?
+		return switch (type) {
+			case BASIC -> {
+				if (size == (3 * 3)) {
+					yield S2COpenScreenPacket.WindowType.GENERIC_3x3;
+				} else if (size == (9 * 2)) {
+					yield S2COpenScreenPacket.WindowType.GENERIC_9x2;
+				} else if (size == (9 * 3)) {
+					yield S2COpenScreenPacket.WindowType.GENERIC_9x3;
+				} else if (size == (9 * 4)) {
+					yield S2COpenScreenPacket.WindowType.GENERIC_9x4;
+				} else if (size == (9 * 5)) {
+					yield S2COpenScreenPacket.WindowType.GENERIC_9x5;
+				} else if (size == (9 * 6)) {
+					yield S2COpenScreenPacket.WindowType.GENERIC_9x6;
+				} else {
+					yield null; // Unknown?
+				}
 			}
-		} else if (type == ContainerOpenPacket.MenuType.CRAFTING) {
-			return S2COpenScreenPacket.WindowType.CRAFTING; // Crafting Table
-		} else if (type == ContainerOpenPacket.MenuType.FURNACE) {
-			return S2COpenScreenPacket.WindowType.FURNACE; // Furnace
-		} else if (type == ContainerOpenPacket.MenuType.DISPENSER) {
-			return S2COpenScreenPacket.WindowType.GENERIC_3x3; // Dispenser/Dropper
-		} else {
-			return null;
-		}
+
+			case CRAFTING -> S2COpenScreenPacket.WindowType.CRAFTING; // Crafting Table
+			case FURNACE -> S2COpenScreenPacket.WindowType.FURNACE; // Furnace
+			case DISPENSER -> S2COpenScreenPacket.WindowType.GENERIC_3x3; // Dispenser/Dropper
+		};
 	}
 
 	public void handleS2CContainerOpen(final ClientConnection connection, final ContainerOpenPacket packet) {
