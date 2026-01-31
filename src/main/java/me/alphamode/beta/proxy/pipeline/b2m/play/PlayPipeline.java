@@ -236,20 +236,20 @@ public class PlayPipeline {
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (packet.hand() == InteractionHand.MAIN_HAND) {
-			connection.getServerConnection().send(new AnimatePacket(0, AnimatePacket.SWING_ARM));
+			connection.getServerConnection().send(new AnimatePacket(0, AnimatePacket.Action.SWING_ARM));
 		}
 	}
 
 	public void handleS2CAnimate(final ClientConnection connection, final AnimatePacket packet) {
 		switch (packet.action()) {
-			case AnimatePacket.SWING_ARM ->
+			case AnimatePacket.Action.SWING_ARM ->
 					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.SWING_MAIN_HAND));
 
-			case AnimatePacket.DAMAGE_ANIMATION -> {
+			case AnimatePacket.Action.DAMAGE_ANIMATION -> {
 				// TODO
 			}
 
-			case AnimatePacket.LEAVE_BED ->
+			case AnimatePacket.Action.LEAVE_BED ->
 					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.WAKE_UP));
 		}
 	}
