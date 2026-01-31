@@ -373,9 +373,23 @@ public class PlayPipeline {
 	}
 
 	// TODO: datagen?
-	private static S2COpenScreenPacket.WindowType betaToModernMenuType(final ContainerOpenPacket.MenuType type) {
+	private static S2COpenScreenPacket.WindowType betaToModernMenuType(final ContainerOpenPacket.MenuType type, final int size) {
 		if (type == ContainerOpenPacket.MenuType.BASIC) {
-			return S2COpenScreenPacket.WindowType.GENERIC_9x3; // Normal Chest (TODO/FIX: double chest)
+			if (size == (3 * 3)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_3x3;
+			} else if (size == (9 * 2)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x2;
+			} else if (size == (9 * 3)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x3;
+			} else if (size == (9 * 4)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x4;
+			} else if (size == (9 * 5)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x5;
+			} else if (size == (9 * 6)) {
+				return S2COpenScreenPacket.WindowType.GENERIC_9x6;
+			} else {
+				return null; // Unknown?
+			}
 		} else if (type == ContainerOpenPacket.MenuType.CRAFTING) {
 			return S2COpenScreenPacket.WindowType.CRAFTING; // Crafting Table
 		} else if (type == ContainerOpenPacket.MenuType.FURNACE) {
@@ -388,7 +402,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CContainerOpen(final ClientConnection connection, final ContainerOpenPacket packet) {
-		final S2COpenScreenPacket.WindowType windowType = betaToModernMenuType(packet.type());
+		final S2COpenScreenPacket.WindowType windowType = betaToModernMenuType(packet.type(), packet.size());
 		if (windowType == null) {
 			return;
 		}
