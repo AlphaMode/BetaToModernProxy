@@ -64,6 +64,10 @@ public record Vec3d(double x, double y, double z) {
 		}
 	};
 
+	public Vec3d copy() {
+		return new Vec3d(this.x, this.y, this.z);
+	}
+
 	public Vec3i toVec3i() {
 		return new Vec3i((int) this.x, (int) this.y, (int) this.z);
 	}
