@@ -19,7 +19,13 @@ public interface HashedStack {
 		}
 	};
 
-	StreamCodec<ByteBuf, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(ActualItem.STREAM_CODEC).map(Optional::get, hashedStack -> hashedStack instanceof ActualItem actualItem ? Optional.of(actualItem) : Optional.empty());
+	StreamCodec<ByteBuf, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(ActualItem.STREAM_CODEC).map(actualItem -> {
+		if (actualItem.isEmpty()) {
+			return EMPTY;
+		} else {
+			return actualItem.get();
+		}
+	}, hashedStack -> hashedStack instanceof ActualItem actualItem ? Optional.of(actualItem) : Optional.empty());
 
 	boolean matches(ModernItemStack var1, HashedPatchMap.HashGenerator var2);
 
@@ -30,18 +36,15 @@ public interface HashedStack {
 	}
 
 	record ActualItem(int itemId, int count, HashedPatchMap components) implements HashedStack {
-		public static final StreamCodec<ByteBuf, ActualItem> STREAM_CODEC = null;
-
-		// TODO
-		/*public static final StreamCodec<ByteBuf, ActualItem> STREAM_CODEC = StreamCodec.composite(
-				ModernStreamCodecs.holderRegistry(Registries.ITEM),
-				ActualItem::item,
+		public static final StreamCodec<ByteBuf, ActualItem> STREAM_CODEC = StreamCodec.composite(
+				ModernStreamCodecs.VAR_INT,
+				ActualItem::itemId,
 				ModernStreamCodecs.VAR_INT,
 				ActualItem::count,
 				HashedPatchMap.STREAM_CODEC,
 				ActualItem::components,
 				ActualItem::new
-		);*/
+		);
 
 		@Override
 		public boolean matches(ModernItemStack itemStack, HashedPatchMap.HashGenerator hasher) {

@@ -1,11 +1,24 @@
 package me.alphamode.beta.proxy.util.data.modern.components;
 
 import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.converter.codec.Codec;
 import org.jetbrains.annotations.Nullable;
 
 public interface DataComponentType<T> {
+	StreamCodec<ByteBuf, DataComponentType<?>> REGISTRY_CODEC = new StreamCodec<>() {
+		@Override
+		public void encode(final ByteBuf buf, final DataComponentType<?> value) {
+			ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(value));
+		}
+
+		@Override
+		public DataComponentType<?> decode(final ByteBuf buf) {
+			return DataComponents.byRawId(ModernStreamCodecs.VAR_INT.decode(buf));
+		}
+	};
+
 	static <T> DataComponentType.Builder<T> builder() {
 		return new DataComponentType.Builder<>();
 	}

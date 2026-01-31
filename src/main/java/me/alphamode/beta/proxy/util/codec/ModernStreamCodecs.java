@@ -373,6 +373,27 @@ public interface ModernStreamCodecs {
 		};
 	}
 
+	static <B extends ByteBuf, V, C extends Collection<V>> StreamCodec<B, C> collection(final IntFunction<C> constructor, final StreamCodec<? super B, V> elementCodec, final int maxSize) {
+		return new StreamCodec<>() {
+			public C decode(B input) {
+				final int count = readCount(input, maxSize);
+				final C result = constructor.apply(Math.min(count, 65536));
+				for (int i = 0; i < count; i++) {
+					result.add(elementCodec.decode(input));
+				}
+
+				return result;
+			}
+
+			public void encode(B output, C value) {
+				writeCount(output, value.size(), maxSize);
+				for (final V element : value) {
+					elementCodec.encode(output, element);
+				}
+			}
+		};
+	}
+
 	static <T, V extends Collection<T>> StreamCodec<ByteBuf, V> collection(final StreamCodec<ByteBuf, T> codec) {
 		return new StreamCodec<>() {
 			@Override

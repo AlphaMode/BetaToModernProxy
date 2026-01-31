@@ -1,23 +1,25 @@
 package me.alphamode.beta.proxy.util.data.modern.item;
 
+import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentType;
 import me.alphamode.beta.proxy.util.data.modern.components.TypedDataComponent;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public record HashedPatchMap(Map<DataComponentType<?>, Integer> addedComponents,
 							 Set<DataComponentType<?>> removedComponents) {
-	/*public static final StreamCodec<ByteBuf, HashedPatchMap> STREAM_CODEC = StreamCodec.composite(
-			ModernStreamCodecs.map(HashMap::new, ModernStreamCodecs.registry(Registries.DATA_COMPONENT_TYPE), ModernStreamCodecs.INT, 256),
+	public static final StreamCodec<ByteBuf, HashedPatchMap> STREAM_CODEC = StreamCodec.composite(
+			ModernStreamCodecs.map(HashMap::new, DataComponentType.REGISTRY_CODEC, BasicStreamCodecs.INT, 256),
 			HashedPatchMap::addedComponents,
-			ModernStreamCodecs.collection(HashSet::new, ModernStreamCodecs.registry(Registries.DATA_COMPONENT_TYPE), 256),
+			ModernStreamCodecs.collection(HashSet::new, DataComponentType.REGISTRY_CODEC, 256),
 			HashedPatchMap::removedComponents,
 			HashedPatchMap::new
-	);*/
+	);
 
 	public static HashedPatchMap create(DataComponentPatch patch, HashedPatchMap.HashGenerator hasher) {
 		final DataComponentPatch.SplitResult split = patch.split();

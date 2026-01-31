@@ -231,6 +231,27 @@ public final class DataComponents {
 		return REGISTRY.getOrDefault(identifier, null);
 	}
 
+	public static DataComponentType<?> byRawId(final int id) {
+		if (id == 1) {
+			return MAX_STACK_SIZE;
+		} else if (id == 2) {
+			return MAX_DAMAGE;
+		} else if (id == 3) {
+			return DAMAGE;
+		}
+
+		int index = 0;
+		for (final var it : REGISTRY.values()) {
+			if (index == id) {
+				return it;
+			}
+
+			index++;
+		}
+
+		throw new IndexOutOfBoundsException();
+	}
+
 	public static Identifier getId(final DataComponentType<?> type) {
 		for (final var entry : REGISTRY.entrySet()) {
 			if (type == entry.getValue()) {
