@@ -38,6 +38,6 @@ public enum BetaEntityTypes {
 			}
 		}
 
-		throw new IndexOutOfBoundsException();
+		return null;
 	}
 }

@@ -179,6 +179,6 @@ public enum ModernEntityTypes {
 			}
 		}
 
-		throw new IndexOutOfBoundsException();
+		return null;
 	}
 }
