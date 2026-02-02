@@ -252,7 +252,7 @@ public class PlayPipeline {
 
 		connection.send(new S2CSetEntityDataPacket(
 				packet.entityId(),
-				List.of(new ModernSynchedEntityData.DataValue<>((byte) 7, EntityDataSerializers.ITEM_STACK, ItemTranslator.toModernStack(packet.item())))
+				List.of(new ModernSynchedEntityData.DataValue<>((byte) 8, EntityDataSerializers.ITEM_STACK, ItemTranslator.toModernStack(packet.item())))
 		));
 	}
 
