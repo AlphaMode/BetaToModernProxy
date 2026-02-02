@@ -1,7 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -23,12 +22,13 @@ import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.UUID;
+
 public final class ClientConnection extends SimpleChannelInboundHandler<ModernPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(ClientConnection.class);
-	private static int LAST_CONNECTION_ID = 0;
 
 	private final MinecraftServerAddress address;
-	private final int id;
+	private final UUID uniqueId;
 	private ActivePipeline<?> pipeline = new ActivePipeline<>(ClientLoginPipeline.PIPELINE, new ClientLoginPipeline());
 	private ServerConnection serverConnection;
 	private Channel clientChannel;
@@ -39,15 +39,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	public ClientConnection(final MinecraftServerAddress address) {
 		this.address = address;
-		this.id = LAST_CONNECTION_ID++;
-	}
-
-	public void write(final ByteBuf buf) {
-		if (this.isConnected()) {
-			this.clientChannel.writeAndFlush(buf);
-		} else {
-			throw new RuntimeException("Cannot write to dead client connection!");
-		}
+		this.uniqueId = UUID.randomUUID();
 	}
 
 	public void send(final ModernPacket<?> packet) {
@@ -79,8 +71,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	public void disconnect() {
 		if (this.clientChannel != null) {
-			LAST_CONNECTION_ID--;
-			LOGGER.info("Disconnected Proxy #{}!", this.id);
+			LOGGER.info("Disconnected Proxy #{}!", this.uniqueId);
 			this.clientChannel.close();
 			this.clientChannel = null;
 		}
@@ -94,8 +85,8 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		return this.clientChannel != null && this.clientChannel.isActive();
 	}
 
-	public int getId() {
-		return this.id;
+	public UUID getUniqueId() {
+		return this.uniqueId;
 	}
 
 	public ActivePipeline<?> getActivePipeline() {
@@ -115,7 +106,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	}
 
 	public void setState(final PacketState state) {
-		LOGGER.info("Switching Proxy #{} to state {}", this.id, state);
+		LOGGER.info("Switching Proxy #{} to state {}", this.uniqueId, state);
 		this.state = state;
 	}
 
@@ -187,7 +178,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext context, final Throwable cause) {
-		LOGGER.error("Caught exception in Proxy #{} ({})", this.id, this.profile.name(), cause);
+		LOGGER.error("Caught exception in Proxy #{} ({})", this.uniqueId, this.profile.name(), cause);
 	}
 
 	public record ActivePipeline<H>(PacketPipeline<H, BetaPacket, ModernPacket<?>> pipeline, H handler) {

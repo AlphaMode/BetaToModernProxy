@@ -38,19 +38,19 @@ public final class ServerConnection extends NetClient {
 
 		this.connect(address).addListener(future -> {
 			if (!future.isSuccess()) {
-				LOGGER.info("Failed to connect proxy #{} to real server!", connection.getId());
+				LOGGER.info("Failed to connect proxy #{} to real server!", connection.getUniqueId());
 				future.cause().printStackTrace();
 				connection.disconnect();
 				return;
 			}
 
 			if (!this.isConnected()) {
-				LOGGER.info("Client #{} already has disconnected, closing the server connection!", connection.getId());
+				LOGGER.info("Client #{} already has disconnected, closing the server connection!", connection.getUniqueId());
 				this.disconnect();
 				return;
 			}
 
-			LOGGER.info("Proxy #{} connected to {}", connection.getId(), address);
+			LOGGER.info("Proxy #{} connected to {}", connection.getUniqueId(), address);
 		});
 
 		this.getChannel().closeFuture().addListener(_ -> {
@@ -69,7 +69,7 @@ public final class ServerConnection extends NetClient {
 	}
 
 	public void disconnect() {
-		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
+		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getUniqueId());
 		this.getChannel().close();
 	}
 
