@@ -20,7 +20,7 @@ public final class ServerConnection extends NetClient {
 			protected void initChannel(final Channel channel) {
 				final ChannelPipeline pipeline = channel.pipeline();
 				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
-				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter());
+				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter(connection));
 				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
 					@Override
 					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {

@@ -36,9 +36,10 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		} catch (Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to encode modern packet");
+				exception.printStackTrace();
 			}
 
-			exception.printStackTrace();
+			connection.kick(exception.getMessage());
 			throw new RuntimeException(exception);
 		}
 	}
