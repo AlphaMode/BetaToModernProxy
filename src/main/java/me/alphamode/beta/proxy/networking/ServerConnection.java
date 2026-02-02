@@ -24,7 +24,9 @@ public final class ServerConnection extends NetClient {
 				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
 					@Override
 					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
-						connection.getActivePipeline().handleServer(connection, msg);
+						if (connection.isConnected()) {
+							connection.getActivePipeline().handleServer(connection, msg);
+						}
 					}
 				});
 			}
