@@ -15,28 +15,7 @@ public final class ServerConnection extends NetClient {
 
 	ServerConnection(final MinecraftServerAddress address, final ClientConnection connection) {
 		this.connection = connection;
-		super(new ChannelInitializer<>() {
-			@Override
-			protected void initChannel(final Channel channel) {
-				final ChannelPipeline pipeline = channel.pipeline();
-				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
-				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter(connection));
-				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
-					@Override
-					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
-						if (connection.isConnected()) {
-							connection.getActivePipeline().handleServer(connection, msg);
-						}
-					}
-				});
-			}
-
-			@Override
-			public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
-				super.exceptionCaught(ctx, cause);
-				cause.printStackTrace();
-			}
-		});
+		super(new ServerChannelInitializer(connection));
 
 		this.connect(address).addListener(future -> {
 			if (!future.isSuccess()) {
@@ -65,17 +44,47 @@ public final class ServerConnection extends NetClient {
 	public void send(final BetaPacket packet) {
 		if (this.isConnected()) {
 			this.getChannel().writeAndFlush(packet);
-		} else {
-			throw new RuntimeException("Cannot write to dead server connection!");
 		}
 	}
 
 	public void disconnect() {
 		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getUniqueId());
-		this.getChannel().close();
+		if (this.isConnected()) {
+			this.getChannel().close();
+		}
 	}
 
 	public boolean isConnected() {
 		return this.getChannel().isActive();
+	}
+
+	private static class ServerChannelInitializer extends ChannelInitializer<Channel> {
+		private final ClientConnection connection;
+
+		public ServerChannelInitializer(final ClientConnection connection) {
+			super();
+			this.connection = connection;
+		}
+
+		@Override
+		protected void initChannel(final Channel channel) {
+			final ChannelPipeline pipeline = channel.pipeline();
+			pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
+			pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter(connection));
+			pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
+				@Override
+				protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
+					if (connection.isConnected()) {
+						connection.getActivePipeline().handleServer(connection, msg);
+					}
+				}
+			});
+		}
+
+		@Override
+		public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
+			super.exceptionCaught(ctx, cause);
+			cause.printStackTrace();
+		}
 	}
 }
