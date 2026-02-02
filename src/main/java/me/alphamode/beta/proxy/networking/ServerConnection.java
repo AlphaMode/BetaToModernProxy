@@ -28,6 +28,12 @@ public final class ServerConnection extends NetClient {
 					}
 				});
 			}
+
+			@Override
+			public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
+				super.exceptionCaught(ctx, cause);
+				cause.printStackTrace();
+			}
 		});
 
 		this.connect(address).addListener(future -> {
@@ -45,7 +51,7 @@ public final class ServerConnection extends NetClient {
 			}
 
 			LOGGER.info("Proxy #{} connected to {}", connection.getId(), address);
-		}).syncUninterruptibly();
+		});
 
 		this.getChannel().closeFuture().addListener(_ -> {
 			if (connection.isConnected()) {
@@ -64,7 +70,7 @@ public final class ServerConnection extends NetClient {
 
 	public void disconnect() {
 		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
-		this.getChannel().close().syncUninterruptibly();
+		this.getChannel().close();
 	}
 
 	public boolean isConnected() {
