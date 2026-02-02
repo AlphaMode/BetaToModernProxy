@@ -13,208 +13,209 @@ import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import net.lenni0451.mcstructs.text.TextComponent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.UUID;
 
 public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> entries) implements S2CPlayPacket {
 	public static final StreamCodec<ByteBuf, S2CPlayerInfoUpdatePacket> CODEC = AbstractPacket.codec(S2CPlayerInfoUpdatePacket::write, S2CPlayerInfoUpdatePacket::read);
 
-    public static S2CPlayerInfoUpdatePacket of(final Entry... entries) {
-        EnumSet<ActionType> types = EnumSet.noneOf(ActionType.class);
-        for (Entry entry : entries) {
-            for (Action<?> action : entry.actions) {
-                types.add(action.type());
-            }
-        }
+	public static S2CPlayerInfoUpdatePacket of(final Entry... entries) {
+		final EnumSet<ActionType> types = EnumSet.noneOf(ActionType.class);
+		for (Entry entry : entries) {
+			for (Action<?> action : entry.actions) {
+				types.add(action.type());
+			}
+		}
 
-        return new S2CPlayerInfoUpdatePacket(types, List.of(entries));
-    }
+		return new S2CPlayerInfoUpdatePacket(types, List.of(entries));
+	}
 
-    public static S2CPlayerInfoUpdatePacket addPlayer(GameProfile profile) {
-        return of(new Entry(profile.id(), new AddPlayer(profile)));
-    }
+	public static S2CPlayerInfoUpdatePacket addPlayer(GameProfile profile) {
+		return of(new Entry(profile.id(), new AddPlayer(profile)));
+	}
 
-    public static S2CPlayerInfoUpdatePacket read(final ByteBuf buf) {
-        EnumSet<ActionType> types = ModernStreamCodecs.readEnumSet(buf, ActionType.class);
-        var entries = ModernStreamCodecs.readList(buf, (decoder) -> {
-            UUID profileId = ModernStreamCodecs.UUID.decode(decoder);
+	public static S2CPlayerInfoUpdatePacket read(final ByteBuf buf) {
+		final EnumSet<ActionType> types = ModernStreamCodecs.readEnumSet(buf, ActionType.class);
+		return new S2CPlayerInfoUpdatePacket(types, ModernStreamCodecs.readList(buf, (decoder) -> {
+			final UUID profileId = ModernStreamCodecs.UUID.decode(decoder);
 
-            List<Action<?>> actions = new ArrayList<>();
-            for(ActionType type : types) {
-                actions.add(type.codec().decode(decoder));
-            }
+			final List<Action<?>> actions = new ArrayList<>();
+			for (final ActionType type : types) {
+				actions.add(type.codec().decode(decoder));
+			}
 
-            return new Entry(profileId, actions);
-        });
+			return new Entry(profileId, actions);
+		}));
+	}
 
-        return new S2CPlayerInfoUpdatePacket(types, entries);
-    }
+	public void write(final ByteBuf buf) {
+		ModernStreamCodecs.writeEnumSet(buf, this.types, ActionType.class);
+		ModernStreamCodecs.writeCollection(buf, this.entries, (encoder, entry) -> {
+			ModernStreamCodecs.UUID.encode(encoder, entry.profileId());
 
-    public void write(final ByteBuf buf) {
-        ModernStreamCodecs.writeEnumSet(buf, this.types, ActionType.class);
-        ModernStreamCodecs.writeCollection(buf, this.entries, (encoder, entry) -> {
-            ModernStreamCodecs.UUID.encode(encoder, entry.profileId());
-
-            for(Action action : entry.actions()) {
-                action.codec().encode(encoder, action);
-            }
-        });
-    }
+			for (final Action<?> action : entry.actions()) {
+				((StreamCodec<ByteBuf, Action<?>>) action.codec()).encode(encoder, action);
+			}
+		});
+	}
 
 	@Override
 	public ClientboundPlayPackets getType() {
 		return ClientboundPlayPackets.PLAYER_INFO_UPDATE;
 	}
 
-    public enum ActionType {
-        ADD_PLAYER(AddPlayer.CODEC),
-        INITIALIZE_CHAT(InitializeChat.CODEC),
-        UPDATE_GAME_MODE(UpdateGameMode.CODEC),
-        UPDATE_LISTED(UpdateListed.CODEC),
-        UPDATE_LATENCY(UpdateLatency.CODEC),
-        UPDATE_DISPLAY_NAME(null),
-        UPDATE_LIST_ORDER(UpdateListOrder.CODEC),
-        UPDATE_HAT(UpdateHat.CODEC),;
+	public enum ActionType {
+		ADD_PLAYER(AddPlayer.CODEC),
+		INITIALIZE_CHAT(InitializeChat.CODEC),
+		UPDATE_GAME_MODE(UpdateGameMode.CODEC),
+		UPDATE_LISTED(UpdateListed.CODEC),
+		UPDATE_LATENCY(UpdateLatency.CODEC),
+		UPDATE_DISPLAY_NAME(null),
+		UPDATE_LIST_ORDER(UpdateListOrder.CODEC),
+		UPDATE_HAT(UpdateHat.CODEC);
 
-        private final StreamCodec<ByteBuf, ? extends Action<?>> codec;
+		private final StreamCodec<ByteBuf, ? extends Action<?>> codec;
 
-        ActionType(StreamCodec<ByteBuf, ? extends Action<?>> codec) {
-            this.codec = codec;
-        }
+		ActionType(StreamCodec<ByteBuf, ? extends Action<?>> codec) {
+			this.codec = codec;
+		}
 
-        public StreamCodec<ByteBuf, ? extends Action<?>> codec() {
-            return codec;
-        }
-    }
-
-	public record Entry(UUID profileId, List<Action<?>> actions) {
-        public Entry(final UUID profileId, final Action<?>... actions) {
-            this(profileId, List.of(actions));
-        }
+		public StreamCodec<ByteBuf, ? extends Action<?>> codec() {
+			return this.codec;
+		}
 	}
 
-    public sealed interface Action<T> permits AddPlayer, InitializeChat, UpdateGameMode, UpdateListed, UpdateLatency, UpdateDisplayName, UpdateListOrder, UpdateHat {
-        StreamCodec<ByteBuf, T> codec();
+	public record Entry(UUID profileId, List<Action<?>> actions) {
+		public Entry(final UUID profileId, final Action<?>... actions) {
+			this(profileId, List.of(actions));
+		}
+	}
 
-        ActionType type();
-    }
+	public sealed interface Action<T> permits AddPlayer, InitializeChat, UpdateGameMode, UpdateListed, UpdateLatency, UpdateDisplayName, UpdateListOrder, UpdateHat {
+		StreamCodec<ByteBuf, T> codec();
 
-    public record AddPlayer(String name, PropertyMap properties) implements Action<AddPlayer> {
-        public static final StreamCodec<ByteBuf, AddPlayer> CODEC = StreamCodec.composite(
-                ModernStreamCodecs.PLAYER_NAME,
-                AddPlayer::name,
-                ModernStreamCodecs.GAME_PROFILE_PROPERTIES,
-                AddPlayer::properties,
-                AddPlayer::new
-        );
+		ActionType type();
+	}
 
-        public AddPlayer(GameProfile profile) {
-            this(profile.name(), profile.properties());
-        }
+	public record AddPlayer(String name, PropertyMap properties) implements Action<AddPlayer> {
+		public static final StreamCodec<ByteBuf, AddPlayer> CODEC = StreamCodec.composite(
+				ModernStreamCodecs.PLAYER_NAME,
+				AddPlayer::name,
+				ModernStreamCodecs.GAME_PROFILE_PROPERTIES,
+				AddPlayer::properties,
+				AddPlayer::new
+		);
 
-        @Override
-        public StreamCodec<ByteBuf, AddPlayer> codec() {
-            return CODEC;
-        }
+		public AddPlayer(GameProfile profile) {
+			this(profile.name(), profile.properties());
+		}
 
-        @Override
-        public ActionType type() {
-            return ActionType.ADD_PLAYER;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, AddPlayer> codec() {
+			return CODEC;
+		}
 
-    public record InitializeChat(@Nullable RemoteChatSession.Data chatSession) implements Action<InitializeChat> {
-        public static final StreamCodec<ByteBuf, InitializeChat> CODEC = ModernStreamCodecs.nullable(RemoteChatSession.Data.CODEC).map(InitializeChat::new, InitializeChat::chatSession);
+		@Override
+		public ActionType type() {
+			return ActionType.ADD_PLAYER;
+		}
+	}
 
-        @Override
-        public StreamCodec<ByteBuf, InitializeChat> codec() {
-            return CODEC;
-        }
+	public record InitializeChat(@Nullable RemoteChatSession.Data chatSession) implements Action<InitializeChat> {
+		public static final StreamCodec<ByteBuf, InitializeChat> CODEC = ModernStreamCodecs.nullable(RemoteChatSession.Data.CODEC).map(InitializeChat::new, InitializeChat::chatSession);
 
-        @Override
-        public ActionType type() {
-            return ActionType.INITIALIZE_CHAT;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, InitializeChat> codec() {
+			return CODEC;
+		}
 
-    public record UpdateGameMode(GameMode gameMode) implements Action<UpdateGameMode> {
-        public static final StreamCodec<ByteBuf, UpdateGameMode> CODEC = GameMode.CODEC.map(UpdateGameMode::new, UpdateGameMode::gameMode);
+		@Override
+		public ActionType type() {
+			return ActionType.INITIALIZE_CHAT;
+		}
+	}
 
-        @Override
-        public StreamCodec<ByteBuf, UpdateGameMode> codec() {
-            return CODEC;
-        }
+	public record UpdateGameMode(GameMode gameMode) implements Action<UpdateGameMode> {
+		public static final StreamCodec<ByteBuf, UpdateGameMode> CODEC = GameMode.CODEC.map(UpdateGameMode::new, UpdateGameMode::gameMode);
 
-        @Override
-        public ActionType type() {
-            return ActionType.UPDATE_GAME_MODE;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, UpdateGameMode> codec() {
+			return CODEC;
+		}
 
-    public record UpdateListed(boolean listed) implements Action<UpdateListed> {
-        public static final StreamCodec<ByteBuf, UpdateListed> CODEC = BasicStreamCodecs.BOOL.map(UpdateListed::new, UpdateListed::listed);
+		@Override
+		public ActionType type() {
+			return ActionType.UPDATE_GAME_MODE;
+		}
+	}
 
-        @Override
-        public StreamCodec<ByteBuf, UpdateListed> codec() {
-            return CODEC;
-        }
+	public record UpdateListed(boolean listed) implements Action<UpdateListed> {
+		public static final StreamCodec<ByteBuf, UpdateListed> CODEC = BasicStreamCodecs.BOOL.map(UpdateListed::new, UpdateListed::listed);
 
-        @Override
-        public ActionType type() {
-            return ActionType.UPDATE_LISTED;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, UpdateListed> codec() {
+			return CODEC;
+		}
 
-    public record UpdateLatency(int latency) implements Action<UpdateLatency> {
-        public static final StreamCodec<ByteBuf, UpdateLatency> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateLatency::new, UpdateLatency::latency);
+		@Override
+		public ActionType type() {
+			return ActionType.UPDATE_LISTED;
+		}
+	}
 
-        @Override
-        public StreamCodec<ByteBuf, UpdateLatency> codec() {
-            return CODEC;
-        }
+	public record UpdateLatency(int latency) implements Action<UpdateLatency> {
+		public static final StreamCodec<ByteBuf, UpdateLatency> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateLatency::new, UpdateLatency::latency);
 
-        @Override
-        public ActionType type() {
-            return ActionType.UPDATE_LATENCY;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, UpdateLatency> codec() {
+			return CODEC;
+		}
 
-    public record UpdateDisplayName(TextComponent displayName) implements Action<UpdateDisplayName> {
-        @Override
-        public StreamCodec<ByteBuf, UpdateDisplayName> codec() {
-            throw new RuntimeException("Not implemented");
-        }
+		@Override
+		public ActionType type() {
+			return ActionType.UPDATE_LATENCY;
+		}
+	}
 
-        @Override
-        public ActionType type() {
-            return ActionType.UPDATE_DISPLAY_NAME;
-        }
-    }
+	public record UpdateDisplayName(TextComponent displayName) implements Action<UpdateDisplayName> {
+		@Override
+		public StreamCodec<ByteBuf, UpdateDisplayName> codec() {
+			throw new RuntimeException("Not implemented");
+		}
 
-    public record UpdateListOrder(int listOrder) implements Action<UpdateListOrder>  {
-        public static final StreamCodec<ByteBuf, UpdateListOrder> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateListOrder::new, UpdateListOrder::listOrder);
+		@Override
+		public ActionType type() {
+			return ActionType.UPDATE_DISPLAY_NAME;
+		}
+	}
 
-        @Override
-        public StreamCodec<ByteBuf, UpdateListOrder> codec() {
-            return CODEC;
-        }
+	public record UpdateListOrder(int listOrder) implements Action<UpdateListOrder> {
+		public static final StreamCodec<ByteBuf, UpdateListOrder> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateListOrder::new, UpdateListOrder::listOrder);
 
-        @Override
-        public ActionType type() {
-            return ActionType.UPDATE_LIST_ORDER;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, UpdateListOrder> codec() {
+			return CODEC;
+		}
 
-    public record UpdateHat(boolean showHat) implements Action<UpdateHat> {
-        public static final StreamCodec<ByteBuf, UpdateHat> CODEC = BasicStreamCodecs.BOOL.map(UpdateHat::new, UpdateHat::showHat);
+		@Override
+		public ActionType type() {
+			return ActionType.UPDATE_LIST_ORDER;
+		}
+	}
 
-        @Override
-        public StreamCodec<ByteBuf, UpdateHat> codec() {
-            return CODEC;
-        }
+	public record UpdateHat(boolean showHat) implements Action<UpdateHat> {
+		public static final StreamCodec<ByteBuf, UpdateHat> CODEC = BasicStreamCodecs.BOOL.map(UpdateHat::new, UpdateHat::showHat);
 
-        @Override
-        public ActionType type() {
-            return ActionType.UPDATE_HAT;
-        }
-    }
+		@Override
+		public StreamCodec<ByteBuf, UpdateHat> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public ActionType type() {
+			return ActionType.UPDATE_HAT;
+		}
+	}
 }

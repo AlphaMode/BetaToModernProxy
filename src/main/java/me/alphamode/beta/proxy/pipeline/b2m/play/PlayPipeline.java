@@ -49,7 +49,7 @@ public class PlayPipeline {
 			.serverHandler(AddMobPacket.class, PlayPipeline::handleS2CAddMob)
 			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
 			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
-            .serverHandler(AddItemEntityPacket.class, PlayPipeline::handleS2CAddItemEntity)
+			.serverHandler(AddItemEntityPacket.class, PlayPipeline::handleS2CAddItemEntity)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
@@ -60,7 +60,6 @@ public class PlayPipeline {
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
 			.clientHandler(C2SClientTickEndPacket.class, PlayPipeline::handleC2STickEnd)
-//            .clientHandler(S2CPlayerPositionPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(SetEntityMotionPacket.class, PlayPipeline::handleS2CSetEntityMotion)
@@ -86,10 +85,12 @@ public class PlayPipeline {
 			.build();
 
 	protected final Player player;
+	protected long seed;
 	protected short lastUid = 0;
 
-	public PlayPipeline(Player player) {
+	public PlayPipeline(final Player player, final long seed) {
 		this.player = Objects.requireNonNull(player, "Can't construct play pipeline without player");
+		this.seed = seed;
 	}
 
 	public void handleC2SKeepAlive(final ClientConnection connection, final C2SPlayKeepAlivePacket packet) {
@@ -104,7 +105,7 @@ public class PlayPipeline {
 	 */
 	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
 		connection.send(new S2CPlayLoginPacket(
-				player.getId(),
+				this.player.getId(),
 				false,
 				List.of(BetaDimension.OVERWORLD, BetaDimension.NETHER, BetaDimension.SKY),
 				BrodernProxy.getProxy().config().getMaxPlayers(),
@@ -115,8 +116,8 @@ public class PlayPipeline {
 				false,
 				new CommonPlayerSpawnInfo(
 						null, // TODO (Holder<DimensionType>)
-						BetaDimension.byLegacyId(player.getDimension()),
-						0,
+						BetaDimension.byLegacyId(this.player.getDimension()),
+						this.seed,
 						GameMode.SURVIVAL,
 						GameMode.SURVIVAL,
 						false,
@@ -231,14 +232,13 @@ public class PlayPipeline {
 		));
 	}
 
-    private UUID lookupUUID(final int entityId) {
-        return UUID.randomUUID();
-    }
+	private UUID lookupUUID(final int entityId) {
+		return UUID.randomUUID();
+	}
 
 	public void handleS2CAddPlayer(final ClientConnection connection, final AddPlayerPacket packet) {
-		// Server attempted to add player prior to sending player info (Player entityId 21586c2d-49e7-40a8-a485-db85537d3c2b)
-        UUID uuid = lookupUUID(packet.entityId());
-        connection.send(S2CPlayerInfoUpdatePacket.addPlayer(new GameProfile(uuid, packet.name())));
+		final UUID uuid = lookupUUID(packet.entityId());
+		connection.send(S2CPlayerInfoUpdatePacket.addPlayer(new GameProfile(uuid, packet.name())));
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				uuid,
@@ -252,23 +252,23 @@ public class PlayPipeline {
 		));
 	}
 
-    public void handleS2CAddItemEntity(final ClientConnection connection, final AddItemEntityPacket packet) {
-        connection.send(new S2CAddEntityPacket(
-                packet.entityId(),
-                UUID.randomUUID(),
-                71,
-                packet.getPosition(),
-                packet.getMovement(),
-                0,
-                0,
-                (byte) 0,
-                0
-        ));
-    }
+	public void handleS2CAddItemEntity(final ClientConnection connection, final AddItemEntityPacket packet) {
+		connection.send(new S2CAddEntityPacket(
+				packet.entityId(),
+				UUID.randomUUID(),
+				71,
+				packet.getPosition(),
+				packet.getMovement(),
+				0,
+				0,
+				(byte) 0,
+				0
+		));
+	}
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (packet.hand() == InteractionHand.MAIN_HAND) {
-			connection.getServerConnection().send(new AnimatePacket(player.getId(), AnimatePacket.Action.SWING_ARM));
+			connection.getServerConnection().send(new AnimatePacket(this.player.getId(), AnimatePacket.Action.SWING_ARM));
 		}
 	}
 
@@ -365,15 +365,15 @@ public class PlayPipeline {
 
 	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {
 		connection.tick();
-		player.tick();
+		this.player.tick();
 	}
 
 	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
-		player.updateFromServer(packet);
+		this.player.updateFromServer(packet);
 	}
 
 	public void handleC2SMovePlayerPos(final ClientConnection connection, final C2SMovePlayerPacket packet) {
-		player.updateFromClient(packet);
+		this.player.updateFromClient(packet);
 	}
 
 	public void handleS2CSetEntityMotion(final ClientConnection connection, final SetEntityMotionPacket packet) {
@@ -381,7 +381,7 @@ public class PlayPipeline {
 	}
 
 	public void handleC2SPlayerInput(final ClientConnection connection, final C2SPlayerInputPacket packet) {
-		player.setSneaking(packet.input().shift());
+		this.player.setSneaking(packet.input().shift());
 	}
 
 	public void handleC2SContainerSlotStateChanged(final ClientConnection connection, final C2SContainerSlotStateChangedPacket packet) {

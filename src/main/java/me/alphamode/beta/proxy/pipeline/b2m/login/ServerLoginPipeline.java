@@ -38,7 +38,7 @@ public class ServerLoginPipeline {
 	public void handleS2CLogin(final ClientConnection connection, final LoginPacket packet) {
 		final Player player = new Player(packet.clientVersion(), connection);
 		player.setDimension(packet.dimension());
-		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(player));
+		connection.setPipeline(PlayPipeline.PIPELINE, new PlayPipeline(player, packet.seed()));
 	}
 
 	public void handleS2CDisconnect(final ClientConnection connection, final DisconnectPacket packet) {
