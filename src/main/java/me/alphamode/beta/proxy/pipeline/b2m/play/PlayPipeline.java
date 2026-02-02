@@ -28,7 +28,7 @@ import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
 import me.alphamode.beta.proxy.util.data.modern.item.HashedPatchMap;
 import me.alphamode.beta.proxy.util.data.modern.item.HashedStack;
 import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
-import me.alphamode.beta.proxy.util.data.modern.registry.dimension.Dimension;
+import me.alphamode.beta.proxy.util.data.modern.registry.dimension.BetaDimension;
 import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,7 +104,7 @@ public class PlayPipeline {
 		connection.send(new S2CPlayLoginPacket(
 				0, // TODO
 				false,
-				List.of(Dimension.OVERWORLD, Dimension.NETHER, Dimension.SKY),
+				List.of(BetaDimension.OVERWORLD, BetaDimension.NETHER, BetaDimension.SKY),
 				BrodernProxy.getProxy().config().getMaxPlayers(),
 				16,
 				16,
@@ -113,7 +113,7 @@ public class PlayPipeline {
 				false,
 				new CommonPlayerSpawnInfo(
 						null, // TODO (Holder<DimensionType>)
-						Dimension.byLegacyId(0),
+						BetaDimension.byLegacyId(0),
 						0,
 						GameMode.SURVIVAL,
 						GameMode.SURVIVAL,
@@ -128,7 +128,7 @@ public class PlayPipeline {
 
 //		TODO: S2CInitializeBorderPacket
 		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
-				GlobalPos.of(Dimension.OVERWORLD, packet.position().toBlockPos()),
+				GlobalPos.of(BetaDimension.OVERWORLD, packet.position().toBlockPos()),
 				0.0F, 0.0F
 		)));
 

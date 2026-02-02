@@ -1,17 +1,19 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "me.alphamode.beta.proxy.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "PacketEncoderAndDecoderMixin"
-  ],
-  "client": [
-    "MixinBuiltChunk"
-  ],
-  "server": [
-  ],
-  "injectors": {
-    "defaultRequire": 1
+	"required": true,
+	"minVersion": "0.8",
+	"package": "me.alphamode.beta.proxy.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinClientConfigurationPacketListenerImpl",
+		"MixinClientPacketListener",
+		"PacketEncoderAndDecoderMixin"
+	],
+	"client": [
+		"MixinBuiltChunk"
+	],
+	"server": [
+	],
+	"injectors": {
+		"defaultRequire": 1
 	}
 }
