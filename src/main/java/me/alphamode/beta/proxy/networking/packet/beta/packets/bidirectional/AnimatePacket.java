@@ -22,6 +22,7 @@ public record AnimatePacket(int entityId, Action action) implements BetaPacket {
 	}
 
 	public enum Action {
+		NONE,
 		SWING_ARM,
 		DAMAGE_ANIMATION,
 		LEAVE_BED

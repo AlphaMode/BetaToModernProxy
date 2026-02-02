@@ -21,10 +21,10 @@ public record PlayerCommandPacket(int id, Action action) implements BetaPacket {
 		return BetaPackets.PLAYER_COMMAND;
 	}
 
-    public enum Action {
-        NONE,
-        CROUCH,
-        UNCROUCH,
-        LEAVE_BED;
-    }
+	public enum Action {
+		NONE,
+		CROUCH,
+		UNCROUCH,
+		WAKE_UP;
+	}
 }
