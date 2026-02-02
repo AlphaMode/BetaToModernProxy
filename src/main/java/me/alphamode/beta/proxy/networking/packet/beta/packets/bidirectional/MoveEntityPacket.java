@@ -8,7 +8,7 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public class MoveEntityPacket implements BetaPacket {
 	public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = AbstractPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
-	public int id;
+	public int entityId;
 	public byte xa;
 	public byte ya;
 	public byte za;
@@ -17,15 +17,15 @@ public class MoveEntityPacket implements BetaPacket {
 	public boolean hasRot = false;
 
 	public MoveEntityPacket(final ByteBuf buf) {
-		this.id = buf.readInt();
+		this.entityId = buf.readInt();
 	}
 
 	public MoveEntityPacket(int entityId) {
-		this.id = entityId;
+		this.entityId = entityId;
 	}
 
 	public void write(final ByteBuf buf) {
-		buf.writeInt(this.id);
+		buf.writeInt(this.entityId);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class MoveEntityPacket implements BetaPacket {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "[entityId=" + id + ", xa=" + this.xa + ", ya=" + this.ya + ", za=" + this.za + ", yRot=" + this.yRot + ", xRot=" + this.xRot + ", hasRot=" + this.hasRot + "]";
+		return getClass().getSimpleName() + "[entityId=" + entityId + ", xa=" + this.xa + ", ya=" + this.ya + ", za=" + this.za + ", yRot=" + this.yRot + ", xRot=" + this.xRot + ", hasRot=" + this.hasRot + "]";
 	}
 
 	public static class Pos extends MoveEntityPacket {

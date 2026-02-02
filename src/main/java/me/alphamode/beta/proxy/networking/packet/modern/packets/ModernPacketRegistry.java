@@ -183,10 +183,10 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.LOGIN, S2CPlayLoginPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.MAP_ITEM_DATA, null);
 		this.registerPacket(ClientboundPlayPackets.MERCHANT_OFFERS, null);
-		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_POS, null);
-		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_POS_ROT, null);
+		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_POS, S2CMoveEntityPacket.Pos.CODEC);
+		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_POS_ROT, S2CMoveEntityPacket.PosRot.CODEC);
 		this.registerPacket(ClientboundPlayPackets.MOVE_MINECART_ALONG_TRACK, null);
-		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_ROT, null);
+		this.registerPacket(ClientboundPlayPackets.MOVE_ENTITY_ROT, S2CMoveEntityPacket.Rot.CODEC);
 		this.registerPacket(ClientboundPlayPackets.MOVE_VEHICLE, null);
 		this.registerPacket(ClientboundPlayPackets.OPEN_BOOK, null);
 		this.registerPacket(ClientboundPlayPackets.OPEN_SCREEN, S2COpenScreenPacket.CODEC);

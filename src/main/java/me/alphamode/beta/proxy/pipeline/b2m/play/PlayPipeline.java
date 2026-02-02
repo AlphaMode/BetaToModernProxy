@@ -61,7 +61,8 @@ public class PlayPipeline {
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
 			.clientHandler(C2SClientTickEndPacket.class, PlayPipeline::handleC2STickEnd)
-			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleBetaMovePlayer)
+			.serverHandler(MoveEntityPacket.class, PlayPipeline::handleS2CMoveEntity)
+			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(SetEntityMotionPacket.class, PlayPipeline::handleS2CSetEntityMotion)
 			.clientHandler(C2SPlayerInputPacket.class, PlayPipeline::handleC2SPlayerInput)
@@ -365,7 +366,20 @@ public class PlayPipeline {
 		this.player.tick();
 	}
 
-	public void handleBetaMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
+	// TODO: they rotate but aren't moving?
+	public void handleS2CMoveEntity(final ClientConnection connection, final MoveEntityPacket packet) {
+		switch (packet) {
+			case MoveEntityPacket.Pos pos ->
+					connection.send(new S2CMoveEntityPacket.Pos(pos.entityId, pos.xa, pos.ya, pos.za, true)); // TODO: onGround?
+			case MoveEntityPacket.PosRot posRot ->
+					connection.send(new S2CMoveEntityPacket.PosRot(posRot.entityId, posRot.xa, posRot.ya, posRot.za, posRot.yRot, posRot.xRot, true)); // TODO: onGround?
+			case MoveEntityPacket.Rot rot ->
+					connection.send(new S2CMoveEntityPacket.Rot(rot.entityId, rot.yRot, rot.xRot, true)); // TODO: onGround?
+			default -> throw new RuntimeException("unreachable");
+		}
+	}
+
+	public void handleS2CMovePlayer(final ClientConnection connection, final MovePlayerPacket packet) {
 		this.player.updateFromServer(packet);
 	}
 
