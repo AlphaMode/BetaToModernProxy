@@ -300,9 +300,9 @@ public class PlayPipeline {
 	public void handleC2SInteract(final ClientConnection connection, final C2SInteractPacket packet) {
 		final ServerConnection serverConnection = connection.getServerConnection();
 		if (packet.action() instanceof C2SInteractPacket.AttackAction) {
-			serverConnection.send(new InteractPacket(this.player.getId(), packet.entityId(), packet.usingSecondaryAction()));
+			serverConnection.send(new InteractPacket(this.player.getId(), packet.entityId(), true));
 		} else {
-			// TODO: InteractionPacket
+			// TODO: InteractionPacket (Use Bed (0x11))
 		}
 	}
 
