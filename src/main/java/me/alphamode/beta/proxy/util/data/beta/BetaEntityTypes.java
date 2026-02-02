@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public enum BetaEntityType {
+public enum BetaEntityTypes {
 	CREEPER(50),
 	SKELETON(51),
 	SPIDER(52),
@@ -20,10 +20,10 @@ public enum BetaEntityType {
 	SQUID(94),
 	WOLF(95);
 
-	public static final StreamCodec<ByteBuf, BetaEntityType> CODEC = BasicStreamCodecs.BYTE.map(BetaEntityType::fromId, (type) -> (byte) type.id);
+	public static final StreamCodec<ByteBuf, BetaEntityTypes> CODEC = BasicStreamCodecs.BYTE.map(BetaEntityTypes::fromId, (type) -> (byte) type.id);
 	private final int id;
 
-	BetaEntityType(final int id) {
+	BetaEntityTypes(final int id) {
 		this.id = id;
 	}
 
@@ -31,8 +31,8 @@ public enum BetaEntityType {
 		return this.id;
 	}
 
-	public static BetaEntityType fromId(final int id) {
-		for (final BetaEntityType type : values()) {
+	public static BetaEntityTypes fromId(final int id) {
+		for (final BetaEntityTypes type : values()) {
 			if (type.id == id) {
 				return type;
 			}

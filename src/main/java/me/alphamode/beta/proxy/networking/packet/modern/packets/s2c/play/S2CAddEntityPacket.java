@@ -7,14 +7,14 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
-import me.alphamode.beta.proxy.util.data.modern.ModernEntityType;
+import me.alphamode.beta.proxy.util.data.modern.ModernEntityTypes;
 
 import java.util.UUID;
 
 public record S2CAddEntityPacket(
 		int entityId,
 		UUID uuid,
-		ModernEntityType type,
+		ModernEntityTypes type,
 		Vec3d position,
 		Vec3d movement,
 		byte xRot,
@@ -27,7 +27,7 @@ public record S2CAddEntityPacket(
 			S2CAddEntityPacket::entityId,
 			ModernStreamCodecs.UUID,
 			S2CAddEntityPacket::uuid,
-			ModernEntityType.CODEC,
+			ModernEntityTypes.CODEC,
 			S2CAddEntityPacket::type,
 			Vec3d.CODEC,
 			S2CAddEntityPacket::position,
@@ -47,7 +47,7 @@ public record S2CAddEntityPacket(
 	public S2CAddEntityPacket(
 			final int id,
 			final UUID uuid,
-			final ModernEntityType type,
+			final ModernEntityTypes type,
 			final Vec3d position,
 			final Vec3d movement,
 			final float xRot,

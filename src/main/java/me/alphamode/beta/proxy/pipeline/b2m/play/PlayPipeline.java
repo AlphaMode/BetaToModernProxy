@@ -18,7 +18,7 @@ import me.alphamode.beta.proxy.util.data.BlockHitResult;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
-import me.alphamode.beta.proxy.util.data.beta.BetaEntityType;
+import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
@@ -156,31 +156,31 @@ public class PlayPipeline {
 	}
 
 	// TODO: Move to data-gen
-	private ModernEntityType mapBetaToModernEntityId(final BetaEntityType type) {
+	private ModernEntityTypes mapBetaToModernEntityId(final BetaEntityTypes type) {
 		// TODO: mobs w/ metadata
-		if (type == BetaEntityType.SKELETON) {
-			return ModernEntityType.SKELETON;
-		} else if (type == BetaEntityType.SPIDER) {
-			return ModernEntityType.SPIDER;
-		} else if (type == BetaEntityType.GIANT) {
-			return ModernEntityType.GIANT;
-		} else if (type == BetaEntityType.ZOMBIE) {
-			return ModernEntityType.ZOMBIE;
-		} else if (type == BetaEntityType.ZOMBIE_PIGMEN) {
-			return ModernEntityType.PIGLIN;
-		} else if (type == BetaEntityType.COW) {
-			return ModernEntityType.COW;
-		} else if (type == BetaEntityType.CHICKEN) {
-			return ModernEntityType.CHICKEN;
-		} else if (type == BetaEntityType.SQUID) {
-			return ModernEntityType.SQUID;
+		if (type == BetaEntityTypes.SKELETON) {
+			return ModernEntityTypes.SKELETON;
+		} else if (type == BetaEntityTypes.SPIDER) {
+			return ModernEntityTypes.SPIDER;
+		} else if (type == BetaEntityTypes.GIANT) {
+			return ModernEntityTypes.GIANT;
+		} else if (type == BetaEntityTypes.ZOMBIE) {
+			return ModernEntityTypes.ZOMBIE;
+		} else if (type == BetaEntityTypes.ZOMBIE_PIGMEN) {
+			return ModernEntityTypes.PIGLIN;
+		} else if (type == BetaEntityTypes.COW) {
+			return ModernEntityTypes.COW;
+		} else if (type == BetaEntityTypes.CHICKEN) {
+			return ModernEntityTypes.CHICKEN;
+		} else if (type == BetaEntityTypes.SQUID) {
+			return ModernEntityTypes.SQUID;
 		}
 
 		return null; // Unhandled
 	}
 
 	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
-		final ModernEntityType mappedType = mapBetaToModernEntityId(packet.type());
+		final ModernEntityTypes mappedType = mapBetaToModernEntityId(packet.type());
 		if (mappedType == null) {
 			return;
 		}
@@ -199,7 +199,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CAddEntity(final ClientConnection connection, final AddEntityPacket packet) {
-		final ModernEntityType mappedType = mapBetaToModernEntityId(packet.type());
+		final ModernEntityTypes mappedType = mapBetaToModernEntityId(packet.type());
 		if (mappedType == null) {
 			return;
 		}
@@ -227,7 +227,7 @@ public class PlayPipeline {
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				uuid,
-				ModernEntityType.PLAYER,
+				ModernEntityTypes.PLAYER,
 				packet.getPosition(),
 				Vec3d.ZERO,
 				packet.packedXRot(),
@@ -241,7 +241,7 @@ public class PlayPipeline {
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
-				ModernEntityType.ITEM,
+				ModernEntityTypes.ITEM,
 				packet.getPosition(),
 				packet.getMovement(),
 				0,
