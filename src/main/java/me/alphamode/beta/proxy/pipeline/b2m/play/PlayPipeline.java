@@ -102,7 +102,7 @@ public class PlayPipeline {
 	 */
 	public void handleS2CSetSpawnPosition(final ClientConnection connection, final SetSpawnPositionPacket packet) {
 		connection.send(new S2CPlayLoginPacket(
-				0, // TODO
+				player.getId(),
 				false,
 				List.of(BetaDimension.OVERWORLD, BetaDimension.NETHER, BetaDimension.SKY),
 				BrodernProxy.getProxy().config().getMaxPlayers(),

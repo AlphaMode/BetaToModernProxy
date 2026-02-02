@@ -56,6 +56,10 @@ public class Player {
 		this.setPos(0, 0, 0);
 	}
 
+	public int getId() {
+		return this.id;
+	}
+
 	public void setDimension(final int dimension) {
 		this.dimension = dimension;
 	}
