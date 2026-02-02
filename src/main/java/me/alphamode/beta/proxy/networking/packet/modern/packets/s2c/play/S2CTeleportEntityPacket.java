@@ -10,11 +10,11 @@ import me.alphamode.beta.proxy.util.data.modern.enums.Relative;
 
 import java.util.Set;
 
-public record S2CTeleportEntityPacket(int id, PositionMoveRotation change, Set<Relative> relatives,
+public record S2CTeleportEntityPacket(int entityId, PositionMoveRotation change, Set<Relative> relatives,
 									  boolean onGround) implements S2CPlayPacket {
 	public static final StreamCodec<ByteBuf, S2CTeleportEntityPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.VAR_INT,
-			S2CTeleportEntityPacket::id,
+			S2CTeleportEntityPacket::entityId,
 			PositionMoveRotation.CODEC,
 			S2CTeleportEntityPacket::change,
 			Relative.SET_STREAM_CODEC,
