@@ -68,12 +68,13 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	}
 
 	public void disconnect() {
+		LOGGER.info("Disconnected Proxy #{}!", this.uniqueId);
 		if (this.isConnected()) {
-			LOGGER.info("Disconnected Proxy #{}!", this.uniqueId);
 			this.clientChannel.close();
-			if (this.serverConnection.isConnected()) {
-				this.serverConnection.disconnect();
-			}
+		}
+
+		if (this.serverConnection.isConnected()) {
+			this.serverConnection.disconnect();
 		}
 	}
 
