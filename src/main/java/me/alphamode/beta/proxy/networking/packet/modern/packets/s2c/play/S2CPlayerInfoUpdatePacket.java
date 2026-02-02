@@ -78,7 +78,7 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 
 		private final StreamCodec<ByteBuf, ? extends Action<?>> codec;
 
-		ActionType(StreamCodec<ByteBuf, ? extends Action<?>> codec) {
+		ActionType(final StreamCodec<ByteBuf, ? extends Action<?>> codec) {
 			this.codec = codec;
 		}
 

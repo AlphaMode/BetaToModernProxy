@@ -10,7 +10,7 @@ import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
 public record C2SUseItemOnPacket(InteractionHand hand, BlockHitResult hitResult,
 								 int sequence) implements C2SPlayPacket {
 	public static final StreamCodec<ByteBuf, C2SUseItemOnPacket> CODEC = StreamCodec.composite(
-			ModernStreamCodecs.javaEnum(InteractionHand.class),
+			InteractionHand.CODEC,
 			C2SUseItemOnPacket::hand,
 			BlockHitResult.CODEC,
 			C2SUseItemOnPacket::hitResult,
