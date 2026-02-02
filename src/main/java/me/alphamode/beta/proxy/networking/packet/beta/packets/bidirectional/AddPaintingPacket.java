@@ -53,8 +53,8 @@ public record AddPaintingPacket(int id, Motive motive, Vec3i position, int direc
 		SKELETON("Skeleton"),
 		DONKEY_KONG("DonkeyKong");
 
-		public static final int MAX_PAINTING_MOTIVE_NAME_LENGTH = 13;
-		public static final StreamCodec<ByteBuf, Motive> STRING_CODEC = BetaStreamCodecs.stringUtf8(MAX_PAINTING_MOTIVE_NAME_LENGTH).map(Motive::byName, Motive::getName);
+		public static final int MAX_NAME_LENGTH = 13;
+		public static final StreamCodec<ByteBuf, Motive> STRING_CODEC = BetaStreamCodecs.stringUtf8(MAX_NAME_LENGTH).map(Motive::byName, Motive::getName);
 
 		private final String name;
 
