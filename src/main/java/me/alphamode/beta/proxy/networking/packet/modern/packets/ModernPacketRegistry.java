@@ -89,7 +89,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.DEBUG_SUBSCRIPTION_REQUEST, null);
 		this.registerPacket(ServerboundPlayPackets.EDIT_BOOK, null);
 		this.registerPacket(ServerboundPlayPackets.ENTITY_TAG_QUERY, null);
-		this.registerPacket(ServerboundPlayPackets.INTERACT, null);
+		this.registerPacket(ServerboundPlayPackets.INTERACT, C2SInteractPacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.JIGSAW_GENERATE, null);
 		this.registerPacket(ServerboundPlayPackets.KEEP_ALIVE, C2SPlayKeepAlivePacket.CODEC);
 		this.registerPacket(ServerboundPlayPackets.LOCK_DIFFICULTY, C2SLockDifficultyPacket.CODEC);

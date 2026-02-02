@@ -53,6 +53,7 @@ public class PlayPipeline {
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
+			.clientHandler(C2SInteractPacket.class, PlayPipeline::handleC2SInteract)
 			.clientHandler(C2SUseItemPacket.class, PlayPipeline::handleC2SUseItem)
 			.clientHandler(C2SUseItemOnPacket.class, PlayPipeline::handleC2SUseItemOn)
 			.clientHandler(C2SClientCommandPacket.class, PlayPipeline::handleC2SClientCommand)
@@ -294,6 +295,13 @@ public class PlayPipeline {
 		} else if (packet.type() == GameEventPacket.Type.END_RAINING) {
 			connection.send(new S2CGameEventPacket(S2CGameEventPacket.EventType.STOP_RAINING, 0.0F));
 		}
+	}
+
+	public void handleC2SInteract(final ClientConnection connection, final C2SInteractPacket packet) {
+		// TODO
+		/*connection.getServerConnection().send(new InteractionPacket(
+
+		));*/
 	}
 
 	public void handleC2SUseItem(final ClientConnection connection, final C2SUseItemPacket packet) {
