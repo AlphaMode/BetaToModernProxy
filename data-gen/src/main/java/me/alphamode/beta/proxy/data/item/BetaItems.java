@@ -194,11 +194,11 @@ public interface BetaItems {
 			.build();
 	BetaItem TRAPDOOR = BetaItem.builder(96)
 			.build();
+
+	// Items
 	BetaItem IRON_SHOVEL = BetaItem.builder(256)
 			.tool(BetaToolMaterial.IRON)
 			.build();
-
-	// Items
 	BetaItem IRON_PICKAXE = BetaItem.builder(257)
 			.tool(BetaToolMaterial.IRON)
 			.build();

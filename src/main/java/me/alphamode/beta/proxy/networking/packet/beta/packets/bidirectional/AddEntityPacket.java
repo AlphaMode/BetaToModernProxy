@@ -7,14 +7,15 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
+import me.alphamode.beta.proxy.util.data.beta.BetaEntityType;
 
-public record AddEntityPacket(int entityId, byte type, Vec3i position, int data, short xd, short yd,
+public record AddEntityPacket(int entityId, BetaEntityType type, Vec3i position, int data, short xd, short yd,
 							  short zd) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, AddEntityPacket> CODEC = AbstractPacket.codec(AddEntityPacket::write, AddEntityPacket::new);
 
 	public AddEntityPacket(final ByteBuf buf) {
 		final int id = buf.readInt();
-		final byte entityId = buf.readByte();
+		final BetaEntityType type = BetaEntityType.CODEC.decode(buf);
 		final Vec3i position = Vec3i.CODEC.decode(buf);
 		final int data = buf.readInt();
 
@@ -27,12 +28,12 @@ public record AddEntityPacket(int entityId, byte type, Vec3i position, int data,
 			zd = buf.readShort();
 		}
 
-		this(id, entityId, position, data, xd, yd, zd);
+		this(id, type, position, data, xd, yd, zd);
 	}
 
 	public void write(final ByteBuf buf) {
 		buf.writeInt(this.entityId);
-		buf.writeByte(this.type);
+		BetaEntityType.CODEC.encode(buf, this.type);
 		Vec3i.CODEC.encode(buf, this.position);
 		buf.writeInt(this.data);
 		if (this.data > 0) {
@@ -42,9 +43,9 @@ public record AddEntityPacket(int entityId, byte type, Vec3i position, int data,
 		}
 	}
 
-    public Vec3d getPosition() {
-        return this.position.toVec3d().divide(32.0);
-    }
+	public Vec3d getPosition() {
+		return this.position.toVec3d().divide(32.0);
+	}
 
 	@Override
 	public BetaPackets getType() {

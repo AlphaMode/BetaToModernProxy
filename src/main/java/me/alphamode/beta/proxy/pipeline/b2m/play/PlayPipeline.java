@@ -18,12 +18,12 @@ import me.alphamode.beta.proxy.util.data.BlockHitResult;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
+import me.alphamode.beta.proxy.util.data.beta.BetaEntityType;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
-import me.alphamode.beta.proxy.util.data.modern.BlockPos;
-import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
-import me.alphamode.beta.proxy.util.data.modern.GlobalPos;
-import me.alphamode.beta.proxy.util.data.modern.LevelData;
+import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
+import me.alphamode.beta.proxy.util.data.modern.entity.EntityDataSerializers;
+import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
 import me.alphamode.beta.proxy.util.data.modern.item.HashedPatchMap;
@@ -156,48 +156,32 @@ public class PlayPipeline {
 	}
 
 	// TODO: Move to data-gen
-	private int mapBetaToModernEntityId(final int id) {
-		// Beta Ids:
-		// 50 -> Creeper (Has Metadata)
-		// 51 -> Skeleton
-		// 52 -> Spider
-		// 53 -> Giant Zombie
-		// 54 -> Zombie
-		// 55 -> Slime (Has Metadata)
-		// 56 -> Ghast (Has Metadata)
-		// 57 -> Zombie Pigman
-		// 90 -> Pig (Has Metadata)
-		// 91 -> Sheep (Has Metadata)
-		// 92 -> Cow
-		// 93 -> Hen
-		// 94 -> Squid
-		// 95 -> Wolf (Has Metadata)
-
+	private ModernEntityType mapBetaToModernEntityId(final BetaEntityType type) {
 		// TODO: mobs w/ metadata
-		if (id == 51) {
-			return 115; // Skeleton
-		} else if (id == 52) {
-			return 124; // Spider
-		} else if (id == 53) {
-			return 59; // Giant
-		} else if (id == 54) {
-			return 150; // Zombie
-		} else if (id == 57) {
-			return 101; // Piglin
-		} else if (id == 92) {
-			return 30; // Cow
-		} else if (id == 93) {
-			return 26; // Chicken
-		} else if (id == 94) {
-			return 127; // Squid
+		if (type == BetaEntityType.SKELETON) {
+			return ModernEntityType.SKELETON;
+		} else if (type == BetaEntityType.SPIDER) {
+			return ModernEntityType.SPIDER;
+		} else if (type == BetaEntityType.GIANT) {
+			return ModernEntityType.GIANT;
+		} else if (type == BetaEntityType.ZOMBIE) {
+			return ModernEntityType.ZOMBIE;
+		} else if (type == BetaEntityType.ZOMBIE_PIGMEN) {
+			return ModernEntityType.PIGLIN;
+		} else if (type == BetaEntityType.COW) {
+			return ModernEntityType.COW;
+		} else if (type == BetaEntityType.CHICKEN) {
+			return ModernEntityType.CHICKEN;
+		} else if (type == BetaEntityType.SQUID) {
+			return ModernEntityType.SQUID;
 		}
 
-		return -1; // Unhandled
+		return null; // Unhandled
 	}
 
 	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
-		final int mappedType = mapBetaToModernEntityId(packet.type());
-		if (mappedType == -1) {
+		final ModernEntityType mappedType = mapBetaToModernEntityId(packet.type());
+		if (mappedType == null) {
 			return;
 		}
 
@@ -215,8 +199,8 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CAddEntity(final ClientConnection connection, final AddEntityPacket packet) {
-		final int mappedType = mapBetaToModernEntityId(packet.type());
-		if (mappedType == -1) {
+		final ModernEntityType mappedType = mapBetaToModernEntityId(packet.type());
+		if (mappedType == null) {
 			return;
 		}
 
@@ -243,7 +227,7 @@ public class PlayPipeline {
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				uuid,
-				155,
+				ModernEntityType.PLAYER,
 				packet.getPosition(),
 				Vec3d.ZERO,
 				packet.packedXRot(),
@@ -257,13 +241,18 @@ public class PlayPipeline {
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
-				71,
+				ModernEntityType.ITEM,
 				packet.getPosition(),
 				packet.getMovement(),
 				0,
 				0,
 				(byte) 0,
 				0
+		));
+
+		connection.send(new S2CSetEntityDataPacket(
+				packet.entityId(),
+				List.of(new ModernSynchedEntityData.DataValue<>((byte) 7, EntityDataSerializers.ITEM_STACK, ItemTranslator.toModernStack(packet.item())))
 		));
 	}
 
