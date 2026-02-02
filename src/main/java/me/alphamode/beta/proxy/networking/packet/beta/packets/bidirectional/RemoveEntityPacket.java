@@ -6,10 +6,10 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record RemoveEntityPacket(int id) implements BetaPacket {
+public record RemoveEntityPacket(int entityId) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, RemoveEntityPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
-			RemoveEntityPacket::id,
+			RemoveEntityPacket::entityId,
 			RemoveEntityPacket::new
 	);
 

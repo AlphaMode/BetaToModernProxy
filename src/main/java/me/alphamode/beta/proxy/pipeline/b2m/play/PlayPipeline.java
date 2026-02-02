@@ -61,6 +61,7 @@ public class PlayPipeline {
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
 			.clientHandler(C2SClientTickEndPacket.class, PlayPipeline::handleC2STickEnd)
+			.serverHandler(RemoveEntityPacket.class, PlayPipeline::handleS2CRemoveEntity)
 			.serverHandler(MoveEntityPacket.class, PlayPipeline::handleS2CMoveEntity)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
@@ -364,6 +365,10 @@ public class PlayPipeline {
 	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {
 		connection.tick();
 		this.player.tick();
+	}
+
+	public void handleS2CRemoveEntity(final ClientConnection connection, final RemoveEntityPacket packet) {
+		connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
 	}
 
 	// TODO: they rotate but aren't moving?

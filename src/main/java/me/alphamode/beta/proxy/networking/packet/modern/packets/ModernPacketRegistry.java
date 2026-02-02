@@ -207,7 +207,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.RECIPE_BOOK_ADD, null);
 		this.registerPacket(ClientboundPlayPackets.RECIPE_BOOK_REMOVE, null);
 		this.registerPacket(ClientboundPlayPackets.RECIPE_BOOK_SETTINGS, null);
-		this.registerPacket(ClientboundPlayPackets.REMOVE_ENTITIES, null);
+		this.registerPacket(ClientboundPlayPackets.REMOVE_ENTITIES, S2CRemoveEntitiesPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.REMOVE_MOB_EFFECT, null);
 		this.registerPacket(ClientboundPlayPackets.RESET_SCORE, null);
 		this.registerPacket(ClientboundPlayPackets.RESOURCE_PACK_POP, null);
