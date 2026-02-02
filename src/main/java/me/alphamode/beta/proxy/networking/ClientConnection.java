@@ -49,8 +49,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 			}
 
 			this.clientChannel.writeAndFlush(packet);
-		} else {
-			throw new RuntimeException("Cannot write to dead client connection!");
 		}
 	}
 
@@ -76,8 +74,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 			if (this.serverConnection.isConnected()) {
 				this.serverConnection.disconnect();
 			}
-		} else {
-			throw new RuntimeException("Cannot close dead client connection!");
 		}
 	}
 
