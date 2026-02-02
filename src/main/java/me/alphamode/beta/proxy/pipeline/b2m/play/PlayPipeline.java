@@ -298,10 +298,12 @@ public class PlayPipeline {
 	}
 
 	public void handleC2SInteract(final ClientConnection connection, final C2SInteractPacket packet) {
-		// TODO
-		/*connection.getServerConnection().send(new InteractionPacket(
-
-		));*/
+		final ServerConnection serverConnection = connection.getServerConnection();
+		if (packet.action() instanceof C2SInteractPacket.AttackAction) {
+			serverConnection.send(new InteractPacket(this.player.getId(), packet.entityId(), packet.usingSecondaryAction()));
+		} else {
+			// TODO: InteractionPacket
+		}
 	}
 
 	public void handleC2SUseItem(final ClientConnection connection, final C2SUseItemPacket packet) {

@@ -6,14 +6,14 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public record InteractPacket(int source, int target, byte action) implements BetaPacket {
+public record InteractPacket(int attackerId, int targetId, boolean attack) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, InteractPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
-			InteractPacket::source,
+			InteractPacket::attackerId,
 			BasicStreamCodecs.INT,
-			InteractPacket::target,
-			BasicStreamCodecs.BYTE,
-			InteractPacket::action,
+			InteractPacket::targetId,
+			BasicStreamCodecs.BOOL,
+			InteractPacket::attack,
 			InteractPacket::new
 	);
 
