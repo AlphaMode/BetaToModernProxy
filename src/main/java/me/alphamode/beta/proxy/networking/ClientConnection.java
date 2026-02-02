@@ -70,19 +70,19 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	}
 
 	public void disconnect() {
-		if (this.clientChannel != null) {
+		if (this.isConnected()) {
 			LOGGER.info("Disconnected Proxy #{}!", this.uniqueId);
 			this.clientChannel.close();
-			this.clientChannel = null;
-		}
-
-		if (this.serverConnection.isConnected()) {
-			this.serverConnection.disconnect();
+			if (this.serverConnection.isConnected()) {
+				this.serverConnection.disconnect();
+			}
+		} else {
+			throw new RuntimeException("Cannot close dead client connection!");
 		}
 	}
 
 	public boolean isConnected() {
-		return this.clientChannel != null && this.clientChannel.isActive();
+		return this.clientChannel.isActive();
 	}
 
 	public UUID getUniqueId() {
