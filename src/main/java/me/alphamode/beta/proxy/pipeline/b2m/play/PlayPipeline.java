@@ -136,7 +136,7 @@ public class PlayPipeline {
 				0.0F
 		)));
 
-		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
+		connection.send(new S2CGameEventPacket(S2CGameEventPacket.EventType.LEVEL_CHUNKS_LOAD_START, 0));
 	}
 
 	public void handleC2SConfigurationAcknowledged(final ClientConnection connection, final C2SConfigurationAcknowledgedPacket packet) {
@@ -150,7 +150,7 @@ public class PlayPipeline {
 		final float health = Math.max(0, packet.health());
 		connection.send(new S2CSetHealthPacket(health));
 		if (health == 0) {
-			connection.send(new S2CGameEventPacket(S2CGameEventPacket.IMMEDIATE_RESPAWN, 0));
+			connection.send(new S2CGameEventPacket(S2CGameEventPacket.EventType.IMMEDIATE_RESPAWN, 0));
 		}
 	}
 
@@ -290,9 +290,9 @@ public class PlayPipeline {
 		if (packet.type() == GameEventPacket.Type.INVALID_BED) {
 			connection.send(new S2CSystemChatPacket(TextComponent.translation("block.minecraft.spawn.not_valid"), false));
 		} else if (packet.type() == GameEventPacket.Type.BEGIN_RAINING) {
-			connection.send(new S2CGameEventPacket(S2CGameEventPacket.START_RAINING, 0.0F));
+			connection.send(new S2CGameEventPacket(S2CGameEventPacket.EventType.START_RAINING, 0.0F));
 		} else if (packet.type() == GameEventPacket.Type.END_RAINING) {
-			connection.send(new S2CGameEventPacket(S2CGameEventPacket.STOP_RAINING, 0.0F));
+			connection.send(new S2CGameEventPacket(S2CGameEventPacket.EventType.STOP_RAINING, 0.0F));
 		}
 	}
 
