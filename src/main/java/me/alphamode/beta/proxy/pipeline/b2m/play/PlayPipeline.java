@@ -155,28 +155,23 @@ public class PlayPipeline {
 		}
 	}
 
-	// TODO: Move to data-gen
 	private ModernEntityTypes mapBetaToModernEntityId(final BetaEntityTypes type) {
-		// TODO: mobs w/ metadata
-		if (type == BetaEntityTypes.SKELETON) {
-			return ModernEntityTypes.SKELETON;
-		} else if (type == BetaEntityTypes.SPIDER) {
-			return ModernEntityTypes.SPIDER;
-		} else if (type == BetaEntityTypes.GIANT) {
-			return ModernEntityTypes.GIANT;
-		} else if (type == BetaEntityTypes.ZOMBIE) {
-			return ModernEntityTypes.ZOMBIE;
-		} else if (type == BetaEntityTypes.ZOMBIE_PIGMEN) {
-			return ModernEntityTypes.PIGLIN;
-		} else if (type == BetaEntityTypes.COW) {
-			return ModernEntityTypes.COW;
-		} else if (type == BetaEntityTypes.CHICKEN) {
-			return ModernEntityTypes.CHICKEN;
-		} else if (type == BetaEntityTypes.SQUID) {
-			return ModernEntityTypes.SQUID;
-		}
-
-		return null; // Unhandled
+		return switch (type) {
+			case CREEPER -> ModernEntityTypes.CREEPER;
+			case SKELETON -> ModernEntityTypes.SKELETON;
+			case SPIDER -> ModernEntityTypes.SPIDER;
+			case GIANT -> ModernEntityTypes.GIANT;
+			case ZOMBIE -> ModernEntityTypes.ZOMBIE;
+			case SLIME -> ModernEntityTypes.SLIME;
+			case GHAST -> ModernEntityTypes.GHAST;
+			case ZOMBIE_PIGMEN -> ModernEntityTypes.PIGLIN;
+			case PIG -> ModernEntityTypes.PIG;
+			case SHEEP -> ModernEntityTypes.SHEEP;
+			case COW -> ModernEntityTypes.COW;
+			case CHICKEN -> ModernEntityTypes.CHICKEN;
+			case SQUID -> ModernEntityTypes.SQUID;
+			case WOLF -> ModernEntityTypes.WOLF;
+		};
 	}
 
 	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
