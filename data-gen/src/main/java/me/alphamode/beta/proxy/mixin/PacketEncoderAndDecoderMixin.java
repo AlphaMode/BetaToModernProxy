@@ -15,7 +15,7 @@ public class PacketEncoderAndDecoderMixin {
 			"decode(Lio/netty/channel/ChannelHandlerContext;Lio/netty/buffer/ByteBuf;Ljava/util/List;)V"
 	}, at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;isDebugEnabled()Z"))
 	private boolean alwaysLogPacket(Logger instance) {
-		return true;
+		return false;
 	}
 
 	@Redirect(method = {
