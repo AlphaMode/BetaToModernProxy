@@ -129,7 +129,8 @@ public class PlayPipeline {
 //		TODO: S2CInitializeBorderPacket
 		connection.send(new S2CSetDefaultSpawnPositionPacket(new LevelData.RespawnData(
 				GlobalPos.of(BetaDimension.OVERWORLD, packet.position().toBlockPos()),
-				0.0F, 0.0F
+				0.0F,
+				0.0F
 		)));
 
 		connection.send(new S2CGameEventPacket(S2CGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0));
@@ -245,7 +246,7 @@ public class PlayPipeline {
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (packet.hand() == InteractionHand.MAIN_HAND) {
-			connection.getServerConnection().send(new AnimatePacket(0, AnimatePacket.Action.SWING_ARM));
+			connection.getServerConnection().send(new AnimatePacket(player.getId(), AnimatePacket.Action.SWING_ARM));
 		}
 	}
 
