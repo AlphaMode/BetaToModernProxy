@@ -60,6 +60,10 @@ public class Player {
 		return this.id;
 	}
 
+	public int getDimension() {
+		return this.dimension;
+	}
+
 	public void setDimension(final int dimension) {
 		this.dimension = dimension;
 	}
