@@ -265,14 +265,11 @@ public class PlayPipeline {
 	public void handleS2CAnimate(final ClientConnection connection, final AnimatePacket packet) {
 		switch (packet.action()) {
 			case AnimatePacket.Action.SWING_ARM ->
-					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.SWING_MAIN_HAND));
-
-			case AnimatePacket.Action.DAMAGE_ANIMATION -> {
-				// TODO
-			}
-
+					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.Action.SWING_MAIN_HAND));
+			case AnimatePacket.Action.DAMAGE_ANIMATION ->
+					connection.send(new S2CHurtAnimationPacket(packet.entityId(), 0.0F));
 			case AnimatePacket.Action.LEAVE_BED ->
-					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.WAKE_UP));
+					connection.send(new S2CAnimatePacket(packet.entityId(), S2CAnimatePacket.Action.WAKE_UP));
 		}
 	}
 
