@@ -54,6 +54,7 @@ public final class Config {
 	private int bindPort = 25566;
 	private String serverAddress = "0.0.0.0";
 	private int serverPort = 25565;
+    private boolean onlineMode = true;
 	private boolean debug = true;
 
 	public String getBrand() {
@@ -95,6 +96,17 @@ public final class Config {
 	public int getServerPort() {
 		return this.serverPort;
 	}
+
+    public boolean isOnlineMode() {
+        if (isDebug()) {
+            return false;
+        }
+        return this.onlineMode;
+    }
+
+    public void setOnlineMode(final boolean onlineMode) {
+        this.onlineMode = onlineMode;
+    }
 
 	public boolean isDebug() {
 		return this.debug;

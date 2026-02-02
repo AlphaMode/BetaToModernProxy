@@ -5,6 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
 
@@ -27,6 +28,10 @@ public record AddMobPacket(int entityId, byte type, Vec3i position, byte yRot, b
 			AddMobPacket::dataItems,
 			AddMobPacket::new
 	);
+
+    public Vec3d getPosition() {
+        return this.position.toVec3d().divide(32.0);
+    }
 
 	@Override
 	public BetaPackets getType() {

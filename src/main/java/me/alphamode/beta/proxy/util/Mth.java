@@ -56,4 +56,17 @@ public class Mth {
 	public static int positiveCeilDiv(int input, int divisor) {
 		return -Math.floorDiv(-input, divisor);
 	}
+
+    public static int floor(final float v) {
+        int i = (int)v;
+        return v < i ? i - 1 : i;
+    }
+
+    public static byte packDegrees(final float angle) {
+        return (byte) floor(angle * 256.0F / 360.0F);
+    }
+
+    public static float unpackDegrees(final byte rot) {
+        return rot * 360 / 256.0F;
+    }
 }

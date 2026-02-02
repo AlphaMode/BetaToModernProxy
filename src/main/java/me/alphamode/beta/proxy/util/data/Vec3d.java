@@ -64,6 +64,10 @@ public record Vec3d(double x, double y, double z) {
 		}
 	};
 
+    public Vec3d divide(final double divider) {
+        return new Vec3d(this.x / divider, this.y / divider, this.z / divider);
+    }
+
 	public Vec3d copy() {
 		return new Vec3d(this.x, this.y, this.z);
 	}

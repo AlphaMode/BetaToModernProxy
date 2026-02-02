@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.pipeline.b2m.login;
 
+import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -30,7 +31,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CSt
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
-import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
 import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
 import me.alphamode.beta.proxy.util.data.modern.TagNetworkSerialization;
@@ -107,8 +107,9 @@ public class ClientLoginPipeline {
 	}
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
+        // TODO: Handle auth here
 		LOGGER.info("Sending Handshake Packet");
-		final GameProfile profile = new GameProfile(packet.profileId(), packet.username(), new HashMap<>());
+		final GameProfile profile = new GameProfile(packet.profileId(), packet.username());
 		connection.setProfile(profile);
 		connection.send(new S2CLoginFinishedPacket(profile));
 	}

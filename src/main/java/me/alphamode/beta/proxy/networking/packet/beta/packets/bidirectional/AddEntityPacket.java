@@ -5,6 +5,7 @@ import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddEntityPacket(int entityId, byte type, Vec3i position, int data, short xd, short yd,
@@ -40,6 +41,10 @@ public record AddEntityPacket(int entityId, byte type, Vec3i position, int data,
 			buf.writeShort(this.zd);
 		}
 	}
+
+    public Vec3d getPosition() {
+        return this.position.toVec3d().divide(32.0);
+    }
 
 	@Override
 	public BetaPackets getType() {

@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.networking;
 
+import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,7 +18,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlay
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlayKeepAlivePacket;
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.login.ClientLoginPipeline;
-import me.alphamode.beta.proxy.util.data.modern.GameProfile;
 import net.lenni0451.mcstructs.text.TextComponent;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;

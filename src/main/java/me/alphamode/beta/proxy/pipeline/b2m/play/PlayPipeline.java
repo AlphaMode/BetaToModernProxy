@@ -1,5 +1,6 @@
 package me.alphamode.beta.proxy.pipeline.b2m.play;
 
+import com.mojang.authlib.GameProfile;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.entity.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
@@ -48,6 +49,7 @@ public class PlayPipeline {
 			.serverHandler(AddMobPacket.class, PlayPipeline::handleS2CAddMob)
 			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
 			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
+            .serverHandler(AddItemEntityPacket.class, PlayPipeline::handleS2CAddItemEntity)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
@@ -200,7 +202,7 @@ public class PlayPipeline {
 				packet.entityId(),
 				UUID.randomUUID(),
 				mappedType,
-				packet.position().toVec3d(),
+				packet.getPosition(),
 				Vec3d.ZERO,
 				packet.yRot(),
 				packet.xRot(),
@@ -219,7 +221,7 @@ public class PlayPipeline {
 				packet.entityId(),
 				UUID.randomUUID(),
 				mappedType,
-				packet.position().toVec3d(),
+				packet.getPosition(),
 				new Vec3d(packet.xd(), packet.yd(), packet.zd()),
 				(byte) 0,
 				(byte) 0,
@@ -228,20 +230,40 @@ public class PlayPipeline {
 		));
 	}
 
+    private UUID lookupUUID(final int entityId) {
+        return UUID.randomUUID();
+    }
+
 	public void handleS2CAddPlayer(final ClientConnection connection, final AddPlayerPacket packet) {
 		// Server attempted to add player prior to sending player info (Player entityId 21586c2d-49e7-40a8-a485-db85537d3c2b)
+        UUID uuid = lookupUUID(packet.entityId());
+        connection.send(S2CPlayerInfoUpdatePacket.addPlayer(new GameProfile(uuid, packet.name())));
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
-				UUID.randomUUID(),
+				uuid,
 				155,
-				packet.position().toVec3d(),
+				packet.getPosition(),
 				Vec3d.ZERO,
-				packet.pitch(),
-				packet.yaw(),
+				packet.packedXRot(),
+				packet.packedYRot(),
 				(byte) 0,
 				0
 		));
 	}
+
+    public void handleS2CAddItemEntity(final ClientConnection connection, final AddItemEntityPacket packet) {
+        connection.send(new S2CAddEntityPacket(
+                packet.entityId(),
+                UUID.randomUUID(),
+                71,
+                packet.getPosition(),
+                packet.getMovement(),
+                0,
+                0,
+                (byte) 0,
+                0
+        ));
+    }
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (packet.hand() == InteractionHand.MAIN_HAND) {
@@ -454,7 +476,7 @@ public class PlayPipeline {
 			case STOP_DESTROY_BLOCK ->
 					serverConnection.send(new PlayerActionPacket(PlayerActionPacket.Action.FINISHED_DIGGING, pos, (byte) packet.direction().ordinal()));
 
-			// TODO: other actions
+			// TODO: other types
 		}
 	}
 

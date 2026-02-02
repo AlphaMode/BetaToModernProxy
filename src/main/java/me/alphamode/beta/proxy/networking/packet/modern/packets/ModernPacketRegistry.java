@@ -200,7 +200,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.PLAYER_COMBAT_ENTER, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_COMBAT_KILL, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_INFO_REMOVE, null);
-		this.registerPacket(ClientboundPlayPackets.PLAYER_INFO_UPDATE, null);
+		this.registerPacket(ClientboundPlayPackets.PLAYER_INFO_UPDATE, S2CPlayerInfoUpdatePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_LOOK_AT, null);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_POSITION, S2CPlayerPositionPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.PLAYER_ROTATION, null);
