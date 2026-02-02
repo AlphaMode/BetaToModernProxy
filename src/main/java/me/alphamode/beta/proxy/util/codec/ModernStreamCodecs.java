@@ -11,6 +11,7 @@ import io.netty.handler.codec.EncoderException;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.util.Mth;
+import me.alphamode.beta.proxy.util.data.modern.VarLong;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.text.TextComponent;
@@ -214,6 +215,18 @@ public interface ModernStreamCodecs {
 		}
 	};
 
+    StreamCodec<ByteBuf, Long> VAR_LONG = new StreamCodec<>() {
+        @Override
+        public void encode(final ByteBuf buf, final Long value) {
+            VarLong.write(buf, value);
+        }
+
+        @Override
+        public Long decode(final ByteBuf buf) {
+            return VarLong.read(buf);
+        }
+    };
+
 	StreamCodec<ByteBuf, IntList> INT_LIST = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteBuf buf, final IntList value) {
@@ -355,6 +368,8 @@ public interface ModernStreamCodecs {
 			}
 		};
 	}
+
+    StreamCodec<ByteBuf, String> STRING_UTF8 = stringUtf8();
 
 	static StreamCodec<ByteBuf, String> stringUtf8() {
 		return stringUtf8(MAX_STRING_LENGTH);

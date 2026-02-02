@@ -14,12 +14,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.util.Util;
 
 import java.io.IOException;
+import java.lang.reflect.AccessFlag;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +52,23 @@ public class Main {
 				e.printStackTrace();
 			}
 
+            dumpEntityDataSerializerIds();
+
 			ItemMapper.writeItems(outputDir.resolve("beta_to_modern_items.nbt"));
 		});
 	}
+
+    private static void dumpEntityDataSerializerIds() {
+        for (Field field : EntityDataSerializers.class.getFields()) {
+            if (field.getType() == EntityDataSerializer.class && field.accessFlags().contains(AccessFlag.STATIC)) {
+                try {
+                    IO.println(field.getName() + ": " + EntityDataSerializers.getSerializedId((EntityDataSerializer<?>) field.get(null)));
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 
 	private static void bootstrap(final Runnable runnable) {
 		SharedConstants.tryDetectVersion();
