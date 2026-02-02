@@ -132,7 +132,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ServerboundPlayPackets.CUSTOM_CLICK_ACTION, null);
 
 		// Clientbound
-		this.registerPacket(ClientboundPlayPackets.BUNDLE_DELIMITER, null);
+		this.registerPacket(ClientboundPlayPackets.BUNDLE_DELIMITER, S2CBundleDelimiterPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.ADD_ENTITY, S2CAddEntityPacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.ANIMATE, S2CAnimatePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.AWARD_STATS, null);

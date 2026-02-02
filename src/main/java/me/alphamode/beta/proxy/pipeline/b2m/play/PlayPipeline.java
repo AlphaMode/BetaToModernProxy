@@ -218,6 +218,7 @@ public class PlayPipeline {
 
 	public void handleS2CAddPlayer(final ClientConnection connection, final AddPlayerPacket packet) {
 		final UUID uuid = lookupUUID(packet.entityId());
+		connection.send(new S2CBundleDelimiterPacket());
 		connection.send(S2CPlayerInfoUpdatePacket.addPlayer(new GameProfile(uuid, packet.name())));
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
@@ -230,9 +231,11 @@ public class PlayPipeline {
 				(byte) 0,
 				0
 		));
+		connection.send(new S2CBundleDelimiterPacket());
 	}
 
 	public void handleS2CAddItemEntity(final ClientConnection connection, final AddItemEntityPacket packet) {
+		connection.send(new S2CBundleDelimiterPacket());
 		connection.send(new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
@@ -244,11 +247,11 @@ public class PlayPipeline {
 				(byte) 0,
 				0
 		));
-
 		connection.send(new S2CSetEntityDataPacket(
 				packet.entityId(),
 				List.of(new ModernSynchedEntityData.DataValue<>((byte) 8, EntityDataSerializers.ITEM_STACK, ItemTranslator.toModernStack(packet.item())))
 		));
+		connection.send(new S2CBundleDelimiterPacket());
 	}
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
