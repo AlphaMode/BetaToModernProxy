@@ -1,6 +1,7 @@
 package me.alphamode.beta.proxy.data.dimension;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -8,6 +9,7 @@ import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TimelineTags;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -17,6 +19,7 @@ import net.minecraft.world.attribute.EnvironmentAttributeMap;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.timeline.Timeline;
 
 import java.lang.ref.Reference;
 
@@ -28,6 +31,7 @@ public class BetaDimensionTypes {
 	}
 
 	public static void bootstrap(final BootstrapContext<DimensionType> ctx) {
+        HolderGetter<Timeline> timelines = ctx.lookup(Registries.TIMELINE);
 		EnvironmentAttributeMap overworldAttributes = EnvironmentAttributeMap.builder()
 				.set(EnvironmentAttributes.FOG_COLOR, -4138753)
 				.set(EnvironmentAttributes.SKY_COLOR, OverworldBiomes.calculateSkyColor(0.8F))
@@ -51,7 +55,7 @@ public class BetaDimensionTypes {
 				DimensionType.Skybox.OVERWORLD,
 				DimensionType.CardinalLightType.DEFAULT,
 				overworldAttributes,
-				HolderSet.empty()
+                timelines.getOrThrow(TimelineTags.IN_OVERWORLD)
 		));
 
 		ctx.register(BuiltinDimensionTypes.NETHER, new DimensionType(

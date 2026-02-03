@@ -15,6 +15,7 @@ import net.minecraft.world.entity.animal.frog.FrogVariants;
 import net.minecraft.world.entity.animal.nautilus.ZombieNautilus;
 import net.minecraft.world.entity.animal.nautilus.ZombieNautilusVariants;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
+import net.minecraft.world.timeline.Timelines;
 
 public class BetaRegistries {
 	public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
@@ -40,7 +41,7 @@ public class BetaRegistries {
 			.add(Registries.TEST_ENVIRONMENT, BetaRegistries::emptyBootstrap)
 			.add(Registries.TEST_INSTANCE, BetaRegistries::emptyBootstrap)
 			.add(Registries.DIALOG, BetaRegistries::emptyBootstrap)
-			.add(Registries.TIMELINE, BetaRegistries::emptyBootstrap);
+			.add(Registries.TIMELINE, Timelines::bootstrap);
 
 	private static <T> void emptyBootstrap(final BootstrapContext<T> ctx) {
 	}
