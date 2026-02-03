@@ -14,10 +14,7 @@ import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
-import me.alphamode.beta.proxy.util.data.BlockHitResult;
-import me.alphamode.beta.proxy.util.data.ChunkPos;
-import me.alphamode.beta.proxy.util.data.Vec3d;
-import me.alphamode.beta.proxy.util.data.Vec3i;
+import me.alphamode.beta.proxy.util.data.*;
 import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
@@ -49,6 +46,7 @@ public class PlayPipeline {
 			.serverHandler(AddMobPacket.class, PlayPipeline::handleS2CAddMob)
 			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
 			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
+			.serverHandler(AddPaintingPacket.class, PlayPipeline::handleS2CAddPainting)
 			.serverHandler(AddItemEntityPacket.class, PlayPipeline::handleS2CAddItemEntity)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
@@ -66,11 +64,11 @@ public class PlayPipeline {
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(SetEntityMotionPacket.class, PlayPipeline::handleS2CSetEntityMotion)
-            .serverHandler(EntityEventPacket.class, PlayPipeline::handleS2CEntityEvent)
+			.serverHandler(EntityEventPacket.class, PlayPipeline::handleS2CEntityEvent)
 			.clientHandler(C2SPlayerInputPacket.class, PlayPipeline::handleC2SPlayerInput)
 			.serverHandler(ChunkVisibilityPacket.class, PlayPipeline::handleS2CChunkVisibility)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
-            .serverHandler(TileUpdatePacket.class, PlayPipeline::handleS2CTileUpdate)
+			.serverHandler(TileUpdatePacket.class, PlayPipeline::handleS2CTileUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
 			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSlotStateChanged)
@@ -238,6 +236,30 @@ public class PlayPipeline {
 		connection.send(new S2CBundleDelimiterPacket());
 	}
 
+	public void handleS2CAddPainting(final ClientConnection connection, final AddPaintingPacket packet) {
+		connection.send(new S2CBundleDelimiterPacket());
+		connection.send(new S2CAddEntityPacket(
+				packet.entityId(),
+				UUID.randomUUID(),
+				ModernEntityTypes.PAINTING,
+				packet.position().toVec3d(),
+				Vec3d.ZERO,
+				0,
+				0,
+				(byte) 0,
+				0
+		));
+		connection.send(new S2CSetEntityDataPacket(
+				packet.entityId(),
+				List.of(new ModernSynchedEntityData.DataValue<>((byte) 8, EntityDataSerializers.DIRECTION, Direction.from3DDataValue(packet.direction())))
+		));
+		connection.send(new S2CSetEntityDataPacket(
+				packet.entityId(),
+				List.of(new ModernSynchedEntityData.DataValue<>((byte) 9, EntityDataSerializers.PAINTING_VARIANT, packet.motive().ordinal()))
+		));
+		connection.send(new S2CBundleDelimiterPacket());
+	}
+
 	public void handleS2CAddItemEntity(final ClientConnection connection, final AddItemEntityPacket packet) {
 		connection.send(new S2CBundleDelimiterPacket());
 		connection.send(new S2CAddEntityPacket(
@@ -353,9 +375,9 @@ public class PlayPipeline {
 		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), xs, ys, zs, buffer);
 	}
 
-    public void handleS2CTileUpdate(final ClientConnection connection, final TileUpdatePacket packet) {
-        connection.send(new S2CBlockUpdatePacket(new BlockPos(packet.x(), packet.y(), packet.z()), BrodernProxy.getBlockTranslator().translate(packet.block(), packet.data())));
-    }
+	public void handleS2CTileUpdate(final ClientConnection connection, final TileUpdatePacket packet) {
+		connection.send(new S2CBlockUpdatePacket(new BlockPos(packet.x(), packet.y(), packet.z()), BrodernProxy.getBlockTranslator().translate(packet.block(), packet.data())));
+	}
 
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {
 		connection.send(new C2SSetCarriedItemPacket(packet.slot()));
@@ -374,9 +396,9 @@ public class PlayPipeline {
 		connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
 	}
 
-    static long encode(final double input) {
-        return Math.round(input * 4096.0);
-    }
+	static long encode(final double input) {
+		return Math.round(input * 4096.0);
+	}
 
 	// TODO: they rotate but aren't moving?
 	public void handleS2CMoveEntity(final ClientConnection connection, final MoveEntityPacket packet) {
@@ -403,9 +425,9 @@ public class PlayPipeline {
 		connection.send(new S2CSetEntityMotionPacket(packet.id(), new Vec3d(packet.deltaX(), packet.deltaY(), packet.deltaZ())));
 	}
 
-    public void handleS2CEntityEvent(final ClientConnection connection, final EntityEventPacket packet) {
-        connection.send(new S2CEntityEventPacket(packet.entityId(), packet.eventId()));
-    }
+	public void handleS2CEntityEvent(final ClientConnection connection, final EntityEventPacket packet) {
+		connection.send(new S2CEntityEventPacket(packet.entityId(), packet.eventId()));
+	}
 
 	public void handleC2SPlayerInput(final ClientConnection connection, final C2SPlayerInputPacket packet) {
 		this.player.setSneaking(packet.input().shift());
@@ -516,10 +538,10 @@ public class PlayPipeline {
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
-        LOGGER.info("Modern Packet {} received", packet);
+		LOGGER.info("Modern Packet {} received", packet);
 	}
 
 	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
-        LOGGER.info("Unhandled Beta Packet {} received", packet);
+		LOGGER.info("Unhandled Beta Packet {} received", packet);
 	}
 }

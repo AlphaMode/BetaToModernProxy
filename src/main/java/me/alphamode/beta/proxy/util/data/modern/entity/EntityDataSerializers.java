@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.Direction;
 import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import org.jspecify.annotations.Nullable;
 
@@ -29,7 +30,9 @@ public class EntityDataSerializers {
 	public static final StreamCodec<ByteBuf, Float> FLOAT = register(3, BasicStreamCodecs.FLOAT);
 	public static final StreamCodec<ByteBuf, String> STRING = register(4, ModernStreamCodecs.STRING_UTF8);
 	public static final StreamCodec<ByteBuf, ModernItemStack> ITEM_STACK = register(7, ModernItemStack.OPTIONAL_CODEC);
-//    public static final StreamCodec<ByteBuf, BlockState> BLOCK_STATE = register(14, ModernStreamCodecs.idMapper(BlockStateRegistry.BLOCK_STATE_REGISTRY));
+	//    public static final StreamCodec<ByteBuf, BlockState> BLOCK_STATE = register(14, ModernStreamCodecs.idMapper(BlockStateRegistry.BLOCK_STATE_REGISTRY));
+	public static final StreamCodec<ByteBuf, Direction> DIRECTION = register(23, Direction.CODEC_3D);
+	public static final StreamCodec<ByteBuf, Integer> PAINTING_VARIANT = register(37, ModernStreamCodecs.VAR_INT);
 
 	public static final StreamCodec<ByteBuf, StreamCodec<ByteBuf, ?>> ID_CODEC = ModernStreamCodecs.VAR_INT.map(EntityDataSerializers::getSerializer, EntityDataSerializers::getSerializedId);
 

@@ -8,10 +8,10 @@ import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record AddPaintingPacket(int id, Motive motive, Vec3i position, int direction) implements BetaPacket {
+public record AddPaintingPacket(int entityId, Motive motive, Vec3i position, int direction) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, AddPaintingPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
-			AddPaintingPacket::id,
+			AddPaintingPacket::entityId,
 			Motive.STRING_CODEC,
 			AddPaintingPacket::motive,
 			Vec3i.CODEC,
