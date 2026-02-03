@@ -247,7 +247,7 @@ public class PlayPipeline {
 				0,
 				0,
 				(byte) 0,
-				packet.direction()
+				4
 		));
 		connection.send(new S2CSetEntityDataPacket(
 				packet.entityId(),

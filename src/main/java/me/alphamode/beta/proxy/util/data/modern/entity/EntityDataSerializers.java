@@ -32,7 +32,7 @@ public class EntityDataSerializers {
 	public static final StreamCodec<ByteBuf, ModernItemStack> ITEM_STACK = register(7, ModernItemStack.OPTIONAL_CODEC);
 	//    public static final StreamCodec<ByteBuf, BlockState> BLOCK_STATE = register(14, ModernStreamCodecs.idMapper(BlockStateRegistry.BLOCK_STATE_REGISTRY));
 	public static final StreamCodec<ByteBuf, Direction> DIRECTION = register(23, ModernStreamCodecs.VAR_INT.map(Direction::from3DDataValue, Direction::ordinal));
-	public static final StreamCodec<ByteBuf, Integer> PAINTING_VARIANT = register(37, ModernStreamCodecs.VAR_INT);
+	public static final StreamCodec<ByteBuf, Integer> PAINTING_VARIANT = register(30, ModernStreamCodecs.VAR_INT);
 
 	public static final StreamCodec<ByteBuf, StreamCodec<ByteBuf, ?>> ID_CODEC = ModernStreamCodecs.VAR_INT.map(EntityDataSerializers::getSerializer, EntityDataSerializers::getSerializedId);
 
