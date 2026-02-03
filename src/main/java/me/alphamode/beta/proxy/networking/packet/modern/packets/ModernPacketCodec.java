@@ -59,7 +59,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 							|| (Object) packet instanceof C2SMovePlayerPacket.StatusOnly
 							|| (Object) packet instanceof C2SPlayerInputPacket
 			)) {
-				LOGGER.info("Modern Packet {} received", packet);
+//				LOGGER.info("Modern Packet {} received", packet);
 			}
 
 			if (packet != null) {

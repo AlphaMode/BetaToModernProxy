@@ -141,7 +141,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		this.registerPacket(ClientboundPlayPackets.BLOCK_DESTRUCTION, null);
 		this.registerPacket(ClientboundPlayPackets.BLOCK_ENTITY_DATA, null);
 		this.registerPacket(ClientboundPlayPackets.BLOCK_EVENT, null);
-		this.registerPacket(ClientboundPlayPackets.BLOCK_UPDATE, null);
+		this.registerPacket(ClientboundPlayPackets.BLOCK_UPDATE, S2CBlockUpdatePacket.CODEC);
 		this.registerPacket(ClientboundPlayPackets.BOSS_EVENT, null);
 		this.registerPacket(ClientboundPlayPackets.CHANGE_DIFFICULTY, null);
 		this.registerPacket(ClientboundPlayPackets.CHUNK_BATCH_FINISHED, null);

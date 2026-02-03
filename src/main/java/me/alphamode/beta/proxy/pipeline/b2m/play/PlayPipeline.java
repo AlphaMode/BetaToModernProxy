@@ -66,9 +66,11 @@ public class PlayPipeline {
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
 			.serverHandler(SetEntityMotionPacket.class, PlayPipeline::handleS2CSetEntityMotion)
+            .serverHandler(EntityEventPacket.class, PlayPipeline::handleS2CEntityEvent)
 			.clientHandler(C2SPlayerInputPacket.class, PlayPipeline::handleC2SPlayerInput)
 			.serverHandler(ChunkVisibilityPacket.class, PlayPipeline::handleS2CChunkVisibility)
 			.serverHandler(BlockRegionUpdatePacket.class, PlayPipeline::handleBlockRegionUpdate)
+            .serverHandler(TileUpdatePacket.class, PlayPipeline::handleS2CTileUpdate)
 			.serverHandler(SetCarriedItemPacket.class, PlayPipeline::handleS2CSetCarriedItem)
 			.clientHandler(C2SSetCarriedItemPacket.class, PlayPipeline::handleC2SSetCarriedItem)
 			.clientHandler(C2SContainerSlotStateChangedPacket.class, PlayPipeline::handleC2SContainerSlotStateChanged)
@@ -351,6 +353,10 @@ public class PlayPipeline {
 		ChunkTranslator.readBetaRegionData(connection, packet.x(), packet.y(), packet.z(), xs, ys, zs, buffer);
 	}
 
+    public void handleS2CTileUpdate(final ClientConnection connection, final TileUpdatePacket packet) {
+        connection.send(new S2CBlockUpdatePacket(new BlockPos(packet.x(), packet.y(), packet.z()), BrodernProxy.getBlockTranslator().translate(packet.block(), packet.data())));
+    }
+
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {
 		connection.send(new C2SSetCarriedItemPacket(packet.slot()));
 	}
@@ -368,13 +374,17 @@ public class PlayPipeline {
 		connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
 	}
 
+    static long encode(final double input) {
+        return Math.round(input * 4096.0);
+    }
+
 	// TODO: they rotate but aren't moving?
 	public void handleS2CMoveEntity(final ClientConnection connection, final MoveEntityPacket packet) {
 		switch (packet) {
 			case MoveEntityPacket.Pos pos ->
-					connection.send(new S2CMoveEntityPacket.Pos(pos.entityId, pos.xa, pos.ya, pos.za, true)); // TODO: onGround?
+					connection.send(new S2CMoveEntityPacket.Pos(pos.entityId, (short) encode(pos.xa / 32.0), (short) encode(pos.ya / 32.0), (short) encode(pos.za / 32.0), true)); // TODO: onGround?
 			case MoveEntityPacket.PosRot posRot ->
-					connection.send(new S2CMoveEntityPacket.PosRot(posRot.entityId, posRot.xa, posRot.ya, posRot.za, posRot.yRot, posRot.xRot, true)); // TODO: onGround?
+					connection.send(new S2CMoveEntityPacket.PosRot(posRot.entityId, (short) encode(posRot.xa / 32.0), (short) encode(posRot.ya / 32.0), (short) encode(posRot.za / 32.0), posRot.yRot, posRot.xRot, true)); // TODO: onGround?
 			case MoveEntityPacket.Rot rot ->
 					connection.send(new S2CMoveEntityPacket.Rot(rot.entityId, rot.yRot, rot.xRot, true)); // TODO: onGround?
 			default -> throw new RuntimeException("unreachable");
@@ -392,6 +402,10 @@ public class PlayPipeline {
 	public void handleS2CSetEntityMotion(final ClientConnection connection, final SetEntityMotionPacket packet) {
 		connection.send(new S2CSetEntityMotionPacket(packet.id(), new Vec3d(packet.deltaX(), packet.deltaY(), packet.deltaZ())));
 	}
+
+    public void handleS2CEntityEvent(final ClientConnection connection, final EntityEventPacket packet) {
+        connection.send(new S2CEntityEventPacket(packet.entityId(), packet.eventId()));
+    }
 
 	public void handleC2SPlayerInput(final ClientConnection connection, final C2SPlayerInputPacket packet) {
 		this.player.setSneaking(packet.input().shift());
@@ -499,8 +513,10 @@ public class PlayPipeline {
 	}
 
 	public void passClientToNextPipeline(final ClientConnection connection, final ModernPacket<?> packet) {
+        LOGGER.info("Modern Packet {} received", packet);
 	}
 
 	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
+        LOGGER.info("Unhandled Beta Packet {} received", packet);
 	}
 }

@@ -1,6 +1,5 @@
 package me.alphamode.beta.proxy.data.dimension;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -20,8 +19,6 @@ import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.timeline.Timeline;
-
-import java.lang.ref.Reference;
 
 public class BetaDimensionTypes {
 	public static final ResourceKey<DimensionType> SKY = register("sky");

@@ -6,11 +6,7 @@ import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record BlockPos(int x, int y, int z) {
-	public static final StreamCodec<ByteBuf, BlockPos> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.LONG,
-			BlockPos::pack,
-			BlockPos::unpack
-	);
+	public static final StreamCodec<ByteBuf, BlockPos> CODEC = BasicStreamCodecs.LONG.map(BlockPos::unpack, BlockPos::pack);
 
 	public static final int PACKED_HORIZONTAL_LENGTH = 1 + Mth.log2(Mth.smallestEncompassingPowerOfTwo(30000000));
 	public static final int PACKED_Y_LENGTH = 64 - 2 * PACKED_HORIZONTAL_LENGTH;
