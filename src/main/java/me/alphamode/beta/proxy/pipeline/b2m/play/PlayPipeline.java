@@ -247,11 +247,7 @@ public class PlayPipeline {
 				0,
 				0,
 				(byte) 0,
-				0
-		));
-		connection.send(new S2CSetEntityDataPacket(
-				packet.entityId(),
-				List.of(new ModernSynchedEntityData.DataValue<>((byte) 8, EntityDataSerializers.DIRECTION, Direction.from3DDataValue(packet.direction())))
+				packet.direction()
 		));
 		connection.send(new S2CSetEntityDataPacket(
 				packet.entityId(),
