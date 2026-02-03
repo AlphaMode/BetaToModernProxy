@@ -14,7 +14,7 @@ public record ProfilePublicKey(ProfilePublicKey.Data data) {
 				Data::expires,
 				ModernStreamCodecs.PUBLIC_KEY,
 				Data::key,
-				ModernStreamCodecs.sizedByteArray(4096),
+				ModernStreamCodecs.byteArray(4096),
 				Data::signature,
 				Data::new
 		);

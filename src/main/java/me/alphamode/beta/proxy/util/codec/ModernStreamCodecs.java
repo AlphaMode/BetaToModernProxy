@@ -20,6 +20,7 @@ import net.raphimc.netminecraft.netty.crypto.CryptUtil;
 import net.raphimc.netminecraft.packet.PacketTypes;
 import org.jspecify.annotations.Nullable;
 
+import java.security.Key;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.util.*;
@@ -291,21 +292,7 @@ public interface ModernStreamCodecs {
 		}
 	};
 
-	StreamCodec<ByteBuf, PublicKey> PUBLIC_KEY = new StreamCodec<>() {
-		@Override
-		public void encode(final ByteBuf buf, final PublicKey key) {
-			BYTE_ARRAY.encode(buf, key.getEncoded());
-		}
-
-		@Override
-		public PublicKey decode(final ByteBuf buf) {
-			try {
-				return CryptUtil.decodeRsaPublicKey(sizedByteArray(512).decode(buf));
-			} catch (final Exception exception) {
-				throw new RuntimeException("Malformed public key bytes", exception);
-			}
-		}
-	};
+	StreamCodec<ByteBuf, PublicKey> PUBLIC_KEY = byteArray(512).map(CryptUtil::decodeRsaPublicKey, Key::getEncoded);
 
 	StreamCodec<ByteBuf, Identifier> IDENTIFIER = new StreamCodec<>() {
 		@Override

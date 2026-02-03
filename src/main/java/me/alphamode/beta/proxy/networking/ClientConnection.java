@@ -19,9 +19,13 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CPlay
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.login.ClientLoginPipeline;
 import net.lenni0451.mcstructs.text.TextComponent;
+import net.raphimc.netminecraft.constants.MCPipeline;
+import net.raphimc.netminecraft.netty.crypto.AESEncryption;
 import net.raphimc.netminecraft.util.MinecraftServerAddress;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.net.SocketAddress;
 
 public final class ClientConnection extends SimpleChannelInboundHandler<ModernPacket<?>> implements PacketHandler {
 	private static final Logger LOGGER = LogManager.getLogger(ClientConnection.class);
@@ -36,6 +40,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	private GameProfile profile;
 	private int protocolVersion = BetaPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveId = 0L;
+    private SocketAddress remoteAddress;
 
 	public ClientConnection(final MinecraftServerAddress address) {
 		this.address = address;
@@ -61,6 +66,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 			throw new RuntimeException("Cannot write to dead client connection!");
 		}
 	}
+
+    public void setEncryption(AESEncryption encryption) {
+        this.clientChannel.attr(MCPipeline.ENCRYPTION_ATTRIBUTE_KEY).set(encryption);
+    }
 
 	public void kick(final TextComponent message) {
 		LOGGER.error("Kicking client with reason: {}", message.toString());
@@ -119,6 +128,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		this.state = state;
 	}
 
+    public SocketAddress getRemoteAddress() {
+        return this.remoteAddress;
+    }
+
 	public GameProfile getProfile() {
 		return this.profile;
 	}
@@ -169,6 +182,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
+        this.remoteAddress = this.clientChannel.remoteAddress();
 		this.serverConnection = new ServerConnection(this.address, this);
 	}
 

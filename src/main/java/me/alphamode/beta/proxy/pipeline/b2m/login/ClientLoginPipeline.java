@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.pipeline.b2m.login;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -17,6 +19,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration.C2SFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SKeyPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusPingRequestPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusRequestPacket;
@@ -25,6 +28,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CFinishConfigurationPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CRegistryDataPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration.S2CUpdateTagsPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CHelloPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLoginFinishedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
@@ -40,9 +44,20 @@ import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import net.lenni0451.mcstructs.nbt.tags.IntArrayTag;
+import net.raphimc.netminecraft.netty.crypto.AESEncryption;
+import net.raphimc.netminecraft.netty.crypto.CryptUtil;
+import net.raphimc.netminecraft.util.ThreadFactoryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
+import javax.crypto.SecretKey;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.util.*;
 
 public class ClientLoginPipeline {
@@ -55,6 +70,8 @@ public class ClientLoginPipeline {
 			.clientHandler(C2SStatusPingRequestPacket.class, ClientLoginPipeline::handleC2SStatusPingRequest)
 			// Login
 			.clientHandler(C2SHelloPacket.class, ClientLoginPipeline::handleC2SHello)
+            // Encryption (Optional)
+            .clientHandler(C2SKeyPacket.class, ClientLoginPipeline::handleC2SKey)
 			// Configuration
 			.clientHandler(C2SConfigurationKeepAlivePacket.class, ClientLoginPipeline::handleC2SKeepAlive)
 			.serverHandler(KeepAlivePacket.class, ClientLoginPipeline::handleS2CKeepAlive)
@@ -66,6 +83,25 @@ public class ClientLoginPipeline {
 			.unhandledClient(ClientLoginPipeline::passClientToNextPipeline)
 			.unhandledServer(ClientLoginPipeline::passServerToNextPipeline)
 			.build();
+
+    private static final Thread.Builder AUTH_THREAD_BUILDER = Thread.ofVirtual().name("auth-thread-", 0);
+
+    private final byte[] challenge;
+    private final boolean onlineMode = BrodernProxy.getProxy().config().isOnlineMode();
+
+    private State state = State.HELLO;
+
+    @Nullable
+    private String requestedUsername;
+    @Nullable
+    private GameProfile authenticatedProfile;
+
+    public ClientLoginPipeline() {
+        int rand = new Random().nextInt();
+        this.challenge = new byte[] {
+                (byte) (rand >> 24), (byte) (rand >> 16), (byte) (rand >> 8), (byte) rand
+        };
+    }
 
 	// Handshake
 	public void handleClientIntent(final ClientConnection connection, final C2SIntentionPacket packet) {
@@ -107,12 +143,51 @@ public class ClientLoginPipeline {
 	}
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
-        // TODO: Handle auth here
-		LOGGER.info("Sending Handshake Packet");
-		final GameProfile profile = new GameProfile(packet.profileId(), packet.username());
-		connection.setProfile(profile);
-		connection.send(new S2CLoginFinishedPacket(profile));
+		this.requestedUsername = packet.username();
+        if (this.onlineMode) {
+            this.state = State.KEY;
+            connection.send(new S2CHelloPacket("", BrodernProxy.getProxy().keyPair().getPublic().getEncoded(), this.challenge, true));
+        } else {
+            final GameProfile profile = new GameProfile(packet.profileId(), packet.username());
+            handleLoginSuccess(connection, profile);
+        }
 	}
+
+    public void handleC2SKey(final ClientConnection connection, C2SKeyPacket packet) {
+        KeyPair keyPair = BrodernProxy.getProxy().keyPair();
+        final PrivateKey serverPrivateKey = keyPair.getPrivate();
+        if (!packet.isChallengeValid(this.challenge, serverPrivateKey)) {
+            throw new IllegalStateException("Protocol error");
+        }
+
+        SecretKey secretKey = packet.getSecretKey(serverPrivateKey);
+        String digest = new BigInteger(CryptUtil.computeServerIdHash("", keyPair.getPublic(), secretKey)).toString(16);
+
+        try {
+            connection.setEncryption(new AESEncryption(secretKey));
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Protocol error", e);
+        }
+
+        this.state = State.AUTHENTICATING;
+        AUTH_THREAD_BUILDER.start(() -> {
+            try {
+                ProfileResult result = BrodernProxy.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
+                if (result != null) {
+                    handleLoginSuccess(connection, result.profile());
+                } else {
+                    connection.kick("Failed to verify username!");
+                }
+            } catch (AuthenticationUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void handleLoginSuccess(final ClientConnection connection, final GameProfile profile) {
+        connection.setProfile(profile);
+        connection.send(new S2CLoginFinishedPacket(profile));
+    }
 
 	// Configuration
 	public void handleC2SKeepAlive(final ClientConnection connection, final C2SConfigurationKeepAlivePacket packet) {
@@ -211,4 +286,15 @@ public class ClientLoginPipeline {
 
 	public void passServerToNextPipeline(final ClientConnection connection, final BetaPacket packet) {
 	}
+
+    private enum State {
+        HELLO,
+        KEY,
+        AUTHENTICATING,
+        NEGOTIATING,
+        VERIFYING,
+        WAITING_FOR_DUPE_DISCONNECT,
+        PROTOCOL_SWITCHING,
+        ACCEPTED;
+    }
 }

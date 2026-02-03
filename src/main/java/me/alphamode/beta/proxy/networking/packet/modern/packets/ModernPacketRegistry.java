@@ -16,6 +16,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuratio
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.handshaking.C2SIntentionPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SCustomQueryAnswerPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SHelloPacket;
+import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SKeyPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login.C2SLoginAcknowledgedPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.status.C2SStatusPingRequestPacket;
@@ -286,7 +287,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 	private void registerLoginPackets() {
 		// Serverbound
 		this.registerPacket(ServerboundLoginPackets.HELLO, C2SHelloPacket.CODEC);
-		this.registerPacket(ServerboundLoginPackets.KEY, null);
+		this.registerPacket(ServerboundLoginPackets.KEY, C2SKeyPacket.CODEC);
 		this.registerPacket(ServerboundLoginPackets.CUSTOM_QUERY_ANSWER, C2SCustomQueryAnswerPacket.CODEC);
 		this.registerPacket(ServerboundLoginPackets.ACKNOWLEDGED, C2SLoginAcknowledgedPacket.CODEC);
 		this.registerPacket(ServerboundLoginPackets.COOKIE_RESPONSE, null);

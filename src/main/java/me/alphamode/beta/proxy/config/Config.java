@@ -98,10 +98,7 @@ public final class Config {
 	}
 
     public boolean isOnlineMode() {
-        if (isDebug()) {
-            return false;
-        }
-        return this.onlineMode;
+        return true;
     }
 
     public void setOnlineMode(final boolean onlineMode) {
