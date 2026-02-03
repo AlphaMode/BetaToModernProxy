@@ -5,12 +5,12 @@ import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record BlockState(int networkId) {
-    public static final StreamCodec<ByteBuf, BlockState> STREAM_CODEC = StreamCodec.composite(
-            ModernStreamCodecs.VAR_INT, BlockState::networkId,
-            BlockState::new
-    );
+	public static final StreamCodec<ByteBuf, BlockState> STREAM_CODEC = StreamCodec.composite(
+			ModernStreamCodecs.VAR_INT, BlockState::networkId,
+			BlockState::new
+	);
 
-    public boolean isAir() {
-        return networkId == 0;
-    }
+	public boolean isAir() {
+		return networkId == 0;
+	}
 }

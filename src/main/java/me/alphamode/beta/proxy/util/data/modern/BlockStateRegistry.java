@@ -7,33 +7,33 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 
 public class BlockStateRegistry implements IdMap<BlockState> {
-    private final Int2ObjectMap<BlockState> idToState;
+	private final Int2ObjectMap<BlockState> idToState;
 
-    public BlockStateRegistry(Int2ObjectMap<BlockState> idToState) {
-        this.idToState = idToState;
-    }
+	public BlockStateRegistry(Int2ObjectMap<BlockState> idToState) {
+		this.idToState = idToState;
+	}
 
-    @Override
-    public int getId(BlockState thing) {
-        if (idToState.containsKey(thing.networkId()))
-            return thing.networkId();
-        return DEFAULT;
-    }
+	@Override
+	public int getId(BlockState thing) {
+		if (idToState.containsKey(thing.networkId()))
+			return thing.networkId();
+		return DEFAULT;
+	}
 
-    @Override
-    public BlockState byId(int id) {
-        if (idToState.containsKey(id))
-            return this.idToState.get(id);
-        return null;
-    }
+	@Override
+	public BlockState byId(int id) {
+		if (idToState.containsKey(id))
+			return this.idToState.get(id);
+		return null;
+	}
 
-    @Override
-    public int size() {
-        return this.idToState.size();
-    }
+	@Override
+	public int size() {
+		return this.idToState.size();
+	}
 
-    @Override
-    public @NotNull Iterator<BlockState> iterator() {
-        return this.idToState.values().iterator();
-    }
+	@Override
+	public @NotNull Iterator<BlockState> iterator() {
+		return this.idToState.values().iterator();
+	}
 }

@@ -23,7 +23,7 @@ public final class ProxyChannelInitializer extends ChannelInitializer<Channel> {
 	protected void initChannel(final Channel channel) {
 		final ClientConnection connection = new ClientConnection(this.address);
 		final ChannelPipeline pipeline = channel.pipeline();
-        pipeline.addLast(new PacketCryptor());
+		pipeline.addLast(new PacketCryptor());
 		pipeline.addLast(new PacketSizer());
 		pipeline.addLast(ModernPacketCodec.KEY, new ModernPacketCodec(connection));
 		pipeline.addLast(connection);

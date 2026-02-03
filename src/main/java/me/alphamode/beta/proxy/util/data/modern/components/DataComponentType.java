@@ -58,7 +58,8 @@ public interface DataComponentType<T> {
 
 		public DataComponentType<T> build() {
 			// TODO
-			final Codec<T> cachingCodec = this.cacheEncoding && this.codec != null ? this.codec /*DataComponents.ENCODER_CACHE.wrap(this.codec)*/ : this.codec;
+			/*DataComponents.ENCODER_CACHE.wrap(this.codec)*/
+			final Codec<T> cachingCodec = this.codec;
 			return new DataComponentType.Builder.SimpleType<>(cachingCodec, this.streamCodec);
 		}
 

@@ -79,9 +79,9 @@ public record Vec3i(int x, int y, int z) {
 		return new BlockPos(this.x, this.y, this.z);
 	}
 
-    public Vec3i divide(final int divider) {
-        return new Vec3i(this.x / divider, this.y / divider, this.z / divider);
-    }
+	public Vec3i divide(final int divider) {
+		return new Vec3i(this.x / divider, this.y / divider, this.z / divider);
+	}
 
 	public Vec3d toVec3d() {
 		return new Vec3d(this.x, this.y, this.z);

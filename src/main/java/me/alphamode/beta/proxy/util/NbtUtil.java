@@ -12,10 +12,11 @@ import java.nio.file.Path;
 import java.util.zip.GZIPInputStream;
 
 public class NbtUtil {
-    public static CompoundTag readCompressed(final Path path) throws IOException {
-        return readCompressed(new FileInputStream(path.toFile()));
-    }
-    public static CompoundTag readCompressed(final InputStream stream) throws IOException {
-        return NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(stream)), new NbtReadTracker()).getTag().asCompoundTag();
-    }
+	public static CompoundTag readCompressed(final Path path) throws IOException {
+		return readCompressed(new FileInputStream(path.toFile()));
+	}
+
+	public static CompoundTag readCompressed(final InputStream stream) throws IOException {
+		return NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(stream)), new NbtReadTracker()).getTag().asCompoundTag();
+	}
 }

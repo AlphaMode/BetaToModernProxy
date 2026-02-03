@@ -11,7 +11,7 @@ import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddPlayerPacket(int entityId, String name, Vec3i position, byte packedYRot, byte packedXRot,
-                              short carriedItem) implements BetaPacket {
+							  short carriedItem) implements BetaPacket {
 	public static final int MAX_NAME_LENGTH = 16;
 	public static final StreamCodec<ByteBuf, String> NAME_CODEC = BetaStreamCodecs.stringUtf8(MAX_NAME_LENGTH);
 	public static final StreamCodec<ByteBuf, AddPlayerPacket> CODEC = StreamCodec.composite(
@@ -30,17 +30,17 @@ public record AddPlayerPacket(int entityId, String name, Vec3i position, byte pa
 			AddPlayerPacket::new
 	);
 
-    public Vec3d getPosition() {
-        return this.position.toVec3d().divide(32.0);
-    }
+	public Vec3d getPosition() {
+		return this.position.toVec3d().divide(32.0);
+	}
 
-    public float getYRot() {
-        return Mth.unpackDegrees(this.packedYRot);
-    }
+	public float getYRot() {
+		return Mth.unpackDegrees(this.packedYRot);
+	}
 
-    public float getXRot() {
-        return Mth.unpackDegrees(this.packedXRot);
-    }
+	public float getXRot() {
+		return Mth.unpackDegrees(this.packedXRot);
+	}
 
 	@Override
 	public BetaPackets getType() {

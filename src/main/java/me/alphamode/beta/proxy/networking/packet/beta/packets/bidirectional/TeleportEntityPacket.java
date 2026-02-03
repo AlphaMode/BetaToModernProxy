@@ -9,7 +9,8 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
-public record TeleportEntityPacket(int entityId, Vec3i position, byte packedYRot, byte packedXRot) implements BetaPacket {
+public record TeleportEntityPacket(int entityId, Vec3i position, byte packedYRot,
+								   byte packedXRot) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, TeleportEntityPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
 			TeleportEntityPacket::entityId,
@@ -27,17 +28,17 @@ public record TeleportEntityPacket(int entityId, Vec3i position, byte packedYRot
 		return BetaPackets.TELEPORT_ENTITY;
 	}
 
-    public Vec3d getPosition() {
-        return this.position.toVec3d().divide(32.0);
-    }
+	public Vec3d getPosition() {
+		return this.position.toVec3d().divide(32.0);
+	}
 
-    public float getYRot() {
-        return Mth.unpackDegrees(this.packedYRot);
-    }
+	public float getYRot() {
+		return Mth.unpackDegrees(this.packedYRot);
+	}
 
-    public float getXRot() {
-        return Mth.unpackDegrees(this.packedXRot);
-    }
+	public float getXRot() {
+		return Mth.unpackDegrees(this.packedXRot);
+	}
 
 //    public TeleportEntityPacket(Entity entity) {
 //        this.entityId = entity.entityId;

@@ -9,7 +9,7 @@ import java.net.Proxy;
 
 public final class Main {
 	static void main(final String[] args) {
-        HttpAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
+		HttpAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
 		new BrodernProxy(new Config(), CryptUtil.generateKeyPair(), authService.createMinecraftSessionService(), authService.createProfileRepository()).listen();
 	}
 }

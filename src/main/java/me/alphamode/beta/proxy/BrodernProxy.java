@@ -1,7 +1,6 @@
 package me.alphamode.beta.proxy;
 
 import com.mojang.authlib.GameProfileRepository;
-import com.mojang.authlib.HttpAuthenticationService;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
@@ -24,7 +23,8 @@ import java.security.KeyPair;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
-public record BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionService sessionService, GameProfileRepository profileRepository) {
+public record BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionService sessionService,
+						   GameProfileRepository profileRepository) {
 	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
 
 	private static BrodernProxy INSTANCE;

@@ -27,13 +27,13 @@ public record AddItemEntityPacket(int entityId, BetaItemStack item, Vec3i positi
 			AddItemEntityPacket::new
 	);
 
-    public Vec3d getPosition() {
-        return this.position.toVec3d().divide(32.0);
-    }
+	public Vec3d getPosition() {
+		return this.position.toVec3d().divide(32.0);
+	}
 
-    public Vec3d getMovement() {
-        return new Vec3d(this.xa / 128.0, this.ya / 128.0, this.za / 128.0);
-    }
+	public Vec3d getMovement() {
+		return new Vec3d(this.xa / 128.0, this.ya / 128.0, this.za / 128.0);
+	}
 
 	@Override
 	public BetaPackets getType() {

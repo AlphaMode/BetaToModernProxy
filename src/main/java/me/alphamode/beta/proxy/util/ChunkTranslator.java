@@ -287,7 +287,7 @@ public class ChunkTranslator {
 			for (int z = z0; z < z1; z++) {
 				final int packedPos = (x << 11 | z << 7 | y0) >> 1;
 				final int offset = (y1 - y0) / 2;
-				 System.arraycopy(chunkData, size, chunk.skyLight.data(), packedPos, offset);
+				System.arraycopy(chunkData, size, chunk.skyLight.data(), packedPos, offset);
 				size += offset;
 			}
 		}

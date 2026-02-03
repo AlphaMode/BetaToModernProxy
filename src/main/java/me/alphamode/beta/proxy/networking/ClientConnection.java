@@ -25,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.SocketAddress;
-
 import java.util.UUID;
 
 public final class ClientConnection extends SimpleChannelInboundHandler<ModernPacket<?>> implements PacketHandler {
@@ -40,7 +39,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	private GameProfile profile;
 	private int protocolVersion = BetaPacket.PROTOCOL_VERSION; // Assume Beta?
 	private long lastKeepAliveId = 0L;
-    private SocketAddress remoteAddress;
+	private SocketAddress remoteAddress;
 
 	public ClientConnection(final MinecraftServerAddress address) {
 		this.address = address;
@@ -57,9 +56,9 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		}
 	}
 
-    public void setEncryption(AESEncryption encryption) {
-        this.clientChannel.attr(MCPipeline.ENCRYPTION_ATTRIBUTE_KEY).set(encryption);
-    }
+	public void setEncryption(AESEncryption encryption) {
+		this.clientChannel.attr(MCPipeline.ENCRYPTION_ATTRIBUTE_KEY).set(encryption);
+	}
 
 	public void kick(final TextComponent message) {
 		LOGGER.error("Kicking client with reason: {}", message.toString());
@@ -116,9 +115,9 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		this.state = state;
 	}
 
-    public SocketAddress getRemoteAddress() {
-        return this.remoteAddress;
-    }
+	public SocketAddress getRemoteAddress() {
+		return this.remoteAddress;
+	}
 
 	public GameProfile getProfile() {
 		return this.profile;
@@ -170,7 +169,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 	@Override
 	public void channelActive(final ChannelHandlerContext context) {
 		this.clientChannel = context.channel();
-        this.remoteAddress = this.clientChannel.remoteAddress();
+		this.remoteAddress = this.clientChannel.remoteAddress();
 		this.serverConnection = new ServerConnection(this.address, this);
 	}
 

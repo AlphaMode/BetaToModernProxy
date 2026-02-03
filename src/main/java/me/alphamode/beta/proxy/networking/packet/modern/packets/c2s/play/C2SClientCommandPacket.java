@@ -19,6 +19,6 @@ public record C2SClientCommandPacket(Action action) implements C2SPlayPacket {
 
 	public enum Action {
 		PERFORM_RESPAWN,
-		REQUEST_STATS;
+		REQUEST_STATS
 	}
 }

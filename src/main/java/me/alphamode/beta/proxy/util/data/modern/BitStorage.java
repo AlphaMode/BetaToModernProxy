@@ -3,21 +3,21 @@ package me.alphamode.beta.proxy.util.data.modern;
 import java.util.function.IntConsumer;
 
 public interface BitStorage {
-    int getAndSet(int index, int value);
+	int getAndSet(int index, int value);
 
-    void set(int index, int value);
+	void set(int index, int value);
 
-    int get(int index);
+	int get(int index);
 
-    long[] getRaw();
+	long[] getRaw();
 
-    int getSize();
+	int size();
 
-    int getBits();
+	int getBits();
 
-    void getAll(IntConsumer output);
+	void getAll(IntConsumer output);
 
-    void unpack(int[] output);
+	void unpack(int[] output);
 
-    BitStorage copy();
+	BitStorage copy();
 }

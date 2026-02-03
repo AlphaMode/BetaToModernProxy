@@ -25,6 +25,6 @@ public record PlayerCommandPacket(int id, Action action) implements BetaPacket {
 		NONE,
 		CROUCH,
 		UNCROUCH,
-		WAKE_UP;
+		WAKE_UP
 	}
 }
