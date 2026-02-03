@@ -404,26 +404,29 @@ public class PlayPipeline {
 	public void handleC2SC2SContainerClick(final ClientConnection connection, final C2SContainerClickPacket packet) {
 		LOGGER.info("Container Click: (containerId={}, slot={}, button={}, clickType={})", packet.containerId(), packet.slot(), packet.button(), packet.clickType());
 
+		ModernItemStack modernStack = ModernItemStack.EMPTY;
 		BetaItemStack stack = BetaItemStack.EMPTY;
 		if (packet.carriedItem() instanceof HashedStack.ActualItem(int itemId, int count, HashedPatchMap components)) {
-			stack = ItemTranslator.toBetaStack(new ModernItemStack(itemId, count, DataComponentPatch.EMPTY)); // TODO: components
+			modernStack = new ModernItemStack(itemId, count, DataComponentPatch.EMPTY);
+			stack = ItemTranslator.toBetaStack(modernStack); // TODO: components
 		}
 
-		if (packet.slot() == 45) {
+		if (packet.slot() != 45) {
 			// Cancel Offhand
-			// TODO: put item back in cursor/don't drop
-			return;
+			final short uid = lastUid++;
+			connection.getServerConnection().send(new ContainerClickPacket(
+					(byte) packet.containerId(),
+					packet.slot(),
+					packet.button(),
+					uid,
+					packet.clickType() == C2SContainerClickPacket.ClickType.QUICK_MOVE,
+					stack
+			));
 		}
 
-		final short uid = lastUid++;
-		connection.getServerConnection().send(new ContainerClickPacket(
-				(byte) packet.containerId(),
-				packet.slot(),
-				packet.button(),
-				uid,
-				packet.clickType() == C2SContainerClickPacket.ClickType.QUICK_MOVE,
-				stack
-		));
+		if (packet.clickType() == C2SContainerClickPacket.ClickType.PICKUP || packet.clickType() == C2SContainerClickPacket.ClickType.PICKUP_ALL) {
+			connection.send(new S2CSetCursorItemPacket(modernStack));
+		}
 	}
 
 	public void handleS2CContainerSetSlot(final ClientConnection connection, final ContainerSetSlotPacket packet) {
