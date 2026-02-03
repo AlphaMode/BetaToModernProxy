@@ -13,7 +13,7 @@ public record MessageSignature(byte[] values) {
 	);
 
 	public MessageSignature {
-		if (values.length == 256) {
+		if (values.length != 256) {
 			throw new IllegalArgumentException("Invalid message signature size");
 		}
 	}
