@@ -57,4 +57,8 @@ public record BetaItemStack(int itemId, int count, int aux) {
 			return new BetaItemStack(id, 1, buf.readShort());
 		}
 	};
+
+	public boolean isEmpty() {
+		return this.itemId == 0 || this.count <= 0;
+	}
 }

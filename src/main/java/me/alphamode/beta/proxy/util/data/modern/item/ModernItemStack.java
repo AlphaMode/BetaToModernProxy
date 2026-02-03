@@ -5,8 +5,6 @@ import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 
-import java.util.Optional;
-
 public record ModernItemStack(int itemId, int count, DataComponentPatch components) {
 	public static final ModernItemStack EMPTY = new ModernItemStack(0, 0, DataComponentPatch.EMPTY);
 	public static final StreamCodec<ByteBuf, ModernItemStack> CODEC = null;
@@ -27,9 +25,9 @@ public record ModernItemStack(int itemId, int count, DataComponentPatch componen
 			if (count <= 0) {
 				return ModernItemStack.EMPTY;
 			} else {
-				final Optional<Integer> id = ModernStreamCodecs.optional(ModernStreamCodecs.VAR_INT).decode(buf);
-				final Optional<DataComponentPatch> components = ModernStreamCodecs.optional(DataComponentPatch.STREAM_CODEC).decode(buf);
-				return new ModernItemStack(id.orElse(0), count, components.orElse(DataComponentPatch.EMPTY));
+				final int id = ModernStreamCodecs.VAR_INT.decode(buf);
+				final DataComponentPatch components = DataComponentPatch.STREAM_CODEC.decode(buf);
+				return new ModernItemStack(id, count, components);
 			}
 		}
 	};
