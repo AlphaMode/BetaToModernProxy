@@ -15,37 +15,24 @@ public final class ServerConnection extends NetClient {
 
 	ServerConnection(final MinecraftServerAddress address, final ClientConnection connection) {
 		this.connection = connection;
-		super(new ChannelInitializer<>() {
-			@Override
-			protected void initChannel(final Channel channel) {
-				final ChannelPipeline pipeline = channel.pipeline();
-				pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
-				pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter(connection));
-				pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
-					@Override
-					protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
-						connection.getActivePipeline().handleServer(connection, msg);
-					}
-				});
-			}
-		});
+		super(new ServerChannelInitializer(connection));
 
 		this.connect(address).addListener(future -> {
 			if (!future.isSuccess()) {
-				LOGGER.info("Failed to connect proxy #{} to real server!", connection.getId());
+				LOGGER.info("Failed to connect proxy #{} to real server!", connection.getUniqueId());
 				future.cause().printStackTrace();
 				connection.disconnect();
 				return;
 			}
 
 			if (!this.isConnected()) {
-				LOGGER.info("Client #{} already has disconnected, closing the server connection!", connection.getId());
+				LOGGER.info("Client #{} already has disconnected, closing the server connection!", connection.getUniqueId());
 				this.disconnect();
 				return;
 			}
 
-			LOGGER.info("Proxy #{} connected to {}", connection.getId(), address);
-		}).syncUninterruptibly();
+			LOGGER.info("Proxy #{} connected to {}", connection.getUniqueId(), address);
+		});
 
 		this.getChannel().closeFuture().addListener(_ -> {
 			if (connection.isConnected()) {
@@ -57,17 +44,47 @@ public final class ServerConnection extends NetClient {
 	public void send(final BetaPacket packet) {
 		if (this.isConnected()) {
 			this.getChannel().writeAndFlush(packet);
-		} else {
-			throw new RuntimeException("Cannot write to dead server connection!");
 		}
 	}
 
 	public void disconnect() {
-		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getId());
-		this.getChannel().close().syncUninterruptibly();
+		LOGGER.info("Disconnected Proxy #{} from real server!", this.connection.getUniqueId());
+		if (this.isConnected()) {
+			this.getChannel().close();
+		}
 	}
 
 	public boolean isConnected() {
 		return this.getChannel().isActive();
+	}
+
+	private static class ServerChannelInitializer extends ChannelInitializer<Channel> {
+		private final ClientConnection connection;
+
+		public ServerChannelInitializer(final ClientConnection connection) {
+			super();
+			this.connection = connection;
+		}
+
+		@Override
+		protected void initChannel(final Channel channel) {
+			final ChannelPipeline pipeline = channel.pipeline();
+			pipeline.addLast(BetaPacketReader.KEY, new BetaPacketReader(connection));
+			pipeline.addLast(BetaPacketWriter.KEY, new BetaPacketWriter(connection));
+			pipeline.addLast("rewriter", new SimpleChannelInboundHandler<BetaPacket>() {
+				@Override
+				protected void channelRead0(final ChannelHandlerContext context, final BetaPacket msg) {
+					if (connection.isConnected()) {
+						connection.getActivePipeline().handleServer(connection, msg);
+					}
+				}
+			});
+		}
+
+		@Override
+		public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
+			super.exceptionCaught(ctx, cause);
+			cause.printStackTrace();
+		}
 	}
 }
