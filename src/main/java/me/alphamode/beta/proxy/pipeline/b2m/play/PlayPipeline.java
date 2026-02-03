@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.pipeline.b2m.play;
 
 import com.mojang.authlib.GameProfile;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.entity.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
@@ -13,6 +15,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
+import me.alphamode.beta.proxy.util.EntityDataTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
 import me.alphamode.beta.proxy.util.data.*;
 import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
@@ -43,13 +46,17 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
+            // Entities
+            .serverHandler(RemoveEntityPacket.class, PlayPipeline::handleS2CRemoveEntity)
 			.serverHandler(AddMobPacket.class, PlayPipeline::handleS2CAddMob)
 			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
 			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
 			.serverHandler(AddPaintingPacket.class, PlayPipeline::handleS2CAddPainting)
 			.serverHandler(AddItemEntityPacket.class, PlayPipeline::handleS2CAddItemEntity)
+            .serverHandler(SetEntityDataPacket.class, PlayPipeline::handleS2CSetEntityData)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
+
 			.serverHandler(GameEventPacket.class, PlayPipeline::handleS2CGameEvent)
 			.clientHandler(C2SInteractPacket.class, PlayPipeline::handleC2SInteract)
 			.clientHandler(C2SUseItemPacket.class, PlayPipeline::handleC2SUseItem)
@@ -59,7 +66,6 @@ public class PlayPipeline {
 			.clientHandler(C2SChatPacket.class, PlayPipeline::handleC2SChat)
 			.clientHandler(C2SChatCommandPacket.class, PlayPipeline::handleC2SChatCommand)
 			.clientHandler(C2SClientTickEndPacket.class, PlayPipeline::handleC2STickEnd)
-			.serverHandler(RemoveEntityPacket.class, PlayPipeline::handleS2CRemoveEntity)
 			.serverHandler(MoveEntityPacket.class, PlayPipeline::handleS2CMoveEntity)
 			.serverHandler(MovePlayerPacket.class, PlayPipeline::handleS2CMovePlayer)
 			.clientHandler(C2SMovePlayerPacket.class, PlayPipeline::handleC2SMovePlayerPos)
@@ -87,6 +93,7 @@ public class PlayPipeline {
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
 
+    private final Int2ObjectMap<ModernEntityTypes> idToTypeMap = new Int2ObjectOpenHashMap<>();
 	protected final Player player;
 	protected long seed;
 	protected short lastUid = 0;
@@ -176,13 +183,27 @@ public class PlayPipeline {
 		};
 	}
 
+    public void addEntity(final ClientConnection connection, final S2CAddEntityPacket packet) {
+        idToTypeMap.put(packet.entityId(), packet.type());
+        connection.send(packet);
+    }
+
+    public void removeEntity(final int entityId) {
+        idToTypeMap.remove(entityId);
+    }
+
+    public void handleS2CRemoveEntity(final ClientConnection connection, final RemoveEntityPacket packet) {
+        removeEntity(packet.entityId());
+        connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
+    }
+
 	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
 		final ModernEntityTypes mappedType = mapBetaToModernEntityId(packet.type());
 		if (mappedType == null) {
 			return;
 		}
 
-		connection.send(new S2CAddEntityPacket(
+		addEntity(connection, new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
 				mappedType,
@@ -201,7 +222,7 @@ public class PlayPipeline {
 			return;
 		}
 
-		connection.send(new S2CAddEntityPacket(
+		addEntity(connection, new S2CAddEntityPacket(
 				packet.entityId(),
 				UUID.randomUUID(),
 				mappedType,
@@ -222,7 +243,7 @@ public class PlayPipeline {
 		final UUID uuid = lookupUUID(packet.entityId());
 		connection.send(new S2CBundleDelimiterPacket());
 		connection.send(S2CPlayerInfoUpdatePacket.addPlayer(new GameProfile(uuid, packet.name())));
-		connection.send(new S2CAddEntityPacket(
+		addEntity(connection, new S2CAddEntityPacket(
 				packet.entityId(),
 				uuid,
 				ModernEntityTypes.PLAYER,
@@ -275,6 +296,10 @@ public class PlayPipeline {
 		));
 		connection.send(new S2CBundleDelimiterPacket());
 	}
+
+    public void handleS2CSetEntityData(final ClientConnection connection, final SetEntityDataPacket packet) {
+        EntityDataTranslator.translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
+    }
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (InteractionHand.MAIN_HAND.equals(packet.hand())) {
@@ -386,10 +411,6 @@ public class PlayPipeline {
 	public void handleC2STickEnd(final ClientConnection connection, final C2SClientTickEndPacket packet) {
 		connection.tick();
 		this.player.tick();
-	}
-
-	public void handleS2CRemoveEntity(final ClientConnection connection, final RemoveEntityPacket packet) {
-		connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
 	}
 
 	static long encode(final double input) {
