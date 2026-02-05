@@ -301,7 +301,8 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CSetEntityData(final ClientConnection connection, final SetEntityDataPacket packet) {
-		EntityDataTranslator.translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
+		List<ModernSynchedEntityData.DataValue<?>> newValues = BrodernProxy.getProxy().getEntityDataTranslator().translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
+        connection.send(new S2CSetEntityDataPacket(packet.id(), newValues));
 	}
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {

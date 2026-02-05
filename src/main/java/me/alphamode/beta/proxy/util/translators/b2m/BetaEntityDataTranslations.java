@@ -9,11 +9,8 @@ import me.alphamode.beta.proxy.util.translators.EntityDataTranslator;
 
 import java.util.function.Consumer;
 
-import static me.alphamode.beta.proxy.util.translators.EntityDataTranslator.registerEntityTranslation;
-import static me.alphamode.beta.proxy.util.translators.EntityDataTranslator.registerTranslation;
-
 public class BetaEntityDataTranslations {
-    public static final EntityDataTranslator.DataAccessor<Byte> SHARED_FLAG = new EntityDataTranslator.DataAccessor<>(0, BetaSynchedEntityData.DataType.BYTE);
+    public static final EntityDataTranslator.DataAccessor<Byte, BetaSynchedEntityData.DataItem<Byte>> SHARED_FLAG = new EntityDataTranslator.DataAccessor<>(0);
 
     public static boolean getSharedFlag(final int flag, final byte data) {
         return (data & 1 << flag) != 0;
@@ -43,13 +40,17 @@ public class BetaEntityDataTranslations {
         modernFlag = setSharedFlag(SNEAKING_FLAG, sneaking, modernFlag);
 
         output.accept(new ModernSynchedEntityData.DataValue<>((byte) SHARED_FLAG.id(), EntityDataSerializers.BYTE, modernFlag));
+
+        if (isPlayer) {
+
+        }
     }
 
-    public static void register() {
-        registerTranslation(SHARED_FLAG, (connection, item, output) -> {
+    public static void register(EntityDataTranslator<BetaSynchedEntityData.DataItem<?>, ModernSynchedEntityData.DataValue<?>> translator) {
+        translator.registerTranslation(SHARED_FLAG, (connection, item, output) -> {
             translateSharedFlags(false, connection, item, output);
         });
-        registerEntityTranslation(ModernEntityTypes.PLAYER, SHARED_FLAG, (connection, item, output) -> {
+        translator.registerEntityTranslation(ModernEntityTypes.PLAYER, SHARED_FLAG, (connection, item, output) -> {
             translateSharedFlags(true, connection, item, output);
         });
     }

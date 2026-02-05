@@ -18,21 +18,22 @@ public class EntityDataTranslator<FROM extends EntityDataValue<?>, TO extends En
 	private final Int2ObjectMap<DataTranslator<?, FROM, TO>> translators = new Int2ObjectOpenHashMap<>();
 	private final Object2ObjectMap<EntityDataAccessor<?>, DataTranslator<?, FROM, TO>> entityTranslators = new Object2ObjectOpenHashMap<>();
 
-	public void translate(final ClientConnection connection, final int entityId, final ModernEntityTypes type, final List<FROM> packedItem) {
-		List<EntityDataValue<?>> newValues = new ArrayList<>();
+	public List<TO> translate(final ClientConnection connection, final int entityId, final ModernEntityTypes type, final List<FROM> packedItem) {
+		List<TO> newValues = new ArrayList<>();
 		for (final FROM item : packedItem) {
 			final int id = item.id();
 			translators.get(id).translate(connection, item, newValues::add);
 		}
-		connection.send(new S2CSetEntityDataPacket(entityId, newValues));
+
+        return newValues;
 	}
 
-	public <T, FROM extends EntityDataValue<T>, TO extends EntityDataValue<?>> void registerTranslation(DataAccessor<T> id, DataTranslator<T, FROM, TO> translator) {
+	public <V, F extends EntityDataValue<V>> void registerTranslation(DataAccessor<V, F> id, DataTranslator<V, F, TO> translator) {
 		translators.put(id.id(), (DataTranslator) translator);
 	}
 
-	public <T, FROM extends EntityDataValue<T>, TO extends EntityDataValue<?>> void registerEntityTranslation(final ModernEntityTypes type, DataAccessor<T> id, DataTranslator<T, FROM, TO> translator) {
-		entityTranslators.put(new EntityDataAccessor<>(type, id), translator);
+	public <V, F extends EntityDataValue<V>> void registerEntityTranslation(final ModernEntityTypes type, DataAccessor<V, F> id, DataTranslator<V, F, TO> translator) {
+		entityTranslators.put(new EntityDataAccessor<>(type, id), (DataTranslator) translator);
 	}
 
 	public interface DataTranslator<T, FROM extends EntityDataValue<T>, TO extends EntityDataValue<?>> {
@@ -42,6 +43,6 @@ public class EntityDataTranslator<FROM extends EntityDataValue<?>, TO extends En
 	public record EntityDataAccessor<T>(ModernEntityTypes type, DataAccessor<T> accessor) {
 	}
 
-	public record DataAccessor<T>(int id, BetaSynchedEntityData.DataType type) {
+	public record DataAccessor<T, V extends EntityDataValue<T>>(int id) {
 	}
 }

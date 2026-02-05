@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModernSynchedEntityData {
-	public static final StreamCodec<ByteBuf, List<EntityDataValue<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteBuf, List<DataValue<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final List<EntityDataValue<?>> dataItems) {
+		public void encode(final ByteBuf buf, final List<DataValue<?>> dataItems) {
 			for (final EntityDataValue<?> dataItem : dataItems) {
 				dataItem.write(buf);
 			}
@@ -20,8 +20,8 @@ public class ModernSynchedEntityData {
 		}
 
 		@Override
-		public List<EntityDataValue<?>> decode(final ByteBuf buf) {
-			final List<EntityDataValue<?>> items = new ArrayList<>();
+		public List<DataValue<?>> decode(final ByteBuf buf) {
+			final List<DataValue<?>> items = new ArrayList<>();
 
 			int id;
 			while ((id = buf.readUnsignedByte()) != 255) {

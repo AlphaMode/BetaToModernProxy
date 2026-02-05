@@ -10,7 +10,7 @@ import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 import java.util.List;
 
 public record S2CSetEntityDataPacket(int id,
-									 List<EntityDataValue<?>> packedItems) implements S2CPlayPacket {
+									 List<ModernSynchedEntityData.DataValue<?>> packedItems) implements S2CPlayPacket {
 	public static final StreamCodec<ByteBuf, S2CSetEntityDataPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.VAR_INT,
 			S2CSetEntityDataPacket::id,

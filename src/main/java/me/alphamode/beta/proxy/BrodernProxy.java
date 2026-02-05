@@ -11,6 +11,7 @@ import me.alphamode.beta.proxy.util.NbtUtil;
 import me.alphamode.beta.proxy.util.data.beta.BetaBlocks;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItems;
 import me.alphamode.beta.proxy.util.translators.EntityDataTranslator;
+import me.alphamode.beta.proxy.util.translators.b2m.BetaEntityDataTranslations;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.nbt.io.NbtReadTracker;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
@@ -35,10 +36,12 @@ public class BrodernProxy {
 	private static final CompoundTag BETA_TO_MODERN_ITEMS;
 	private static final BlockTranslator BLOCK_TRANSLATOR;
 
-	private Config config;
-	private KeyPair keyPair;
-	private MinecraftSessionService sessionService;
-	private GameProfileRepository profileRepository;
+	private final Config config;
+	private final KeyPair keyPair;
+	private final MinecraftSessionService sessionService;
+	private final GameProfileRepository profileRepository;
+    private final EntityDataTranslator<BetaSynchedEntityData.DataItem<?>, ModernSynchedEntityData.DataValue<?>> entityDataTranslator;
+
 	private int onlinePlayers = 0;
 
 	static {
@@ -81,6 +84,8 @@ public class BrodernProxy {
 		this.keyPair = keyPair;
 		this.sessionService = sessionService;
 		this.profileRepository = profileRepository;
+        this.entityDataTranslator = new EntityDataTranslator<>();
+        BetaEntityDataTranslations.register();
 
 		INSTANCE = this;
 		config.load();
@@ -103,6 +108,10 @@ public class BrodernProxy {
 	public boolean isDebug() {
 		return this.config.isDebug();
 	}
+
+    public EntityDataTranslator<BetaSynchedEntityData.DataItem<?>, ModernSynchedEntityData.DataValue<?>> getEntityDataTranslator() {
+
+    }
 
 	public static CompoundTag getDefaultTags() {
 		return DEFAULT_TAGS;

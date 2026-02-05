@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BetaSynchedEntityData {
-	public static final StreamCodec<ByteBuf, List<EntityDataValue<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final List<EntityDataValue<?>> dataItems) {
-			for (final EntityDataValue<?> dataItem : dataItems) {
+		public void encode(final ByteBuf buf, final List<DataItem<?>> dataItems) {
+			for (final DataItem<?> dataItem : dataItems) {
 				dataItem.write(buf);
 			}
 
@@ -23,8 +23,8 @@ public class BetaSynchedEntityData {
 		}
 
 		@Override
-		public List<EntityDataValue<?>> decode(final ByteBuf buf) {
-			final List<EntityDataValue<?>> items = new ArrayList<>();
+		public List<DataItem<?>> decode(final ByteBuf buf) {
+			final List<DataItem<?>> items = new ArrayList<>();
 			for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
 				final DataType type = DataType.values()[(i & 224) >> 5];
 				items.add(new DataItem<>(type, i & 31, type.getCodec().decode(buf)));
