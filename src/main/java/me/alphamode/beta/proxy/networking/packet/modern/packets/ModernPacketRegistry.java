@@ -33,7 +33,11 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
 
 	private ModernPacketRegistry() {
-		this.registerVanillaPackets();
+		this.registerHandshakingPackets();
+		this.registerPlayPackets();
+		this.registerStatusPackets();
+		this.registerLoginPackets();
+		this.registerConfigurationPackets();
 	}
 
 	@Override
@@ -44,14 +48,6 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		} else {
 			return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
 		}
-	}
-
-	private void registerVanillaPackets() {
-		this.registerHandshakingPackets();
-		this.registerPlayPackets();
-		this.registerStatusPackets();
-		this.registerLoginPackets();
-		this.registerConfigurationPackets();
 	}
 
 	private void registerHandshakingPackets() {

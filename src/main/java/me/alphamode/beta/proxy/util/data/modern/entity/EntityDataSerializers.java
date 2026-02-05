@@ -30,7 +30,7 @@ public class EntityDataSerializers {
 	public static final StreamCodec<ByteBuf, Float> FLOAT = register(3, BasicStreamCodecs.FLOAT);
 	public static final StreamCodec<ByteBuf, String> STRING = register(4, ModernStreamCodecs.STRING_UTF8);
 	public static final StreamCodec<ByteBuf, ModernItemStack> ITEM_STACK = register(7, ModernItemStack.OPTIONAL_CODEC);
-	//    public static final StreamCodec<ByteBuf, BlockState> BLOCK_STATE = register(14, ModernStreamCodecs.idMapper(BlockStateRegistry.BLOCK_STATE_REGISTRY));
+	// public static final StreamCodec<ByteBuf, BlockState> BLOCK_STATE = register(14, ModernStreamCodecs.idMapper(BlockStateRegistry.BLOCK_STATE_REGISTRY));
 	public static final StreamCodec<ByteBuf, Direction> DIRECTION = register(12, ModernStreamCodecs.VAR_INT.map(Direction::from3DDataValue, Direction::ordinal));
 	public static final StreamCodec<ByteBuf, Integer> PAINTING_VARIANT = register(30, ModernStreamCodecs.VAR_INT);
 
@@ -42,10 +42,11 @@ public class EntityDataSerializers {
 	}
 
 	public static int getSerializedId(final StreamCodec<ByteBuf, ?> serializer) {
-		int serializerId = BY_CODEC.getOrDefault(serializer, -1);
+		final int serializerId = BY_CODEC.getOrDefault(serializer, -1);
 		if (serializerId == -1) {
 			throw new EncoderException("Unknown serializer type " + serializer);
+		} else {
+			return serializerId;
 		}
-		return serializerId;
 	}
 }

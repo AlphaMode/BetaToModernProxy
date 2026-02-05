@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 
 public class BlockStateRegistry implements IdMap<BlockState> {
+	// public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new IdMapper<>();
 	private final Int2ObjectMap<BlockState> idToState;
 
 	public BlockStateRegistry(Int2ObjectMap<BlockState> idToState) {
@@ -15,16 +16,20 @@ public class BlockStateRegistry implements IdMap<BlockState> {
 
 	@Override
 	public int getId(BlockState thing) {
-		if (idToState.containsKey(thing.networkId()))
+		if (idToState.containsKey(thing.networkId())) {
 			return thing.networkId();
-		return DEFAULT;
+		} else {
+			return DEFAULT;
+		}
 	}
 
 	@Override
 	public BlockState byId(int id) {
-		if (idToState.containsKey(id))
+		if (idToState.containsKey(id)) {
 			return this.idToState.get(id);
-		return null;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
