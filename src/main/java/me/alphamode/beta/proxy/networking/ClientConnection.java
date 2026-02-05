@@ -69,7 +69,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 			this.send(disconnectPacket);
 		}
 
-		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
+		if (this.isConnected()) {
+			BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
+		}
+
 		this.disconnect();
 	}
 
@@ -184,6 +187,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
+		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
 		this.disconnect();
 	}
 
