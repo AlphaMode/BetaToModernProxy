@@ -173,7 +173,6 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		this.serverConnection = new ServerConnection(this.address, this);
 	}
 
-	// Out channel (Writing from Proxy to Serer)
 	@Override
 	protected void channelRead0(final ChannelHandlerContext context, final ModernPacket<?> packet) {
 		if (this.isConnected()) {

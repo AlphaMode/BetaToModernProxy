@@ -12,12 +12,16 @@ import org.apache.logging.log4j.Logger;
 public final class ServerConnection extends NetClient {
 	private static final Logger LOGGER = LogManager.getLogger(ServerConnection.class);
 	private final ClientConnection connection;
+	private final MinecraftServerAddress address;
 
 	ServerConnection(final MinecraftServerAddress address, final ClientConnection connection) {
-		this.connection = connection;
 		super(new ServerChannelInitializer(connection));
+		this.connection = connection;
+		this.address = address;
+	}
 
-		this.connect(address).addListener(future -> {
+	public void connect() {
+		this.connect(this.address).addListener(future -> {
 			if (!future.isSuccess()) {
 				LOGGER.info("Failed to connect proxy #{} to real server!", connection.getUniqueId());
 				future.cause().printStackTrace();

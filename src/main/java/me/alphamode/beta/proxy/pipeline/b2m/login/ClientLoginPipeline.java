@@ -91,6 +91,7 @@ public class ClientLoginPipeline {
 
 	@Nullable
 	private String requestedUsername;
+
 	@Nullable
 	private GameProfile authenticatedProfile;
 
@@ -135,9 +136,9 @@ public class ClientLoginPipeline {
 		connection.setState(PacketState.LOGIN);
 		if (packet.protocolVersion() != ModernPacket.PROTOCOL_VERSION) {
 			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernPacket.PROTOCOL_VERSION);
-		} else if (!connection.getServerConnection().isConnected()) {
-			connection.kick("Server is not connected!");
 		}
+
+		connection.getServerConnection().connect();
 	}
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
