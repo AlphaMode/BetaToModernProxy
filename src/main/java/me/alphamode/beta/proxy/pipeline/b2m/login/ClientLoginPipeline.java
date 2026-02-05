@@ -118,7 +118,7 @@ public class ClientLoginPipeline {
 		final BrodernProxy proxy = BrodernProxy.getProxy();
 		connection.send(new S2CStatusResponsePacket(new ServerStatus(
 				proxy.config().getMessage(),
-				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
+				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), proxy.onlinePlayers(), List.of())),
 				Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernPacket.PROTOCOL_VERSION)),
 				Optional.empty(),
 				false
@@ -170,7 +170,7 @@ public class ClientLoginPipeline {
 		this.state = State.AUTHENTICATING;
 		AUTH_THREAD_BUILDER.start(() -> {
 			try {
-				ProfileResult result = BrodernProxy.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
+				final ProfileResult result = BrodernProxy.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
 				if (result != null) {
 					handleLoginSuccess(connection, result.profile());
 				} else {
@@ -185,6 +185,7 @@ public class ClientLoginPipeline {
 	public void handleLoginSuccess(final ClientConnection connection, final GameProfile profile) {
 		connection.setProfile(profile);
 		connection.send(new S2CLoginFinishedPacket(profile));
+		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() + 1);
 	}
 
 	// Configuration
