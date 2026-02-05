@@ -128,8 +128,6 @@ public class ClientLoginPipeline {
 		if (packet.protocolVersion() != ModernPacket.PROTOCOL_VERSION) {
 			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernPacket.PROTOCOL_VERSION);
 		}
-
-		connection.getServerConnection().connect();
 	}
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
@@ -267,6 +265,7 @@ public class ClientLoginPipeline {
 		connection.setState(PacketState.PLAY);
 		// Done with client login now do server login
 		connection.setPipeline(ServerLoginPipeline.PIPELINE, new ServerLoginPipeline()); // TODO: Pass in unhandled packets
+		connection.getServerConnection().connect();
 		connection.getServerConnection().send(new HandshakePacket(connection.getProfile().name()));
 	}
 
