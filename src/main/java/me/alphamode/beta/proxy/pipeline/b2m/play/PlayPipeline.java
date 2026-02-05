@@ -518,11 +518,9 @@ public class PlayPipeline {
 
 	public void handleS2CContainerOpen(final ClientConnection connection, final ContainerOpenPacket packet) {
 		final S2COpenScreenPacket.WindowType windowType = betaToModernMenuType(packet.type(), packet.size());
-		if (windowType == null) {
-			return;
+		if (windowType != null) {
+			connection.send(new S2COpenScreenPacket(packet.containerId(), windowType, TextComponent.of(packet.title())));
 		}
-
-		connection.send(new S2COpenScreenPacket(packet.containerId(), windowType, TextComponent.of(packet.title())));
 	}
 
 	public void handleS2CContainerClose(final ClientConnection connection, final ContainerClosePacket packet) {
@@ -548,6 +546,9 @@ public class PlayPipeline {
 
 			case STOP_DESTROY_BLOCK ->
 					serverConnection.send(new PlayerActionPacket(PlayerActionPacket.Action.FINISHED_DIGGING, pos, (byte) packet.direction().ordinal()));
+
+			case DROP_ITEM ->
+					serverConnection.send(new PlayerActionPacket(PlayerActionPacket.Action.DROP_ITEM, pos, (byte) packet.direction().ordinal()));
 
 			// TODO: other types
 		}
