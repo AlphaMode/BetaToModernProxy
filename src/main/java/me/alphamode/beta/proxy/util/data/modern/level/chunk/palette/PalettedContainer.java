@@ -56,18 +56,18 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 		if (oldData != null && dataConfiguration.equals(oldData.configuration())) {
 			return oldData;
 		} else {
-			BitStorage storage = dataConfiguration.bitsInMemory() == 0
+			final BitStorage storage = dataConfiguration.bitsInMemory() == 0
 					? new ZeroBitStorage(this.strategy.entryCount())
 					: new SimpleBitStorage(dataConfiguration.bitsInMemory(), this.strategy.entryCount());
-			Palette<T> palette = dataConfiguration.createPalette(this.strategy, List.of());
+			final Palette<T> palette = dataConfiguration.createPalette(this.strategy, List.of());
 			return new PalettedContainer.Data<>(dataConfiguration, storage, palette);
 		}
 	}
 
 	@Override
 	public int onResize(final int bits, final T lastAddedValue) {
-		PalettedContainer.Data<T> oldData = this.data;
-		PalettedContainer.Data<T> newData = this.createOrReuseData(oldData, bits);
+		final PalettedContainer.Data<T> oldData = this.data;
+		final PalettedContainer.Data<T> newData = this.createOrReuseData(oldData, bits);
 		newData.copyFrom(oldData.palette, oldData.storage);
 		this.data = newData;
 		return newData.palette.idFor(lastAddedValue, PaletteResize.noResizeExpected());
@@ -86,8 +86,7 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 	}
 
 	private void set(final int index, final T value) {
-		int id = this.data.palette.idFor(value, this);
-		this.data.storage.set(index, id);
+		this.data.storage.set(index, this.data.palette.idFor(value, this));
 	}
 
 	public T get(final int x, final int y, final int z) {
@@ -95,14 +94,12 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 	}
 
 	protected T get(final int index) {
-		PalettedContainer.Data<T> data = this.data;
-		return data.palette.valueFor(data.storage.get(index));
+		return this.data.palette.valueFor(this.data.storage.get(index));
 	}
 
 	private record Data<T>(Configuration configuration, BitStorage storage, Palette<T> palette) {
 		public void copyFrom(final Palette<T> oldPalette, final BitStorage oldStorage) {
-			PaletteResize<T> dummyResizer = PaletteResize.noResizeExpected();
-
+			final PaletteResize<T> dummyResizer = PaletteResize.noResizeExpected();
 			for (int i = 0; i < oldStorage.size(); i++) {
 				T value = oldPalette.valueFor(oldStorage.get(i));
 				this.storage.set(i, this.palette.idFor(value, dummyResizer));
@@ -116,7 +113,7 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 		public void write(final ByteBuf buffer, final IdMap<T> globalMap) {
 			buffer.writeByte(this.storage.getBits());
 			this.palette.write(buffer, globalMap);
-			long[] data = this.storage.getRaw();
+			final long[] data = this.storage.getRaw();
 			ModernStreamCodecs.fixedLongArray(data.length).encode(buffer, data);
 		}
 
