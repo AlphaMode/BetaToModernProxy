@@ -24,7 +24,7 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaPacket> {
 		final BetaPackets type = packet.getType();
 		buf.writeByte(type.getId());
 		try {
-			BetaPacketRegistry.INSTANCE.getCodec(type).encode(buf, packet);
+			type.codec().encode(buf, packet);
 		} catch (Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to encode beta packet: {}", exception.getMessage());
