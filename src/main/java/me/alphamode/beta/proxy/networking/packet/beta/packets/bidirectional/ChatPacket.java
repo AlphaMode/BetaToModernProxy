@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
@@ -16,7 +16,7 @@ public record ChatPacket(String message) implements BetaPacket {
 	);
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.CHAT;
+	public BetaPacketType getType() {
+		return BetaPacketType.CHAT;
 	}
 }

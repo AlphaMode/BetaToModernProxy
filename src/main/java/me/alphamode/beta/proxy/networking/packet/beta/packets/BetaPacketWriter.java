@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +21,7 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaPacket> {
 
 	@Override
 	protected void encode(final ChannelHandlerContext context, final BetaPacket packet, final ByteBuf buf) throws Exception {
-		final BetaPackets type = packet.getType();
+		final BetaPacketType type = packet.getType();
 		buf.writeByte(type.getId());
 		try {
 			type.codec().encode(buf, packet);

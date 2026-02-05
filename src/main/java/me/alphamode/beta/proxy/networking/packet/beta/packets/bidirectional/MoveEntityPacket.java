@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
@@ -29,8 +29,8 @@ public class MoveEntityPacket implements BetaPacket {
 	}
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.MOVE_ENTITY;
+	public BetaPacketType getType() {
+		return BetaPacketType.MOVE_ENTITY;
 	}
 
 	@Override
@@ -64,8 +64,8 @@ public class MoveEntityPacket implements BetaPacket {
 		}
 
 		@Override
-		public BetaPackets getType() {
-			return BetaPackets.MOVE_ENTITY_POS;
+		public BetaPacketType getType() {
+			return BetaPacketType.MOVE_ENTITY_POS;
 		}
 	}
 
@@ -103,8 +103,8 @@ public class MoveEntityPacket implements BetaPacket {
 		}
 
 		@Override
-		public BetaPackets getType() {
-			return BetaPackets.MOVE_ENTITY_POS_ROT;
+		public BetaPacketType getType() {
+			return BetaPacketType.MOVE_ENTITY_POS_ROT;
 		}
 	}
 
@@ -133,8 +133,8 @@ public class MoveEntityPacket implements BetaPacket {
 		}
 
 		@Override
-		public BetaPackets getType() {
-			return BetaPackets.MOVE_ENTITY_ROT;
+		public BetaPacketType getType() {
+			return BetaPacketType.MOVE_ENTITY_ROT;
 		}
 	}
 }

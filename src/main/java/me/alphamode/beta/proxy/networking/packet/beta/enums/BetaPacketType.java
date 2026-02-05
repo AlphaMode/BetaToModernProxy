@@ -6,7 +6,7 @@ import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
-public enum BetaPackets implements Packets {
+public enum BetaPacketType implements Packets {
 	KEEP_ALIVE(0, KeepAlivePacket.CODEC),
 	LOGIN(1, LoginPacket.CODEC),
 	HANDSHAKE(2, HandshakePacket.CODEC),
@@ -69,7 +69,7 @@ public enum BetaPackets implements Packets {
 	private final int id;
 	private final StreamCodec<ByteBuf, ? extends BetaPacket> codec;
 
-	BetaPackets(final int id, final StreamCodec<ByteBuf, ? extends BetaPacket> codec) {
+	BetaPacketType(final int id, final StreamCodec<ByteBuf, ? extends BetaPacket> codec) {
 		this.id = id;
 		this.codec = codec;
 	}
@@ -82,8 +82,8 @@ public enum BetaPackets implements Packets {
 		return (StreamCodec<ByteBuf, T>) this.codec;
 	}
 
-	public static BetaPackets getPacket(final int id) {
-		for (final BetaPackets packet : BetaPackets.values()) {
+	public static BetaPacketType byId(final int id) {
+		for (final BetaPacketType packet : BetaPacketType.values()) {
 			if (packet.getId() == id) {
 				return packet;
 			}

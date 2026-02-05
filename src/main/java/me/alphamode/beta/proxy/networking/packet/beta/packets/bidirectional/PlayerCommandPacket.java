@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
@@ -17,8 +17,8 @@ public record PlayerCommandPacket(int id, Action action) implements BetaPacket {
 	);
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.PLAYER_COMMAND;
+	public BetaPacketType getType() {
+		return BetaPacketType.PLAYER_COMMAND;
 	}
 
 	public enum Action {

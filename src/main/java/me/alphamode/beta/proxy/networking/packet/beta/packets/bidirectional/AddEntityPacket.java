@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
@@ -48,7 +48,7 @@ public record AddEntityPacket(int entityId, BetaEntityTypes type, Vec3i position
 	}
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.ADD_ENTITY;
+	public BetaPacketType getType() {
+		return BetaPacketType.ADD_ENTITY;
 	}
 }

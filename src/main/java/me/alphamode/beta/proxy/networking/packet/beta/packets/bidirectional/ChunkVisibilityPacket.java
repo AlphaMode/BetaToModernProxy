@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
@@ -18,7 +18,7 @@ public record ChunkVisibilityPacket(int x, int z, boolean visible) implements Be
 	);
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.CHUNK_VISIBILITY;
+	public BetaPacketType getType() {
+		return BetaPacketType.CHUNK_VISIBILITY;
 	}
 }

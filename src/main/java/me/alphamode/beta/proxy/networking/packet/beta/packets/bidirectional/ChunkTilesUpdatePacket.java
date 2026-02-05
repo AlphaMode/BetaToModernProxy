@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
@@ -40,7 +40,7 @@ public record ChunkTilesUpdatePacket(int x,
 	}
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.CHUNK_TILES_UPDATE;
+	public BetaPacketType getType() {
+		return BetaPacketType.CHUNK_TILES_UPDATE;
 	}
 }

@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
@@ -22,8 +22,8 @@ public record AddPaintingPacket(int entityId, Motive motive, Vec3i position, int
 	);
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.ADD_PAINTING;
+	public BetaPacketType getType() {
+		return BetaPacketType.ADD_PAINTING;
 	}
 
 	public enum Motive {

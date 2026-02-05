@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
 import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPackets;
+import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
@@ -25,7 +25,7 @@ public record PlayerInputPacket(float deltaX, float deltaZ, float yaw, float pit
 	);
 
 	@Override
-	public BetaPackets getType() {
-		return BetaPackets.PLAYER_INPUT;
+	public BetaPacketType getType() {
+		return BetaPacketType.PLAYER_INPUT;
 	}
 }
