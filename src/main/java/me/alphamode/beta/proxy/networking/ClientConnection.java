@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
@@ -66,6 +67,10 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		final S2CCommonDisconnectPacket<?> disconnectPacket = this.createDisconnectPacket(message);
 		if (disconnectPacket != null) {
 			this.send(disconnectPacket);
+		}
+
+		if (this.isConnected()) {
+			BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
 		}
 
 		this.disconnect();
@@ -182,6 +187,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
+		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
 		this.disconnect();
 	}
 

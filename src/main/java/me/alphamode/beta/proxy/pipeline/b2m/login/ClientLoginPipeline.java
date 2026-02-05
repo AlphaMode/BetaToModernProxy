@@ -85,21 +85,13 @@ public class ClientLoginPipeline {
 	private static final Thread.Builder AUTH_THREAD_BUILDER = Thread.ofVirtual().name("auth-thread-", 0);
 
 	private final byte[] challenge;
-	private final boolean onlineMode = BrodernProxy.getProxy().config().isOnlineMode();
-
-	private State state = State.HELLO;
-
 	@Nullable
 	private String requestedUsername;
-
-	@Nullable
-	private GameProfile authenticatedProfile;
+	private State state = State.HELLO;
 
 	public ClientLoginPipeline() {
-		int rand = new Random().nextInt();
-		this.challenge = new byte[]{
-				(byte) (rand >> 24), (byte) (rand >> 16), (byte) (rand >> 8), (byte) rand
-		};
+		final int seed = new Random().nextInt();
+		this.challenge = new byte[]{(byte) (seed >> 24), (byte) (seed >> 16), (byte) (seed >> 8), (byte) seed};
 	}
 
 	// Handshake
@@ -118,7 +110,7 @@ public class ClientLoginPipeline {
 		final BrodernProxy proxy = BrodernProxy.getProxy();
 		connection.send(new S2CStatusResponsePacket(new ServerStatus(
 				proxy.config().getMessage(),
-				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
+				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), proxy.onlinePlayers(), List.of())),
 				Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernPacket.PROTOCOL_VERSION)),
 				Optional.empty(),
 				false
@@ -136,31 +128,27 @@ public class ClientLoginPipeline {
 		if (packet.protocolVersion() != ModernPacket.PROTOCOL_VERSION) {
 			connection.kick("Client is on " + packet.protocolVersion() + " while server is on " + ModernPacket.PROTOCOL_VERSION);
 		}
-
-		connection.getServerConnection().connect();
 	}
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
 		this.requestedUsername = packet.username();
-		if (this.onlineMode) {
-			this.state = State.KEY;
+		if (BrodernProxy.getProxy().config().isOnlineMode()) {
 			connection.send(new S2CHelloPacket("", BrodernProxy.getProxy().keyPair().getPublic().getEncoded(), this.challenge, true));
+			this.state = State.KEY;
 		} else {
-			final GameProfile profile = new GameProfile(packet.profileId(), packet.username());
-			handleLoginSuccess(connection, profile);
+			handleLoginSuccess(connection, new GameProfile(packet.profileId(), packet.username()));
 		}
 	}
 
 	public void handleC2SKey(final ClientConnection connection, C2SKeyPacket packet) {
-		KeyPair keyPair = BrodernProxy.getProxy().keyPair();
+		final KeyPair keyPair = BrodernProxy.getProxy().keyPair();
 		final PrivateKey serverPrivateKey = keyPair.getPrivate();
 		if (!packet.isChallengeValid(this.challenge, serverPrivateKey)) {
 			throw new IllegalStateException("Protocol error");
 		}
 
-		SecretKey secretKey = packet.getSecretKey(serverPrivateKey);
-		String digest = new BigInteger(CryptUtil.computeServerIdHash("", keyPair.getPublic(), secretKey)).toString(16);
-
+		final SecretKey secretKey = packet.getSecretKey(serverPrivateKey);
+		final String digest = new BigInteger(CryptUtil.computeServerIdHash("", keyPair.getPublic(), secretKey)).toString(16);
 		try {
 			connection.setEncryption(new AESEncryption(secretKey));
 		} catch (GeneralSecurityException e) {
@@ -170,7 +158,7 @@ public class ClientLoginPipeline {
 		this.state = State.AUTHENTICATING;
 		AUTH_THREAD_BUILDER.start(() -> {
 			try {
-				ProfileResult result = BrodernProxy.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
+				final ProfileResult result = BrodernProxy.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
 				if (result != null) {
 					handleLoginSuccess(connection, result.profile());
 				} else {
@@ -185,6 +173,7 @@ public class ClientLoginPipeline {
 	public void handleLoginSuccess(final ClientConnection connection, final GameProfile profile) {
 		connection.setProfile(profile);
 		connection.send(new S2CLoginFinishedPacket(profile));
+		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() + 1);
 	}
 
 	// Configuration
@@ -276,6 +265,7 @@ public class ClientLoginPipeline {
 		connection.setState(PacketState.PLAY);
 		// Done with client login now do server login
 		connection.setPipeline(ServerLoginPipeline.PIPELINE, new ServerLoginPipeline()); // TODO: Pass in unhandled packets
+		connection.getServerConnection().connect();
 		connection.getServerConnection().send(new HandshakePacket(connection.getProfile().name()));
 	}
 

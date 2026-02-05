@@ -26,8 +26,7 @@ import java.security.KeyPair;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
-public record BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionService sessionService,
-						   GameProfileRepository profileRepository) {
+public class BrodernProxy {
 	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
 
 	private static BrodernProxy INSTANCE;
@@ -35,6 +34,12 @@ public record BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionServi
 	private static final CompoundTag DEFAULT_REGISTRIES;
 	private static final CompoundTag BETA_TO_MODERN_ITEMS;
 	private static final BlockTranslator BLOCK_TRANSLATOR;
+
+	private Config config;
+	private KeyPair keyPair;
+	private MinecraftSessionService sessionService;
+	private GameProfileRepository profileRepository;
+	private int onlinePlayers = 0;
 
 	static {
 		CompoundTag tag;
@@ -70,7 +75,13 @@ public record BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionServi
 
 	}
 
-	public BrodernProxy {
+	public BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionService sessionService,
+						GameProfileRepository profileRepository) {
+		this.config = config;
+		this.keyPair = keyPair;
+		this.sessionService = sessionService;
+		this.profileRepository = profileRepository;
+
 		INSTANCE = this;
 		config.load();
 	}
@@ -107,6 +118,30 @@ public record BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionServi
 
 	public static CompoundTag getBetaToModernItems() {
 		return BETA_TO_MODERN_ITEMS;
+	}
+
+	public Config config() {
+		return this.config;
+	}
+
+	public KeyPair keyPair() {
+		return this.keyPair;
+	}
+
+	public MinecraftSessionService sessionService() {
+		return this.sessionService;
+	}
+
+	public GameProfileRepository profileRepository() {
+		return this.profileRepository;
+	}
+
+	public void setOnlinePlayers(final int onlinePlayers) {
+		this.onlinePlayers = onlinePlayers;
+	}
+
+	public int onlinePlayers() {
+		return this.onlinePlayers;
 	}
 
 	public static BrodernProxy getProxy() {
