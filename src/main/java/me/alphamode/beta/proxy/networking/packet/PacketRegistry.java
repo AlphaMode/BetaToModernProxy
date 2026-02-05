@@ -11,7 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class PacketRegistry<V extends Packets, K extends AbstractPacket<V>> {
 	protected final Map<V, StreamCodec<ByteBuf, ? extends AbstractPacket<?>>> registry = new ConcurrentHashMap<>();
 
-	public abstract K createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf);
+	public abstract K createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf buf);
+
+	public K createPacket(final int packetId, final ByteBuf buf) {
+		return createPacket(packetId, PacketDirection.SERVERBOUND, PacketState.PLAY, buf);
+	}
 
 	public <T extends AbstractPacket<V>> StreamCodec<ByteBuf, T> getCodec(final V type) {
 		if (!registry.containsKey(type)) {

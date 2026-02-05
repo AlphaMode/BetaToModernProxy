@@ -6,10 +6,6 @@ import io.netty.handler.codec.ByteToMessageCodec;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SClientTickEndPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SMovePlayerPacket;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.C2SPlayerInputPacket;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import net.raphimc.netminecraft.packet.PacketTypes;
 import org.apache.logging.log4j.LogManager;
@@ -49,34 +45,16 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {
-			final var packet = ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData);
-			if (BrodernProxy.getProxy().isDebug() && !(
-					packet instanceof C2SCommonKeepAlivePacket<?>
-							|| (Object) packet instanceof C2SClientTickEndPacket
-							|| (Object) packet instanceof C2SMovePlayerPacket.Pos
-							|| (Object) packet instanceof C2SMovePlayerPacket.Rot
-							|| (Object) packet instanceof C2SMovePlayerPacket.PosRot
-							|| (Object) packet instanceof C2SMovePlayerPacket.StatusOnly
-							|| (Object) packet instanceof C2SPlayerInputPacket
-			)) {
-//				LOGGER.info("Modern Packet {} received", packet);
-			}
-
-			if (packet != null) {
-				out.add(packet);
-			} else {
-				LOGGER.warn("Received null client packet!");
-			}
-
-			packetData.release();
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, connection.getState());
 			}
 
-			packetData.release();
 			connection.kick(exception.getMessage());
 			throw new RuntimeException(exception);
+		} finally {
+			packetData.release();
 		}
 	}
 }
