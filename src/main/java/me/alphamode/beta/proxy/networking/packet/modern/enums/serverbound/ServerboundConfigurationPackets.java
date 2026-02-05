@@ -41,7 +41,7 @@ public enum ServerboundConfigurationPackets implements ModernServerboundPackets 
 		return this.state;
 	}
 
-	public static ServerboundConfigurationPackets getPacket(final int id) {
+	public static ServerboundConfigurationPackets byId(final int id) {
 		for (final ServerboundConfigurationPackets packet : ServerboundConfigurationPackets.values()) {
 			if (packet.getId() == id) {
 				return packet;

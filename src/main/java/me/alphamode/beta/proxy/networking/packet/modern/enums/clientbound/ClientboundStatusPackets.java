@@ -33,7 +33,7 @@ public enum ClientboundStatusPackets implements ModernClientboundPackets {
 		return this.state;
 	}
 
-	public static ClientboundStatusPackets getPacket(final int id) {
+	public static ClientboundStatusPackets byId(final int id) {
 		for (final ClientboundStatusPackets packet : ClientboundStatusPackets.values()) {
 			if (packet.getId() == id) {
 				return packet;

@@ -32,7 +32,7 @@ public enum ServerboundHandshakingPackets implements ModernServerboundPackets {
 		return this.state;
 	}
 
-	public static ServerboundHandshakingPackets getPacket(final int id) {
+	public static ServerboundHandshakingPackets byId(final int id) {
 		for (final ServerboundHandshakingPackets packet : ServerboundHandshakingPackets.values()) {
 			if (packet.getId() == id) {
 				return packet;

@@ -51,7 +51,7 @@ public enum ClientboundConfigurationPackets implements ModernClientboundPackets 
 		return this.state;
 	}
 
-	public static ClientboundConfigurationPackets getPacket(final int id) {
+	public static ClientboundConfigurationPackets byId(final int id) {
 		for (final ClientboundConfigurationPackets packet : ClientboundConfigurationPackets.values()) {
 			if (packet.getId() == id) {
 				return packet;

@@ -33,7 +33,7 @@ public enum ServerboundStatusPackets implements ModernServerboundPackets {
 		return this.state;
 	}
 
-	public static ServerboundStatusPackets getPacket(final int id) {
+	public static ServerboundStatusPackets byId(final int id) {
 		for (final ServerboundStatusPackets packet : ServerboundStatusPackets.values()) {
 			if (packet.getId() == id) {
 				return packet;
