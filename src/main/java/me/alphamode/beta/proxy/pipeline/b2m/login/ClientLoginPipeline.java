@@ -85,21 +85,13 @@ public class ClientLoginPipeline {
 	private static final Thread.Builder AUTH_THREAD_BUILDER = Thread.ofVirtual().name("auth-thread-", 0);
 
 	private final byte[] challenge;
-	private final boolean onlineMode = BrodernProxy.getProxy().config().isOnlineMode();
-
-	private State state = State.HELLO;
-
 	@Nullable
 	private String requestedUsername;
-
-	@Nullable
-	private GameProfile authenticatedProfile;
+	private State state = State.HELLO;
 
 	public ClientLoginPipeline() {
-		int rand = new Random().nextInt();
-		this.challenge = new byte[]{
-				(byte) (rand >> 24), (byte) (rand >> 16), (byte) (rand >> 8), (byte) rand
-		};
+		final int seed = new Random().nextInt();
+		this.challenge = new byte[]{(byte) (seed >> 24), (byte) (seed >> 16), (byte) (seed >> 8), (byte) seed};
 	}
 
 	// Handshake
@@ -142,25 +134,23 @@ public class ClientLoginPipeline {
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
 		this.requestedUsername = packet.username();
-		if (this.onlineMode) {
-			this.state = State.KEY;
+		if (BrodernProxy.getProxy().config().isOnlineMode()) {
 			connection.send(new S2CHelloPacket("", BrodernProxy.getProxy().keyPair().getPublic().getEncoded(), this.challenge, true));
+			this.state = State.KEY;
 		} else {
-			final GameProfile profile = new GameProfile(packet.profileId(), packet.username());
-			handleLoginSuccess(connection, profile);
+			handleLoginSuccess(connection, new GameProfile(packet.profileId(), packet.username()));
 		}
 	}
 
 	public void handleC2SKey(final ClientConnection connection, C2SKeyPacket packet) {
-		KeyPair keyPair = BrodernProxy.getProxy().keyPair();
+		final KeyPair keyPair = BrodernProxy.getProxy().keyPair();
 		final PrivateKey serverPrivateKey = keyPair.getPrivate();
 		if (!packet.isChallengeValid(this.challenge, serverPrivateKey)) {
 			throw new IllegalStateException("Protocol error");
 		}
 
-		SecretKey secretKey = packet.getSecretKey(serverPrivateKey);
-		String digest = new BigInteger(CryptUtil.computeServerIdHash("", keyPair.getPublic(), secretKey)).toString(16);
-
+		final SecretKey secretKey = packet.getSecretKey(serverPrivateKey);
+		final String digest = new BigInteger(CryptUtil.computeServerIdHash("", keyPair.getPublic(), secretKey)).toString(16);
 		try {
 			connection.setEncryption(new AESEncryption(secretKey));
 		} catch (GeneralSecurityException e) {
