@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.EntityDataValue;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 
@@ -11,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BetaSynchedEntityData {
-	public static final StreamCodec<ByteBuf, List<DataItem<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteBuf, List<EntityDataValue<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final List<DataItem<?>> dataItems) {
-			for (final DataItem<?> dataItem : dataItems) {
+		public void encode(final ByteBuf buf, final List<EntityDataValue<?>> dataItems) {
+			for (final EntityDataValue<?> dataItem : dataItems) {
 				dataItem.write(buf);
 			}
 
@@ -22,8 +23,8 @@ public class BetaSynchedEntityData {
 		}
 
 		@Override
-		public List<DataItem<?>> decode(final ByteBuf buf) {
-			final List<DataItem<?>> items = new ArrayList<>();
+		public List<EntityDataValue<?>> decode(final ByteBuf buf) {
+			final List<EntityDataValue<?>> items = new ArrayList<>();
 			for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
 				final DataType type = DataType.values()[(i & 224) >> 5];
 				items.add(new DataItem<>(type, i & 31, type.getCodec().decode(buf)));
@@ -59,33 +60,8 @@ public class BetaSynchedEntityData {
 		}
 	}
 
-	public static class DataItem<T> {
-		private final DataType type;
-		private final int id;
-		private T data;
-
-		public DataItem(final DataType type, final int id, final T data) {
-			this.id = id;
-			this.data = data;
-			this.type = type;
-		}
-
-		public int getId() {
-			return this.id;
-		}
-
-		public void setData(T data) {
-			this.data = data;
-		}
-
-		public T getData() {
-			return this.data;
-		}
-
-		public DataType getType() {
-			return this.type;
-		}
-
+	public record DataItem<T>(DataType type, int id, T data) implements EntityDataValue<T> {
+        @Override
 		public void write(final ByteBuf buf) {
 			buf.writeByte((this.type.getId() << 5 | this.id & 31) & 0xFF);
 			this.type.getCodec().encode(buf, this.data);

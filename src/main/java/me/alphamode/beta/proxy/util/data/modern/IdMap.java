@@ -13,7 +13,7 @@ public interface IdMap<T> extends Iterable<T> {
 	default T byIdOrThrow(final int id) {
 		T result = this.byId(id);
 		if (result == null) {
-			throw new IllegalArgumentException("No value with id " + id);
+			throw new IllegalArgumentException("No data with id " + id);
 		} else {
 			return result;
 		}

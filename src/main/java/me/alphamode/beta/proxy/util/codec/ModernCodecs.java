@@ -74,9 +74,9 @@ public interface ModernCodecs {
 				} else {
 					try {
 						long value = HexFormat.fromHexDigitsToLong(string, "#".length(), string.length());
-						return value >= 0L && value <= maxValue ? Result.success((int) value) : Result.error("Color value out of range: " + string);
+						return value >= 0L && value <= maxValue ? Result.success((int) value) : Result.error("Color data out of range: " + string);
 					} catch (NumberFormatException var7) {
-						return Result.error("Invalid color value: " + string);
+						return Result.error("Invalid color data: " + string);
 					}
 				}
 			}

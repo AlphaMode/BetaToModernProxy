@@ -5,7 +5,7 @@ public interface PaletteResize<T> {
 
 	static <T> PaletteResize<T> noResizeExpected() {
 		return (bits, lastAddedValue) -> {
-			throw new IllegalArgumentException("Unexpected palette resize, bits = " + bits + ", added value = " + lastAddedValue);
+			throw new IllegalArgumentException("Unexpected palette resize, bits = " + bits + ", added data = " + lastAddedValue);
 		};
 	}
 }

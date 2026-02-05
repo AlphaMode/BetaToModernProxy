@@ -2,7 +2,7 @@ package me.alphamode.beta.proxy.util.data.modern.level;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import me.alphamode.beta.proxy.util.ChunkTranslator;
+import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;

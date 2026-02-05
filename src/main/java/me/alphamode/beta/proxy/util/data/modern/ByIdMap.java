@@ -10,14 +10,14 @@ public interface ByIdMap {
 	static <T> T[] createSortedArray(final ToIntFunction<T> idGetter, final T[] values) {
 		final int length = values.length;
 		if (length == 0) {
-			throw new IllegalArgumentException("Empty value list");
+			throw new IllegalArgumentException("Empty data list");
 		} else {
 			final T[] result = values.clone();
 			Arrays.fill(result, null);
 			for (T value : values) {
 				final int id = idGetter.applyAsInt(value);
 				if (id < 0 || id >= length) {
-					throw new IllegalArgumentException("Values are not continous, found index " + id + " for value " + value);
+					throw new IllegalArgumentException("Values are not continous, found index " + id + " for data " + value);
 				}
 
 				final T previous = result[id];
@@ -30,7 +30,7 @@ public interface ByIdMap {
 
 			for (int i = 0; i < length; i++) {
 				if (result[i] == null) {
-					throw new IllegalArgumentException("Missing value at index: " + i);
+					throw new IllegalArgumentException("Missing data at index: " + i);
 				}
 			}
 

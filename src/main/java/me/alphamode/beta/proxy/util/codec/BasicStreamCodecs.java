@@ -96,7 +96,7 @@ public interface BasicStreamCodecs {
 			public Double decode(final ByteBuf buf) {
 				final double value = DOUBLE.decode(buf);
 				if (value < min || value > max) {
-					throw new RuntimeException("Double value is out of range!");
+					throw new RuntimeException("Double data is out of range!");
 				} else {
 					return value;
 				}

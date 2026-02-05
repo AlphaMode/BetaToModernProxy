@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.util;
+package me.alphamode.beta.proxy.util.translators;
 
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
