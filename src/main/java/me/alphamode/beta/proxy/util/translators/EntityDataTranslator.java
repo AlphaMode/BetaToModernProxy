@@ -5,9 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.alphamode.beta.proxy.networking.ClientConnection;
-import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CSetEntityDataPacket;
 import me.alphamode.beta.proxy.util.data.EntityDataValue;
-import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.modern.ModernEntityTypes;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.function.Consumer;
 
 public class EntityDataTranslator<FROM extends EntityDataValue<?>, TO extends EntityDataValue<?>> {
 	private final Int2ObjectMap<DataTranslator<?, FROM, TO>> translators = new Int2ObjectOpenHashMap<>();
-	private final Object2ObjectMap<EntityDataAccessor<?>, DataTranslator<?, FROM, TO>> entityTranslators = new Object2ObjectOpenHashMap<>();
+	private final Object2ObjectMap<EntityDataAccessor<?, ?>, DataTranslator<?, FROM, TO>> entityTranslators = new Object2ObjectOpenHashMap<>();
 
 	public List<TO> translate(final ClientConnection connection, final int entityId, final ModernEntityTypes type, final List<FROM> packedItem) {
 		List<TO> newValues = new ArrayList<>();
@@ -40,7 +38,7 @@ public class EntityDataTranslator<FROM extends EntityDataValue<?>, TO extends En
 		void translate(final ClientConnection connection, final FROM item, final Consumer<TO> output);
 	}
 
-	public record EntityDataAccessor<T>(ModernEntityTypes type, DataAccessor<T> accessor) {
+	public record EntityDataAccessor<T, F extends EntityDataValue<T>>(ModernEntityTypes type, DataAccessor<T, F> accessor) {
 	}
 
 	public record DataAccessor<T, V extends EntityDataValue<T>>(int id) {

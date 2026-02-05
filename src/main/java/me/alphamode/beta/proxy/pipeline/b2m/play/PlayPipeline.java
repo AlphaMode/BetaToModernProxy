@@ -14,8 +14,8 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.util.data.modern.entity.ModernEntityData;
 import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
-import me.alphamode.beta.proxy.util.translators.EntityDataTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
 import me.alphamode.beta.proxy.util.data.BlockHitResult;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
@@ -25,7 +25,7 @@ import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
-import me.alphamode.beta.proxy.util.data.modern.entity.EntityDataSerializers;
+import me.alphamode.beta.proxy.util.data.EntityDataSerializers;
 import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
@@ -275,7 +275,7 @@ public class PlayPipeline {
 		));
 		connection.send(new S2CSetEntityDataPacket(
 				packet.entityId(),
-				List.of(new ModernSynchedEntityData.DataValue<>((byte) 9, EntityDataSerializers.PAINTING_VARIANT, packet.motive().ordinal()))
+				List.of(new ModernSynchedEntityData.DataValue<>((byte) 9, ModernEntityData.PAINTING_VARIANT, packet.motive().ordinal()))
 		));
 		connection.send(new S2CBundleDelimiterPacket());
 	}
@@ -295,7 +295,7 @@ public class PlayPipeline {
 		));
 		connection.send(new S2CSetEntityDataPacket(
 				packet.entityId(),
-				List.of(new ModernSynchedEntityData.DataValue<>((byte) 8, EntityDataSerializers.ITEM_STACK, ItemTranslator.toModernStack(packet.item())))
+				List.of(new ModernSynchedEntityData.DataValue<>((byte) 8, ModernEntityData.ITEM_STACK, ItemTranslator.toModernStack(packet.item())))
 		));
 		connection.send(new S2CBundleDelimiterPacket());
 	}

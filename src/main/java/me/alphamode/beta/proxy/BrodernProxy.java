@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
-import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
+import me.alphamode.beta.proxy.util.data.beta.entity.BetaSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 import me.alphamode.beta.proxy.util.translators.BlockTranslator;
 import me.alphamode.beta.proxy.util.NbtUtil;
@@ -40,7 +40,7 @@ public class BrodernProxy {
 	private final KeyPair keyPair;
 	private final MinecraftSessionService sessionService;
 	private final GameProfileRepository profileRepository;
-    private final EntityDataTranslator<BetaSynchedEntityData.DataItem<?>, ModernSynchedEntityData.DataValue<?>> entityDataTranslator;
+    private final EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> entityDataTranslator;
 
 	private int onlinePlayers = 0;
 
@@ -85,7 +85,7 @@ public class BrodernProxy {
 		this.sessionService = sessionService;
 		this.profileRepository = profileRepository;
         this.entityDataTranslator = new EntityDataTranslator<>();
-        BetaEntityDataTranslations.register();
+        BetaEntityDataTranslations.register(this.entityDataTranslator);
 
 		INSTANCE = this;
 		config.load();
@@ -109,8 +109,8 @@ public class BrodernProxy {
 		return this.config.isDebug();
 	}
 
-    public EntityDataTranslator<BetaSynchedEntityData.DataItem<?>, ModernSynchedEntityData.DataValue<?>> getEntityDataTranslator() {
-
+    public EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> getEntityDataTranslator() {
+        return this.entityDataTranslator;
     }
 
 	public static CompoundTag getDefaultTags() {

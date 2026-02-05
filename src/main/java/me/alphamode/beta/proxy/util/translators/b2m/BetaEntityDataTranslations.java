@@ -1,16 +1,16 @@
 package me.alphamode.beta.proxy.util.translators.b2m;
 
 import me.alphamode.beta.proxy.networking.ClientConnection;
-import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
+import me.alphamode.beta.proxy.util.data.beta.entity.BetaSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.modern.ModernEntityTypes;
-import me.alphamode.beta.proxy.util.data.modern.entity.EntityDataSerializers;
+import me.alphamode.beta.proxy.util.data.modern.entity.ModernEntityData;
 import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 import me.alphamode.beta.proxy.util.translators.EntityDataTranslator;
 
 import java.util.function.Consumer;
 
 public class BetaEntityDataTranslations {
-    public static final EntityDataTranslator.DataAccessor<Byte, BetaSynchedEntityData.DataItem<Byte>> SHARED_FLAG = new EntityDataTranslator.DataAccessor<>(0);
+    public static final EntityDataTranslator.DataAccessor<Byte, BetaSynchedEntityData.DataValue<Byte>> SHARED_FLAG = new EntityDataTranslator.DataAccessor<>(0);
 
     public static boolean getSharedFlag(final int flag, final byte data) {
         return (data & 1 << flag) != 0;
@@ -28,7 +28,7 @@ public class BetaEntityDataTranslations {
     public static final int SNEAKING_FLAG = 1;
     public static final int RIDING_FLAG = 2;
 
-    private static void translateSharedFlags(final boolean isPlayer, final ClientConnection connection, final BetaSynchedEntityData.DataItem<Byte> item, Consumer<ModernSynchedEntityData.DataValue<?>> output) {
+    private static void translateSharedFlags(final boolean isPlayer, final ClientConnection connection, final BetaSynchedEntityData.DataValue<Byte> item, Consumer<ModernSynchedEntityData.DataValue<?>> output) {
         final byte flags = item.data();
         boolean onFire = getSharedFlag(ON_FIRE_FLAG, flags);
         boolean sneaking = getSharedFlag(SNEAKING_FLAG, flags);
@@ -39,14 +39,14 @@ public class BetaEntityDataTranslations {
         modernFlag = setSharedFlag(ON_FIRE_FLAG, onFire, modernFlag);
         modernFlag = setSharedFlag(SNEAKING_FLAG, sneaking, modernFlag);
 
-        output.accept(new ModernSynchedEntityData.DataValue<>((byte) SHARED_FLAG.id(), EntityDataSerializers.BYTE, modernFlag));
+        output.accept(new ModernSynchedEntityData.DataValue<>((byte) SHARED_FLAG.id(), ModernEntityData.BYTE, modernFlag));
 
         if (isPlayer) {
 
         }
     }
 
-    public static void register(EntityDataTranslator<BetaSynchedEntityData.DataItem<?>, ModernSynchedEntityData.DataValue<?>> translator) {
+    public static void register(EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> translator) {
         translator.registerTranslation(SHARED_FLAG, (connection, item, output) -> {
             translateSharedFlags(false, connection, item, output);
         });

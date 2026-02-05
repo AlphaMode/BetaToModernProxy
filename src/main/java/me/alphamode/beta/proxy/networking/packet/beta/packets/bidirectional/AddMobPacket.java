@@ -8,12 +8,12 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
-import me.alphamode.beta.proxy.util.data.beta.BetaSynchedEntityData;
+import me.alphamode.beta.proxy.util.data.beta.entity.BetaSynchedEntityData;
 
 import java.util.List;
 
 public record AddMobPacket(int entityId, BetaEntityTypes type, Vec3i position, byte yRot, byte xRot,
-						   List<BetaSynchedEntityData.DataItem<?>> dataItems) implements BetaPacket {
+						   List<BetaSynchedEntityData.DataValue<?>> dataItems) implements BetaPacket {
 	public static final StreamCodec<ByteBuf, AddMobPacket> CODEC = StreamCodec.composite(
 			BasicStreamCodecs.INT,
 			AddMobPacket::entityId,
