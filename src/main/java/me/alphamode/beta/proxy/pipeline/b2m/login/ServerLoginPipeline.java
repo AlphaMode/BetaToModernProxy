@@ -28,7 +28,7 @@ public class ServerLoginPipeline {
 
 	public void handleS2CHandshake(final ClientConnection connection, final HandshakePacket packet) {
 		if (packet.username().equals("-")) {
-			LOGGER.info("Sending Login Packet & Login Finished");
+			LOGGER.info("Sending Login Packet");
 			connection.getServerConnection().send(new LoginPacket(BetaPacket.PROTOCOL_VERSION, connection.getProfile().name()));
 		} else {
 			connection.kick("Online mode isn't supported!");

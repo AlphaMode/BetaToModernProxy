@@ -17,7 +17,10 @@ import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ChunkTranslator;
 import me.alphamode.beta.proxy.util.EntityDataTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
-import me.alphamode.beta.proxy.util.data.*;
+import me.alphamode.beta.proxy.util.data.BlockHitResult;
+import me.alphamode.beta.proxy.util.data.ChunkPos;
+import me.alphamode.beta.proxy.util.data.Vec3d;
+import me.alphamode.beta.proxy.util.data.Vec3i;
 import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
@@ -46,14 +49,14 @@ public class PlayPipeline {
 			.clientHandler(C2SConfigurationAcknowledgedPacket.class, PlayPipeline::handleC2SConfigurationAcknowledged)
 			.serverHandler(SetTimePacket.class, PlayPipeline::handleS2CSetTime)
 			.serverHandler(SetHealthPacket.class, PlayPipeline::handleS2CSetHealth)
-            // Entities
-            .serverHandler(RemoveEntityPacket.class, PlayPipeline::handleS2CRemoveEntity)
+			// Entities
+			.serverHandler(RemoveEntityPacket.class, PlayPipeline::handleS2CRemoveEntity)
 			.serverHandler(AddMobPacket.class, PlayPipeline::handleS2CAddMob)
 			.serverHandler(AddEntityPacket.class, PlayPipeline::handleS2CAddEntity)
 			.serverHandler(AddPlayerPacket.class, PlayPipeline::handleS2CAddPlayer)
 			.serverHandler(AddPaintingPacket.class, PlayPipeline::handleS2CAddPainting)
 			.serverHandler(AddItemEntityPacket.class, PlayPipeline::handleS2CAddItemEntity)
-            .serverHandler(SetEntityDataPacket.class, PlayPipeline::handleS2CSetEntityData)
+			.serverHandler(SetEntityDataPacket.class, PlayPipeline::handleS2CSetEntityData)
 			.clientHandler(C2SSwingPacket.class, PlayPipeline::handleC2SSwing)
 			.serverHandler(AnimatePacket.class, PlayPipeline::handleS2CAnimate)
 
@@ -93,7 +96,7 @@ public class PlayPipeline {
 			.unhandledServer(PlayPipeline::passServerToNextPipeline)
 			.build();
 
-    private final Int2ObjectMap<ModernEntityTypes> idToTypeMap = new Int2ObjectOpenHashMap<>();
+	private final Int2ObjectMap<ModernEntityTypes> idToTypeMap = new Int2ObjectOpenHashMap<>();
 	protected final Player player;
 	protected long seed;
 	protected short lastUid = 0;
@@ -183,19 +186,19 @@ public class PlayPipeline {
 		};
 	}
 
-    public void addEntity(final ClientConnection connection, final S2CAddEntityPacket packet) {
-        idToTypeMap.put(packet.entityId(), packet.type());
-        connection.send(packet);
-    }
+	public void addEntity(final ClientConnection connection, final S2CAddEntityPacket packet) {
+		idToTypeMap.put(packet.entityId(), packet.type());
+		connection.send(packet);
+	}
 
-    public void removeEntity(final int entityId) {
-        idToTypeMap.remove(entityId);
-    }
+	public void removeEntity(final int entityId) {
+		idToTypeMap.remove(entityId);
+	}
 
-    public void handleS2CRemoveEntity(final ClientConnection connection, final RemoveEntityPacket packet) {
-        removeEntity(packet.entityId());
-        connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
-    }
+	public void handleS2CRemoveEntity(final ClientConnection connection, final RemoveEntityPacket packet) {
+		removeEntity(packet.entityId());
+		connection.send(new S2CRemoveEntitiesPacket(packet.entityId()));
+	}
 
 	public void handleS2CAddMob(final ClientConnection connection, final AddMobPacket packet) {
 		final ModernEntityTypes mappedType = mapBetaToModernEntityId(packet.type());
@@ -297,9 +300,9 @@ public class PlayPipeline {
 		connection.send(new S2CBundleDelimiterPacket());
 	}
 
-    public void handleS2CSetEntityData(final ClientConnection connection, final SetEntityDataPacket packet) {
-        EntityDataTranslator.translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
-    }
+	public void handleS2CSetEntityData(final ClientConnection connection, final SetEntityDataPacket packet) {
+		EntityDataTranslator.translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
+	}
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {
 		if (InteractionHand.MAIN_HAND.equals(packet.hand())) {

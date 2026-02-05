@@ -16,64 +16,65 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class EntityDataTranslator {
-    private static Int2ObjectMap<DataTranslator<?>> TRANSLATORS = new Int2ObjectOpenHashMap<>();
-    private static Object2ObjectMap<EntityDataAccessor<?>, DataTranslator<?>> ENTITY_TRANSLATORS = new Object2ObjectOpenHashMap<>();
-    public static final DataAccessor<Byte> SHARED_FLAG = new DataAccessor<>(0, BetaSynchedEntityData.DataType.BYTE);
-    public static final int ON_FIRE_FLAG = 0;
-    public static final int SNEAKING_FLAG = 1;
-    public static final int RIDING_FLAG = 2;
+	private static final Int2ObjectMap<DataTranslator<?>> TRANSLATORS = new Int2ObjectOpenHashMap<>();
+	private static final Object2ObjectMap<EntityDataAccessor<?>, DataTranslator<?>> ENTITY_TRANSLATORS = new Object2ObjectOpenHashMap<>();
+	public static final DataAccessor<Byte> SHARED_FLAG = new DataAccessor<>(0, BetaSynchedEntityData.DataType.BYTE);
+	public static final int ON_FIRE_FLAG = 0;
+	public static final int SNEAKING_FLAG = 1;
+	public static final int RIDING_FLAG = 2;
 
-    public static boolean getSharedFlag(final int flag, final byte data) {
-        return (data & 1 << flag) != 0;
-    }
+	public static boolean getSharedFlag(final int flag, final byte data) {
+		return (data & 1 << flag) != 0;
+	}
 
-    public static byte setSharedFlag(final int flag, final boolean value, final byte currentValue) {
-        if (value) {
-            return (byte) (currentValue | 1 << flag);
-        } else {
-            return (byte) (currentValue & ~(1 << flag));
-        }
-    }
+	public static byte setSharedFlag(final int flag, final boolean value, final byte currentValue) {
+		if (value) {
+			return (byte) (currentValue | 1 << flag);
+		} else {
+			return (byte) (currentValue & ~(1 << flag));
+		}
+	}
 
-    public static void translate(final ClientConnection connection, final int entityId, final ModernEntityTypes type, final List<BetaSynchedEntityData.DataItem<?>> packedItem) {
-        List<ModernSynchedEntityData.DataValue<?>> newValues = new ArrayList<>();
-        for (final BetaSynchedEntityData.DataItem item : packedItem) {
-            final int id = item.getId();
-            TRANSLATORS.get(id).translate(connection, item, newValues::add);
-        }
-        connection.send(new S2CSetEntityDataPacket(entityId, newValues));
-    }
+	public static void translate(final ClientConnection connection, final int entityId, final ModernEntityTypes type, final List<BetaSynchedEntityData.DataItem<?>> packedItem) {
+		List<ModernSynchedEntityData.DataValue<?>> newValues = new ArrayList<>();
+		for (final BetaSynchedEntityData.DataItem item : packedItem) {
+			final int id = item.getId();
+			TRANSLATORS.get(id).translate(connection, item, newValues::add);
+		}
+		connection.send(new S2CSetEntityDataPacket(entityId, newValues));
+	}
 
-    public static <T> void registerTranslation(DataAccessor<T> id, DataTranslator<T> translator) {
-        TRANSLATORS.put(id.id(), translator);
-    }
+	public static <T> void registerTranslation(DataAccessor<T> id, DataTranslator<T> translator) {
+		TRANSLATORS.put(id.id(), translator);
+	}
 
-    public static <T> void registerEntityTranslation(final ModernEntityTypes type, DataAccessor<T> id, DataTranslator<T> translator) {
-        ENTITY_TRANSLATORS.put(new EntityDataAccessor<>(type, id), translator);
-    }
+	public static <T> void registerEntityTranslation(final ModernEntityTypes type, DataAccessor<T> id, DataTranslator<T> translator) {
+		ENTITY_TRANSLATORS.put(new EntityDataAccessor<>(type, id), translator);
+	}
 
-    public interface DataTranslator<T> {
-        void translate(final ClientConnection connection, final BetaSynchedEntityData.DataItem<T> item, final Consumer<ModernSynchedEntityData.DataValue<?>> output);
-    }
+	public interface DataTranslator<T> {
+		void translate(final ClientConnection connection, final BetaSynchedEntityData.DataItem<T> item, final Consumer<ModernSynchedEntityData.DataValue<?>> output);
+	}
 
-    public record EntityDataAccessor<T>(ModernEntityTypes type, DataAccessor<T> accessor) {}
+	public record EntityDataAccessor<T>(ModernEntityTypes type, DataAccessor<T> accessor) {
+	}
 
-    public record DataAccessor<T>(int id, BetaSynchedEntityData.DataType type) {
-    }
+	public record DataAccessor<T>(int id, BetaSynchedEntityData.DataType type) {
+	}
 
-    static {
-        registerTranslation(SHARED_FLAG, (connection, item, output) -> {
-            final byte flags = item.getData();
-            boolean onFire = getSharedFlag(ON_FIRE_FLAG, flags);
-            boolean sneaking = getSharedFlag(SNEAKING_FLAG, flags);
-            // Riding isn't a shared flag anymore
-            boolean riding = getSharedFlag(RIDING_FLAG, flags);
+	static {
+		registerTranslation(SHARED_FLAG, (connection, item, output) -> {
+			final byte flags = item.getData();
+			boolean onFire = getSharedFlag(ON_FIRE_FLAG, flags);
+			boolean sneaking = getSharedFlag(SNEAKING_FLAG, flags);
+			// Riding isn't a shared flag anymore
+			boolean riding = getSharedFlag(RIDING_FLAG, flags);
 
-            byte modernFlag = 0;
-            modernFlag = setSharedFlag(ON_FIRE_FLAG, onFire, modernFlag);
-            modernFlag = setSharedFlag(SNEAKING_FLAG, sneaking, modernFlag);
+			byte modernFlag = 0;
+			modernFlag = setSharedFlag(ON_FIRE_FLAG, onFire, modernFlag);
+			modernFlag = setSharedFlag(SNEAKING_FLAG, sneaking, modernFlag);
 
-            output.accept(new ModernSynchedEntityData.DataValue<>((byte) SHARED_FLAG.id(), EntityDataSerializers.BYTE, modernFlag));
-        });
-    }
+			output.accept(new ModernSynchedEntityData.DataValue<>((byte) SHARED_FLAG.id(), EntityDataSerializers.BYTE, modernFlag));
+		});
+	}
 }
