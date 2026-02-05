@@ -116,14 +116,13 @@ public class ClientLoginPipeline {
 	// Status
 	public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
 		final BrodernProxy proxy = BrodernProxy.getProxy();
-		final ServerStatus serverStatus = new ServerStatus(
-				proxy.config().getMessage().append(String.format("\n(Connected To Server? %s)", connection.getServerConnection().isConnected())),
+		connection.send(new S2CStatusResponsePacket(new ServerStatus(
+				proxy.config().getMessage(),
 				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), 0, List.of())),
 				Optional.of(new ServerStatus.Version(proxy.config().getBrand(), ModernPacket.PROTOCOL_VERSION)),
 				Optional.empty(),
 				false
-		);
-		connection.send(new S2CStatusResponsePacket(serverStatus));
+		)));
 	}
 
 	public void handleC2SStatusPingRequest(final ClientConnection connection, final C2SStatusPingRequestPacket packet) {
