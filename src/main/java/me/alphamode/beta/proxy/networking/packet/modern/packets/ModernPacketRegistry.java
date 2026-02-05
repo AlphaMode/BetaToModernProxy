@@ -42,11 +42,7 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 		if (packetType == null) {
 			throw new IllegalArgumentException("Could not determine modern packet type for id " + packetId);
 		} else {
-			try {
-				return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
-			} catch (final Exception exception) {
-				throw new RuntimeException("(" + state + ") Failed to decode modern " + direction + " packet " + packetType + "\nReason: " + exception.getMessage());
-			}
+			return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
 		}
 	}
 
