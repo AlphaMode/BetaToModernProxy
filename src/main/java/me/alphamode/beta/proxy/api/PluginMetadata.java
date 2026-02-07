@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.api;
 
 public interface PluginMetadata {
-    String id();
+	String id();
 
-    String version();
+	String version();
 }

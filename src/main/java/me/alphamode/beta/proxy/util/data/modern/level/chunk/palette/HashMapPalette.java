@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.level.chunk.palette;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.CrudeIncrementalIntIdentityHashBiMap;
 import me.alphamode.beta.proxy.util.data.modern.IdMap;
@@ -63,7 +63,7 @@ public class HashMapPalette<T> implements Palette<T> {
 	}
 
 	@Override
-	public void read(final ByteBuf buffer, final IdMap<T> globalMap) {
+	public void read(final ByteStream buffer, final IdMap<T> globalMap) {
 		this.values.clear();
 		int size = ModernStreamCodecs.VAR_INT.decode(buffer);
 
@@ -73,7 +73,7 @@ public class HashMapPalette<T> implements Palette<T> {
 	}
 
 	@Override
-	public void write(final ByteBuf buffer, final IdMap<T> globalMap) {
+	public void write(final ByteStream buffer, final IdMap<T> globalMap) {
 		int size = this.getSize();
 		ModernStreamCodecs.VAR_INT.encode(buffer, size);
 

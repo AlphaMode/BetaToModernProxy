@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.item;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
@@ -13,8 +13,8 @@ import java.util.function.Function;
 
 public record HashedPatchMap(Map<DataComponentType<?>, Integer> addedComponents,
 							 Set<DataComponentType<?>> removedComponents) {
-	public static final StreamCodec<ByteBuf, HashedPatchMap> STREAM_CODEC = StreamCodec.composite(
-			ModernStreamCodecs.map(HashMap::new, DataComponentType.REGISTRY_CODEC, BasicStreamCodecs.INT, 256),
+	public static final StreamCodec<ByteStream, HashedPatchMap> STREAM_CODEC = StreamCodec.composite(
+			ModernStreamCodecs.map(HashMap::new, DataComponentType.REGISTRY_CODEC, CommonStreamCodecs.INT, 256),
 			HashedPatchMap::addedComponents,
 			ModernStreamCodecs.collection(HashSet::new, DataComponentType.REGISTRY_CODEC, 256),
 			HashedPatchMap::removedComponents,

@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.level.chunk.palette;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.IdMap;
 import net.raphimc.netminecraft.packet.PacketTypes;
@@ -71,7 +71,7 @@ public final class LinearPalette<T> implements Palette<T> {
 	}
 
 	@Override
-	public void read(final ByteBuf buffer, final IdMap<T> globalMap) {
+	public void read(final ByteStream buffer, final IdMap<T> globalMap) {
 		this.size = ModernStreamCodecs.VAR_INT.decode(buffer);
 
 		for (int i = 0; i < this.size; i++) {
@@ -80,7 +80,7 @@ public final class LinearPalette<T> implements Palette<T> {
 	}
 
 	@Override
-	public void write(final ByteBuf buffer, final IdMap<T> globalMap) {
+	public void write(final ByteStream buffer, final IdMap<T> globalMap) {
 		ModernStreamCodecs.VAR_INT.encode(buffer, this.size);
 
 		for (int i = 0; i < this.size; i++) {

@@ -1,17 +1,17 @@
 package me.alphamode.beta.proxy.util.data.modern.item;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 
 public record ModernItemStack(int itemId, int count, DataComponentPatch components) {
 	public static final ModernItemStack EMPTY = new ModernItemStack(0, 0, DataComponentPatch.EMPTY);
-	public static final StreamCodec<ByteBuf, ModernItemStack> CODEC = null;
+	public static final StreamCodec<ByteStream, ModernItemStack> CODEC = null;
 
-	public static final StreamCodec<ByteBuf, ModernItemStack> OPTIONAL_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, ModernItemStack> OPTIONAL_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final ModernItemStack stack) {
+		public void encode(final ByteStream buf, final ModernItemStack stack) {
 			ModernStreamCodecs.VAR_INT.encode(buf, stack.count);
 			if (stack.count > 0) {
 				ModernStreamCodecs.VAR_INT.encode(buf, stack.itemId);
@@ -20,7 +20,7 @@ public record ModernItemStack(int itemId, int count, DataComponentPatch componen
 		}
 
 		@Override
-		public ModernItemStack decode(final ByteBuf buf) {
+		public ModernItemStack decode(final ByteStream buf) {
 			final int count = ModernStreamCodecs.VAR_INT.decode(buf);
 			if (count <= 0) {
 				return ModernItemStack.EMPTY;

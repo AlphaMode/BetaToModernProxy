@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 import java.util.Arrays;
@@ -17,14 +17,14 @@ public enum Direction {
 	private static final Direction[] VALUES = values();
 	private static final Direction[] BY_3D_DATA = Arrays.stream(VALUES).sorted(Comparator.comparingInt(d -> d.data3d)).toArray(Direction[]::new);
 
-	public static final StreamCodec<ByteBuf, Direction> CODEC_3D = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, Direction> CODEC_3D = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final Direction value) {
-			buf.writeByte(value.data3d);
+		public void encode(final ByteStream buf, final Direction value) {
+			buf.writeByte((byte) value.data3d);
 		}
 
 		@Override
-		public Direction decode(final ByteBuf buf) {
+		public Direction decode(final ByteStream buf) {
 			return Direction.from3DDataValue(buf.readUnsignedByte());
 		}
 	};

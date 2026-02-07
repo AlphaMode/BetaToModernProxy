@@ -1,16 +1,16 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.common.S2CCommonDisconnectPacket;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.text.TextComponent;
 
 public record S2CPlayDisconnectPacket(
 		TextComponent reason) implements S2CCommonDisconnectPacket<ClientboundPlayPackets> {
-	public static final StreamCodec<ByteBuf, S2CPlayDisconnectPacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, S2CPlayDisconnectPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.TEXT_COMPONENT,
 			S2CPlayDisconnectPacket::reason,
 			S2CPlayDisconnectPacket::new

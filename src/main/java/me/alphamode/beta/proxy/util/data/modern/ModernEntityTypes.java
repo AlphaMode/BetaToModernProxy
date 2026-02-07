@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
@@ -161,7 +161,7 @@ public enum ModernEntityTypes {
 	PLAYER(155),
 	FISHING_BOBBER(156);
 
-	public static final StreamCodec<ByteBuf, ModernEntityTypes> CODEC = ModernStreamCodecs.VAR_INT.map(ModernEntityTypes::fromId, ModernEntityTypes::id);
+	public static final StreamCodec<ByteStream, ModernEntityTypes> CODEC = ModernStreamCodecs.VAR_INT.map(ModernEntityTypes::fromId, ModernEntityTypes::id);
 	private final int id;
 
 	ModernEntityTypes(final int id) {

@@ -7,12 +7,12 @@ import me.alphamode.wisp.loader.api.plugin.PluginContext;
 import java.io.IOException;
 
 public class ProxyLoaderPlugin implements LoaderPlugin {
-    @Override
-    public void init(PluginContext context) {
-        try {
-            context.addMods(PluginLoader.INSTANCE.locatePlugins().toArray(LoadingMod[]::new));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@Override
+	public void init(PluginContext context) {
+		try {
+			context.addMods(PluginLoader.INSTANCE.locatePlugins().toArray(LoadingMod[]::new));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

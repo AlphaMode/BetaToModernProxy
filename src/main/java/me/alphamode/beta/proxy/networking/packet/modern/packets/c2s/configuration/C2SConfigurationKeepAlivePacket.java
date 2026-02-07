@@ -1,16 +1,16 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.configuration;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundConfigurationPackets;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.common.C2SCommonKeepAlivePacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record C2SConfigurationKeepAlivePacket(
 		long id) implements C2SCommonKeepAlivePacket<ServerboundConfigurationPackets> {
-	public static final StreamCodec<ByteBuf, C2SConfigurationKeepAlivePacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.LONG,
+	public static final StreamCodec<ByteStream, C2SConfigurationKeepAlivePacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.LONG,
 			C2SConfigurationKeepAlivePacket::id,
 			C2SConfigurationKeepAlivePacket::new
 	);

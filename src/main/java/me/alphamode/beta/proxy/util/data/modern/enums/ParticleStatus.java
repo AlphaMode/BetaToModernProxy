@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.enums;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ByIdMap;
@@ -13,7 +13,7 @@ public enum ParticleStatus {
 	MINIMAL(2);
 
 	private static final IntFunction<ParticleStatus> BY_ID = ByIdMap.continuous(ParticleStatus::getId, values(), ByIdMap.OutOfBoundsStrategy.WRAP);
-	public static final StreamCodec<ByteBuf, ParticleStatus> CODEC = ModernStreamCodecs.idMapper(BY_ID, ParticleStatus::getId);
+	public static final StreamCodec<ByteStream, ParticleStatus> CODEC = ModernStreamCodecs.idMapper(BY_ID, ParticleStatus::getId);
 	private final int id;
 
 	ParticleStatus(final int id) {

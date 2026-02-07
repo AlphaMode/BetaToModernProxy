@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLevelChunkPacketData;
@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.util.data.modern.level.ClientboundLightUpdatePack
 
 public record S2CLevelChunkWithLightPacket(ChunkPos pos, ClientboundLevelChunkPacketData chunkData,
 										   ClientboundLightUpdatePacketData lightData) implements S2CPlayPacket {
-	public static StreamCodec<ByteBuf, S2CLevelChunkWithLightPacket> CODEC = StreamCodec.composite(
+	public static StreamCodec<ByteStream, S2CLevelChunkWithLightPacket> CODEC = StreamCodec.composite(
 			ChunkPos.BASIC_CODEC,
 			S2CLevelChunkWithLightPacket::pos,
 			ClientboundLevelChunkPacketData.CODEC,

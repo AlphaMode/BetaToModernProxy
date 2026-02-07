@@ -1,26 +1,26 @@
 package me.alphamode.beta.proxy.util.data;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record ChunkPos(int x, int z) {
-	public static final StreamCodec<ByteBuf, ChunkPos> CODEC = StreamCodec.ofMember(ChunkPos::write, ChunkPos::new);
+	public static final StreamCodec<ByteStream, ChunkPos> CODEC = StreamCodec.ofMember(ChunkPos::write, ChunkPos::new);
 
-	public static final StreamCodec<ByteBuf, ChunkPos> BASIC_CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, ChunkPos> BASIC_CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			ChunkPos::x,
-			BasicStreamCodecs.INT,
+			CommonStreamCodecs.INT,
 			ChunkPos::z,
 			ChunkPos::new
 	);
 
-	public ChunkPos(final ByteBuf buf) {
+	public ChunkPos(final ByteStream buf) {
 		final long value = buf.readLong();
 		this((int) value, (int) (value >> 32));
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		buf.writeLong(this.pack());
 	}
 

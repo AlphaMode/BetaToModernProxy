@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.enums;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 import java.util.EnumSet;
@@ -21,7 +21,7 @@ public enum Relative {
 	public static final Set<Relative> ALL = Set.of(values());
 	public static final Set<Relative> ROTATION = Set.of(X_ROT, Y_ROT);
 	public static final Set<Relative> DELTA = Set.of(DELTA_X, DELTA_Y, DELTA_Z, ROTATE_DELTA);
-	public static final StreamCodec<ByteBuf, Set<Relative>> SET_STREAM_CODEC = BasicStreamCodecs.INT.map(Relative::unpack, Relative::pack);
+	public static final StreamCodec<ByteStream, Set<Relative>> SET_STREAM_CODEC = CommonStreamCodecs.INT.map(Relative::unpack, Relative::pack);
 	private final int bit;
 
 	Relative(int bit) {

@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
@@ -11,18 +11,18 @@ import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 
 public record AddItemEntityPacket(int entityId, BetaItemStack item, Vec3i position, byte xa, byte ya,
 								  byte za) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, AddItemEntityPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, AddItemEntityPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			AddItemEntityPacket::entityId,
 			BetaItemStack.CODEC,
 			AddItemEntityPacket::item,
 			Vec3i.CODEC,
 			AddItemEntityPacket::position,
-			BasicStreamCodecs.BYTE,
+			CommonStreamCodecs.BYTE,
 			AddItemEntityPacket::xa,
-			BasicStreamCodecs.BYTE,
+			CommonStreamCodecs.BYTE,
 			AddItemEntityPacket::ya,
-			BasicStreamCodecs.BYTE,
+			CommonStreamCodecs.BYTE,
 			AddItemEntityPacket::za,
 			AddItemEntityPacket::new
 	);

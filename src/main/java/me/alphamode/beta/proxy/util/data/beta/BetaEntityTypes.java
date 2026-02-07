@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.beta;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public enum BetaEntityTypes {
@@ -20,7 +20,7 @@ public enum BetaEntityTypes {
 	SQUID(94),
 	WOLF(95);
 
-	public static final StreamCodec<ByteBuf, BetaEntityTypes> CODEC = BasicStreamCodecs.BYTE.map(BetaEntityTypes::fromId, (type) -> (byte) type.id);
+	public static final StreamCodec<ByteStream, BetaEntityTypes> CODEC = CommonStreamCodecs.BYTE.map(BetaEntityTypes::fromId, (type) -> (byte) type.id);
 	private final int id;
 
 	BetaEntityTypes(final int id) {

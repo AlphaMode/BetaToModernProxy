@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.level.chunk.palette;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.data.modern.IdMap;
 
 import java.util.List;
@@ -13,9 +13,9 @@ public interface Palette<T> {
 
 	T valueFor(int index);
 
-	void read(ByteBuf buffer, IdMap<T> globalMap);
+	void read(ByteStream buffer, IdMap<T> globalMap);
 
-	void write(ByteBuf buffer, IdMap<T> globalMap);
+	void write(ByteStream buffer, IdMap<T> globalMap);
 
 	int getSerializedSize(IdMap<T> globalMap);
 

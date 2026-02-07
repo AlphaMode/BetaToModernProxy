@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.StringRepresentable;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
@@ -8,22 +8,19 @@ import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import java.util.BitSet;
 
 public record FilterMask(BitSet mask, Type type) {
-	public static final StreamCodec<ByteBuf, FilterMask> CODEC = StreamCodec.ofMember(FilterMask::write, FilterMask::new);
+	public static final StreamCodec<ByteStream, FilterMask> CODEC = StreamCodec.ofMember(FilterMask::write, FilterMask::new);
 	public static final FilterMask FULLY_FILTERED = new FilterMask(new BitSet(0), FilterMask.Type.FULLY_FILTERED);
 	public static final FilterMask PASS_THROUGH = new FilterMask(new BitSet(0), FilterMask.Type.PASS_THROUGH);
 
-	public FilterMask(final ByteBuf buf) {
-		FilterMask.Type type = Type.CODEC.decode(buf);
-		BitSet bitSet = null;
-		switch (type) {
-			case PASS_THROUGH, FULLY_FILTERED -> bitSet = new BitSet(0);
-			case PARTIALLY_FILTERED -> bitSet = ModernStreamCodecs.BIT_SET.decode(buf);
-		}
-
-		this(bitSet, type);
+	public FilterMask(final ByteStream buf) {
+		final FilterMask.Type type = Type.CODEC.decode(buf);
+		this(switch (type) {
+			case PASS_THROUGH, FULLY_FILTERED -> new BitSet(0);
+			case PARTIALLY_FILTERED -> ModernStreamCodecs.BIT_SET.decode(buf);
+		}, type);
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		Type.CODEC.encode(buf, this.type);
 		if (this.type == FilterMask.Type.PARTIALLY_FILTERED) {
 			ModernStreamCodecs.BIT_SET.encode(buf, this.mask);
@@ -58,10 +55,10 @@ public record FilterMask(BitSet mask, Type type) {
 		FULLY_FILTERED("fully_filtered"),
 		PARTIALLY_FILTERED("partially_filtered");
 
-		public static final StreamCodec<ByteBuf, Type> CODEC = ModernStreamCodecs.javaEnum(Type.class);
+		public static final StreamCodec<ByteStream, Type> CODEC = ModernStreamCodecs.javaEnum(Type.class);
 		private final String serializedName;
 
-		Type(String serializedName) {
+		Type(final String serializedName) {
 			this.serializedName = serializedName;
 		}
 

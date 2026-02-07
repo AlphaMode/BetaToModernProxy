@@ -6,6 +6,7 @@ import io.netty.handler.codec.ByteToMessageCodec;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import net.raphimc.netminecraft.packet.PacketTypes;
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +27,9 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 	@Override
 	protected void encode(final ChannelHandlerContext context, final ModernPacket<ModernPackets> packet, final ByteBuf buf) throws Exception {
 		final ModernPackets type = packet.getType();
-		ModernStreamCodecs.VAR_INT.encode(buf, type.getId());
+		ModernStreamCodecs.VAR_INT.encode((ByteStream) buf, type.getId());
 		try {
-			ModernPacketRegistry.INSTANCE.getCodec(type).encode(buf, packet);
+			ModernPacketRegistry.INSTANCE.getCodec(type).encode((ByteStream) buf, packet);
 		} catch (Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to encode modern packet");
@@ -45,7 +46,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {
-			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), packetData));
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), (ByteStream) packetData));
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, connection.getState());

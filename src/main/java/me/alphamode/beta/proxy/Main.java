@@ -8,8 +8,8 @@ import net.raphimc.netminecraft.netty.crypto.CryptUtil;
 import java.net.Proxy;
 
 public final class Main {
-	public static void main(final String[] args) {
-		HttpAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
+	static void main(final String[] args) {
+		final HttpAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
 		new BrodernProxy(new Config(), CryptUtil.generateKeyPair(), authService.createMinecraftSessionService(), authService.createProfileRepository()).listen();
 	}
 }

@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPacket.StatusOnly, MovePlayerPacket.Pos, MovePlayerPacket.PosRot, MovePlayerPacket.Rot {
@@ -38,8 +38,8 @@ public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPa
 	boolean hasRot();
 
 	record StatusOnly(boolean onGround) implements MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, MovePlayerPacket> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.BOOL, MovePlayerPacket::onGround,
+		public static final StreamCodec<ByteStream, MovePlayerPacket> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.BOOL, MovePlayerPacket::onGround,
 				StatusOnly::new
 		);
 
@@ -60,12 +60,12 @@ public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPa
 	}
 
 	record Pos(double x, double y, double yView, double z, boolean onGround) implements MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, Pos> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.DOUBLE, Pos::x,
-				BasicStreamCodecs.DOUBLE, Pos::y,
-				BasicStreamCodecs.DOUBLE, Pos::yView,
-				BasicStreamCodecs.DOUBLE, Pos::z,
-				BasicStreamCodecs.BOOL, Pos::onGround,
+		public static final StreamCodec<ByteStream, Pos> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.DOUBLE, Pos::x,
+				CommonStreamCodecs.DOUBLE, Pos::y,
+				CommonStreamCodecs.DOUBLE, Pos::yView,
+				CommonStreamCodecs.DOUBLE, Pos::z,
+				CommonStreamCodecs.BOOL, Pos::onGround,
 				Pos::new
 		);
 
@@ -87,14 +87,14 @@ public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPa
 
 	record PosRot(double x, double y, double yView, double z, float yRot, float xRot,
 				  boolean onGround) implements MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, PosRot> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.DOUBLE, PosRot::x,
-				BasicStreamCodecs.DOUBLE, PosRot::y,
-				BasicStreamCodecs.DOUBLE, PosRot::yView,
-				BasicStreamCodecs.DOUBLE, PosRot::z,
-				BasicStreamCodecs.FLOAT, PosRot::yRot,
-				BasicStreamCodecs.FLOAT, PosRot::xRot,
-				BasicStreamCodecs.BOOL, PosRot::onGround,
+		public static final StreamCodec<ByteStream, PosRot> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.DOUBLE, PosRot::x,
+				CommonStreamCodecs.DOUBLE, PosRot::y,
+				CommonStreamCodecs.DOUBLE, PosRot::yView,
+				CommonStreamCodecs.DOUBLE, PosRot::z,
+				CommonStreamCodecs.FLOAT, PosRot::yRot,
+				CommonStreamCodecs.FLOAT, PosRot::xRot,
+				CommonStreamCodecs.BOOL, PosRot::onGround,
 				PosRot::new
 		);
 
@@ -115,10 +115,10 @@ public sealed interface MovePlayerPacket extends BetaPacket permits MovePlayerPa
 	}
 
 	record Rot(float yRot, float xRot, boolean onGround) implements MovePlayerPacket {
-		public static final StreamCodec<ByteBuf, Rot> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.FLOAT, Rot::yRot,
-				BasicStreamCodecs.FLOAT, Rot::xRot,
-				BasicStreamCodecs.BOOL, Rot::onGround,
+		public static final StreamCodec<ByteStream, Rot> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.FLOAT, Rot::yRot,
+				CommonStreamCodecs.FLOAT, Rot::xRot,
+				CommonStreamCodecs.BOOL, Rot::onGround,
 				Rot::new
 		);
 

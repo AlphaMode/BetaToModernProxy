@@ -3,7 +3,6 @@ package me.alphamode.beta.proxy.pipeline.b2m.login;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -34,6 +33,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CSt
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
 import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
@@ -208,8 +208,8 @@ public class ClientLoginPipeline {
 		this.sendRegistries(connection);
 
 		// Send Custom Brand
-		final ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
-		ModernStreamCodecs.stringUtf8().encode(buf, BrodernProxy.getProxy().config().getBrand());
+		final ByteStream buf = (ByteStream) ByteBufAllocator.DEFAULT.buffer();
+		ModernStreamCodecs.STRING_UTF8.encode(buf, BrodernProxy.getProxy().config().getBrand());
 
 		final byte[] buffer = new byte[buf.readableBytes()];
 		buf.readBytes(buffer);

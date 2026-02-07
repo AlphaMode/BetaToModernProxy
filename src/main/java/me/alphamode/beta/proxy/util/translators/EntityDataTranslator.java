@@ -23,7 +23,7 @@ public class EntityDataTranslator<FROM extends EntityDataValue<?>, TO extends En
 			translators.get(id).translate(connection, item, newValues::add);
 		}
 
-        return newValues;
+		return newValues;
 	}
 
 	public <V, F extends EntityDataValue<V>> void registerTranslation(DataAccessor<V, F> id, DataTranslator<V, F, TO> translator) {
@@ -38,7 +38,8 @@ public class EntityDataTranslator<FROM extends EntityDataValue<?>, TO extends En
 		void translate(final ClientConnection connection, final FROM item, final Consumer<TO> output);
 	}
 
-	public record EntityDataAccessor<T, F extends EntityDataValue<T>>(ModernEntityTypes type, DataAccessor<T, F> accessor) {
+	public record EntityDataAccessor<T, F extends EntityDataValue<T>>(ModernEntityTypes type,
+																	  DataAccessor<T, F> accessor) {
 	}
 
 	public record DataAccessor<T, V extends EntityDataValue<T>>(int id) {

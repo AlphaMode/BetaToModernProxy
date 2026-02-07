@@ -1,22 +1,22 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record AddPaintingPacket(int entityId, Motive motive, Vec3i position, int direction) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, AddPaintingPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, AddPaintingPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			AddPaintingPacket::entityId,
 			Motive.STRING_CODEC,
 			AddPaintingPacket::motive,
 			Vec3i.CODEC,
 			AddPaintingPacket::position,
-			BasicStreamCodecs.INT,
+			CommonStreamCodecs.INT,
 			AddPaintingPacket::direction,
 			AddPaintingPacket::new
 	);
@@ -54,7 +54,7 @@ public record AddPaintingPacket(int entityId, Motive motive, Vec3i position, int
 		DONKEY_KONG("DonkeyKong");
 
 		public static final int MAX_NAME_LENGTH = 13;
-		public static final StreamCodec<ByteBuf, Motive> STRING_CODEC = BetaStreamCodecs.stringUtf8(MAX_NAME_LENGTH).map(Motive::byName, Motive::getName);
+		public static final StreamCodec<ByteStream, Motive> STRING_CODEC = BetaStreamCodecs.stringUtf8(MAX_NAME_LENGTH).map(Motive::byName, Motive::getName);
 
 		private final String name;
 

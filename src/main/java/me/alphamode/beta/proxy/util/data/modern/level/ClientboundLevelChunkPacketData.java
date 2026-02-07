@@ -1,10 +1,10 @@
 package me.alphamode.beta.proxy.util.data.modern.level;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
 import net.lenni0451.mcstructs.nbt.tags.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 public class ClientboundLevelChunkPacketData {
-	private static final StreamCodec<ByteBuf, Map<Heightmap.Types, long[]>> HEIGHTMAPS_STREAM_CODEC = ModernStreamCodecs.map(
+	private static final StreamCodec<ByteStream, Map<Heightmap.Types, long[]>> HEIGHTMAPS_STREAM_CODEC = ModernStreamCodecs.map(
 			_ -> new EnumMap<>(Heightmap.Types.class),
 			Heightmap.Types.STREAM_CODEC,
 			ModernStreamCodecs.LONG_ARRAY
 	);
-	public static final StreamCodec<ByteBuf, ClientboundLevelChunkPacketData> CODEC = StreamCodec.ofMember(ClientboundLevelChunkPacketData::write, ClientboundLevelChunkPacketData::new);
+	public static final StreamCodec<ByteStream, ClientboundLevelChunkPacketData> CODEC = StreamCodec.ofMember(ClientboundLevelChunkPacketData::write, ClientboundLevelChunkPacketData::new);
 
 	private final Map<Heightmap.Types, long[]> heightmaps;
 	private final byte[] buffer;
@@ -41,7 +41,7 @@ public class ClientboundLevelChunkPacketData {
 		this.blockEntitiesData = blockEntitiesData;
 	}
 
-	public ClientboundLevelChunkPacketData(final ByteBuf buf) {
+	public ClientboundLevelChunkPacketData(final ByteStream buf) {
 		this.heightmaps = HEIGHTMAPS_STREAM_CODEC.decode(buf);
 
 		final int size = ModernStreamCodecs.VAR_INT.decode(buf);
@@ -54,7 +54,7 @@ public class ClientboundLevelChunkPacketData {
 		}
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		HEIGHTMAPS_STREAM_CODEC.encode(buf, this.heightmaps);
 		ModernStreamCodecs.VAR_INT.encode(buf, this.buffer.length);
 		buf.writeBytes(this.buffer);
@@ -71,14 +71,14 @@ public class ClientboundLevelChunkPacketData {
 		return total;
 	}
 
-	private ByteBuf getWriteBuffer() {
-		ByteBuf buffer = Unpooled.wrappedBuffer(this.buffer);
+	private ByteStream getWriteBuffer() {
+		final ByteStream buffer = (ByteStream) Unpooled.wrappedBuffer(this.buffer);
 		buffer.writerIndex(0);
 		return buffer;
 	}
 
-	public static void extractChunkData(final ByteBuf buffer, final ChunkTranslator.ModernChunk chunk) {
-		for (ChunkTranslator.ModernChunkSection section : chunk.sections()) {
+	public static void extractChunkData(final ByteStream buffer, final ChunkTranslator.ModernChunk chunk) {
+		for (final ChunkTranslator.ModernChunkSection section : chunk.sections()) {
 			section.write(buffer);
 		}
 
@@ -87,8 +87,8 @@ public class ClientboundLevelChunkPacketData {
 		}
 	}
 
-	public ByteBuf getReadBuffer() {
-		return Unpooled.wrappedBuffer(this.buffer);
+	public ByteStream getReadBuffer() {
+		return (ByteStream) Unpooled.wrappedBuffer(this.buffer);
 	}
 
 	public Map<Heightmap.Types, long[]> getHeightmaps() {
@@ -96,8 +96,8 @@ public class ClientboundLevelChunkPacketData {
 	}
 
 	public static class BlockEntityInfo {
-		public static final StreamCodec<ByteBuf, ClientboundLevelChunkPacketData.BlockEntityInfo> STREAM_CODEC = StreamCodec.ofMember(ClientboundLevelChunkPacketData.BlockEntityInfo::write, ClientboundLevelChunkPacketData.BlockEntityInfo::new);
-		public static final StreamCodec<ByteBuf, List<ClientboundLevelChunkPacketData.BlockEntityInfo>> LIST_STREAM_CODEC = STREAM_CODEC.apply(ModernStreamCodecs.list());
+		public static final StreamCodec<ByteStream, ClientboundLevelChunkPacketData.BlockEntityInfo> STREAM_CODEC = StreamCodec.ofMember(ClientboundLevelChunkPacketData.BlockEntityInfo::write, ClientboundLevelChunkPacketData.BlockEntityInfo::new);
+		public static final StreamCodec<ByteStream, List<ClientboundLevelChunkPacketData.BlockEntityInfo>> LIST_STREAM_CODEC = STREAM_CODEC.apply(ModernStreamCodecs.list());
 		private final int packedXZ;
 		private final int y;
 		// TODO: private final BlockEntityType<?> type;
@@ -110,17 +110,17 @@ public class ClientboundLevelChunkPacketData {
 			this.tag = tag;
 		}
 
-		private BlockEntityInfo(final ByteBuf buf) {
+		private BlockEntityInfo(final ByteStream buf) {
 			this.packedXZ = buf.readByte();
 			this.y = buf.readShort();
-			// TODO: this.type = ByteBufCodecs.registry(Registries.BLOCK_ENTITY_TYPE).decode(buf);
+			// TODO: this.type = ByteStreamCodecs.registry(Registries.BLOCK_ENTITY_TYPE).decode(buf);
 			this.tag = ModernStreamCodecs.TAG.decode(buf).asCompoundTag();
 		}
 
-		private void write(final ByteBuf buf) {
-			buf.writeByte(this.packedXZ);
-			buf.writeShort(this.y);
-			// ByteBufCodecs.registry(Registries.BLOCK_ENTITY_TYPE).encode(buf, this.type);
+		private void write(final ByteStream buf) {
+			buf.writeByte((byte) this.packedXZ);
+			buf.writeShort((short) this.y);
+			// ByteStreamCodecs.registry(Registries.BLOCK_ENTITY_TYPE).encode(buf, this.type);
 			ModernStreamCodecs.TAG.encode(buf, this.tag);
 		}
 	}

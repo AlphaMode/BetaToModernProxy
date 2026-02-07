@@ -1,20 +1,20 @@
 package me.alphamode.beta.proxy.util.data.modern.components;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.converter.codec.Codec;
 import org.jetbrains.annotations.Nullable;
 
 public interface DataComponentType<T> {
-	StreamCodec<ByteBuf, DataComponentType<?>> REGISTRY_CODEC = new StreamCodec<>() {
+	StreamCodec<ByteStream, DataComponentType<?>> REGISTRY_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final DataComponentType<?> value) {
+		public void encode(final ByteStream buf, final DataComponentType<?> value) {
 			ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(value));
 		}
 
 		@Override
-		public DataComponentType<?> decode(final ByteBuf buf) {
+		public DataComponentType<?> decode(final ByteStream buf) {
 			return DataComponents.byRawId(ModernStreamCodecs.VAR_INT.decode(buf));
 		}
 	};
@@ -34,11 +34,11 @@ public interface DataComponentType<T> {
 		}
 	}
 
-	StreamCodec<? super ByteBuf, T> streamCodec();
+	StreamCodec<? super ByteStream, T> streamCodec();
 
 	class Builder<T> {
 		private @Nullable Codec<T> codec;
-		private @Nullable StreamCodec<? super ByteBuf, T> streamCodec;
+		private @Nullable StreamCodec<? super ByteStream, T> streamCodec;
 		private boolean cacheEncoding;
 
 		public DataComponentType.Builder<T> persistent(Codec<T> codec) {
@@ -46,7 +46,7 @@ public interface DataComponentType<T> {
 			return this;
 		}
 
-		public DataComponentType.Builder<T> networkSynchronized(StreamCodec<? super ByteBuf, T> streamCodec) {
+		public DataComponentType.Builder<T> networkSynchronized(StreamCodec<? super ByteStream, T> streamCodec) {
 			this.streamCodec = streamCodec;
 			return this;
 		}
@@ -64,7 +64,7 @@ public interface DataComponentType<T> {
 		}
 
 		private record SimpleType<T>(@Nullable Codec<T> codec,
-									 StreamCodec<? super ByteBuf, T> streamCodec) implements DataComponentType<T> {
+									 StreamCodec<? super ByteStream, T> streamCodec) implements DataComponentType<T> {
 			@Override
 			public String toString() {
 				return DataComponents.getId(this).get();

@@ -1,13 +1,13 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public class MoveEntityPacket implements BetaPacket {
-	public static final StreamCodec<ByteBuf, MoveEntityPacket> CODEC = AbstractPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
+	public static final StreamCodec<ByteStream, MoveEntityPacket> CODEC = AbstractPacket.codec(MoveEntityPacket::write, MoveEntityPacket::new);
 	public int entityId;
 	public byte xa;
 	public byte ya;
@@ -16,7 +16,7 @@ public class MoveEntityPacket implements BetaPacket {
 	public byte xRot;
 	public boolean hasRot = false;
 
-	public MoveEntityPacket(final ByteBuf buf) {
+	public MoveEntityPacket(final ByteStream buf) {
 		this.entityId = buf.readInt();
 	}
 
@@ -24,7 +24,7 @@ public class MoveEntityPacket implements BetaPacket {
 		this.entityId = entityId;
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		buf.writeInt(this.entityId);
 	}
 
@@ -39,9 +39,9 @@ public class MoveEntityPacket implements BetaPacket {
 	}
 
 	public static class Pos extends MoveEntityPacket {
-		public static final StreamCodec<ByteBuf, Pos> CODEC = AbstractPacket.codec(Pos::write, Pos::new);
+		public static final StreamCodec<ByteStream, Pos> CODEC = AbstractPacket.codec(Pos::write, Pos::new);
 
-		public Pos(final ByteBuf buf) {
+		public Pos(final ByteStream buf) {
 			super(buf);
 			this.xa = buf.readByte();
 			this.ya = buf.readByte();
@@ -56,7 +56,7 @@ public class MoveEntityPacket implements BetaPacket {
 		}
 
 		@Override
-		public void write(final ByteBuf buf) {
+		public void write(final ByteStream buf) {
 			super.write(buf);
 			buf.writeByte(this.xa);
 			buf.writeByte(this.ya);
@@ -70,9 +70,9 @@ public class MoveEntityPacket implements BetaPacket {
 	}
 
 	public static class PosRot extends MoveEntityPacket {
-		public static final StreamCodec<ByteBuf, PosRot> CODEC = AbstractPacket.codec(PosRot::write, PosRot::new);
+		public static final StreamCodec<ByteStream, PosRot> CODEC = AbstractPacket.codec(PosRot::write, PosRot::new);
 
-		public PosRot(final ByteBuf buf) {
+		public PosRot(final ByteStream buf) {
 			super(buf);
 			this.xa = buf.readByte();
 			this.ya = buf.readByte();
@@ -93,7 +93,7 @@ public class MoveEntityPacket implements BetaPacket {
 		}
 
 		@Override
-		public void write(final ByteBuf buf) {
+		public void write(final ByteStream buf) {
 			super.write(buf);
 			buf.writeByte(this.xa);
 			buf.writeByte(this.ya);
@@ -109,9 +109,9 @@ public class MoveEntityPacket implements BetaPacket {
 	}
 
 	public static class Rot extends MoveEntityPacket {
-		public static final StreamCodec<ByteBuf, Rot> CODEC = AbstractPacket.codec(Rot::write, Rot::new);
+		public static final StreamCodec<ByteStream, Rot> CODEC = AbstractPacket.codec(Rot::write, Rot::new);
 
-		public Rot(final ByteBuf buf) {
+		public Rot(final ByteStream buf) {
 			super(buf);
 			this.yRot = buf.readByte();
 			this.xRot = buf.readByte();
@@ -126,7 +126,7 @@ public class MoveEntityPacket implements BetaPacket {
 		}
 
 		@Override
-		public void write(final ByteBuf buf) {
+		public void write(final ByteStream buf) {
 			super.write(buf);
 			buf.writeByte(this.yRot);
 			buf.writeByte(this.xRot);

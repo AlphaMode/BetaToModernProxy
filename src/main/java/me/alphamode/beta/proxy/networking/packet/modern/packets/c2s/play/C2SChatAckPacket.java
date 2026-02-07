@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record C2SChatAckPacket(int offset) implements C2SPlayPacket {
-	public static final StreamCodec<ByteBuf, C2SChatAckPacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, C2SChatAckPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.VAR_INT,
 			C2SChatAckPacket::offset,
 			C2SChatAckPacket::new

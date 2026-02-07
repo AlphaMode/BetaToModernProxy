@@ -1,24 +1,24 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 
 public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, BetaItemStack[]> ITEM_STACK_ARRAY = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, BetaItemStack[]> ITEM_STACK_ARRAY = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final BetaItemStack[] items) {
-			buf.writeShort(items.length);
+		public void encode(final ByteStream buf, final BetaItemStack[] items) {
+			buf.writeShort((short) items.length);
 			for (final BetaItemStack item : items) {
 				BetaItemStack.OPTIONAL_CODEC.encode(buf, item);
 			}
 		}
 
 		@Override
-		public BetaItemStack[] decode(final ByteBuf buf) {
+		public BetaItemStack[] decode(final ByteStream buf) {
 			final int size = buf.readShort();
 
 			final BetaItemStack[] items = new BetaItemStack[size];
@@ -30,8 +30,8 @@ public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items)
 		}
 	};
 
-	public static final StreamCodec<ByteBuf, ContainerSetContentPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.BYTE,
+	public static final StreamCodec<ByteStream, ContainerSetContentPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.BYTE,
 			ContainerSetContentPacket::containerId,
 			ITEM_STACK_ARRAY,
 			ContainerSetContentPacket::items,

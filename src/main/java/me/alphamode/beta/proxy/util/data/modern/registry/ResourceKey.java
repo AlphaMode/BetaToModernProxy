@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.registry;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.lenni0451.mcstructs.core.Identifier;
@@ -9,14 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ResourceKey<T> {
-	public static final StreamCodec<ByteBuf, ResourceKey<? extends Registry<?>>> CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, ResourceKey<? extends Registry<?>>> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final ResourceKey<? extends Registry<?>> value) {
+		public void encode(final ByteStream buf, final ResourceKey<? extends Registry<?>> value) {
 			ModernStreamCodecs.IDENTIFIER.encode(buf, value.identifier());
 		}
 
 		@Override
-		public ResourceKey<? extends Registry<?>> decode(final ByteBuf buf) {
+		public ResourceKey<? extends Registry<?>> decode(final ByteStream buf) {
 			return ResourceKey.createRegistryKey(ModernStreamCodecs.IDENTIFIER.decode(buf));
 		}
 	};
@@ -30,15 +30,15 @@ public class ResourceKey<T> {
 		this.identifier = identifier;
 	}
 
-	public static <T> StreamCodec<ByteBuf, ResourceKey<T>> streamCodec(final ResourceKey<? extends Registry<T>> registryName) {
+	public static <T> StreamCodec<ByteStream, ResourceKey<T>> streamCodec(final ResourceKey<? extends Registry<T>> registryName) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteBuf buf, final ResourceKey<T> value) {
+			public void encode(final ByteStream buf, final ResourceKey<T> value) {
 				ModernStreamCodecs.IDENTIFIER.encode(buf, value.identifier);
 			}
 
 			@Override
-			public ResourceKey<T> decode(final ByteBuf buf) {
+			public ResourceKey<T> decode(final ByteStream buf) {
 				return ResourceKey.create(registryName, ModernStreamCodecs.IDENTIFIER.decode(buf));
 			}
 		};

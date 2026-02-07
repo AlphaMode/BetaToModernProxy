@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.configuration;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundConfigurationPackets;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
@@ -14,7 +14,7 @@ public record S2CRegistryDataPacket(
 		ResourceKey<? extends Registry<?>> registry,
 		List<RegistrySynchronization.PackedRegistryEntry> entries
 ) implements S2CConfigurationPacket {
-	public static final StreamCodec<ByteBuf, S2CRegistryDataPacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, S2CRegistryDataPacket> CODEC = StreamCodec.composite(
 			ResourceKey.CODEC,
 			S2CRegistryDataPacket::registry,
 			ModernStreamCodecs.list(RegistrySynchronization.PackedRegistryEntry.CODEC),

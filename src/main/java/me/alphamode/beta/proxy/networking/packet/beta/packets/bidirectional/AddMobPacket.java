@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
@@ -14,16 +14,16 @@ import java.util.List;
 
 public record AddMobPacket(int entityId, BetaEntityTypes type, Vec3i position, byte yRot, byte xRot,
 						   List<BetaSynchedEntityData.DataValue<?>> dataItems) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, AddMobPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, AddMobPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			AddMobPacket::entityId,
 			BetaEntityTypes.CODEC,
 			AddMobPacket::type,
 			Vec3i.CODEC,
 			AddMobPacket::position,
-			BasicStreamCodecs.BYTE,
+			CommonStreamCodecs.BYTE,
 			AddMobPacket::yRot,
-			BasicStreamCodecs.BYTE,
+			CommonStreamCodecs.BYTE,
 			AddMobPacket::xRot,
 			BetaSynchedEntityData.DATA_ITEMS_CODEC,
 			AddMobPacket::dataItems,

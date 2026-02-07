@@ -1,19 +1,19 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record LevelEventPacket(int type, Vec3i pos, int data) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, LevelEventPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, LevelEventPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			LevelEventPacket::type,
 			Vec3i.TINY_CODEC,
 			LevelEventPacket::pos,
-			BasicStreamCodecs.INT,
+			CommonStreamCodecs.INT,
 			LevelEventPacket::data,
 			LevelEventPacket::new
 	);

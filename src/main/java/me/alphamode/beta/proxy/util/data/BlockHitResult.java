@@ -1,12 +1,12 @@
 package me.alphamode.beta.proxy.util.data;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.BlockPos;
 
 public class BlockHitResult extends HitResult {
-	public static final StreamCodec<ByteBuf, BlockHitResult> CODEC = StreamCodec.ofMember(BlockHitResult::write, BlockHitResult::read);
+	public static final StreamCodec<ByteStream, BlockHitResult> CODEC = StreamCodec.ofMember(BlockHitResult::write, BlockHitResult::read);
 
 	private final Direction direction;
 	private final BlockPos blockPos;
@@ -35,7 +35,7 @@ public class BlockHitResult extends HitResult {
 		this.worldBorderHit = worldBorderHit;
 	}
 
-	public static BlockHitResult read(final ByteBuf buf) {
+	public static BlockHitResult read(final ByteStream buf) {
 		final BlockPos pos = BlockPos.CODEC.decode(buf);
 		final Direction face = ModernStreamCodecs.javaEnum(Direction.class).decode(buf);
 		final float clickX = buf.readFloat();
@@ -46,7 +46,7 @@ public class BlockHitResult extends HitResult {
 		return new BlockHitResult(new Vec3d((double) pos.getX() + clickX, (double) pos.getY() + clickY, (double) pos.getZ() + clickZ), face, pos, inside, worldBorder);
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		final BlockPos blockPos = this.getBlockPos();
 		BlockPos.CODEC.encode(buf, blockPos);
 		ModernStreamCodecs.javaEnum(Direction.class).encode(buf, this.getDirection());

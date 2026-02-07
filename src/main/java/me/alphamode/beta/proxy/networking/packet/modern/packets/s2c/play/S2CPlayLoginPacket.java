@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.CommonPlayerSpawnInfo;
@@ -25,10 +25,10 @@ public record S2CPlayLoginPacket(
 		CommonPlayerSpawnInfo commonPlayerSpawnInfo,
 		boolean enforcesSecureChat
 ) implements S2CPlayPacket {
-	public static final StreamCodec<ByteBuf, S2CPlayLoginPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, S2CPlayLoginPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			S2CPlayLoginPacket::playerId,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			S2CPlayLoginPacket::hardcore,
 			ModernStreamCodecs.collection(ResourceKey.streamCodec(Registries.DIMENSION)),
 			S2CPlayLoginPacket::levels,
@@ -38,15 +38,15 @@ public record S2CPlayLoginPacket(
 			S2CPlayLoginPacket::chunkRadius,
 			ModernStreamCodecs.VAR_INT,
 			S2CPlayLoginPacket::simulationDistance,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			S2CPlayLoginPacket::reducedDebugInfo,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			S2CPlayLoginPacket::showDeathScreen,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			S2CPlayLoginPacket::doLimitedCrafting,
 			CommonPlayerSpawnInfo.CODEC,
 			S2CPlayLoginPacket::commonPlayerSpawnInfo,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			S2CPlayLoginPacket::enforcesSecureChat,
 			S2CPlayLoginPacket::new
 	);

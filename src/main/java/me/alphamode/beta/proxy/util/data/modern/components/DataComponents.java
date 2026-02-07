@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.components;
 
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import net.lenni0451.mcstructs.core.Identifier;
@@ -27,7 +27,7 @@ public final class DataComponents {
 
 	public static final DataComponentType<TextComponent> CUSTOM_NAME = register("custom_name", b -> b.networkSynchronized(ModernStreamCodecs.TEXT_COMPONENT));
 
-	public static final DataComponentType<Float> MINIMUM_ATTACK_CHARGE = register("minimum_attack_charge", b -> b.networkSynchronized(BasicStreamCodecs.FLOAT));
+	public static final DataComponentType<Float> MINIMUM_ATTACK_CHARGE = register("minimum_attack_charge", b -> b.networkSynchronized(CommonStreamCodecs.FLOAT));
 
 //	public static final DataComponentType<EitherHolder<DamageType>> DAMAGE_TYPE = register("damage_type", b -> bRegistries.DAMAGE_TYPE, DamageType.CODEC)).networkSynchronized(EitherHolder.streamCodec(Registries.DAMAGE_TYPE, DamageType.STREAM_CODEC)));
 
@@ -55,7 +55,7 @@ public final class DataComponents {
 
 //	public static final DataComponentType<Unit> CREATIVE_SLOT_LOCK = register("creative_slot_lock", b -> b.networkSynchronized(Unit.STREAM_CODEC));
 
-	public static final DataComponentType<Boolean> ENCHANTMENT_GLINT_OVERRIDE = register("enchantment_glint_override", b -> b.networkSynchronized(BasicStreamCodecs.BOOL));
+	public static final DataComponentType<Boolean> ENCHANTMENT_GLINT_OVERRIDE = register("enchantment_glint_override", b -> b.networkSynchronized(CommonStreamCodecs.BOOL));
 
 //	public static final DataComponentType<Unit> INTANGIBLE_PROJECTILE = register("intangible_projectile", b -> b);
 //
@@ -113,7 +113,7 @@ public final class DataComponents {
 //
 //	public static final DataComponentType<PotionContents> POTION_CONTENTS = register("potion_contents", b -> b.networkSynchronized(PotionContents.STREAM_CODEC));
 //
-//	public static final DataComponentType<Float> POTION_DURATION_SCALE = register("potion_duration_scale", b -> b.networkSynchronized(ByteBufCodecs.FLOAT));
+//	public static final DataComponentType<Float> POTION_DURATION_SCALE = register("potion_duration_scale", b -> b.networkSynchronized(ByteStreamCodecs.FLOAT));
 //
 //	public static final DataComponentType<SuspiciousStewEffects> SUSPICIOUS_STEW_EFFECTS = register("suspicious_stew_effects", b -> b.networkSynchronized(SuspiciousStewEffects.STREAM_CODEC));
 //
@@ -129,7 +129,7 @@ public final class DataComponents {
 //
 //	public static final DataComponentType<CustomData> BUCKET_ENTITY_DATA = register("bucket_entity_data", b -> b.networkSynchronized(CustomData.STREAM_CODEC));
 //
-//	public static final DataComponentType<TypedEntityData<BlockEntityType<?>>> BLOCK_ENTITY_DATA = register("block_entity_data", b -> bBuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec())).networkSynchronized(TypedEntityData.streamCodec(ByteBufCodecs.registry(Registries.BLOCK_ENTITY_TYPE))));
+//	public static final DataComponentType<TypedEntityData<BlockEntityType<?>>> BLOCK_ENTITY_DATA = register("block_entity_data", b -> bBuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec())).networkSynchronized(TypedEntityData.streamCodec(ByteStreamCodecs.registry(Registries.BLOCK_ENTITY_TYPE))));
 //
 //	public static final DataComponentType<InstrumentComponent> INSTRUMENT = register("instrument", b -> b.networkSynchronized(InstrumentComponent.STREAM_CODEC));
 //

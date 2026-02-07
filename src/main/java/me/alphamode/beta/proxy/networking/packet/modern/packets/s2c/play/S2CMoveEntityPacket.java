@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
@@ -59,12 +59,12 @@ public sealed interface S2CMoveEntityPacket extends S2CPlayPacket permits S2CMov
 
 	record Pos(int entityId, short x, short y, short z, byte yRot, byte xRot,
 			   boolean onGround) implements S2CMoveEntityPacket {
-		public static final StreamCodec<ByteBuf, Pos> CODEC = StreamCodec.composite(
+		public static final StreamCodec<ByteStream, Pos> CODEC = StreamCodec.composite(
 				ModernStreamCodecs.VAR_INT, Pos::entityId,
-				BasicStreamCodecs.SHORT, Pos::x,
-				BasicStreamCodecs.SHORT, Pos::y,
-				BasicStreamCodecs.SHORT, Pos::z,
-				BasicStreamCodecs.BOOL, Pos::onGround,
+				CommonStreamCodecs.SHORT, Pos::x,
+				CommonStreamCodecs.SHORT, Pos::y,
+				CommonStreamCodecs.SHORT, Pos::z,
+				CommonStreamCodecs.BOOL, Pos::onGround,
 				Pos::new
 		);
 
@@ -90,14 +90,14 @@ public sealed interface S2CMoveEntityPacket extends S2CPlayPacket permits S2CMov
 
 	record PosRot(int entityId, short x, short y, short z, byte yRot, byte xRot,
 				  boolean onGround) implements S2CMoveEntityPacket {
-		public static final StreamCodec<ByteBuf, PosRot> CODEC = StreamCodec.composite(
+		public static final StreamCodec<ByteStream, PosRot> CODEC = StreamCodec.composite(
 				ModernStreamCodecs.VAR_INT, PosRot::entityId,
-				BasicStreamCodecs.SHORT, PosRot::x,
-				BasicStreamCodecs.SHORT, PosRot::y,
-				BasicStreamCodecs.SHORT, PosRot::z,
-				BasicStreamCodecs.BYTE, PosRot::yRot,
-				BasicStreamCodecs.BYTE, PosRot::xRot,
-				BasicStreamCodecs.BOOL, PosRot::onGround,
+				CommonStreamCodecs.SHORT, PosRot::x,
+				CommonStreamCodecs.SHORT, PosRot::y,
+				CommonStreamCodecs.SHORT, PosRot::z,
+				CommonStreamCodecs.BYTE, PosRot::yRot,
+				CommonStreamCodecs.BYTE, PosRot::xRot,
+				CommonStreamCodecs.BOOL, PosRot::onGround,
 				PosRot::new
 		);
 
@@ -118,11 +118,11 @@ public sealed interface S2CMoveEntityPacket extends S2CPlayPacket permits S2CMov
 	}
 
 	record Rot(int entityId, byte yRot, byte xRot, boolean onGround) implements S2CMoveEntityPacket {
-		public static final StreamCodec<ByteBuf, Rot> CODEC = StreamCodec.composite(
+		public static final StreamCodec<ByteStream, Rot> CODEC = StreamCodec.composite(
 				ModernStreamCodecs.VAR_INT, Rot::entityId,
-				BasicStreamCodecs.BYTE, Rot::yRot,
-				BasicStreamCodecs.BYTE, Rot::xRot,
-				BasicStreamCodecs.BOOL, Rot::onGround,
+				CommonStreamCodecs.BYTE, Rot::yRot,
+				CommonStreamCodecs.BYTE, Rot::xRot,
+				CommonStreamCodecs.BOOL, Rot::onGround,
 				Rot::new
 		);
 

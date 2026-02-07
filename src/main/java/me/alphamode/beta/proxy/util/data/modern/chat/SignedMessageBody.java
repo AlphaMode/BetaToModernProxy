@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.chat;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.LastSeenMessages;
@@ -14,12 +14,14 @@ public record SignedMessageBody(String content, Instant timeStamp, long salt, La
 	}
 
 	public record Packed(String content, Instant timeStamp, long salt, LastSeenMessages.Packed lastSeen) {
-		public static final StreamCodec<ByteBuf, Packed> CODEC = StreamCodec.composite(
-				ModernStreamCodecs.stringUtf8(256),
+		public static final int MAX_CONTENT_LENGTH = 256;
+		public static final StreamCodec<ByteStream, String> CONTENT_CODEC = ModernStreamCodecs.stringUtf8(MAX_CONTENT_LENGTH);
+		public static final StreamCodec<ByteStream, Packed> CODEC = StreamCodec.composite(
+				CONTENT_CODEC,
 				Packed::content,
 				ModernStreamCodecs.INSTANT,
 				Packed::timeStamp,
-				BasicStreamCodecs.LONG,
+				CommonStreamCodecs.LONG,
 				Packed::salt,
 				LastSeenMessages.Packed.CODEC,
 				Packed::lastSeen,

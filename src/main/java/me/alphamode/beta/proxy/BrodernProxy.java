@@ -7,13 +7,12 @@ import me.alphamode.beta.proxy.config.Config;
 import me.alphamode.beta.proxy.networking.ProxyChannelInitializer;
 import me.alphamode.beta.proxy.plugin.PluginContainer;
 import me.alphamode.beta.proxy.plugin.PluginLoader;
-import me.alphamode.beta.proxy.plugin.PluginUtil;
-import me.alphamode.beta.proxy.util.data.beta.entity.BetaSynchedEntityData;
-import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
-import me.alphamode.beta.proxy.util.translators.BlockTranslator;
 import me.alphamode.beta.proxy.util.NbtUtil;
 import me.alphamode.beta.proxy.util.data.beta.BetaBlocks;
+import me.alphamode.beta.proxy.util.data.beta.entity.BetaSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItems;
+import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
+import me.alphamode.beta.proxy.util.translators.BlockTranslator;
 import me.alphamode.beta.proxy.util.translators.EntityDataTranslator;
 import me.alphamode.beta.proxy.util.translators.b2m.BetaEntityDataTranslations;
 import me.alphamode.wisp.loader.api.WispLoader;
@@ -34,7 +33,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
-public class BrodernProxy {
+public final class BrodernProxy {
 	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
 
 	private static BrodernProxy INSTANCE;
@@ -47,8 +46,8 @@ public class BrodernProxy {
 	private final KeyPair keyPair;
 	private final MinecraftSessionService sessionService;
 	private final GameProfileRepository profileRepository;
-    private final EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> entityDataTranslator;
-    private final Map<String, PluginContainer> plugins;
+	private final EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> entityDataTranslator;
+	private final Map<String, PluginContainer> plugins;
 
 	private int onlinePlayers = 0;
 
@@ -86,23 +85,20 @@ public class BrodernProxy {
 
 	}
 
-	public BrodernProxy(Config config, KeyPair keyPair, MinecraftSessionService sessionService,
-						GameProfileRepository profileRepository) {
+	public BrodernProxy(final Config config, final KeyPair keyPair, final MinecraftSessionService sessionService, final GameProfileRepository profileRepository) {
 		this.config = config;
 		this.keyPair = keyPair;
 		this.sessionService = sessionService;
 		this.profileRepository = profileRepository;
-        this.entityDataTranslator = new EntityDataTranslator<>();
-        BetaEntityDataTranslations.register(this.entityDataTranslator);
-        // Construct plugin containers for plugins
-        PluginLoader.INSTANCE.loadPlugins(WispLoader.get().getMods());
-        this.plugins = Map.copyOf(PluginLoader.INSTANCE.getPlugins());
+		this.entityDataTranslator = new EntityDataTranslator<>();
+		BetaEntityDataTranslations.register(this.entityDataTranslator);
+
+		// Construct plugin containers for plugins
+		PluginLoader.INSTANCE.loadPlugins(WispLoader.get().getMods());
+		this.plugins = Map.copyOf(PluginLoader.INSTANCE.getPlugins());
 
 		INSTANCE = this;
 		config.load();
-
-
-        invokeMethod(ProxyPlugin::onProxyStart);
 	}
 
 	public void listen() {
@@ -114,19 +110,22 @@ public class BrodernProxy {
 		final String serverAddress = this.config.getServerAddress();
 		final int serverPort = this.config.getServerPort();
 
+		this.invokeMethod(ProxyPlugin::onProxyStart);
+
 		LOGGER.info("Listening on {}:{} -> {}:{}", bindAddress, bindPort, serverAddress, serverPort);
 		new NetServer(new ProxyChannelInitializer(MinecraftServerAddress.ofResolved(serverAddress, serverPort)))
 				.bind(new InetSocketAddress(bindAddress, bindPort));
-        BrodernProxy.getProxy().invokeMethod(ProxyPlugin::onProxyClose);
+
+		this.invokeMethod(ProxyPlugin::onProxyClose);
 	}
 
 	public boolean isDebug() {
 		return this.config.isDebug();
 	}
 
-    public EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> getEntityDataTranslator() {
-        return this.entityDataTranslator;
-    }
+	public EntityDataTranslator<BetaSynchedEntityData.DataValue<?>, ModernSynchedEntityData.DataValue<?>> getEntityDataTranslator() {
+		return this.entityDataTranslator;
+	}
 
 	public static CompoundTag getDefaultTags() {
 		return DEFAULT_TAGS;
@@ -168,11 +167,9 @@ public class BrodernProxy {
 		return this.onlinePlayers;
 	}
 
-    public void invokeMethod(Consumer<ProxyPlugin> method) {
-        plugins.values().forEach(plugin -> {
-            method.accept(plugin.getPlugin());
-        });
-    }
+	public void invokeMethod(Consumer<ProxyPlugin> method) {
+		this.plugins.values().forEach(container -> method.accept(container.plugin()));
+	}
 
 	public static BrodernProxy getProxy() {
 		if (INSTANCE == null) {

@@ -1,17 +1,17 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record S2CSetTimePacket(long gameTime, long dayTime, boolean tickDayTime) implements S2CPlayPacket {
-	public static final StreamCodec<ByteBuf, S2CSetTimePacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.LONG,
+	public static final StreamCodec<ByteStream, S2CSetTimePacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.LONG,
 			S2CSetTimePacket::gameTime,
-			BasicStreamCodecs.LONG,
+			CommonStreamCodecs.LONG,
 			S2CSetTimePacket::dayTime,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			S2CSetTimePacket::tickDayTime,
 			S2CSetTimePacket::new
 	);

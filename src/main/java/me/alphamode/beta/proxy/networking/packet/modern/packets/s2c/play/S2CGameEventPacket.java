@@ -1,16 +1,16 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record S2CGameEventPacket(EventType type, float value) implements S2CPlayPacket {
-	public static final StreamCodec<ByteBuf, S2CGameEventPacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, S2CGameEventPacket> CODEC = StreamCodec.composite(
 			BetaStreamCodecs.javaEnum(EventType.class), // TODO/NOTE: using beta stream codec cuz it reads a byte
 			S2CGameEventPacket::type,
-			BasicStreamCodecs.FLOAT,
+			CommonStreamCodecs.FLOAT,
 			S2CGameEventPacket::value,
 			S2CGameEventPacket::new
 	);

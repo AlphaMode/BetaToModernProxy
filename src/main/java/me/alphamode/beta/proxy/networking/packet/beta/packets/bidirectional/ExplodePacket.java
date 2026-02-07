@@ -1,17 +1,17 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.Vec3d;
 import me.alphamode.beta.proxy.util.data.Vec3i;
 
 public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, ExplodePacket> CODEC = AbstractPacket.codec(ExplodePacket::write, ExplodePacket::new);
+	public static final StreamCodec<ByteStream, ExplodePacket> CODEC = AbstractPacket.codec(ExplodePacket::write, ExplodePacket::new);
 
-	public ExplodePacket(final ByteBuf buf) {
+	public ExplodePacket(final ByteStream buf) {
 		Vec3d pos = Vec3d.CODEC.decode(buf);
 		float radius = buf.readFloat();
 
@@ -25,12 +25,12 @@ public record ExplodePacket(Vec3d pos, float radius, Vec3i[] toBlow) implements 
 		this(pos, radius, toBlow);
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		Vec3d.CODEC.encode(buf, this.pos);
 		buf.writeFloat(this.radius);
 		buf.writeInt(this.toBlow.length);
 
-		final StreamCodec<ByteBuf, Vec3i> codec = Vec3i.relative(this.pos.toVec3i());
+		final StreamCodec<ByteStream, Vec3i> codec = Vec3i.relative(this.pos.toVec3i());
 		for (final Vec3i tilePos : this.toBlow) {
 			codec.encode(buf, tilePos);
 		}

@@ -1,10 +1,10 @@
 package me.alphamode.beta.proxy.util.translators;
 
 import com.google.common.collect.Lists;
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLevelChunkWithLightPacket;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
 import me.alphamode.beta.proxy.util.data.beta.BetaNibbleArray;
 import me.alphamode.beta.proxy.util.data.modern.ModernNibbleArray;
@@ -176,7 +176,7 @@ public class ChunkTranslator {
 		final ModernChunkSection[] sections = new ModernChunkSection[BETA_CHUNK_SECTION_SIZE];
 		for (int sectionY = 0; sectionY < BETA_CHUNK_SECTION_SIZE; sectionY++) {
 			PalettedContainer<BlockState> states = PalettedContainer.blockStates();
-			int nonEmptyBlockCount = 0;
+			short nonEmptyBlockCount = 0;
 			for (int x = 0; x < SECTION_SIZE; x++) {
 				for (int y = 0; y < SECTION_SIZE; y++) {
 					for (int z = 0; z < SECTION_SIZE; z++) {
@@ -207,13 +207,13 @@ public class ChunkTranslator {
 	public record ModernChunk(ModernChunkSection[] sections, Map<Heightmap.Types, long[]> heightmaps) {
 	}
 
-	public record ModernChunkSection(int nonEmptyBlockCount, PalettedContainer<BlockState> blockStates,
+	public record ModernChunkSection(short nonEmptyBlockCount, PalettedContainer<BlockState> blockStates,
 									 PalettedContainer<Object> biomes) {
 		public void setBlockState(int x, int y, int z, BlockState state) {
 			blockStates.set(x, y, z, state);
 		}
 
-		public void write(final ByteBuf buffer) {
+		public void write(final ByteStream buffer) {
 			buffer.writeShort(this.nonEmptyBlockCount);
 			this.blockStates.write(buffer);
 			this.biomes.write(buffer);

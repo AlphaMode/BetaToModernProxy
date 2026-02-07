@@ -1,6 +1,5 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.PacketRegistry;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
@@ -28,6 +27,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.login.S2CLog
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusPongResponsePacket;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CStatusResponsePacket;
+import me.alphamode.beta.proxy.util.ByteStream;
 
 public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPacket<ModernPackets>> {
 	public static final ModernPacketRegistry INSTANCE = new ModernPacketRegistry();
@@ -41,12 +41,12 @@ public class ModernPacketRegistry extends PacketRegistry<ModernPackets, ModernPa
 	}
 
 	@Override
-	public ModernPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteBuf byteBuf) {
+	public ModernPacket<ModernPackets> createPacket(final int packetId, final PacketDirection direction, final PacketState state, final ByteStream ByteStream) {
 		final ModernPackets packetType = ModernPackets.getPacket(packetId, direction, state);
 		if (packetType == null) {
 			throw new IllegalArgumentException("Could not determine modern packet type for id " + packetId);
 		} else {
-			return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(byteBuf);
+			return (ModernPacket<ModernPackets>) this.getCodec(packetType).decode(ByteStream);
 		}
 	}
 

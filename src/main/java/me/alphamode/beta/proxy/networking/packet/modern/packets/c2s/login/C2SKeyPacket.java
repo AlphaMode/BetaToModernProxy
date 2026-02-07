@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.login;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundLoginPackets;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import net.raphimc.netminecraft.netty.crypto.CryptUtil;
@@ -12,7 +12,7 @@ import java.security.PublicKey;
 import java.util.Arrays;
 
 public record C2SKeyPacket(byte[] keyBytes, byte[] encryptedChallenge) implements C2SLoginPacket {
-	public static final StreamCodec<ByteBuf, C2SKeyPacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, C2SKeyPacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.PREFIXED_BYTE_ARRAY,
 			C2SKeyPacket::keyBytes,
 			ModernStreamCodecs.PREFIXED_BYTE_ARRAY,

@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.networking.packet.beta.enums;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.Packets;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.*;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public enum BetaPacketType implements Packets {
@@ -67,9 +67,9 @@ public enum BetaPacketType implements Packets {
 	DISCONNECT(255, DisconnectPacket.CODEC);
 
 	private final int id;
-	private final StreamCodec<ByteBuf, ? extends BetaPacket> codec;
+	private final StreamCodec<ByteStream, ? extends BetaPacket> codec;
 
-	BetaPacketType(final int id, final StreamCodec<ByteBuf, ? extends BetaPacket> codec) {
+	BetaPacketType(final int id, final StreamCodec<ByteStream, ? extends BetaPacket> codec) {
 		this.id = id;
 		this.codec = codec;
 	}
@@ -78,8 +78,8 @@ public enum BetaPacketType implements Packets {
 		return this.id;
 	}
 
-	public <T extends BetaPacket> StreamCodec<ByteBuf, T> codec() {
-		return (StreamCodec<ByteBuf, T>) this.codec;
+	public <T extends BetaPacket> StreamCodec<ByteStream, T> codec() {
+		return (StreamCodec<ByteStream, T>) this.codec;
 	}
 
 	public static BetaPacketType byId(final int id) {

@@ -1,16 +1,16 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record UpdateStatPacket(int id, byte amount) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, UpdateStatPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.INT,
+	public static final StreamCodec<ByteStream, UpdateStatPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.INT,
 			UpdateStatPacket::id,
-			BasicStreamCodecs.BYTE,
+			CommonStreamCodecs.BYTE,
 			UpdateStatPacket::amount,
 			UpdateStatPacket::new
 	);

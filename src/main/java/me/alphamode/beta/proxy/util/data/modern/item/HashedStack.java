@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.item;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
@@ -19,7 +19,7 @@ public interface HashedStack {
 		}
 	};
 
-	StreamCodec<ByteBuf, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(ActualItem.STREAM_CODEC).map(actualItem -> {
+	StreamCodec<ByteStream, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(ActualItem.STREAM_CODEC).map(actualItem -> {
 		if (actualItem.isEmpty()) {
 			return EMPTY;
 		} else {
@@ -36,7 +36,7 @@ public interface HashedStack {
 	}
 
 	record ActualItem(int itemId, int count, HashedPatchMap components) implements HashedStack {
-		public static final StreamCodec<ByteBuf, ActualItem> STREAM_CODEC = StreamCodec.composite(
+		public static final StreamCodec<ByteStream, ActualItem> STREAM_CODEC = StreamCodec.composite(
 				ModernStreamCodecs.VAR_INT,
 				ActualItem::itemId,
 				ModernStreamCodecs.VAR_INT,

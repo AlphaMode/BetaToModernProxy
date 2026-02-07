@@ -2,10 +2,10 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.AbstractPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.RemoteChatSession;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> entries) implements S2CPlayPacket {
-	public static final StreamCodec<ByteBuf, S2CPlayerInfoUpdatePacket> CODEC = AbstractPacket.codec(S2CPlayerInfoUpdatePacket::write, S2CPlayerInfoUpdatePacket::read);
+	public static final StreamCodec<ByteStream, S2CPlayerInfoUpdatePacket> CODEC = AbstractPacket.codec(S2CPlayerInfoUpdatePacket::write, S2CPlayerInfoUpdatePacket::read);
 
 	public static S2CPlayerInfoUpdatePacket of(final Entry... entries) {
 		final EnumSet<ActionType> types = EnumSet.noneOf(ActionType.class);
@@ -36,7 +36,7 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 		return of(new Entry(profile.id(), new AddPlayer(profile)));
 	}
 
-	public static S2CPlayerInfoUpdatePacket read(final ByteBuf buf) {
+	public static S2CPlayerInfoUpdatePacket read(final ByteStream buf) {
 		final EnumSet<ActionType> types = ModernStreamCodecs.readEnumSet(buf, ActionType.class);
 		return new S2CPlayerInfoUpdatePacket(types, ModernStreamCodecs.readList(buf, (decoder) -> {
 			final UUID profileId = ModernStreamCodecs.UUID.decode(decoder);
@@ -50,13 +50,13 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 		}));
 	}
 
-	public void write(final ByteBuf buf) {
+	public void write(final ByteStream buf) {
 		ModernStreamCodecs.writeEnumSet(buf, this.types, ActionType.class);
 		ModernStreamCodecs.writeCollection(buf, this.entries, (encoder, entry) -> {
 			ModernStreamCodecs.UUID.encode(encoder, entry.profileId());
 
 			for (final Action<?> action : entry.actions()) {
-				((StreamCodec<ByteBuf, Action<?>>) action.codec()).encode(encoder, action);
+				((StreamCodec<ByteStream, Action<?>>) action.codec()).encode(encoder, action);
 			}
 		});
 	}
@@ -76,13 +76,13 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 		UPDATE_LIST_ORDER(UpdateListOrder.CODEC),
 		UPDATE_HAT(UpdateHat.CODEC);
 
-		private final StreamCodec<ByteBuf, ? extends Action<?>> codec;
+		private final StreamCodec<ByteStream, ? extends Action<?>> codec;
 
-		ActionType(final StreamCodec<ByteBuf, ? extends Action<?>> codec) {
+		ActionType(final StreamCodec<ByteStream, ? extends Action<?>> codec) {
 			this.codec = codec;
 		}
 
-		public StreamCodec<ByteBuf, ? extends Action<?>> codec() {
+		public StreamCodec<ByteStream, ? extends Action<?>> codec() {
 			return this.codec;
 		}
 	}
@@ -94,26 +94,28 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public sealed interface Action<T> permits AddPlayer, InitializeChat, UpdateGameMode, UpdateListed, UpdateLatency, UpdateDisplayName, UpdateListOrder, UpdateHat {
-		StreamCodec<ByteBuf, T> codec();
+		StreamCodec<ByteStream, T> codec();
 
 		ActionType type();
 	}
 
 	public record AddPlayer(String name, PropertyMap properties) implements Action<AddPlayer> {
-		public static final StreamCodec<ByteBuf, AddPlayer> CODEC = StreamCodec.composite(
-				ModernStreamCodecs.PLAYER_NAME,
+		public static final int MAX_NAME_LENGTH = 16;
+		public static final StreamCodec<ByteStream, String> NAME_CODEC = ModernStreamCodecs.stringUtf8(MAX_NAME_LENGTH);
+		public static final StreamCodec<ByteStream, AddPlayer> CODEC = StreamCodec.composite(
+				NAME_CODEC,
 				AddPlayer::name,
 				ModernStreamCodecs.GAME_PROFILE_PROPERTIES,
 				AddPlayer::properties,
 				AddPlayer::new
 		);
 
-		public AddPlayer(GameProfile profile) {
+		public AddPlayer(final GameProfile profile) {
 			this(profile.name(), profile.properties());
 		}
 
 		@Override
-		public StreamCodec<ByteBuf, AddPlayer> codec() {
+		public StreamCodec<ByteStream, AddPlayer> codec() {
 			return CODEC;
 		}
 
@@ -124,10 +126,10 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public record InitializeChat(@Nullable RemoteChatSession.Data chatSession) implements Action<InitializeChat> {
-		public static final StreamCodec<ByteBuf, InitializeChat> CODEC = ModernStreamCodecs.nullable(RemoteChatSession.Data.CODEC).map(InitializeChat::new, InitializeChat::chatSession);
+		public static final StreamCodec<ByteStream, InitializeChat> CODEC = ModernStreamCodecs.nullable(RemoteChatSession.Data.CODEC).map(InitializeChat::new, InitializeChat::chatSession);
 
 		@Override
-		public StreamCodec<ByteBuf, InitializeChat> codec() {
+		public StreamCodec<ByteStream, InitializeChat> codec() {
 			return CODEC;
 		}
 
@@ -138,10 +140,10 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public record UpdateGameMode(GameMode gameMode) implements Action<UpdateGameMode> {
-		public static final StreamCodec<ByteBuf, UpdateGameMode> CODEC = GameMode.CODEC.map(UpdateGameMode::new, UpdateGameMode::gameMode);
+		public static final StreamCodec<ByteStream, UpdateGameMode> CODEC = GameMode.CODEC.map(UpdateGameMode::new, UpdateGameMode::gameMode);
 
 		@Override
-		public StreamCodec<ByteBuf, UpdateGameMode> codec() {
+		public StreamCodec<ByteStream, UpdateGameMode> codec() {
 			return CODEC;
 		}
 
@@ -152,10 +154,10 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public record UpdateListed(boolean listed) implements Action<UpdateListed> {
-		public static final StreamCodec<ByteBuf, UpdateListed> CODEC = BasicStreamCodecs.BOOL.map(UpdateListed::new, UpdateListed::listed);
+		public static final StreamCodec<ByteStream, UpdateListed> CODEC = CommonStreamCodecs.BOOL.map(UpdateListed::new, UpdateListed::listed);
 
 		@Override
-		public StreamCodec<ByteBuf, UpdateListed> codec() {
+		public StreamCodec<ByteStream, UpdateListed> codec() {
 			return CODEC;
 		}
 
@@ -166,10 +168,10 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public record UpdateLatency(int latency) implements Action<UpdateLatency> {
-		public static final StreamCodec<ByteBuf, UpdateLatency> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateLatency::new, UpdateLatency::latency);
+		public static final StreamCodec<ByteStream, UpdateLatency> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateLatency::new, UpdateLatency::latency);
 
 		@Override
-		public StreamCodec<ByteBuf, UpdateLatency> codec() {
+		public StreamCodec<ByteStream, UpdateLatency> codec() {
 			return CODEC;
 		}
 
@@ -181,7 +183,7 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 
 	public record UpdateDisplayName(TextComponent displayName) implements Action<UpdateDisplayName> {
 		@Override
-		public StreamCodec<ByteBuf, UpdateDisplayName> codec() {
+		public StreamCodec<ByteStream, UpdateDisplayName> codec() {
 			throw new RuntimeException("Not implemented");
 		}
 
@@ -192,10 +194,10 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public record UpdateListOrder(int listOrder) implements Action<UpdateListOrder> {
-		public static final StreamCodec<ByteBuf, UpdateListOrder> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateListOrder::new, UpdateListOrder::listOrder);
+		public static final StreamCodec<ByteStream, UpdateListOrder> CODEC = ModernStreamCodecs.VAR_INT.map(UpdateListOrder::new, UpdateListOrder::listOrder);
 
 		@Override
-		public StreamCodec<ByteBuf, UpdateListOrder> codec() {
+		public StreamCodec<ByteStream, UpdateListOrder> codec() {
 			return CODEC;
 		}
 
@@ -206,10 +208,10 @@ public record S2CPlayerInfoUpdatePacket(EnumSet<ActionType> types, List<Entry> e
 	}
 
 	public record UpdateHat(boolean showHat) implements Action<UpdateHat> {
-		public static final StreamCodec<ByteBuf, UpdateHat> CODEC = BasicStreamCodecs.BOOL.map(UpdateHat::new, UpdateHat::showHat);
+		public static final StreamCodec<ByteStream, UpdateHat> CODEC = CommonStreamCodecs.BOOL.map(UpdateHat::new, UpdateHat::showHat);
 
 		@Override
-		public StreamCodec<ByteBuf, UpdateHat> codec() {
+		public StreamCodec<ByteStream, UpdateHat> codec() {
 			return CODEC;
 		}
 

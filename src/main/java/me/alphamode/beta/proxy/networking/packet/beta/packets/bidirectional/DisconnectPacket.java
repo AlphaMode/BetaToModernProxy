@@ -1,14 +1,16 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record DisconnectPacket(String reason) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, DisconnectPacket> CODEC = StreamCodec.composite(
-			BetaStreamCodecs.stringUtf8(100),
+	public static final int MAX_REASON_LENGTH = 100;
+	public static final StreamCodec<ByteStream, String> REASON_CODEC = BetaStreamCodecs.stringUtf8(MAX_REASON_LENGTH);
+	public static final StreamCodec<ByteStream, DisconnectPacket> CODEC = StreamCodec.composite(
+			REASON_CODEC,
 			DisconnectPacket::reason,
 			DisconnectPacket::new
 	);

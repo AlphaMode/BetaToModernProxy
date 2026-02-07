@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.enums;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.ByIdMap;
@@ -17,31 +17,31 @@ public enum GameMode {
 	SPECTATOR(3);
 
 	private static final IntFunction<GameMode> BY_ID = ByIdMap.continuous(GameMode::getId, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-	public static final StreamCodec<ByteBuf, GameMode> CODEC = ModernStreamCodecs.idMapper(BY_ID, GameMode::getId);
+	public static final StreamCodec<ByteStream, GameMode> CODEC = ModernStreamCodecs.idMapper(BY_ID, GameMode::getId);
 
 	// TODO: make proper
-	public static final StreamCodec<ByteBuf, GameMode> BYTE_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, GameMode> BYTE_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final GameMode value) {
-			BasicStreamCodecs.BYTE.encode(buf, (byte) value.id);
+		public void encode(final ByteStream buf, final GameMode value) {
+			CommonStreamCodecs.BYTE.encode(buf, (byte) value.id);
 		}
 
 		@Override
-		public GameMode decode(final ByteBuf buf) {
-			return GameMode.byId(BasicStreamCodecs.BYTE.decode(buf));
+		public GameMode decode(final ByteStream buf) {
+			return GameMode.byId(CommonStreamCodecs.BYTE.decode(buf));
 		}
 	};
 
 	// TODO: make proper
-	public static final StreamCodec<ByteBuf, GameMode> NULLABLE_BYTE_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, GameMode> NULLABLE_BYTE_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final GameMode value) {
-			BasicStreamCodecs.BYTE.encode(buf, (byte) value.id);
+		public void encode(final ByteStream buf, final GameMode value) {
+			CommonStreamCodecs.BYTE.encode(buf, (byte) value.id);
 		}
 
 		@Override
-		public GameMode decode(final ByteBuf buf) {
-			return GameMode.byNullableId(BasicStreamCodecs.BYTE.decode(buf));
+		public GameMode decode(final ByteStream buf) {
+			return GameMode.byNullableId(CommonStreamCodecs.BYTE.decode(buf));
 		}
 	};
 

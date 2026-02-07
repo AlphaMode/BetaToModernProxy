@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.level;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.StringRepresentable;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
@@ -20,7 +20,7 @@ public class Heightmap {
 
 		public static final Codec<Types> CODEC = StringRepresentable.fromEnum(Heightmap.Types::values);
 		private static final IntFunction<Types> BY_ID = ByIdMap.continuous(t -> t.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-		public static final StreamCodec<ByteBuf, Types> STREAM_CODEC = ModernStreamCodecs.idMapper(BY_ID, t -> t.id);
+		public static final StreamCodec<ByteStream, Types> STREAM_CODEC = ModernStreamCodecs.idMapper(BY_ID, t -> t.id);
 		private final int id;
 		private final String serializationKey;
 		private final Heightmap.Usage usage;

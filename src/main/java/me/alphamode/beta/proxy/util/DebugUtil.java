@@ -1,13 +1,12 @@
 package me.alphamode.beta.proxy.util;
 
-import io.netty.buffer.ByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public interface DebugUtil {
 	Logger LOGGER = LogManager.getLogger(DebugUtil.class);
 
-	static void printBuf(final ByteBuf buf) {
+	static void printBuf(final ByteStream buf) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append('[');
 

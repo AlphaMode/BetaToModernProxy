@@ -1,13 +1,13 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.BetaStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record S2CAnimatePacket(int entityId, Action action) implements S2CPlayPacket {
-	public static final StreamCodec<ByteBuf, S2CAnimatePacket> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, S2CAnimatePacket> CODEC = StreamCodec.composite(
 			ModernStreamCodecs.VAR_INT,
 			S2CAnimatePacket::entityId,
 			BetaStreamCodecs.javaEnum(Action.class), // TODO/NOTE: Use beta codec cuz it reads byte

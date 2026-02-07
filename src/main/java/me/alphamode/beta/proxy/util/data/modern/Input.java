@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record Input(boolean forward, boolean backward, boolean left, boolean right, boolean jump, boolean shift,
@@ -13,7 +13,7 @@ public record Input(boolean forward, boolean backward, boolean left, boolean rig
 	public static final byte FLAG_SHIFT = 32;
 	public static final byte FLAG_SPRINT = 64;
 
-	public static final StreamCodec<ByteBuf, Input> CODEC = StreamCodec.ofMember((input, buf) -> buf.writeByte(input.pack()), (buf) -> Input.unpack(buf.readByte()));
+	public static final StreamCodec<ByteStream, Input> CODEC = StreamCodec.ofMember((input, buf) -> buf.writeByte((byte) input.pack()), (buf) -> Input.unpack(buf.readByte()));
 
 	public static Input unpack(final int flags) {
 		return new Input((flags & FLAG_FORWARD) != 0,

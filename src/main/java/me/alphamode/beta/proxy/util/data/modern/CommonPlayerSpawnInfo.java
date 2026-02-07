@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
-import io.netty.buffer.ByteBuf;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
@@ -24,20 +24,20 @@ public record CommonPlayerSpawnInfo(
 		int portalCooldown,
 		int seaLevel
 ) {
-	public static final StreamCodec<ByteBuf, CommonPlayerSpawnInfo> CODEC = StreamCodec.composite(
+	public static final StreamCodec<ByteStream, CommonPlayerSpawnInfo> CODEC = StreamCodec.composite(
 			DimensionType.CODEC,
 			CommonPlayerSpawnInfo::dimensionType,
 			ResourceKey.streamCodec(Registries.DIMENSION),
 			CommonPlayerSpawnInfo::dimension,
-			BasicStreamCodecs.LONG,
+			CommonStreamCodecs.LONG,
 			CommonPlayerSpawnInfo::seed,
 			GameMode.BYTE_CODEC,
 			CommonPlayerSpawnInfo::gameMode,
 			GameMode.NULLABLE_BYTE_CODEC,
 			CommonPlayerSpawnInfo::previousGameType,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			CommonPlayerSpawnInfo::isDebug,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			CommonPlayerSpawnInfo::isFlat,
 			ModernStreamCodecs.optional(GlobalPos.CODEC),
 			CommonPlayerSpawnInfo::lastDeathLocation,

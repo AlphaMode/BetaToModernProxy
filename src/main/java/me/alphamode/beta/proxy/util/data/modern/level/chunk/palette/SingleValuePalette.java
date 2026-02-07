@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.level.chunk.palette;
 
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.IdMap;
 import net.raphimc.netminecraft.packet.PacketTypes;
@@ -50,12 +50,12 @@ public final class SingleValuePalette<T> implements Palette<T> {
 	}
 
 	@Override
-	public void read(final ByteBuf buffer, final IdMap<T> globalMap) {
+	public void read(final ByteStream buffer, final IdMap<T> globalMap) {
 		this.value = globalMap.byIdOrThrow(ModernStreamCodecs.VAR_INT.decode(buffer));
 	}
 
 	@Override
-	public void write(final ByteBuf buffer, final IdMap<T> globalMap) {
+	public void write(final ByteStream buffer, final IdMap<T> globalMap) {
 		if (this.value == null) {
 			throw new IllegalStateException("Use of an uninitialized palette");
 		} else {

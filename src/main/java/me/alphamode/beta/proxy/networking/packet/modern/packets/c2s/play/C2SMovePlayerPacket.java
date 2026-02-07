@@ -1,8 +1,8 @@
 package me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.serverbound.ServerboundPlayPackets;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMovePlayerPacket.Pos, C2SMovePlayerPacket.PosRot, C2SMovePlayerPacket.Rot, C2SMovePlayerPacket.StatusOnly {
@@ -84,11 +84,14 @@ public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMov
 
 	record Pos(double x, double y, double z, float yRot, float xRot, boolean onGround,
 			   boolean horizontalCollision) implements C2SMovePlayerPacket {
-		public static final StreamCodec<ByteBuf, Pos> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.DOUBLE, Pos::x,
-				BasicStreamCodecs.DOUBLE, Pos::y,
-				BasicStreamCodecs.DOUBLE, Pos::z,
-				BasicStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
+		public static final StreamCodec<ByteStream, Pos> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.DOUBLE,
+				Pos::x,
+				CommonStreamCodecs.DOUBLE,
+				Pos::y,
+				CommonStreamCodecs.DOUBLE,
+				Pos::z,
+				CommonStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
 				Pos::new
 		);
 
@@ -114,13 +117,13 @@ public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMov
 
 	record PosRot(double x, double y, double z, float yRot, float xRot, boolean onGround,
 				  boolean horizontalCollision) implements C2SMovePlayerPacket {
-		public static final StreamCodec<ByteBuf, PosRot> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.DOUBLE, PosRot::x,
-				BasicStreamCodecs.DOUBLE, PosRot::y,
-				BasicStreamCodecs.DOUBLE, PosRot::z,
-				BasicStreamCodecs.FLOAT, PosRot::yRot,
-				BasicStreamCodecs.FLOAT, PosRot::xRot,
-				BasicStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
+		public static final StreamCodec<ByteStream, PosRot> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.DOUBLE, PosRot::x,
+				CommonStreamCodecs.DOUBLE, PosRot::y,
+				CommonStreamCodecs.DOUBLE, PosRot::z,
+				CommonStreamCodecs.FLOAT, PosRot::yRot,
+				CommonStreamCodecs.FLOAT, PosRot::xRot,
+				CommonStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
 				PosRot::new
 		);
 
@@ -145,10 +148,10 @@ public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMov
 	}
 
 	record Rot(float yRot, float xRot, boolean onGround, boolean horizontalCollision) implements C2SMovePlayerPacket {
-		public static final StreamCodec<ByteBuf, Rot> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.FLOAT, Rot::yRot,
-				BasicStreamCodecs.FLOAT, Rot::xRot,
-				BasicStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
+		public static final StreamCodec<ByteStream, Rot> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.FLOAT, Rot::yRot,
+				CommonStreamCodecs.FLOAT, Rot::xRot,
+				CommonStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
 				Rot::new
 		);
 
@@ -173,8 +176,8 @@ public sealed interface C2SMovePlayerPacket extends C2SPlayPacket permits C2SMov
 	}
 
 	record StatusOnly(boolean onGround, boolean horizontalCollision) implements C2SMovePlayerPacket {
-		public static final StreamCodec<ByteBuf, StatusOnly> CODEC = StreamCodec.composite(
-				BasicStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
+		public static final StreamCodec<ByteStream, StatusOnly> CODEC = StreamCodec.composite(
+				CommonStreamCodecs.BYTE, C2SMovePlayerPacket::packFlags,
 				StatusOnly::new
 		);
 

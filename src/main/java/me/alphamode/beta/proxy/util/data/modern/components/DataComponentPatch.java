@@ -1,10 +1,10 @@
 package me.alphamode.beta.proxy.util.data.modern.components;
 
 import com.google.common.collect.Sets;
-import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.codec.StreamEncoder;
@@ -47,9 +47,9 @@ public class DataComponentPatch {
 		}
 	};
 
-	public static final StreamCodec<ByteBuf, DataComponentPatch> STREAM_CODEC = new StreamCodec<>() {
+	public static final StreamCodec<ByteStream, DataComponentPatch> STREAM_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteBuf buf, final DataComponentPatch patch) {
+		public void encode(final ByteStream buf, final DataComponentPatch patch) {
 			if (patch == EMPTY) {
 				ModernStreamCodecs.VAR_INT.encode(buf, 0);
 				ModernStreamCodecs.VAR_INT.encode(buf, 0);
@@ -70,7 +70,7 @@ public class DataComponentPatch {
 				// To Add
 				toAdd.forEach((type, value) -> {
 					ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(type));
-					((StreamEncoder<ByteBuf, Object>) type.streamCodec()).encode(buf, value);
+					((StreamEncoder<ByteStream, Object>) type.streamCodec()).encode(buf, value);
 				});
 
 				// To Remove
@@ -79,7 +79,7 @@ public class DataComponentPatch {
 		}
 
 		@Override
-		public DataComponentPatch decode(final ByteBuf buf) {
+		public DataComponentPatch decode(final ByteStream buf) {
 			final int componentsToAdd = ModernStreamCodecs.VAR_INT.decode(buf);
 			final int componentsToRemove = ModernStreamCodecs.VAR_INT.decode(buf);
 			if (componentsToAdd == 0 || componentsToRemove == 0) {

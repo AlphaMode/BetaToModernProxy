@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern;
 
 import com.google.gson.JsonElement;
-import io.netty.buffer.ByteBuf;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernCodecs;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
@@ -33,16 +33,16 @@ public record ServerStatus(TextComponent description,
 			ServerStatus::new
 	);
 
-	public static final StreamCodec<ByteBuf, ServerStatus> STREAM_CODEC = new StreamCodec<>() {
-		private static final StreamCodec<ByteBuf, JsonElement> JSON = ModernStreamCodecs.lenientJson(ModernStreamCodecs.MAX_STRING_LENGTH);
+	public static final StreamCodec<ByteStream, ServerStatus> STREAM_CODEC = new StreamCodec<>() {
+		private static final StreamCodec<ByteStream, JsonElement> JSON = ModernStreamCodecs.lenientJson(ModernStreamCodecs.MAX_STRING_LENGTH);
 
 		@Override
-		public void encode(final ByteBuf buf, final ServerStatus value) {
+		public void encode(final ByteStream buf, final ServerStatus value) {
 			JSON.encode(buf, CODEC.serialize(JsonConverter_v1_20_5.INSTANCE, value).getOrThrow(RuntimeException::new));
 		}
 
 		@Override
-		public ServerStatus decode(final ByteBuf buf) {
+		public ServerStatus decode(final ByteStream buf) {
 			return CODEC.deserialize(JsonConverter_v1_20_5.INSTANCE, JSON.decode(buf)).getOrThrow(RuntimeException::new);
 		}
 	};

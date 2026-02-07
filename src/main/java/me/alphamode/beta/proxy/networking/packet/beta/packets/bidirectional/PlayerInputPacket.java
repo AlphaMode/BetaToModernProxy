@@ -1,25 +1,25 @@
 package me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
-import me.alphamode.beta.proxy.util.codec.BasicStreamCodecs;
+import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.codec.CommonStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 
 public record PlayerInputPacket(float deltaX, float deltaZ, float yaw, float pitch, boolean jumping,
 								boolean shifting) implements BetaPacket {
-	public static final StreamCodec<ByteBuf, PlayerInputPacket> CODEC = StreamCodec.composite(
-			BasicStreamCodecs.FLOAT,
+	public static final StreamCodec<ByteStream, PlayerInputPacket> CODEC = StreamCodec.composite(
+			CommonStreamCodecs.FLOAT,
 			PlayerInputPacket::deltaX,
-			BasicStreamCodecs.FLOAT,
+			CommonStreamCodecs.FLOAT,
 			PlayerInputPacket::deltaZ,
-			BasicStreamCodecs.FLOAT,
+			CommonStreamCodecs.FLOAT,
 			PlayerInputPacket::yaw,
-			BasicStreamCodecs.FLOAT,
+			CommonStreamCodecs.FLOAT,
 			PlayerInputPacket::pitch,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			PlayerInputPacket::jumping,
-			BasicStreamCodecs.BOOL,
+			CommonStreamCodecs.BOOL,
 			PlayerInputPacket::shifting,
 			PlayerInputPacket::new
 	);

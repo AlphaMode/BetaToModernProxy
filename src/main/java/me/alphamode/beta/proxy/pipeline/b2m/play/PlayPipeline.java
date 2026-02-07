@@ -14,8 +14,6 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.c2s.play.*;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.*;
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
-import me.alphamode.beta.proxy.util.data.modern.entity.ModernEntityData;
-import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
 import me.alphamode.beta.proxy.util.ItemTranslator;
 import me.alphamode.beta.proxy.util.data.BlockHitResult;
 import me.alphamode.beta.proxy.util.data.ChunkPos;
@@ -25,7 +23,7 @@ import me.alphamode.beta.proxy.util.data.beta.BetaEntityTypes;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
-import me.alphamode.beta.proxy.util.data.EntityDataSerializers;
+import me.alphamode.beta.proxy.util.data.modern.entity.ModernEntityData;
 import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 import me.alphamode.beta.proxy.util.data.modern.enums.GameMode;
 import me.alphamode.beta.proxy.util.data.modern.enums.InteractionHand;
@@ -33,6 +31,7 @@ import me.alphamode.beta.proxy.util.data.modern.item.HashedPatchMap;
 import me.alphamode.beta.proxy.util.data.modern.item.HashedStack;
 import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.registry.dimension.BetaDimension;
+import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
 import net.lenni0451.mcstructs.text.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -302,7 +301,7 @@ public class PlayPipeline {
 
 	public void handleS2CSetEntityData(final ClientConnection connection, final SetEntityDataPacket packet) {
 		List<ModernSynchedEntityData.DataValue<?>> newValues = BrodernProxy.getProxy().getEntityDataTranslator().translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
-        connection.send(new S2CSetEntityDataPacket(packet.id(), newValues));
+		connection.send(new S2CSetEntityDataPacket(packet.id(), newValues));
 	}
 
 	public void handleC2SSwing(final ClientConnection connection, final C2SSwingPacket packet) {

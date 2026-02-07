@@ -39,7 +39,7 @@ public final class ItemTranslator {
 			}
 
 			if (isDamagable(stack.itemId())) {
-				builder.set(DataComponents.DAMAGE, stack.aux());
+				builder.set(DataComponents.DAMAGE, (int) stack.aux());
 			}
 
 			return new ModernItemStack(modernId, stack.count(), builder.build());
@@ -50,12 +50,12 @@ public final class ItemTranslator {
 		if (stack == null || stack.itemId() == 0 || stack.count() <= 0) {
 			return BetaItemStack.EMPTY;
 		} else {
-			int betaId;
+			short betaId;
 
 			// TODO
-			betaId = stack.itemId();
+			betaId = (short) stack.itemId();
 
-			return new BetaItemStack(betaId, stack.count(), 0);
+			return new BetaItemStack(betaId, (byte) stack.count(), (short) 0);
 		}
 	}
 

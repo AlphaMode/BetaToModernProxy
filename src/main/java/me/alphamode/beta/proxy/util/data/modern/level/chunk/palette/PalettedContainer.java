@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.data.modern.level.chunk.palette;
 
-import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.*;
 import me.alphamode.beta.proxy.util.data.modern.level.block.BlockState;
@@ -73,7 +73,7 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 		return newData.palette.idFor(lastAddedValue, PaletteResize.noResizeExpected());
 	}
 
-	public void write(final ByteBuf buffer) {
+	public void write(final ByteStream buffer) {
 		this.data.write(buffer, this.strategy.globalMap());
 	}
 
@@ -110,8 +110,8 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 			return 1 + this.palette.getSerializedSize(globalMap) + this.storage.getRaw().length * 8;
 		}
 
-		public void write(final ByteBuf buffer, final IdMap<T> globalMap) {
-			buffer.writeByte(this.storage.getBits());
+		public void write(final ByteStream buffer, final IdMap<T> globalMap) {
+			buffer.writeByte((byte) this.storage.getBits());
 			this.palette.write(buffer, globalMap);
 			final long[] data = this.storage.getRaw();
 			ModernStreamCodecs.fixedLongArray(data.length).encode(buffer, data);

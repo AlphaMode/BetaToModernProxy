@@ -1,11 +1,12 @@
 package me.alphamode.beta.proxy.util.data;
 
-import io.netty.buffer.ByteBuf;
+
+import me.alphamode.beta.proxy.util.ByteStream;
 
 public interface EntityDataValue<T> {
-    int id();
+	int id();
 
-    T data();
+	T data();
 
-    void write(final ByteBuf buf);
+	void write(final ByteStream buf);
 }

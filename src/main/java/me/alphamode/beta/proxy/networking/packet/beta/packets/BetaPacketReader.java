@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
+import me.alphamode.beta.proxy.util.ByteStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +25,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) {
 		int id = -1;
 		try {
-			out.add(BetaPacketRegistry.INSTANCE.createPacket(id = buf.readUnsignedByte(), buf));
+			out.add(BetaPacketRegistry.INSTANCE.createPacket(id = buf.readUnsignedByte(), (ByteStream) buf));
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode beta packet with id {}", id);
