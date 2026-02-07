@@ -1,0 +1,3 @@
+plugin-id="beta-to-modern-proxy"
+plugin="me.alphamode.beta.proxy.plugin.ProxyLoaderPlugin"
+version="1.0.0"

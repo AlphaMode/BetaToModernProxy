@@ -1,0 +1,14 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://mvn.devos.one/snapshots"
+    }
+}
+
+dependencies {
+    implementation("me.alphamode.wisp:wisp-loader:1.0.0-ALPHA")
+}

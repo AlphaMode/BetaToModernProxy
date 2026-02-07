@@ -1,0 +1,3 @@
+plugin-id="proxy-bootstrap"
+plugin="me.alphamode.beta.proxy.wisp.BootstrapLoaderPlugin"
+version="1.0.0"

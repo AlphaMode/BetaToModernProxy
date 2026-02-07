@@ -1,0 +1,6 @@
+{
+	"schemaVersion": 1,
+	"id": "fabric",
+	"version": "1.0.0",
+	"plugin": "me.alphamode.beta.proxy.fabric.FabricPlugin"
+}

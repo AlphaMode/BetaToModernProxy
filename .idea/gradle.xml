@@ -9,7 +9,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/bootstrap" />
             <option value="$PROJECT_DIR$/data-gen" />
+            <option value="$PROJECT_DIR$/plugins" />
+            <option value="$PROJECT_DIR$/plugins/fabric" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="true" />
