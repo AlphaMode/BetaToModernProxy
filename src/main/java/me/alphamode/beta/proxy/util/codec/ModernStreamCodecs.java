@@ -207,12 +207,12 @@ public interface ModernStreamCodecs {
 	StreamCodec<ByteStream, Integer> VAR_INT = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteStream buf, final Integer value) {
-			PacketTypes.writeVarInt(buf instanceof NettyByteStream nbs ? nbs.buf() : null, value);
+			PacketTypes.writeVarInt(NettyByteStream.unwrap(buf), value);
 		}
 
 		@Override
 		public Integer decode(final ByteStream buf) {
-			return PacketTypes.readVarInt(buf instanceof NettyByteStream nbs ? nbs.buf() : null);
+			return PacketTypes.readVarInt(NettyByteStream.unwrap(buf));
 		}
 	};
 
@@ -296,12 +296,12 @@ public interface ModernStreamCodecs {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteStream buf, final String value) {
-				PacketTypes.writeString((ByteBuf) buf, value);
+				PacketTypes.writeString(NettyByteStream.unwrap(buf), value);
 			}
 
 			@Override
 			public String decode(final ByteStream buf) {
-				return PacketTypes.readString((ByteBuf) buf, maxLength);
+				return PacketTypes.readString(NettyByteStream.unwrap(buf), maxLength);
 			}
 		};
 	}

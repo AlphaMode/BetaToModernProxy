@@ -15,6 +15,10 @@ public final class NettyByteStream implements ByteStream {
 		return INSTANCE;
 	}
 
+	public static ByteBuf unwrap(final ByteStream stream) {
+		return stream instanceof NettyByteStream nbs ? nbs.buf() : null;
+	}
+
 	@Override
 	public byte readByte() {
 		return this.buf.readByte();
