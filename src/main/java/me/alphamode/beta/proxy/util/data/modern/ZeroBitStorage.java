@@ -9,14 +9,14 @@ public record ZeroBitStorage(int size) implements BitStorage {
 	@Override
 	public int getAndSet(final int index, final int value) {
 //        Validate.inclusiveBetween(0L, (long)(this.size - 1), (long)index);
-//        Validate.inclusiveBetween(0L, 0L, (long)value);
+//        Validate.inclusiveBetween(0L, 0L, (long)data);
 		return 0;
 	}
 
 	@Override
 	public void set(final int index, final int value) {
 //        Validate.inclusiveBetween(0L, (long)(this.size - 1), (long)index);
-//        Validate.inclusiveBetween(0L, 0L, (long)value);
+//        Validate.inclusiveBetween(0L, 0L, (long)data);
 	}
 
 	@Override

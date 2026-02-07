@@ -272,7 +272,7 @@ public class SimpleBitStorage implements BitStorage {
 	@Override
 	public int getAndSet(final int index, final int value) {
 //        Validate.inclusiveBetween(0L, (long)(this.size - 1), (long)index);
-//        Validate.inclusiveBetween(0L, this.mask, (long)value);
+//        Validate.inclusiveBetween(0L, this.mask, (long)data);
 		int cellIndex = this.cellIndex(index);
 		long cellValue = this.data[cellIndex];
 		int bitIndex = (index - cellIndex * this.valuesPerLong) * this.bits;
@@ -284,7 +284,7 @@ public class SimpleBitStorage implements BitStorage {
 	@Override
 	public void set(final int index, final int value) {
 //        Validate.inclusiveBetween(0L, (long)(this.size - 1), (long)index);
-//        Validate.inclusiveBetween(0L, this.mask, (long)value);
+//        Validate.inclusiveBetween(0L, this.mask, (long)data);
 		int cellIndex = this.cellIndex(index);
 		long cellValue = this.data[cellIndex];
 		int bitIndex = (index - cellIndex * this.valuesPerLong) * this.bits;

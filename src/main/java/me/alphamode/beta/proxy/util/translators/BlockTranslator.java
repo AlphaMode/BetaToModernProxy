@@ -1,4 +1,4 @@
-package me.alphamode.beta.proxy.util;
+package me.alphamode.beta.proxy.util.translators;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;

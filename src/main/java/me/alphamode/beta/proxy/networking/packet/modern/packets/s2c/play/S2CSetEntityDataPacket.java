@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.clientbound.ClientboundPlayPackets;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
+import me.alphamode.beta.proxy.util.data.EntityDataValue;
 import me.alphamode.beta.proxy.util.data.modern.entity.ModernSynchedEntityData;
 
 import java.util.List;

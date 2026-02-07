@@ -10,4 +10,7 @@ pluginManagement {
 
 rootProject.name = 'BetaToModernProxy'
 
+include(":bootstrap")
 include(":data-gen")
+
+include(":plugins:fabric")
