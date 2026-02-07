@@ -45,7 +45,7 @@ public interface ByteStream {
 
 	void writeDouble(double value);
 
-	long writeLong(long value);
+	void writeLong(long value);
 
 	int writerIndex();
 

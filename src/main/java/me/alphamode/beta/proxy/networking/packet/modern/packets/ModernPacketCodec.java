@@ -7,6 +7,7 @@ import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
 import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.NettyByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import net.raphimc.netminecraft.packet.PacketTypes;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +47,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
 		try {
-			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), (ByteStream) packetData));
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), new NettyByteStream(packetData)));
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, connection.getState());
