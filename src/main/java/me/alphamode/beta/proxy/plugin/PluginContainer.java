@@ -5,8 +5,6 @@ import me.alphamode.beta.proxy.api.ProxyPlugin;
 import me.alphamode.wisp.loader.api.mod.Mod;
 
 public record PluginContainer(Mod mod, ProxyPlugin plugin, PluginMetadata metadata) {
-
-
 	@Override
 	public int hashCode() {
 		return this.metadata.id().hashCode();
@@ -16,8 +14,9 @@ public record PluginContainer(Mod mod, ProxyPlugin plugin, PluginMetadata metada
 	public boolean equals(Object obj) {
 		if (obj instanceof PluginContainer other) {
 			return this.metadata.id().equals(other.metadata.id());
+		} else {
+			return false;
 		}
-		return super.equals(obj);
 	}
 
 	@Override

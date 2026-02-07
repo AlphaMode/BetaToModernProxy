@@ -176,9 +176,9 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		this.clientChannel = context.channel();
 		this.remoteAddress = this.clientChannel.remoteAddress();
 		this.serverConnection = new ServerConnection(this.address, this);
-		BrodernProxy.getProxy().invokeMethod(plugin -> {
-			plugin.onProxyConnection(this);
-		});
+        BrodernProxy.getProxy().invokeMethod(plugin -> {
+            plugin.onProxyConnection(this);
+        });
 	}
 
 	@Override
