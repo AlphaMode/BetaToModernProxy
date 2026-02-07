@@ -3,10 +3,16 @@ package me.alphamode.beta.proxy.util;
 import io.netty.buffer.ByteBuf;
 
 public final class NettyByteStream implements ByteStream {
-	private final ByteBuf buf;
+	public static final NettyByteStream INSTANCE = new NettyByteStream(null);
+	private ByteBuf buf;
 
 	public NettyByteStream(final ByteBuf buf) {
 		this.buf = buf;
+	}
+
+	public static NettyByteStream of(final ByteBuf buf) {
+		INSTANCE.buf = buf;
+		return INSTANCE;
 	}
 
 	@Override
@@ -147,5 +153,9 @@ public final class NettyByteStream implements ByteStream {
 	@Override
 	public void release() {
 		this.buf.release();
+	}
+
+	public ByteBuf buf() {
+		return this.buf;
 	}
 }

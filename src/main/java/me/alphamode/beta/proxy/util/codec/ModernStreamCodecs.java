@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.Mth;
+import me.alphamode.beta.proxy.util.NettyByteStream;
 import net.lenni0451.mcstructs.core.Identifier;
 import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.text.TextComponent;
@@ -206,12 +207,12 @@ public interface ModernStreamCodecs {
 	StreamCodec<ByteStream, Integer> VAR_INT = new StreamCodec<>() {
 		@Override
 		public void encode(final ByteStream buf, final Integer value) {
-			PacketTypes.writeVarInt((ByteBuf) buf, value);
+			PacketTypes.writeVarInt(buf instanceof NettyByteStream nbs ? nbs.buf() : null, value);
 		}
 
 		@Override
 		public Integer decode(final ByteStream buf) {
-			return PacketTypes.readVarInt((ByteBuf) buf);
+			return PacketTypes.readVarInt(buf instanceof NettyByteStream nbs ? nbs.buf() : null);
 		}
 	};
 
