@@ -28,9 +28,10 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 	@Override
 	protected void encode(final ChannelHandlerContext context, final ModernPacket<ModernPackets> packet, final ByteBuf buf) throws Exception {
 		final ModernPackets type = packet.getType();
-		ModernStreamCodecs.VAR_INT.encode((ByteStream) buf, type.getId());
+		final ByteStream stream = NettyByteStream.of(buf);
+		ModernStreamCodecs.VAR_INT.encode(stream, type.getId());
 		try {
-			ModernPacketRegistry.INSTANCE.getCodec(type).encode((ByteStream) buf, packet);
+			ModernPacketRegistry.INSTANCE.getCodec(type).encode(stream, packet);
 		} catch (Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to encode modern packet");
@@ -39,15 +40,17 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 
 			connection.kick(exception.getMessage());
 			throw new RuntimeException(exception);
+		} finally {
+			stream.release();
 		}
 	}
 
 	@Override
 	protected void decode(final ChannelHandlerContext context, final ByteBuf buf, final List<Object> out) throws Exception {
 		final int packetId = PacketTypes.readVarInt(buf);
-		final ByteBuf packetData = buf.readBytes(buf.readableBytes());
+		final ByteStream stream = NettyByteStream.of(buf.readBytes(buf.readableBytes()));
 		try {
-			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), NettyByteStream.of(packetData)));
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), stream));
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, connection.getState());
@@ -57,7 +60,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 			connection.kick(exception.getMessage());
 			throw new RuntimeException(exception);
 		} finally {
-			packetData.release();
+			stream.release();
 		}
 	}
 }
