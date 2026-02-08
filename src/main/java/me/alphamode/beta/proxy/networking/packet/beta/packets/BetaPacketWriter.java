@@ -7,6 +7,7 @@ import me.alphamode.beta.proxy.BrodernProxy;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.enums.BetaPacketType;
 import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.NettyByteStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,15 +24,18 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaPacket> {
 	@Override
 	protected void encode(final ChannelHandlerContext context, final BetaPacket packet, final ByteBuf buf) throws Exception {
 		final BetaPacketType type = packet.getType();
-		buf.writeByte(type.getId());
+		final ByteStream stream = NettyByteStream.of(buf);
+		stream.writeByte((byte) type.getId());
 		try {
-			type.codec().encode((ByteStream) buf, packet);
+			type.codec().encode(stream, packet);
 		} catch (Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
 				LOGGER.info("Failed to encode beta packet: {}", exception.getMessage());
 			}
 
 			this.connection.kick("Failed to encode beta packet: " + exception.getMessage());
+		} finally {
+			stream.release();
 		}
 	}
 }

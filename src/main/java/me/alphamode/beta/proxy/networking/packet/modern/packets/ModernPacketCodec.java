@@ -50,14 +50,14 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		final int packetId = PacketTypes.readVarInt(buf);
 		final ByteStream stream = NettyByteStream.of(buf.readBytes(buf.readableBytes()));
 		try {
-			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, connection.getState(), stream));
+			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), stream));
 		} catch (final Exception exception) {
 			if (BrodernProxy.getProxy().isDebug()) {
-				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, connection.getState());
+				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, this.connection.getState());
 				exception.printStackTrace();
 			}
 
-			connection.kick(exception.getMessage());
+			this.connection.kick(exception.getMessage());
 			throw new RuntimeException(exception);
 		} finally {
 			stream.release();
