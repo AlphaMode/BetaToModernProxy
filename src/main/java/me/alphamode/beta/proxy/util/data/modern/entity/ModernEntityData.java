@@ -10,7 +10,6 @@ import me.alphamode.beta.proxy.util.data.modern.item.ModernItemStack;
 import me.alphamode.beta.proxy.util.data.modern.level.block.BlockState;
 
 public class ModernEntityData {
-
 	public static final EntityDataSerializers SERIALIZERS = new EntityDataSerializers();
 	public static final StreamCodec<ByteStream, Byte> BYTE = SERIALIZERS.register(0, CommonStreamCodecs.BYTE);
 	public static final StreamCodec<ByteStream, Integer> INT = SERIALIZERS.register(1, ModernStreamCodecs.VAR_INT);
@@ -24,8 +23,6 @@ public class ModernEntityData {
 
 	public static final StreamCodec<ByteStream, StreamCodec<ByteStream, ?>> ID_CODEC = ModernStreamCodecs.VAR_INT.map(SERIALIZERS::getSerializer, SERIALIZERS::getSerializedId);
 
-
 	public static class Player {
-
 	}
 }

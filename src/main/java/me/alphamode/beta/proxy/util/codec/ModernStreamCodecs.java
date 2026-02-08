@@ -28,7 +28,7 @@ import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 
 public interface ModernStreamCodecs {
-	short MAX_STRING_LENGTH = 32767;
+	short MAX_STRING_LENGTH = Short.MAX_VALUE;
 
 	StreamCodec<ByteStream, UUID> UUID = new StreamCodec<>() {
 		@Override
@@ -523,13 +523,14 @@ public interface ModernStreamCodecs {
 	}
 
 	static <T extends JsonElement> StreamCodec<ByteStream, T> lenientJson(final int maxLength) {
+		final StreamCodec<ByteStream, String> stringCodec = stringUtf8(maxLength);
 		return new StreamCodec<>() {
 			private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
 			@Override
 			public T decode(final ByteStream stream) {
 				try {
-					return (T) JsonParser.parseString(stringUtf8(maxLength).decode(stream));
+					return (T) JsonParser.parseString(stringCodec.decode(stream));
 				} catch (JsonSyntaxException e) {
 					throw new RuntimeException("Failed to parse JSON", e);
 				}
@@ -537,7 +538,7 @@ public interface ModernStreamCodecs {
 
 			@Override
 			public void encode(final ByteStream stream, final T value) {
-				stringUtf8(maxLength).encode(stream, GSON.toJson(value));
+				stringCodec.encode(stream, GSON.toJson(value));
 			}
 		};
 	}
