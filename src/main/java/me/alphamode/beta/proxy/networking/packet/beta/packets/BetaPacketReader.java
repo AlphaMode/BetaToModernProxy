@@ -34,8 +34,6 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 			}
 
 			this.connection.kick("Failed to decode beta packet with id " + id + ": " + exception.getMessage());
-		} finally {
-			stream.release();
 		}
 	}
 }
