@@ -2,6 +2,7 @@ package me.alphamode.beta.proxy.util.data.modern.level;
 
 import io.netty.buffer.Unpooled;
 import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.NettyByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.codec.StreamCodec;
 import me.alphamode.beta.proxy.util.translators.ChunkTranslator;
@@ -72,7 +73,7 @@ public class ClientboundLevelChunkPacketData {
 	}
 
 	private ByteStream getWriteBuffer() {
-		final ByteStream buffer = (ByteStream) Unpooled.wrappedBuffer(this.buffer);
+		final ByteStream buffer = NettyByteStream.of(Unpooled.wrappedBuffer(this.buffer));
 		buffer.writerIndex(0);
 		return buffer;
 	}
@@ -85,10 +86,6 @@ public class ClientboundLevelChunkPacketData {
 		if (buffer.writerIndex() != buffer.capacity()) {
 			throw new IllegalStateException("Didn't fill chunk buffer: expected " + buffer.capacity() + " bytes, got " + buffer.writerIndex());
 		}
-	}
-
-	public ByteStream getReadBuffer() {
-		return (ByteStream) Unpooled.wrappedBuffer(this.buffer);
 	}
 
 	public Map<Heightmap.Types, long[]> getHeightmaps() {

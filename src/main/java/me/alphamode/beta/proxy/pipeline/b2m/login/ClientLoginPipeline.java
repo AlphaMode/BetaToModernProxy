@@ -34,6 +34,7 @@ import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.status.S2CSt
 import me.alphamode.beta.proxy.pipeline.PacketPipeline;
 import me.alphamode.beta.proxy.pipeline.b2m.BetaToModernPipeline;
 import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.NettyByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.RegistrySynchronization;
 import me.alphamode.beta.proxy.util.data.modern.ServerStatus;
@@ -208,13 +209,13 @@ public class ClientLoginPipeline {
 		this.sendRegistries(connection);
 
 		// Send Custom Brand
-		final ByteStream buf = (ByteStream) ByteBufAllocator.DEFAULT.buffer();
-		ModernStreamCodecs.STRING_UTF8.encode(buf, BrodernProxy.getProxy().config().getBrand());
+		final ByteStream stream = NettyByteStream.of(ByteBufAllocator.DEFAULT.buffer());
+		ModernStreamCodecs.STRING_UTF8.encode(stream, BrodernProxy.getProxy().config().getBrand());
 
-		final byte[] buffer = new byte[buf.readableBytes()];
-		buf.readBytes(buffer);
+		final byte[] buffer = new byte[stream.readableBytes()];
+		stream.readBytes(buffer);
 		connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
-		buf.release();
+		stream.release();
 
 		connection.send(S2CFinishConfigurationPacket.INSTANCE);
 	}
