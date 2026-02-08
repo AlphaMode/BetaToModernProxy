@@ -34,8 +34,6 @@ public final class BetaPacketWriter extends MessageToByteEncoder<BetaPacket> {
 			}
 
 			this.connection.kick("Failed to encode beta packet: " + exception.getMessage());
-		} finally {
-			stream.release();
 		}
 	}
 }
