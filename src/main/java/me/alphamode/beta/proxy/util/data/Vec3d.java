@@ -9,24 +9,24 @@ public record Vec3d(double x, double y, double z) {
 	public static final Vec3d ZERO = new Vec3d(0, 0, 0);
 	public static final StreamCodec<ByteStream, Vec3d> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Vec3d value) {
-			buf.writeDouble(value.x);
-			buf.writeDouble(value.y);
-			buf.writeDouble(value.z);
+		public void encode(final ByteStream stream, final Vec3d value) {
+			stream.writeDouble(value.x);
+			stream.writeDouble(value.y);
+			stream.writeDouble(value.z);
 		}
 
 		@Override
-		public Vec3d decode(final ByteStream buf) {
-			return new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+		public Vec3d decode(final ByteStream stream) {
+			return new Vec3d(stream.readDouble(), stream.readDouble(), stream.readDouble());
 		}
 	};
 
 	public static final StreamCodec<ByteStream, Vec3d> LERP_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Vec3d value) {
+		public void encode(final ByteStream stream, final Vec3d value) {
 			double chessboardLength = Mth.absMax(value.x, Mth.absMax(value.y, value.z));
 			if (chessboardLength < 3.051944088384301E-5) {
-				buf.writeByte((byte) 0);
+				stream.writeByte((byte) 0);
 			} else {
 				final long scale = Mth.ceilLong(chessboardLength);
 				final boolean isPartial = (scale & 3L) != scale;
@@ -35,28 +35,28 @@ public record Vec3d(double x, double y, double z) {
 				final long yn = pack(value.y / scale) << 18;
 				final long zn = pack(value.z / scale) << 33;
 				final long buffer = markers | xn | yn | zn;
-				buf.writeByte((byte) buffer);
-				buf.writeByte((byte) (buffer >> 8));
-				buf.writeInt((int) (buffer >> 16));
+				stream.writeByte((byte) buffer);
+				stream.writeByte((byte) (buffer >> 8));
+				stream.writeInt((int) (buffer >> 16));
 				if (isPartial) {
-					ModernStreamCodecs.VAR_INT.encode(buf, (int) (scale >> 2));
+					ModernStreamCodecs.VAR_INT.encode(stream, (int) (scale >> 2));
 				}
 			}
 		}
 
 		@Override
-		public Vec3d decode(final ByteStream buf) {
-			final int lowest = buf.readByte();
+		public Vec3d decode(final ByteStream stream) {
+			final int lowest = stream.readByte();
 			if (lowest == 0) {
 				return Vec3d.ZERO;
 			} else {
-				final int middle = buf.readUnsignedByte();
-				final long highest = buf.readUnsignedInt();
+				final int middle = stream.readUnsignedByte();
+				final long highest = stream.readUnsignedInt();
 				final long buffer = highest << 16 | middle << 8 | lowest;
 
 				long scale = lowest & 3;
 				if ((lowest & 4) == 4) {
-					scale |= (ModernStreamCodecs.VAR_INT.decode(buf) & 4294967295L) << 2;
+					scale |= (ModernStreamCodecs.VAR_INT.decode(stream) & 4294967295L) << 2;
 				}
 
 				return new Vec3d(unpack(buffer >> 3) * scale, unpack(buffer >> 18) * scale, unpack(buffer >> 33) * scale);

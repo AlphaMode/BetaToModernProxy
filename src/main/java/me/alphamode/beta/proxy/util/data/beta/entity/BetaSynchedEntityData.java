@@ -11,24 +11,24 @@ import java.util.List;
 public class BetaSynchedEntityData {
 	public static final StreamCodec<ByteStream, List<DataValue<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final List<DataValue<?>> dataItems) {
+		public void encode(final ByteStream stream, final List<DataValue<?>> dataItems) {
 			for (final DataValue<?> dataItem : dataItems) {
-				dataItem.write(buf);
+				dataItem.write(stream);
 			}
 
-			buf.writeByte((byte) 127);
+			stream.writeByte((byte) 127);
 		}
 
 		@Override
-		public List<DataValue<?>> decode(final ByteStream buf) {
+		public List<DataValue<?>> decode(final ByteStream stream) {
 			final List<DataValue<?>> items = new ArrayList<>();
-			for (int i = buf.readByte(); i != 127; i = buf.readByte()) {
+			for (int i = stream.readByte(); i != 127; i = stream.readByte()) {
 				final int id = (i & 224) >> 5;
 				final var codec = BetaEntityData.SERIALIZERS.getSerializer(id);
 				if (codec == null) {
 					throw new DecoderException("Unknown serializer type " + id);
 				} else {
-					items.add(new DataValue<>(i & 31, codec, codec.decode(buf)));
+					items.add(new DataValue<>(i & 31, codec, codec.decode(stream)));
 				}
 			}
 

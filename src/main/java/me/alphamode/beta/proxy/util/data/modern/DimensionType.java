@@ -8,13 +8,13 @@ public class DimensionType {
 	// TODO
 	public static final StreamCodec<ByteStream, Holder<DimensionType>> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Holder<DimensionType> value) {
-			ModernStreamCodecs.VAR_INT.encode(buf, 0);
+		public void encode(final ByteStream stream, final Holder<DimensionType> value) {
+			ModernStreamCodecs.VAR_INT.encode(stream, 0);
 		}
 
 		@Override
-		public Holder<DimensionType> decode(final ByteStream buf) {
-			ModernStreamCodecs.VAR_INT.decode(buf);
+		public Holder<DimensionType> decode(final ByteStream stream) {
+			ModernStreamCodecs.VAR_INT.decode(stream);
 			return null;
 		}
 	};

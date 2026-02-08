@@ -1,9 +1,9 @@
 package me.alphamode.beta.proxy.util.codec;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import me.alphamode.beta.proxy.util.ByteStream;
+import me.alphamode.beta.proxy.util.NettyByteStream;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,50 +13,50 @@ public interface BetaStreamCodecs {
 
 	StreamCodec<ByteStream, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
-		public byte[] decode(final ByteStream buf) {
-			final byte[] data = new byte[buf.readInt()];
-			buf.readBytes(data);
+		public byte[] decode(final ByteStream stream) {
+			final byte[] data = new byte[stream.readInt()];
+			stream.readBytes(data);
 			return data;
 		}
 
 		@Override
-		public void encode(final ByteStream buf, final byte[] value) {
-			buf.writeInt(value.length);
-			buf.writeBytes(value);
+		public void encode(final ByteStream stream, final byte[] value) {
+			stream.writeInt(value.length);
+			stream.writeBytes(value);
 		}
 	};
 
 	StreamCodec<ByteStream, byte[]> TINY_BYTE_ARRAY = new StreamCodec<>() {
-		public byte[] decode(final ByteStream buf) {
-			final byte[] data = new byte[buf.readByte() & 255];
-			buf.readBytes(data);
+		public byte[] decode(final ByteStream stream) {
+			final byte[] data = new byte[stream.readByte() & 255];
+			stream.readBytes(data);
 			return data;
 		}
 
-		public void encode(final ByteStream buf, final byte[] data) {
-			buf.writeByte((byte) data.length);
-			buf.writeBytes(data);
+		public void encode(final ByteStream stream, final byte[] data) {
+			stream.writeByte((byte) data.length);
+			stream.writeBytes(data);
 		}
 	};
 
 	static StreamCodec<ByteStream, String> stringUtf8(final int maxLength) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final String msg) {
+			public void encode(final ByteStream stream, final String msg) {
 				if (msg.length() > maxLength) {
 					throw new RuntimeException("Your mum too big");
 				} else {
 					final short len = (short) msg.length();
-					buf.writeShort(len);
+					stream.writeShort(len);
 					for (int i = 0; i < len; ++i) {
-						buf.writeChar(msg.charAt(i));
+						stream.writeChar(msg.charAt(i));
 					}
 				}
 			}
 
 			@Override
-			public String decode(final ByteStream buf) {
-				final int size = buf.readShort();
+			public String decode(final ByteStream stream) {
+				final int size = stream.readShort();
 				if (size > maxLength) {
 					throw new RuntimeException("Received string length longer than maximum allowed (" + size + " > " + maxLength + ")");
 				} else if (size < 0) {
@@ -64,7 +64,7 @@ public interface BetaStreamCodecs {
 				} else {
 					final StringBuilder builder = new StringBuilder();
 					for (int i = 0; i < size; i++) {
-						builder.append(buf.readChar());
+						builder.append(stream.readChar());
 					}
 
 					return builder.toString();
@@ -80,20 +80,18 @@ public interface BetaStreamCodecs {
 	static StreamCodec<ByteStream, String> stringJava() {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final String msg) {
-				final DataOutputStream dos = new DataOutputStream(new ByteBufOutputStream((ByteBuf) buf));
+			public void encode(final ByteStream stream, final String msg) {
 				try {
-					dos.writeUTF(msg);
+					new DataOutputStream(new ByteBufOutputStream(NettyByteStream.unwrap(stream))).writeUTF(msg);
 				} catch (Exception exception) {
 					throw new RuntimeException(exception);
 				}
 			}
 
 			@Override
-			public String decode(final ByteStream buf) {
-				final DataInputStream dis = new DataInputStream(new ByteBufInputStream((ByteBuf) buf));
+			public String decode(final ByteStream stream) {
 				try {
-					return dis.readUTF();
+					return new DataInputStream(new ByteBufInputStream(NettyByteStream.unwrap(stream))).readUTF();
 				} catch (Exception exception) {
 					throw new RuntimeException(exception);
 				}
@@ -104,13 +102,13 @@ public interface BetaStreamCodecs {
 	static <T extends Enum<T>> StreamCodec<ByteStream, T> javaEnum(final Class<T> enumClazz) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final T value) {
-				CommonStreamCodecs.BYTE.encode(buf, (byte) value.ordinal());
+			public void encode(final ByteStream stream, final T value) {
+				CommonStreamCodecs.BYTE.encode(stream, (byte) value.ordinal());
 			}
 
 			@Override
-			public T decode(final ByteStream buf) {
-				return enumClazz.getEnumConstants()[CommonStreamCodecs.BYTE.decode(buf)];
+			public T decode(final ByteStream stream) {
+				return enumClazz.getEnumConstants()[CommonStreamCodecs.BYTE.decode(stream)];
 			}
 		};
 	}

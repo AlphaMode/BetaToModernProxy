@@ -22,26 +22,26 @@ public enum GameMode {
 	// TODO: make proper
 	public static final StreamCodec<ByteStream, GameMode> BYTE_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final GameMode value) {
-			CommonStreamCodecs.BYTE.encode(buf, (byte) value.id);
+		public void encode(final ByteStream stream, final GameMode value) {
+			CommonStreamCodecs.BYTE.encode(stream, (byte) value.id);
 		}
 
 		@Override
-		public GameMode decode(final ByteStream buf) {
-			return GameMode.byId(CommonStreamCodecs.BYTE.decode(buf));
+		public GameMode decode(final ByteStream stream) {
+			return GameMode.byId(CommonStreamCodecs.BYTE.decode(stream));
 		}
 	};
 
 	// TODO: make proper
 	public static final StreamCodec<ByteStream, GameMode> NULLABLE_BYTE_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final GameMode value) {
-			CommonStreamCodecs.BYTE.encode(buf, (byte) value.id);
+		public void encode(final ByteStream stream, final GameMode value) {
+			CommonStreamCodecs.BYTE.encode(stream, (byte) value.id);
 		}
 
 		@Override
-		public GameMode decode(final ByteStream buf) {
-			return GameMode.byNullableId(CommonStreamCodecs.BYTE.decode(buf));
+		public GameMode decode(final ByteStream stream) {
+			return GameMode.byNullableId(CommonStreamCodecs.BYTE.decode(stream));
 		}
 	};
 

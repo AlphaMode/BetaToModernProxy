@@ -7,58 +7,58 @@ import me.alphamode.beta.proxy.util.data.modern.BlockPos;
 public record Vec3i(int x, int y, int z) {
 	public static final StreamCodec<ByteStream, Vec3i> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Vec3i value) {
-			buf.writeInt(value.x);
-			buf.writeInt(value.y);
-			buf.writeInt(value.z);
+		public void encode(final ByteStream stream, final Vec3i value) {
+			stream.writeInt(value.x);
+			stream.writeInt(value.y);
+			stream.writeInt(value.z);
 		}
 
 		@Override
-		public Vec3i decode(final ByteStream buf) {
-			return new Vec3i(buf.readInt(), buf.readInt(), buf.readInt());
+		public Vec3i decode(final ByteStream stream) {
+			return new Vec3i(stream.readInt(), stream.readInt(), stream.readInt());
 		}
 	};
 
 	public static final StreamCodec<ByteStream, Vec3i> TINY_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Vec3i value) {
-			buf.writeInt(value.x);
-			buf.writeByte((byte) value.y);
-			buf.writeInt(value.z);
+		public void encode(final ByteStream stream, final Vec3i value) {
+			stream.writeInt(value.x);
+			stream.writeByte((byte) value.y);
+			stream.writeInt(value.z);
 		}
 
 		@Override
-		public Vec3i decode(final ByteStream buf) {
-			return new Vec3i(buf.readInt(), buf.readUnsignedByte(), buf.readInt());
+		public Vec3i decode(final ByteStream stream) {
+			return new Vec3i(stream.readInt(), stream.readUnsignedByte(), stream.readInt());
 		}
 	};
 
 	public static final StreamCodec<ByteStream, Vec3i> SEMI_TINY_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Vec3i value) {
-			buf.writeInt(value.x);
-			buf.writeShort((short) value.y);
-			buf.writeInt(value.z);
+		public void encode(final ByteStream stream, final Vec3i value) {
+			stream.writeInt(value.x);
+			stream.writeShort((short) value.y);
+			stream.writeInt(value.z);
 		}
 
 		@Override
-		public Vec3i decode(final ByteStream buf) {
-			return new Vec3i(buf.readInt(), buf.readShort(), buf.readInt());
+		public Vec3i decode(final ByteStream stream) {
+			return new Vec3i(stream.readInt(), stream.readShort(), stream.readInt());
 		}
 	};
 
 	public static StreamCodec<ByteStream, Vec3i> relative(final Vec3i origin) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final Vec3i value) {
-				buf.writeByte((byte) (value.x - origin.x));
-				buf.writeByte((byte) (value.y - origin.y));
-				buf.writeByte((byte) (value.z - origin.z));
+			public void encode(final ByteStream stream, final Vec3i value) {
+				stream.writeByte((byte) (value.x - origin.x));
+				stream.writeByte((byte) (value.y - origin.y));
+				stream.writeByte((byte) (value.z - origin.z));
 			}
 
 			@Override
-			public Vec3i decode(final ByteStream buf) {
-				return new Vec3i(buf.readByte() + origin.x, buf.readByte() + origin.y, buf.readByte() + origin.z);
+			public Vec3i decode(final ByteStream stream) {
+				return new Vec3i(stream.readByte() + origin.x, stream.readByte() + origin.y, stream.readByte() + origin.z);
 			}
 		};
 	}

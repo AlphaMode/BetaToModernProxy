@@ -2,21 +2,13 @@ package me.alphamode.beta.proxy.util;
 
 import io.netty.buffer.ByteBuf;
 
-public final class NettyByteStream implements ByteStream {
-	public static final NettyByteStream INSTANCE = new NettyByteStream(null);
-	private ByteBuf buf;
-
-	public NettyByteStream(final ByteBuf buf) {
-		this.buf = buf;
-	}
-
+public record NettyByteStream(ByteBuf buf) implements ByteStream {
 	public static NettyByteStream of(final ByteBuf buf) {
-		INSTANCE.buf = buf;
-		return INSTANCE;
+		return new NettyByteStream(buf);
 	}
 
 	public static ByteBuf unwrap(final ByteStream stream) {
-		return stream instanceof NettyByteStream nbs ? nbs.buf() : null;
+		return stream instanceof NettyByteStream(final ByteBuf buf) ? buf : null;
 	}
 
 	@Override

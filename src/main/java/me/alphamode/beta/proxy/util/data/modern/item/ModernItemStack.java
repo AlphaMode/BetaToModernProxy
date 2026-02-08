@@ -11,22 +11,22 @@ public record ModernItemStack(int itemId, int count, DataComponentPatch componen
 
 	public static final StreamCodec<ByteStream, ModernItemStack> OPTIONAL_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final ModernItemStack stack) {
-			ModernStreamCodecs.VAR_INT.encode(buf, stack.count);
+		public void encode(final ByteStream stream, final ModernItemStack stack) {
+			ModernStreamCodecs.VAR_INT.encode(stream, stack.count);
 			if (stack.count > 0) {
-				ModernStreamCodecs.VAR_INT.encode(buf, stack.itemId);
-				DataComponentPatch.STREAM_CODEC.encode(buf, stack.components);
+				ModernStreamCodecs.VAR_INT.encode(stream, stack.itemId);
+				DataComponentPatch.STREAM_CODEC.encode(stream, stack.components);
 			}
 		}
 
 		@Override
-		public ModernItemStack decode(final ByteStream buf) {
-			final int count = ModernStreamCodecs.VAR_INT.decode(buf);
+		public ModernItemStack decode(final ByteStream stream) {
+			final int count = ModernStreamCodecs.VAR_INT.decode(stream);
 			if (count <= 0) {
 				return ModernItemStack.EMPTY;
 			} else {
-				final int id = ModernStreamCodecs.VAR_INT.decode(buf);
-				final DataComponentPatch components = DataComponentPatch.STREAM_CODEC.decode(buf);
+				final int id = ModernStreamCodecs.VAR_INT.decode(stream);
+				final DataComponentPatch components = DataComponentPatch.STREAM_CODEC.decode(stream);
 				return new ModernItemStack(id, count, components);
 			}
 		}

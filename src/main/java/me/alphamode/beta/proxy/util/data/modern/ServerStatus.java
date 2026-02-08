@@ -37,13 +37,13 @@ public record ServerStatus(TextComponent description,
 		private static final StreamCodec<ByteStream, JsonElement> JSON = ModernStreamCodecs.lenientJson(ModernStreamCodecs.MAX_STRING_LENGTH);
 
 		@Override
-		public void encode(final ByteStream buf, final ServerStatus value) {
-			JSON.encode(buf, CODEC.serialize(JsonConverter_v1_20_5.INSTANCE, value).getOrThrow(RuntimeException::new));
+		public void encode(final ByteStream stream, final ServerStatus value) {
+			JSON.encode(stream, CODEC.serialize(JsonConverter_v1_20_5.INSTANCE, value).getOrThrow(RuntimeException::new));
 		}
 
 		@Override
-		public ServerStatus decode(final ByteStream buf) {
-			return CODEC.deserialize(JsonConverter_v1_20_5.INSTANCE, JSON.decode(buf)).getOrThrow(RuntimeException::new);
+		public ServerStatus decode(final ByteStream stream) {
+			return CODEC.deserialize(JsonConverter_v1_20_5.INSTANCE, JSON.decode(stream)).getOrThrow(RuntimeException::new);
 		}
 	};
 

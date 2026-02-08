@@ -11,25 +11,25 @@ import java.util.UUID;
 public record GameProfile(UUID uuid, String name, Map<String, Property> properties) {
 	public static final StreamCodec<ByteStream, GameProfile> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final GameProfile value) {
-			ModernStreamCodecs.UUID.encode(buf, value.uuid);
-			ModernStreamCodecs.STRING_UTF8.encode(buf, value.name);
+		public void encode(final ByteStream stream, final GameProfile value) {
+			ModernStreamCodecs.UUID.encode(stream, value.uuid);
+			ModernStreamCodecs.STRING_UTF8.encode(stream, value.name);
 
-			ModernStreamCodecs.VAR_INT.encode(buf, value.properties.size());
+			ModernStreamCodecs.VAR_INT.encode(stream, value.properties.size());
 			for (final Property property : value.properties.values()) {
-				Property.CODEC.encode(buf, property);
+				Property.CODEC.encode(stream, property);
 			}
 		}
 
 		@Override
-		public GameProfile decode(final ByteStream buf) {
-			final UUID uuid = ModernStreamCodecs.UUID.decode(buf);
-			final String name = ModernStreamCodecs.STRING_UTF8.decode(buf);
+		public GameProfile decode(final ByteStream stream) {
+			final UUID uuid = ModernStreamCodecs.UUID.decode(stream);
+			final String name = ModernStreamCodecs.STRING_UTF8.decode(stream);
 
 			final Map<String, Property> properties = new HashMap<>();
-			final int propertyCount = ModernStreamCodecs.readCount(buf, 16);
+			final int propertyCount = ModernStreamCodecs.readCount(stream, 16);
 			for (int i = 0; i < propertyCount; i++) {
-				final Property property = Property.CODEC.decode(buf);
+				final Property property = Property.CODEC.decode(stream);
 				properties.put(property.name(), property);
 			}
 

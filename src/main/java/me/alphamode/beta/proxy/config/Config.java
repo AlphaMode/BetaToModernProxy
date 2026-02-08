@@ -20,21 +20,21 @@ public final class Config {
 
 	public static final StreamCodec<JsonObject, Config> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final JsonObject object, final Config value) {
-			object.addProperty("brand", value.brand);
-			object.addProperty("message", value.message.asLegacyFormatString());
-			object.addProperty("max_players", value.maxPlayers);
-			object.addProperty("bind_address", value.bindAddress);
-			object.addProperty("bind_port", value.bindPort);
-			object.addProperty("server_address", value.serverAddress);
-			object.addProperty("server_port", value.serverPort);
-			object.addProperty("debug", value.debug);
+		public void encode(final JsonObject stream, final Config value) {
+			stream.addProperty("brand", value.brand);
+			stream.addProperty("message", value.message.asLegacyFormatString());
+			stream.addProperty("max_players", value.maxPlayers);
+			stream.addProperty("bind_address", value.bindAddress);
+			stream.addProperty("bind_port", value.bindPort);
+			stream.addProperty("server_address", value.serverAddress);
+			stream.addProperty("server_port", value.serverPort);
+			stream.addProperty("debug", value.debug);
 		}
 
 		@Override
-		public Config decode(final JsonObject object) {
+		public Config decode(final JsonObject stream) {
 			final Config config = new Config();
-			final Map<String, JsonElement> elementMap = object.asMap();
+			final Map<String, JsonElement> elementMap = stream.asMap();
 			config.brand = elementMap.getOrDefault("brand", new JsonPrimitive("BetaToModernProxy")).getAsString();
 			config.message = TextComponent.of(elementMap.getOrDefault("message", new JsonPrimitive("A modern to b1.7.3 proxy server.")).getAsString());
 			config.maxPlayers = elementMap.getOrDefault("max_players", new JsonPrimitive(20)).getAsInt();

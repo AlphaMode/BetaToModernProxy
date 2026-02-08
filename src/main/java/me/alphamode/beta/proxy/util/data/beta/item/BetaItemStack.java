@@ -8,52 +8,52 @@ public record BetaItemStack(short itemId, byte count, short aux) {
 
 	public static final StreamCodec<ByteStream, BetaItemStack> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final BetaItemStack stack) {
-			buf.writeShort(stack.itemId);
-			buf.writeByte(stack.count);
-			buf.writeShort(stack.aux);
+		public void encode(final ByteStream stream, final BetaItemStack stack) {
+			stream.writeShort(stack.itemId);
+			stream.writeByte(stack.count);
+			stream.writeShort(stack.aux);
 		}
 
 		@Override
-		public BetaItemStack decode(final ByteStream buf) {
-			final short id = buf.readShort();
-			return new BetaItemStack(id, buf.readByte(), buf.readShort());
+		public BetaItemStack decode(final ByteStream stream) {
+			final short id = stream.readShort();
+			return new BetaItemStack(id, stream.readByte(), stream.readShort());
 		}
 	};
 
 	public static final StreamCodec<ByteStream, BetaItemStack> OPTIONAL_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final BetaItemStack stack) {
+		public void encode(final ByteStream stream, final BetaItemStack stack) {
 			if (stack == null) {
-				buf.writeShort((short) -1);
+				stream.writeShort((short) -1);
 			} else {
-				buf.writeShort(stack.itemId);
-				buf.writeByte(stack.count);
-				buf.writeShort(stack.aux);
+				stream.writeShort(stack.itemId);
+				stream.writeByte(stack.count);
+				stream.writeShort(stack.aux);
 			}
 		}
 
 		@Override
-		public BetaItemStack decode(final ByteStream buf) {
-			final short id = buf.readShort();
+		public BetaItemStack decode(final ByteStream stream) {
+			final short id = stream.readShort();
 			if (id < 0) {
 				return null;
 			} else {
-				return new BetaItemStack(id, buf.readByte(), buf.readShort());
+				return new BetaItemStack(id, stream.readByte(), stream.readShort());
 			}
 		}
 	};
 
 	public static final StreamCodec<ByteStream, BetaItemStack> NO_DATA_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final BetaItemStack stack) {
-			buf.writeShort(stack.itemId);
-			buf.writeShort(stack.aux());
+		public void encode(final ByteStream stream, final BetaItemStack stack) {
+			stream.writeShort(stack.itemId);
+			stream.writeShort(stack.aux());
 		}
 
 		@Override
-		public BetaItemStack decode(final ByteStream buf) {
-			return new BetaItemStack(buf.readShort(), (byte) 1, buf.readShort());
+		public BetaItemStack decode(final ByteStream stream) {
+			return new BetaItemStack(stream.readShort(), (byte) 1, stream.readShort());
 		}
 	};
 

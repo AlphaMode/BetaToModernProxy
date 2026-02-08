@@ -26,14 +26,14 @@ public class DataComponentPatch {
 
 	public static final StreamCodec<CompoundTag, DataComponentPatch> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final CompoundTag tag, final DataComponentPatch value) {
+		public void encode(final CompoundTag stream, final DataComponentPatch value) {
 			// TODO
 		}
 
 		@Override
-		public DataComponentPatch decode(final CompoundTag tag) {
+		public DataComponentPatch decode(final CompoundTag stream) {
 			final DataComponentPatch.Builder builder = DataComponentPatch.builder();
-			for (final var entry : tag) {
+			for (final var entry : stream) {
 				final PatchKey key = PatchKey.CODEC.deserialize(JavaConverter_v1_20_3.INSTANCE, entry.getKey()).get();
 				if (key.removed) {
 					builder.remove(key.type);
@@ -49,10 +49,10 @@ public class DataComponentPatch {
 
 	public static final StreamCodec<ByteStream, DataComponentPatch> STREAM_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final DataComponentPatch patch) {
+		public void encode(final ByteStream stream, final DataComponentPatch patch) {
 			if (patch == EMPTY) {
-				ModernStreamCodecs.VAR_INT.encode(buf, 0);
-				ModernStreamCodecs.VAR_INT.encode(buf, 0);
+				ModernStreamCodecs.VAR_INT.encode(stream, 0);
+				ModernStreamCodecs.VAR_INT.encode(stream, 0);
 			} else {
 				final Map<DataComponentType<?>, Object> toAdd = new HashMap<>();
 				final List<Integer> toRemove = new ArrayList<>();
@@ -64,35 +64,35 @@ public class DataComponentPatch {
 					}
 				}
 
-				ModernStreamCodecs.VAR_INT.encode(buf, toAdd.size());
-				ModernStreamCodecs.VAR_INT.encode(buf, toRemove.size());
+				ModernStreamCodecs.VAR_INT.encode(stream, toAdd.size());
+				ModernStreamCodecs.VAR_INT.encode(stream, toRemove.size());
 
 				// To Add
 				toAdd.forEach((type, value) -> {
-					ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(type));
-					((StreamEncoder<ByteStream, Object>) type.streamCodec()).encode(buf, value);
+					ModernStreamCodecs.VAR_INT.encode(stream, DataComponents.getRawId(type));
+					((StreamEncoder<ByteStream, Object>) type.streamCodec()).encode(stream, value);
 				});
 
 				// To Remove
-				toRemove.forEach(id -> ModernStreamCodecs.VAR_INT.encode(buf, id));
+				toRemove.forEach(id -> ModernStreamCodecs.VAR_INT.encode(stream, id));
 			}
 		}
 
 		@Override
-		public DataComponentPatch decode(final ByteStream buf) {
-			final int componentsToAdd = ModernStreamCodecs.VAR_INT.decode(buf);
-			final int componentsToRemove = ModernStreamCodecs.VAR_INT.decode(buf);
+		public DataComponentPatch decode(final ByteStream stream) {
+			final int componentsToAdd = ModernStreamCodecs.VAR_INT.decode(stream);
+			final int componentsToRemove = ModernStreamCodecs.VAR_INT.decode(stream);
 			if (componentsToAdd == 0 || componentsToRemove == 0) {
 				return EMPTY;
 			} else {
 				final DataComponentPatch patch = new DataComponentPatch(Reference2ObjectMaps.emptyMap());
 				for (int i = 0; i < componentsToAdd; i++) {
-					final int type = ModernStreamCodecs.VAR_INT.decode(buf);
+					final int type = ModernStreamCodecs.VAR_INT.decode(stream);
 					// TODO
 				}
 
 				for (int i = 0; i < componentsToRemove; i++) {
-					final int type = ModernStreamCodecs.VAR_INT.decode(buf);
+					final int type = ModernStreamCodecs.VAR_INT.decode(stream);
 					// TODO
 				}
 

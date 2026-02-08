@@ -11,13 +11,13 @@ import java.util.concurrent.ConcurrentMap;
 public class ResourceKey<T> {
 	public static final StreamCodec<ByteStream, ResourceKey<? extends Registry<?>>> CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final ResourceKey<? extends Registry<?>> value) {
-			ModernStreamCodecs.IDENTIFIER.encode(buf, value.identifier());
+		public void encode(final ByteStream stream, final ResourceKey<? extends Registry<?>> value) {
+			ModernStreamCodecs.IDENTIFIER.encode(stream, value.identifier());
 		}
 
 		@Override
-		public ResourceKey<? extends Registry<?>> decode(final ByteStream buf) {
-			return ResourceKey.createRegistryKey(ModernStreamCodecs.IDENTIFIER.decode(buf));
+		public ResourceKey<? extends Registry<?>> decode(final ByteStream stream) {
+			return ResourceKey.createRegistryKey(ModernStreamCodecs.IDENTIFIER.decode(stream));
 		}
 	};
 
@@ -33,13 +33,13 @@ public class ResourceKey<T> {
 	public static <T> StreamCodec<ByteStream, ResourceKey<T>> streamCodec(final ResourceKey<? extends Registry<T>> registryName) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final ResourceKey<T> value) {
-				ModernStreamCodecs.IDENTIFIER.encode(buf, value.identifier);
+			public void encode(final ByteStream stream, final ResourceKey<T> value) {
+				ModernStreamCodecs.IDENTIFIER.encode(stream, value.identifier);
 			}
 
 			@Override
-			public ResourceKey<T> decode(final ByteStream buf) {
-				return ResourceKey.create(registryName, ModernStreamCodecs.IDENTIFIER.decode(buf));
+			public ResourceKey<T> decode(final ByteStream stream) {
+				return ResourceKey.create(registryName, ModernStreamCodecs.IDENTIFIER.decode(stream));
 			}
 		};
 	}

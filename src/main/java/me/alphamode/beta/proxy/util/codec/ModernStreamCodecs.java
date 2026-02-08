@@ -6,7 +6,6 @@ import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.EncoderException;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -33,24 +32,24 @@ public interface ModernStreamCodecs {
 
 	StreamCodec<ByteStream, UUID> UUID = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final UUID value) {
-			PacketTypes.writeUuid((ByteBuf) buf, value);
+		public void encode(final ByteStream stream, final UUID value) {
+			PacketTypes.writeUuid(NettyByteStream.unwrap(stream), value);
 		}
 
 		@Override
-		public UUID decode(final ByteStream buf) {
-			return PacketTypes.readUuid((ByteBuf) buf);
+		public UUID decode(final ByteStream stream) {
+			return PacketTypes.readUuid(NettyByteStream.unwrap(stream));
 		}
 	};
 
 	StreamCodec<ByteStream, PropertyMap> GAME_PROFILE_PROPERTIES = new StreamCodec<>() {
-		public PropertyMap decode(final ByteStream input) {
-			final int propertyCount = readCount(input, 16);
+		public PropertyMap decode(final ByteStream stream) {
+			final int propertyCount = readCount(stream, 16);
 			ImmutableMultimap.Builder<String, Property> result = ImmutableMultimap.builder();
 			for (int i = 0; i < propertyCount; i++) {
-				final String name = PacketTypes.readString((ByteBuf) input, 64);
-				final String value = PacketTypes.readString((ByteBuf) input, MAX_STRING_LENGTH);
-				final String signature = readNullable(input, in -> PacketTypes.readString((ByteBuf) in, 1024));
+				final String name = PacketTypes.readString(NettyByteStream.unwrap(stream), 64);
+				final String value = PacketTypes.readString(NettyByteStream.unwrap(stream), MAX_STRING_LENGTH);
+				final String signature = readNullable(stream, in -> PacketTypes.readString(NettyByteStream.unwrap(in), 1024));
 
 				final Property property = new Property(name, value, signature);
 				result.put(property.name(), property);
@@ -59,12 +58,12 @@ public interface ModernStreamCodecs {
 			return new PropertyMap(result.build());
 		}
 
-		public void encode(final ByteStream output, final PropertyMap properties) {
-			writeCount(output, properties.size(), 16);
+		public void encode(final ByteStream stream, final PropertyMap properties) {
+			writeCount(stream, properties.size(), 16);
 			for (final Property property : properties.values()) {
-				PacketTypes.writeString((ByteBuf) output, property.name());
-				PacketTypes.writeString((ByteBuf) output, property.value());
-				writeNullable(output, property.signature(), (buf, value) -> PacketTypes.writeString((ByteBuf) buf, value));
+				PacketTypes.writeString(NettyByteStream.unwrap(stream), property.name());
+				PacketTypes.writeString(NettyByteStream.unwrap(stream), property.value());
+				writeNullable(stream, property.signature(), (buf, value) -> PacketTypes.writeString(NettyByteStream.unwrap(buf), value));
 			}
 		}
 	};
@@ -80,44 +79,44 @@ public interface ModernStreamCodecs {
 
 	StreamCodec<ByteStream, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
-		public byte[] decode(final ByteStream buf) {
-			final byte[] data = new byte[buf.readableBytes()];
-			buf.readBytes(data);
+		public byte[] decode(final ByteStream stream) {
+			final byte[] data = new byte[stream.readableBytes()];
+			stream.readBytes(data);
 			return data;
 		}
 
 		@Override
-		public void encode(final ByteStream buf, final byte[] value) {
-			buf.writeBytes(value);
+		public void encode(final ByteStream stream, final byte[] value) {
+			stream.writeBytes(value);
 		}
 	};
 
 	StreamCodec<ByteStream, byte[]> PREFIXED_BYTE_ARRAY = new StreamCodec<>() {
 		@Override
-		public byte[] decode(final ByteStream buf) {
-			final byte[] data = new byte[VAR_INT.decode(buf)];
-			buf.readBytes(data);
+		public byte[] decode(final ByteStream stream) {
+			final byte[] data = new byte[VAR_INT.decode(stream)];
+			stream.readBytes(data);
 			return data;
 		}
 
 		@Override
-		public void encode(final ByteStream buf, final byte[] value) {
-			VAR_INT.encode(buf, value.length);
-			buf.writeBytes(value);
+		public void encode(final ByteStream stream, final byte[] value) {
+			VAR_INT.encode(stream, value.length);
+			stream.writeBytes(value);
 		}
 	};
 
 	StreamCodec<ByteStream, long[]> LONG_ARRAY = new StreamCodec<>() {
 		@Override
-		public long[] decode(final ByteStream buf) {
-			final int size = VAR_INT.decode(buf);
-			final int maxSize = buf.readableBytes() / 8;
+		public long[] decode(final ByteStream stream) {
+			final int size = VAR_INT.decode(stream);
+			final int maxSize = stream.readableBytes() / 8;
 			if (size > maxSize) {
 				throw new RuntimeException("LongArray with size " + size + " is bigger than allowed " + maxSize);
 			} else {
 				final long[] data = new long[size];
 				for (int i = 0; i < size; ++i) {
-					data[i] = buf.readLong();
+					data[i] = stream.readLong();
 				}
 
 				return data;
@@ -125,10 +124,10 @@ public interface ModernStreamCodecs {
 		}
 
 		@Override
-		public void encode(final ByteStream buf, final long[] value) {
-			VAR_INT.encode(buf, value.length);
+		public void encode(final ByteStream stream, final long[] value) {
+			VAR_INT.encode(stream, value.length);
 			for (final long lol : value) {
-				buf.writeLong(lol);
+				stream.writeLong(lol);
 			}
 		}
 	};
@@ -136,17 +135,17 @@ public interface ModernStreamCodecs {
 	static StreamCodec<ByteStream, long[]> fixedLongArray(int size) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(ByteStream buf, long[] value) {
+			public void encode(ByteStream stream, long[] value) {
 				for (final long v : value) {
-					buf.writeLong(v);
+					stream.writeLong(v);
 				}
 			}
 
 			@Override
-			public long[] decode(ByteStream buf) {
+			public long[] decode(ByteStream stream) {
 				long[] data = new long[size];
 				for (int i = 0; i < size; i++) {
-					data[i] = buf.readLong();
+					data[i] = stream.readLong();
 				}
 
 				return data;
@@ -156,28 +155,28 @@ public interface ModernStreamCodecs {
 
 	StreamCodec<ByteStream, BitSet> BIT_SET = new StreamCodec<>() {
 		@Override
-		public BitSet decode(final ByteStream buf) {
-			return BitSet.valueOf(LONG_ARRAY.decode(buf));
+		public BitSet decode(final ByteStream stream) {
+			return BitSet.valueOf(LONG_ARRAY.decode(stream));
 		}
 
 		@Override
-		public void encode(final ByteStream buf, final BitSet value) {
-			LONG_ARRAY.encode(buf, value.toLongArray());
+		public void encode(final ByteStream stream, final BitSet value) {
+			LONG_ARRAY.encode(stream, value.toLongArray());
 		}
 	};
 
 	static StreamCodec<ByteStream, byte[]> sizedByteArray(final int size) {
 		return new StreamCodec<>() {
 			@Override
-			public byte[] decode(final ByteStream buf) {
+			public byte[] decode(final ByteStream stream) {
 				final byte[] data = new byte[size];
-				buf.readBytes(data);
+				stream.readBytes(data);
 				return data;
 			}
 
 			@Override
-			public void encode(final ByteStream buf, final byte[] value) {
-				buf.writeBytes(value);
+			public void encode(final ByteStream stream, final byte[] value) {
+				stream.writeBytes(value);
 			}
 		};
 	}
@@ -185,64 +184,64 @@ public interface ModernStreamCodecs {
 	static StreamCodec<ByteStream, byte[]> byteArray(final int maxSize) {
 		return new StreamCodec<>() {
 			@Override
-			public byte[] decode(final ByteStream buf) {
-				final int size = VAR_INT.decode(buf);
+			public byte[] decode(final ByteStream stream) {
+				final int size = VAR_INT.decode(stream);
 				if (size > maxSize) {
 					throw new RuntimeException("ByteArray with size " + size + " is bigger than allowed " + maxSize);
 				} else {
 					final byte[] data = new byte[size];
-					buf.readBytes(data);
+					stream.readBytes(data);
 					return data;
 				}
 			}
 
 			@Override
-			public void encode(final ByteStream buf, final byte[] value) {
-				VAR_INT.encode(buf, value.length);
-				buf.writeBytes(value);
+			public void encode(final ByteStream stream, final byte[] value) {
+				VAR_INT.encode(stream, value.length);
+				stream.writeBytes(value);
 			}
 		};
 	}
 
 	StreamCodec<ByteStream, Integer> VAR_INT = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Integer value) {
-			PacketTypes.writeVarInt(NettyByteStream.unwrap(buf), value);
+		public void encode(final ByteStream stream, final Integer value) {
+			PacketTypes.writeVarInt(NettyByteStream.unwrap(stream), value);
 		}
 
 		@Override
-		public Integer decode(final ByteStream buf) {
-			return PacketTypes.readVarInt(NettyByteStream.unwrap(buf));
+		public Integer decode(final ByteStream stream) {
+			return PacketTypes.readVarInt(NettyByteStream.unwrap(stream));
 		}
 	};
 
 	StreamCodec<ByteStream, Long> VAR_LONG = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Long value) {
-			PacketTypes.writeVarLong((ByteBuf) buf, value);
+		public void encode(final ByteStream stream, final Long value) {
+			PacketTypes.writeVarLong(NettyByteStream.unwrap(stream), value);
 		}
 
 		@Override
-		public Long decode(final ByteStream buf) {
-			return PacketTypes.readVarLong((ByteBuf) buf);
+		public Long decode(final ByteStream stream) {
+			return PacketTypes.readVarLong(NettyByteStream.unwrap(stream));
 		}
 	};
 
 	StreamCodec<ByteStream, IntList> INT_LIST = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final IntList value) {
-			VAR_INT.encode(buf, value.size());
+		public void encode(final ByteStream stream, final IntList value) {
+			VAR_INT.encode(stream, value.size());
 			for (int i = 0; i < value.size(); i++) {
-				VAR_INT.encode(buf, value.getInt(i));
+				VAR_INT.encode(stream, value.getInt(i));
 			}
 		}
 
 		@Override
-		public IntList decode(final ByteStream buf) {
-			final int count = VAR_INT.decode(buf);
+		public IntList decode(final ByteStream stream) {
+			final int count = VAR_INT.decode(stream);
 			final IntList list = new IntArrayList();
 			for (int i = 0; i < count; ++i) {
-				list.add(VAR_INT.decode(buf));
+				list.add(VAR_INT.decode(stream));
 			}
 
 			return list;
@@ -282,26 +281,26 @@ public interface ModernStreamCodecs {
 
 	StreamCodec<ByteStream, Instant> INSTANT = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Instant value) {
-			buf.writeLong(value.toEpochMilli());
+		public void encode(final ByteStream stream, final Instant value) {
+			stream.writeLong(value.toEpochMilli());
 		}
 
 		@Override
-		public Instant decode(final ByteStream buf) {
-			return Instant.ofEpochMilli(buf.readLong());
+		public Instant decode(final ByteStream stream) {
+			return Instant.ofEpochMilli(stream.readLong());
 		}
 	};
 
 	static StreamCodec<ByteStream, String> stringUtf8(final int maxLength) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final String value) {
-				PacketTypes.writeString(NettyByteStream.unwrap(buf), value);
+			public void encode(final ByteStream stream, final String value) {
+				PacketTypes.writeString(NettyByteStream.unwrap(stream), value);
 			}
 
 			@Override
-			public String decode(final ByteStream buf) {
-				return PacketTypes.readString(NettyByteStream.unwrap(buf), maxLength);
+			public String decode(final ByteStream stream) {
+				return PacketTypes.readString(NettyByteStream.unwrap(stream), maxLength);
 			}
 		};
 	}
@@ -314,48 +313,48 @@ public interface ModernStreamCodecs {
 
 	StreamCodec<ByteStream, NbtTag> TAG = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final NbtTag value) {
-			PacketTypes.writeUnnamedTag((ByteBuf) buf, value);
+		public void encode(final ByteStream stream, final NbtTag value) {
+			PacketTypes.writeUnnamedTag(NettyByteStream.unwrap(stream), value);
 		}
 
 		@Override
-		public NbtTag decode(final ByteStream buf) {
-			return PacketTypes.readUnnamedTag((ByteBuf) buf);
+		public NbtTag decode(final ByteStream stream) {
+			return PacketTypes.readUnnamedTag(NettyByteStream.unwrap(stream));
 		}
 	};
 
 	StreamCodec<ByteStream, NbtTag> NAMED_TAG = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final NbtTag value) {
-			PacketTypes.writeNamedTag((ByteBuf) buf, value);
+		public void encode(final ByteStream stream, final NbtTag value) {
+			PacketTypes.writeNamedTag(NettyByteStream.unwrap(stream), value);
 		}
 
 		@Override
-		public NbtTag decode(final ByteStream buf) {
-			return PacketTypes.readNamedTag((ByteBuf) buf);
+		public NbtTag decode(final ByteStream stream) {
+			return PacketTypes.readNamedTag(NettyByteStream.unwrap(stream));
 		}
 	};
 
 	StreamCodec<ByteStream, TextComponent> TEXT_COMPONENT = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final TextComponent value) {
-			PacketTypes.writeUnnamedTag((ByteBuf) buf, TextComponentCodec.LATEST.serializeNbtTree(value));
+		public void encode(final ByteStream stream, final TextComponent value) {
+			PacketTypes.writeUnnamedTag(NettyByteStream.unwrap(stream), TextComponentCodec.LATEST.serializeNbtTree(value));
 		}
 
 		@Override
-		public TextComponent decode(final ByteStream buf) {
-			return TextComponentCodec.LATEST.deserialize(PacketTypes.readUnnamedTag((ByteBuf) buf));
+		public TextComponent decode(final ByteStream stream) {
+			return TextComponentCodec.LATEST.deserialize(PacketTypes.readUnnamedTag(NettyByteStream.unwrap(stream)));
 		}
 	};
 
 	static <T> StreamCodec<ByteStream, T> idMapper(final IntFunction<T> byId, final ToIntFunction<T> toId) {
 		return new StreamCodec<>() {
-			public T decode(final ByteStream buf) {
-				return byId.apply(VAR_INT.decode(buf));
+			public T decode(final ByteStream stream) {
+				return byId.apply(VAR_INT.decode(stream));
 			}
 
-			public void encode(final ByteStream buf, final T value) {
-				VAR_INT.encode(buf, toId.applyAsInt(value));
+			public void encode(final ByteStream stream, final T value) {
+				VAR_INT.encode(stream, toId.applyAsInt(value));
 			}
 		};
 	}
@@ -363,18 +362,18 @@ public interface ModernStreamCodecs {
 	static <T> StreamCodec<ByteStream, T> nullable(final StreamCodec<ByteStream, T> codec) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final T value) {
+			public void encode(final ByteStream stream, final T value) {
 				if (value == null) {
-					buf.writeBoolean(false);
+					stream.writeBoolean(false);
 				} else {
-					buf.writeBoolean(true);
-					codec.encode(buf, value);
+					stream.writeBoolean(true);
+					codec.encode(stream, value);
 				}
 			}
 
 			@Override
-			public T decode(final ByteStream buf) {
-				return buf.readBoolean() ? codec.decode(buf) : null;
+			public T decode(final ByteStream stream) {
+				return stream.readBoolean() ? codec.decode(stream) : null;
 			}
 		};
 	}
@@ -382,18 +381,18 @@ public interface ModernStreamCodecs {
 	static <T, S extends T> StreamCodec<ByteStream, Optional<S>> optional(final StreamCodec<ByteStream, T> codec) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final Optional<S> value) {
+			public void encode(final ByteStream stream, final Optional<S> value) {
 				if (value.isEmpty()) {
-					buf.writeBoolean(false);
+					stream.writeBoolean(false);
 				} else {
-					buf.writeBoolean(true);
-					codec.encode(buf, value.get());
+					stream.writeBoolean(true);
+					codec.encode(stream, value.get());
 				}
 			}
 
 			@Override
-			public Optional<S> decode(final ByteStream buf) {
-				return buf.readBoolean() ? Optional.of((S) codec.decode(buf)) : Optional.empty();
+			public Optional<S> decode(final ByteStream stream) {
+				return stream.readBoolean() ? Optional.of((S) codec.decode(stream)) : Optional.empty();
 			}
 		};
 	}
@@ -401,18 +400,18 @@ public interface ModernStreamCodecs {
 	static StreamCodec<ByteStream, BitSet> sizedBitSet(final int size) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final BitSet bitSet) {
+			public void encode(final ByteStream stream, final BitSet bitSet) {
 				if (bitSet.length() > size) {
 					throw new RuntimeException("BitSet is larger than expected size (" + bitSet.length() + ">" + size + ")");
 				} else {
-					buf.writeBytes(Arrays.copyOf(bitSet.toByteArray(), Mth.positiveCeilDiv(size, 8)));
+					stream.writeBytes(Arrays.copyOf(bitSet.toByteArray(), Mth.positiveCeilDiv(size, 8)));
 				}
 			}
 
 			@Override
-			public BitSet decode(final ByteStream buf) {
+			public BitSet decode(final ByteStream stream) {
 				final byte[] bytes = new byte[Mth.positiveCeilDiv(size, 8)];
-				buf.readBytes(bytes);
+				stream.readBytes(bytes);
 				return BitSet.valueOf(bytes);
 			}
 		};
@@ -420,12 +419,12 @@ public interface ModernStreamCodecs {
 
 	static <B extends ByteStream, V, C extends Collection<V>> StreamCodec<B, C> collection(final IntFunction<C> constructor, final StreamCodec<? super B, V> elementCodec, final int maxSize) {
 		return new StreamCodec<>() {
-			public C decode(B input) {
-				return readCollection(input, constructor, elementCodec);
+			public C decode(B stream) {
+				return readCollection(stream, constructor, elementCodec);
 			}
 
-			public void encode(B output, C value) {
-				writeCollection(output, value, elementCodec);
+			public void encode(B stream, C value) {
+				writeCollection(stream, value, elementCodec);
 			}
 		};
 	}
@@ -433,19 +432,19 @@ public interface ModernStreamCodecs {
 	static <T, V extends Collection<T>> StreamCodec<ByteStream, V> collection(final StreamCodec<ByteStream, T> codec) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final V collection) {
-				VAR_INT.encode(buf, collection.size());
+			public void encode(final ByteStream stream, final V collection) {
+				VAR_INT.encode(stream, collection.size());
 				for (final T value : collection) {
-					codec.encode(buf, value);
+					codec.encode(stream, value);
 				}
 			}
 
 			@Override
-			public V decode(final ByteStream buf) {
-				final int count = VAR_INT.decode(buf);
+			public V decode(final ByteStream stream) {
+				final int count = VAR_INT.decode(stream);
 				final V collection = (V) new ArrayList<V>();
 				for (int i = 0; i < count; ++i) {
-					collection.add(codec.decode(buf));
+					collection.add(codec.decode(stream));
 				}
 
 				return collection;
@@ -461,13 +460,13 @@ public interface ModernStreamCodecs {
 		final StreamCodec<ByteStream, Collection<T>> collectionCodec = collection(codec);
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final List<T> list) {
-				collectionCodec.encode(buf, list);
+			public void encode(final ByteStream stream, final List<T> list) {
+				collectionCodec.encode(stream, list);
 			}
 
 			@Override
-			public List<T> decode(final ByteStream buf) {
-				return List.copyOf(collectionCodec.decode(buf));
+			public List<T> decode(final ByteStream stream) {
+				return List.copyOf(collectionCodec.decode(stream));
 			}
 		};
 	}
@@ -478,20 +477,20 @@ public interface ModernStreamCodecs {
 
 	static <B extends ByteStream, K, V, M extends Map<K, V>> StreamCodec<B, M> map(final IntFunction<? extends M> constructor, final StreamCodec<? super B, K> keyCodec, final StreamCodec<? super B, V> valueCodec, final int maxSize) {
 		return new StreamCodec<>() {
-			public void encode(B output, M map) {
-				writeCount(output, map.size(), maxSize);
+			public void encode(B stream, M map) {
+				writeCount(stream, map.size(), maxSize);
 				for (final var entry : map.entrySet()) {
-					keyCodec.encode(output, entry.getKey());
-					valueCodec.encode(output, entry.getValue());
+					keyCodec.encode(stream, entry.getKey());
+					valueCodec.encode(stream, entry.getValue());
 				}
 			}
 
-			public M decode(B input) {
-				final int count = readCount(input, maxSize);
+			public M decode(B stream) {
+				final int count = readCount(stream, maxSize);
 
 				final M result = constructor.apply(Math.min(count, 65536));
 				for (int i = 0; i < count; i++) {
-					result.put(keyCodec.decode(input), valueCodec.decode(input));
+					result.put(keyCodec.decode(stream), valueCodec.decode(stream));
 				}
 
 				return result;
@@ -502,20 +501,20 @@ public interface ModernStreamCodecs {
 	static <T, S> StreamCodec<ByteStream, Map<T, S>> javaMap(final StreamCodec<ByteStream, T> keyCodec, final StreamCodec<ByteStream, S> valueCodec) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final Map<T, S> map) {
-				VAR_INT.encode(buf, map.size());
+			public void encode(final ByteStream stream, final Map<T, S> map) {
+				VAR_INT.encode(stream, map.size());
 				for (final var entry : map.entrySet()) {
-					keyCodec.encode(buf, entry.getKey());
-					valueCodec.encode(buf, entry.getValue());
+					keyCodec.encode(stream, entry.getKey());
+					valueCodec.encode(stream, entry.getValue());
 				}
 			}
 
 			@Override
-			public Map<T, S> decode(final ByteStream buf) {
-				final int count = VAR_INT.decode(buf);
+			public Map<T, S> decode(final ByteStream stream) {
+				final int count = VAR_INT.decode(stream);
 				final Map<T, S> map = new HashMap<>();
 				for (int i = 0; i < count; ++i) {
-					map.put(keyCodec.decode(buf), valueCodec.decode(buf));
+					map.put(keyCodec.decode(stream), valueCodec.decode(stream));
 				}
 
 				return map;
@@ -528,17 +527,17 @@ public interface ModernStreamCodecs {
 			private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
 			@Override
-			public T decode(final ByteStream buf) {
+			public T decode(final ByteStream stream) {
 				try {
-					return (T) JsonParser.parseString(stringUtf8(maxLength).decode(buf));
+					return (T) JsonParser.parseString(stringUtf8(maxLength).decode(stream));
 				} catch (JsonSyntaxException e) {
 					throw new RuntimeException("Failed to parse JSON", e);
 				}
 			}
 
 			@Override
-			public void encode(final ByteStream buf, final T value) {
-				stringUtf8(maxLength).encode(buf, GSON.toJson(value));
+			public void encode(final ByteStream stream, final T value) {
+				stringUtf8(maxLength).encode(stream, GSON.toJson(value));
 			}
 		};
 	}
@@ -546,13 +545,13 @@ public interface ModernStreamCodecs {
 	static <T extends Enum<T>> StreamCodec<ByteStream, T> javaEnum(final Class<T> enumClazz) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final T value) {
-				VAR_INT.encode(buf, value.ordinal());
+			public void encode(final ByteStream stream, final T value) {
+				VAR_INT.encode(stream, value.ordinal());
 			}
 
 			@Override
-			public T decode(final ByteStream buf) {
-				return enumClazz.getEnumConstants()[VAR_INT.decode(buf)];
+			public T decode(final ByteStream stream) {
+				return enumClazz.getEnumConstants()[VAR_INT.decode(stream)];
 			}
 		};
 	}
@@ -560,13 +559,13 @@ public interface ModernStreamCodecs {
 	static <T extends Enum<T>> StreamCodec<ByteStream, EnumSet<T>> enumSet(final Class<T> enumClazz) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final EnumSet<T> value) {
-				writeEnumSet(buf, value, enumClazz);
+			public void encode(final ByteStream stream, final EnumSet<T> value) {
+				writeEnumSet(stream, value, enumClazz);
 			}
 
 			@Override
-			public EnumSet<T> decode(final ByteStream buf) {
-				return readEnumSet(buf, enumClazz);
+			public EnumSet<T> decode(final ByteStream stream) {
+				return readEnumSet(stream, enumClazz);
 			}
 		};
 	}

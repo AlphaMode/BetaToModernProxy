@@ -19,13 +19,13 @@ public enum Direction {
 
 	public static final StreamCodec<ByteStream, Direction> CODEC_3D = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final Direction value) {
-			buf.writeByte((byte) value.data3d);
+		public void encode(final ByteStream stream, final Direction value) {
+			stream.writeByte((byte) value.data3d);
 		}
 
 		@Override
-		public Direction decode(final ByteStream buf) {
-			return Direction.from3DDataValue(buf.readUnsignedByte());
+		public Direction decode(final ByteStream stream) {
+			return Direction.from3DDataValue(stream.readUnsignedByte());
 		}
 	};
 

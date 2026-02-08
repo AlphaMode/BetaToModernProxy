@@ -6,95 +6,95 @@ import java.lang.reflect.Array;
 
 public interface CommonStreamCodecs {
 	StreamCodec<ByteStream, Boolean> BOOL = new StreamCodec<>() {
-		public Boolean decode(final ByteStream buf) {
-			return buf.readBoolean();
+		public Boolean decode(final ByteStream stream) {
+			return stream.readBoolean();
 		}
 
-		public void encode(final ByteStream buf, final Boolean value) {
-			buf.writeBoolean(value);
+		public void encode(final ByteStream stream, final Boolean value) {
+			stream.writeBoolean(value);
 		}
 	};
 
 	StreamCodec<ByteStream, Byte> BYTE = new StreamCodec<>() {
-		public Byte decode(final ByteStream buf) {
-			return buf.readByte();
+		public Byte decode(final ByteStream stream) {
+			return stream.readByte();
 		}
 
-		public void encode(final ByteStream buf, final Byte value) {
-			buf.writeByte(value);
+		public void encode(final ByteStream stream, final Byte value) {
+			stream.writeByte(value);
 		}
 	};
 
 	StreamCodec<ByteStream, Short> UNSIGNED_BYTE = new StreamCodec<>() {
-		public Short decode(final ByteStream buf) {
-			return buf.readUnsignedByte();
+		public Short decode(final ByteStream stream) {
+			return stream.readUnsignedByte();
 		}
 
-		public void encode(final ByteStream buf, final Short value) {
-			buf.writeByte((byte) (value & 255));
+		public void encode(final ByteStream stream, final Short value) {
+			stream.writeByte((byte) (value & 255));
 		}
 	};
 
 	StreamCodec<ByteStream, Short> SHORT = new StreamCodec<>() {
-		public Short decode(final ByteStream buf) {
-			return buf.readShort();
+		public Short decode(final ByteStream stream) {
+			return stream.readShort();
 		}
 
-		public void encode(final ByteStream buf, final Short value) {
-			buf.writeShort(value);
+		public void encode(final ByteStream stream, final Short value) {
+			stream.writeShort(value);
 		}
 	};
 
 	StreamCodec<ByteStream, Integer> INT = new StreamCodec<>() {
-		public Integer decode(final ByteStream buf) {
-			return buf.readInt();
+		public Integer decode(final ByteStream stream) {
+			return stream.readInt();
 		}
 
-		public void encode(final ByteStream buf, final Integer value) {
-			buf.writeInt(value);
+		public void encode(final ByteStream stream, final Integer value) {
+			stream.writeInt(value);
 		}
 	};
 
 	StreamCodec<ByteStream, Long> LONG = new StreamCodec<>() {
-		public Long decode(final ByteStream buf) {
-			return buf.readLong();
+		public Long decode(final ByteStream stream) {
+			return stream.readLong();
 		}
 
-		public void encode(final ByteStream buf, final Long value) {
-			buf.writeLong(value);
+		public void encode(final ByteStream stream, final Long value) {
+			stream.writeLong(value);
 		}
 	};
 
 	StreamCodec<ByteStream, Float> FLOAT = new StreamCodec<>() {
-		public Float decode(final ByteStream buf) {
-			return buf.readFloat();
+		public Float decode(final ByteStream stream) {
+			return stream.readFloat();
 		}
 
-		public void encode(final ByteStream buf, final Float value) {
-			buf.writeFloat(value);
+		public void encode(final ByteStream stream, final Float value) {
+			stream.writeFloat(value);
 		}
 	};
 
 	StreamCodec<ByteStream, Double> DOUBLE = new StreamCodec<>() {
-		public Double decode(final ByteStream buf) {
-			return buf.readDouble();
+		public Double decode(final ByteStream stream) {
+			return stream.readDouble();
 		}
 
-		public void encode(final ByteStream buf, final Double value) {
-			buf.writeDouble(value);
+		public void encode(final ByteStream stream, final Double value) {
+			stream.writeDouble(value);
 		}
 	};
 
 	default StreamCodec<ByteStream, Double> doubleRange(final double min, final double max) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final Double value) {
-				DOUBLE.encode(buf, Math.max(min, Math.min(max, value)));
+			public void encode(final ByteStream stream, final Double value) {
+				DOUBLE.encode(stream, Math.max(min, Math.min(max, value)));
 			}
 
 			@Override
-			public Double decode(final ByteStream buf) {
-				final double value = DOUBLE.decode(buf);
+			public Double decode(final ByteStream stream) {
+				final double value = DOUBLE.decode(stream);
 				if (value < min || value > max) {
 					throw new RuntimeException("Double data is out of range!");
 				} else {
@@ -107,17 +107,17 @@ public interface CommonStreamCodecs {
 	static <T> StreamCodec<ByteStream, T[]> array(final StreamCodec<ByteStream, T> type, final int size, final Class<T> clazz) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final T[] values) {
+			public void encode(final ByteStream stream, final T[] values) {
 				for (int i = 0; i < size; ++i) {
-					type.encode(buf, values[i]);
+					type.encode(stream, values[i]);
 				}
 			}
 
 			@Override
-			public T[] decode(final ByteStream buf) {
+			public T[] decode(final ByteStream stream) {
 				final T[] values = (T[]) Array.newInstance(clazz, size);
 				for (int i = 0; i < size; ++i) {
-					values[i] = type.decode(buf);
+					values[i] = type.decode(stream);
 				}
 
 				return values;

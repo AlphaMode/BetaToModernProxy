@@ -87,15 +87,15 @@ public record C2SInteractPacket(int entityId, Action<?> action,
 											  Vec3d location) implements Action<InteractionAtLocationAction> {
 		private static final StreamCodec<ByteStream, Vec3d> FLOAT_VEC3D = new StreamCodec<>() {
 			@Override
-			public void encode(final ByteStream buf, final Vec3d value) {
-				buf.writeFloat((float) value.x());
-				buf.writeFloat((float) value.y());
-				buf.writeFloat((float) value.z());
+			public void encode(final ByteStream stream, final Vec3d value) {
+				stream.writeFloat((float) value.x());
+				stream.writeFloat((float) value.y());
+				stream.writeFloat((float) value.z());
 			}
 
 			@Override
-			public Vec3d decode(final ByteStream buf) {
-				return new Vec3d(buf.readFloat(), buf.readFloat(), buf.readFloat());
+			public Vec3d decode(final ByteStream stream) {
+				return new Vec3d(stream.readFloat(), stream.readFloat(), stream.readFloat());
 			}
 		};
 

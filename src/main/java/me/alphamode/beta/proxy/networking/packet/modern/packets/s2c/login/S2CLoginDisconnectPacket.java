@@ -17,13 +17,13 @@ public record S2CLoginDisconnectPacket(
 	public static final StreamCodec<ByteStream, JsonElement> REASON_CODEC = ModernStreamCodecs.lenientJson(MAX_REASON_LENGTH);
 	private static final StreamCodec<ByteStream, TextComponent> REASON_COMPONENT_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final TextComponent component) {
-			REASON_CODEC.encode(buf, TextComponentSerializer.LATEST.serializeJson(component));
+		public void encode(final ByteStream stream, final TextComponent component) {
+			REASON_CODEC.encode(stream, TextComponentSerializer.LATEST.serializeJson(component));
 		}
 
 		@Override
-		public TextComponent decode(final ByteStream buf) {
-			return TextComponentSerializer.LATEST.deserialize(REASON_CODEC.decode(buf));
+		public TextComponent decode(final ByteStream stream) {
+			return TextComponentSerializer.LATEST.deserialize(REASON_CODEC.decode(stream));
 		}
 	};
 

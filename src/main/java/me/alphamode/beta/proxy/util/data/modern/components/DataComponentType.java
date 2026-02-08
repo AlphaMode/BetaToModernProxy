@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
 public interface DataComponentType<T> {
 	StreamCodec<ByteStream, DataComponentType<?>> REGISTRY_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final DataComponentType<?> value) {
-			ModernStreamCodecs.VAR_INT.encode(buf, DataComponents.getRawId(value));
+		public void encode(final ByteStream stream, final DataComponentType<?> value) {
+			ModernStreamCodecs.VAR_INT.encode(stream, DataComponents.getRawId(value));
 		}
 
 		@Override
-		public DataComponentType<?> decode(final ByteStream buf) {
-			return DataComponents.byRawId(ModernStreamCodecs.VAR_INT.decode(buf));
+		public DataComponentType<?> decode(final ByteStream stream) {
+			return DataComponents.byRawId(ModernStreamCodecs.VAR_INT.decode(stream));
 		}
 	};
 

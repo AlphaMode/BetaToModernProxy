@@ -10,20 +10,20 @@ import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 public record ContainerSetContentPacket(byte containerId, BetaItemStack[] items) implements BetaPacket {
 	public static final StreamCodec<ByteStream, BetaItemStack[]> ITEM_STACK_ARRAY = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final BetaItemStack[] items) {
-			buf.writeShort((short) items.length);
+		public void encode(final ByteStream stream, final BetaItemStack[] items) {
+			stream.writeShort((short) items.length);
 			for (final BetaItemStack item : items) {
-				BetaItemStack.OPTIONAL_CODEC.encode(buf, item);
+				BetaItemStack.OPTIONAL_CODEC.encode(stream, item);
 			}
 		}
 
 		@Override
-		public BetaItemStack[] decode(final ByteStream buf) {
-			final int size = buf.readShort();
+		public BetaItemStack[] decode(final ByteStream stream) {
+			final int size = stream.readShort();
 
 			final BetaItemStack[] items = new BetaItemStack[size];
 			for (int i = 0; i < size; i++) {
-				items[i] = BetaItemStack.OPTIONAL_CODEC.decode(buf);
+				items[i] = BetaItemStack.OPTIONAL_CODEC.decode(stream);
 			}
 
 			return items;

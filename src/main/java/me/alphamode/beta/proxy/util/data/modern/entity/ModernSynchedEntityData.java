@@ -11,21 +11,21 @@ import java.util.List;
 public class ModernSynchedEntityData {
 	public static final StreamCodec<ByteStream, List<DataValue<?>>> DATA_ITEMS_CODEC = new StreamCodec<>() {
 		@Override
-		public void encode(final ByteStream buf, final List<DataValue<?>> dataItems) {
+		public void encode(final ByteStream stream, final List<DataValue<?>> dataItems) {
 			for (final EntityDataValue<?> dataItem : dataItems) {
-				dataItem.write(buf);
+				dataItem.write(stream);
 			}
 
-			buf.writeByte((byte) 255);
+			stream.writeByte((byte) 255);
 		}
 
 		@Override
-		public List<DataValue<?>> decode(final ByteStream buf) {
+		public List<DataValue<?>> decode(final ByteStream stream) {
 			final List<DataValue<?>> items = new ArrayList<>();
 
 			int id;
-			while ((id = buf.readUnsignedByte()) != 255) {
-				items.add(DataValue.read(buf, id));
+			while ((id = stream.readUnsignedByte()) != 255) {
+				items.add(DataValue.read(stream, id));
 			}
 
 			return items;
