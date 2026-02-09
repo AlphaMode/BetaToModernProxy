@@ -1,6 +1,8 @@
 package me.alphamode.beta.proxy.util;
 
-public interface ByteStream {
+import java.io.IOException;
+
+public interface ByteStream extends AutoCloseable {
 	// Reader
 	byte readByte();
 
@@ -56,7 +58,7 @@ public interface ByteStream {
 
 	int capacity();
 
-	int readableBytes();
+	int size();
 
-	void release();
+	void close() throws IOException;
 }

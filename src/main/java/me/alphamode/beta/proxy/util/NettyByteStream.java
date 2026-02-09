@@ -142,16 +142,12 @@ public record NettyByteStream(ByteBuf buf) implements ByteStream {
 	}
 
 	@Override
-	public int readableBytes() {
+	public int size() {
 		return this.buf.readableBytes();
 	}
 
 	@Override
-	public void release() {
+	public void close() {
 		this.buf.release();
-	}
-
-	public ByteBuf buf() {
-		return this.buf;
 	}
 }

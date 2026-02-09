@@ -80,7 +80,7 @@ public interface ModernStreamCodecs {
 	StreamCodec<ByteStream, byte[]> BYTE_ARRAY = new StreamCodec<>() {
 		@Override
 		public byte[] decode(final ByteStream stream) {
-			final byte[] data = new byte[stream.readableBytes()];
+			final byte[] data = new byte[stream.size()];
 			stream.readBytes(data);
 			return data;
 		}
@@ -110,7 +110,7 @@ public interface ModernStreamCodecs {
 		@Override
 		public long[] decode(final ByteStream stream) {
 			final int size = VAR_INT.decode(stream);
-			final int maxSize = stream.readableBytes() / 8;
+			final int maxSize = stream.size() / 8;
 			if (size > maxSize) {
 				throw new RuntimeException("LongArray with size " + size + " is bigger than allowed " + maxSize);
 			} else {

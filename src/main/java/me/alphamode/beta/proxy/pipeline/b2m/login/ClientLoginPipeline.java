@@ -209,13 +209,18 @@ public class ClientLoginPipeline {
 		this.sendRegistries(connection);
 
 		// Send Custom Brand
-		final ByteStream stream = NettyByteStream.of(ByteBufAllocator.DEFAULT.buffer());
-		ModernStreamCodecs.STRING_UTF8.encode(stream, BrodernProxy.getProxy().config().getBrand());
+		try {
+			final ByteStream stream = NettyByteStream.of(ByteBufAllocator.DEFAULT.buffer());
+			ModernStreamCodecs.STRING_UTF8.encode(stream, BrodernProxy.getProxy().config().getBrand());
 
-		final byte[] buffer = new byte[stream.readableBytes()];
-		stream.readBytes(buffer);
-		connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
-		stream.release();
+			final byte[] buffer = new byte[stream.size()];
+			stream.readBytes(buffer);
+			connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
+			stream.close();
+		} catch (final Exception exception) {
+			exception.printStackTrace();
+			// Its fine if it fails, just continue
+		}
 
 		connection.send(S2CFinishConfigurationPacket.INSTANCE);
 	}
