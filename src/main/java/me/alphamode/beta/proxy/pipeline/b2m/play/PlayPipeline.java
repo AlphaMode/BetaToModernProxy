@@ -503,7 +503,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CContainerAck(final ClientConnection connection, final ContainerAckPacket packet) {
-		connection.getServerConnection().send(new ContainerAckPacket(packet.containerId(), packet.uid(), true));
+		connection.getServerConnection().send(new ContainerAckPacket(packet.containerId(), packet.uid(), packet.accepted()));
 	}
 
 	// TODO: datagen?
