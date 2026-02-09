@@ -467,8 +467,8 @@ public class PlayPipeline {
 			stack = ItemTranslator.toBetaStack(modernStack); // TODO: components
 		}
 
+		// Cancel Offhand
 		if (packet.slot() != 45) {
-			// Cancel Offhand
 			final short uid = lastUid++;
 			connection.getServerConnection().send(new ContainerClickPacket(
 					(byte) packet.containerId(),
@@ -478,10 +478,10 @@ public class PlayPipeline {
 					packet.clickType() == C2SContainerClickPacket.ClickType.QUICK_MOVE,
 					stack
 			));
-		}
 
-		if (packet.clickType() == C2SContainerClickPacket.ClickType.PICKUP || packet.clickType() == C2SContainerClickPacket.ClickType.PICKUP_ALL) {
-			connection.send(new S2CSetCursorItemPacket(modernStack));
+			if (packet.clickType() == C2SContainerClickPacket.ClickType.PICKUP || packet.clickType() == C2SContainerClickPacket.ClickType.PICKUP_ALL) {
+				connection.send(new S2CSetCursorItemPacket(modernStack));
+			}
 		}
 	}
 

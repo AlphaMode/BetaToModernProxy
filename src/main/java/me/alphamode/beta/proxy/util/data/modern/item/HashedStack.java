@@ -12,11 +12,6 @@ public interface HashedStack {
 		public String toString() {
 			return "<empty>";
 		}
-
-		@Override
-		public boolean matches(ModernItemStack stack, HashedPatchMap.HashGenerator hasher) {
-			return stack.isEmpty();
-		}
 	};
 
 	StreamCodec<ByteStream, HashedStack> STREAM_CODEC = ModernStreamCodecs.optional(ActualItem.STREAM_CODEC).map(actualItem -> {
@@ -26,8 +21,6 @@ public interface HashedStack {
 			return actualItem.get();
 		}
 	}, hashedStack -> hashedStack instanceof ActualItem actualItem ? Optional.of(actualItem) : Optional.empty());
-
-	boolean matches(ModernItemStack var1, HashedPatchMap.HashGenerator var2);
 
 	static HashedStack create(ModernItemStack itemStack, HashedPatchMap.HashGenerator hasher) {
 		return itemStack.isEmpty()
@@ -45,14 +38,5 @@ public interface HashedStack {
 				ActualItem::components,
 				ActualItem::new
 		);
-
-		@Override
-		public boolean matches(ModernItemStack itemStack, HashedPatchMap.HashGenerator hasher) {
-			if (this.count != itemStack.count()) {
-				return false;
-			} else {
-				return this.itemId == itemStack.itemId() && this.components.matches(itemStack.components(), hasher);
-			}
-		}
 	}
 }
