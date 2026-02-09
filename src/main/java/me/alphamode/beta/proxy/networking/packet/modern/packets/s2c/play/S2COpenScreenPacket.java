@@ -51,7 +51,7 @@ public record S2COpenScreenPacket(int containerId, WindowType windowType,
 		STONECUTTER;
 
 		public static WindowType genericBySize(final int size) {
-			if (size == (3 * 3)) {
+			if (size == 9) {
 				return S2COpenScreenPacket.WindowType.GENERIC_9x1;
 			} else if (size == (9 * 2)) {
 				return S2COpenScreenPacket.WindowType.GENERIC_9x2;
