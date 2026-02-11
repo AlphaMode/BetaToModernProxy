@@ -1,8 +1,13 @@
 package me.alphamode.beta.proxy.util;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 
 public record NettyByteStream(ByteBuf buf) implements ByteStream {
+	public static NettyByteStream of() {
+		return new NettyByteStream(ByteBufAllocator.DEFAULT.buffer());
+	}
+
 	public static NettyByteStream of(final ByteBuf buf) {
 		return new NettyByteStream(buf);
 	}

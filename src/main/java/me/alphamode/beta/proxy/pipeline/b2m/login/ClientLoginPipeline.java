@@ -210,7 +210,7 @@ public class ClientLoginPipeline {
 
 		// Send Custom Brand
 		try {
-			final ByteStream stream = NettyByteStream.of(ByteBufAllocator.DEFAULT.buffer());
+			final ByteStream stream = NettyByteStream.of();
 			ModernStreamCodecs.STRING_UTF8.encode(stream, BrodernProxy.getProxy().config().getBrand());
 
 			final byte[] buffer = new byte[stream.size()];
