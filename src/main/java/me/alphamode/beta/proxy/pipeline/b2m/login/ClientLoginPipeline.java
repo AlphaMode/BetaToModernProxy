@@ -3,7 +3,6 @@ package me.alphamode.beta.proxy.pipeline.b2m.login;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import me.alphamode.beta.proxy.BrodernProxy;
@@ -212,10 +211,7 @@ public class ClientLoginPipeline {
 		try {
 			final ByteStream stream = NettyByteStream.of();
 			ModernStreamCodecs.STRING_UTF8.encode(stream, BrodernProxy.getProxy().config().getBrand());
-
-			final byte[] buffer = new byte[stream.size()];
-			stream.readBytes(buffer);
-			connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), buffer));
+			connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), stream.data()));
 			stream.close();
 		} catch (final Exception exception) {
 			exception.printStackTrace();

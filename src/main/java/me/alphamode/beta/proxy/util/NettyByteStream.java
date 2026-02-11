@@ -142,6 +142,11 @@ public record NettyByteStream(ByteBuf buf) implements ByteStream {
 	}
 
 	@Override
+	public byte[] data() {
+		return this.buf.array();
+	}
+
+	@Override
 	public int capacity() {
 		return this.buf.capacity();
 	}

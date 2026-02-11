@@ -56,6 +56,8 @@ public interface ByteStream extends AutoCloseable {
 	// Other
 	byte getByte(int index);
 
+	byte[] data();
+
 	int capacity();
 
 	int size();
