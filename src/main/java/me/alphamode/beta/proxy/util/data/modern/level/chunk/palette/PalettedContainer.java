@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util.data.modern.level.chunk.palette;
 
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.codec.ModernStreamCodecs;
 import me.alphamode.beta.proxy.util.data.modern.*;
@@ -17,7 +17,7 @@ public class PalettedContainer<T> implements PaletteResize<T> {
 	private final Strategy<T> strategy;
 
 	public static PalettedContainer<BlockState> blockStates() {
-		final BlockStateRegistry registry = BrodernProxy.getBlockTranslator().getBlockStateRegistry();
+		final BlockStateRegistry registry = Asterial.getBlockTranslator().getBlockStateRegistry();
 		return new PalettedContainer<>(registry.byId(0), Strategy.createForSection(registry));
 	}
 

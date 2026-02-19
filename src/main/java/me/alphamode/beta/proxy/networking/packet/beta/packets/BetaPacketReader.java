@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.beta.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.util.ByteStream;
 import me.alphamode.beta.proxy.util.NettyByteStream;
@@ -29,7 +29,7 @@ public final class BetaPacketReader extends ReplayingDecoder<Void> {
 		try {
 			out.add(BetaPacketRegistry.INSTANCE.createPacket(id = buf.readUnsignedByte(), stream));
 		} catch (final Exception exception) {
-			if (BrodernProxy.getProxy().isDebug()) {
+			if (Asterial.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode beta packet with id {}", id);
 			}
 

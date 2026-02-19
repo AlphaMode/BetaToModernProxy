@@ -5,7 +5,7 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.bidirectional.DisconnectPacket;
@@ -107,7 +107,7 @@ public class ClientLoginPipeline {
 
 	// Status
 	public void handleC2SStatusRequest(final ClientConnection connection, final C2SStatusRequestPacket packet) {
-		final BrodernProxy proxy = BrodernProxy.getProxy();
+		final Asterial proxy = Asterial.getProxy();
 		connection.send(new S2CStatusResponsePacket(new ServerStatus(
 				proxy.config().getMessage(),
 				Optional.of(new ServerStatus.Players(proxy.config().getMaxPlayers(), proxy.onlinePlayers(), List.of())),
@@ -134,8 +134,8 @@ public class ClientLoginPipeline {
 
 	public void handleC2SHello(final ClientConnection connection, final C2SHelloPacket packet) {
 		this.requestedUsername = packet.username();
-		if (BrodernProxy.getProxy().config().isOnlineMode()) {
-			connection.send(new S2CHelloPacket("", BrodernProxy.getProxy().keyPair().getPublic().getEncoded(), this.challenge, true));
+		if (Asterial.getProxy().config().isOnlineMode()) {
+			connection.send(new S2CHelloPacket("", Asterial.getProxy().keyPair().getPublic().getEncoded(), this.challenge, true));
 			this.state = State.KEY;
 		} else {
 			this.handleLoginSuccess(connection, new GameProfile(packet.profileId(), packet.username()));
@@ -143,7 +143,7 @@ public class ClientLoginPipeline {
 	}
 
 	public void handleC2SKey(final ClientConnection connection, C2SKeyPacket packet) {
-		final KeyPair keyPair = BrodernProxy.getProxy().keyPair();
+		final KeyPair keyPair = Asterial.getProxy().keyPair();
 		final PrivateKey serverPrivateKey = keyPair.getPrivate();
 		if (!packet.isChallengeValid(this.challenge, serverPrivateKey)) {
 			throw new IllegalStateException("Protocol error");
@@ -160,7 +160,7 @@ public class ClientLoginPipeline {
 		this.state = State.AUTHENTICATING;
 		AUTH_THREAD_BUILDER.start(() -> {
 			try {
-				final ProfileResult result = BrodernProxy.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
+				final ProfileResult result = Asterial.getProxy().sessionService().hasJoinedServer(this.requestedUsername, digest, connection.getRemoteAddress() instanceof InetSocketAddress inetAddress ? inetAddress.getAddress() : null);
 				if (result != null) {
 					handleLoginSuccess(connection, result.profile());
 				} else {
@@ -175,7 +175,7 @@ public class ClientLoginPipeline {
 	public void handleLoginSuccess(final ClientConnection connection, final GameProfile profile) {
 		connection.setProfile(profile);
 		connection.send(new S2CLoginFinishedPacket(profile));
-		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() + 1);
+		Asterial.getProxy().setOnlinePlayers(Asterial.getProxy().onlinePlayers() + 1);
 	}
 
 	// Configuration
@@ -210,7 +210,7 @@ public class ClientLoginPipeline {
 		// Send Custom Brand
 		try {
 			final ByteStream stream = NettyByteStream.of();
-			ModernStreamCodecs.STRING_UTF8.encode(stream, BrodernProxy.getProxy().config().getBrand());
+			ModernStreamCodecs.STRING_UTF8.encode(stream, Asterial.getProxy().config().getBrand());
 			connection.send(new S2CConfigurationCustomPayloadPacket(Identifier.defaultNamespace("brand"), stream.data()));
 			stream.close();
 		} catch (final Exception exception) {
@@ -225,7 +225,7 @@ public class ClientLoginPipeline {
 		LOGGER.info("Sending Tags");
 
 		final Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = new HashMap<>();
-		BrodernProxy.getDefaultTags().forEach(entry -> {
+		Asterial.getDefaultTags().forEach(entry -> {
 			final Map<Identifier, IntList> map = new HashMap<>();
 
 			entry.getValue().asCompoundTag().forEach(tag -> {
@@ -245,7 +245,7 @@ public class ClientLoginPipeline {
 	public void sendRegistries(final ClientConnection connection) {
 		LOGGER.info("Sending Registries");
 
-		BrodernProxy.getDefaultRegistries().forEach(entry -> {
+		Asterial.getDefaultRegistries().forEach(entry -> {
 			final List<RegistrySynchronization.PackedRegistryEntry> entries = new ArrayList<>();
 
 			final CompoundTag tag = entry.getValue().asCompoundTag();

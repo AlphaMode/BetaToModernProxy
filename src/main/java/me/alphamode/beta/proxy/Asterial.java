@@ -33,10 +33,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
-public final class BrodernProxy {
-	public static final Logger LOGGER = LogManager.getLogger(BrodernProxy.class);
+public final class Asterial {
+	public static final Logger LOGGER = LogManager.getLogger(Asterial.class);
 
-	private static BrodernProxy INSTANCE;
+	private static Asterial INSTANCE;
 	private static final CompoundTag DEFAULT_TAGS;
 	private static final CompoundTag DEFAULT_REGISTRIES;
 	private static final CompoundTag BETA_TO_MODERN_ITEMS;
@@ -53,12 +53,12 @@ public final class BrodernProxy {
 
 	static {
 		CompoundTag tag;
+
 		try {
 			tag = NbtIO.LATEST.readNamed(new DataInputStream(new GZIPInputStream(Objects.requireNonNull(Main.class.getResourceAsStream("/vanilla_tags.nbt")))), new NbtReadTracker()).getTag().asCompoundTag();
 		} catch (final Exception exception) {
 			tag = new CompoundTag();
 		}
-
 		DEFAULT_TAGS = tag;
 
 		try {
@@ -66,7 +66,6 @@ public final class BrodernProxy {
 		} catch (final Exception exception) {
 			tag = new CompoundTag();
 		}
-
 		DEFAULT_REGISTRIES = tag;
 
 		try {
@@ -74,7 +73,6 @@ public final class BrodernProxy {
 		} catch (final Exception exception) {
 			tag = new CompoundTag();
 		}
-
 		BETA_TO_MODERN_ITEMS = tag;
 
 		try {
@@ -82,10 +80,9 @@ public final class BrodernProxy {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
-	public BrodernProxy(final Config config, final KeyPair keyPair, final MinecraftSessionService sessionService, final GameProfileRepository profileRepository) {
+	public Asterial(final Config config, final KeyPair keyPair, final MinecraftSessionService sessionService, final GameProfileRepository profileRepository) {
 		this.config = config;
 		this.keyPair = keyPair;
 		this.sessionService = sessionService;
@@ -171,7 +168,7 @@ public final class BrodernProxy {
 		this.plugins.values().forEach(container -> method.accept(container.plugin()));
 	}
 
-	public static BrodernProxy getProxy() {
+	public static Asterial getProxy() {
 		if (INSTANCE == null) {
 			throw new IllegalStateException("Proxy has not been initialized yet");
 		}

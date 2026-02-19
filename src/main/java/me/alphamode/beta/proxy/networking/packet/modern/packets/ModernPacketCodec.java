@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.networking.packet.modern.packets;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketDirection;
 import me.alphamode.beta.proxy.util.ByteStream;
@@ -33,7 +33,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		try {
 			ModernPacketRegistry.INSTANCE.getCodec(type).encode(stream, packet);
 		} catch (Exception exception) {
-			if (BrodernProxy.getProxy().isDebug()) {
+			if (Asterial.getProxy().isDebug()) {
 				LOGGER.info("Failed to encode modern packet");
 				exception.printStackTrace();
 			}
@@ -50,7 +50,7 @@ public class ModernPacketCodec extends ByteToMessageCodec<ModernPacket<ModernPac
 		try {
 			out.add(ModernPacketRegistry.INSTANCE.createPacket(packetId, PacketDirection.SERVERBOUND, this.connection.getState(), stream));
 		} catch (final Exception exception) {
-			if (BrodernProxy.getProxy().isDebug()) {
+			if (Asterial.getProxy().isDebug()) {
 				LOGGER.info("Failed to decode modern packet with id {} in state {}", packetId, this.connection.getState());
 				exception.printStackTrace();
 			}

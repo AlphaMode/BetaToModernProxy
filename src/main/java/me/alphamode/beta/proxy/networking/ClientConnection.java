@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.networking.packet.PacketHandler;
 import me.alphamode.beta.proxy.networking.packet.beta.packets.BetaPacket;
 import me.alphamode.beta.proxy.networking.packet.modern.enums.PacketState;
@@ -70,7 +70,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		}
 
 		if (this.isConnected()) {
-			BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
+			Asterial.getProxy().setOnlinePlayers(Asterial.getProxy().onlinePlayers() - 1);
 		}
 
 		this.disconnect();
@@ -176,7 +176,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 		this.clientChannel = context.channel();
 		this.remoteAddress = this.clientChannel.remoteAddress();
 		this.serverConnection = new ServerConnection(this.address, this);
-        BrodernProxy.getProxy().invokeMethod(plugin -> {
+        Asterial.getProxy().invokeMethod(plugin -> {
             plugin.onProxyConnection(this);
         });
 	}
@@ -190,7 +190,7 @@ public final class ClientConnection extends SimpleChannelInboundHandler<ModernPa
 
 	@Override
 	public void channelInactive(final ChannelHandlerContext context) {
-		BrodernProxy.getProxy().setOnlinePlayers(BrodernProxy.getProxy().onlinePlayers() - 1);
+		Asterial.getProxy().setOnlinePlayers(Asterial.getProxy().onlinePlayers() - 1);
 		this.disconnect();
 	}
 

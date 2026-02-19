@@ -3,7 +3,7 @@ package me.alphamode.beta.proxy.pipeline.b2m.play;
 import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.entity.Player;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.ServerConnection;
@@ -120,7 +120,7 @@ public class PlayPipeline {
 				this.player.getId(),
 				false,
 				List.of(BetaDimension.OVERWORLD, BetaDimension.NETHER, BetaDimension.SKY),
-				BrodernProxy.getProxy().config().getMaxPlayers(),
+				Asterial.getProxy().config().getMaxPlayers(),
 				16,
 				16,
 				false,
@@ -300,7 +300,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CSetEntityData(final ClientConnection connection, final SetEntityDataPacket packet) {
-		List<ModernSynchedEntityData.DataValue<?>> newValues = BrodernProxy.getProxy().getEntityDataTranslator().translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
+		List<ModernSynchedEntityData.DataValue<?>> newValues = Asterial.getProxy().getEntityDataTranslator().translate(connection, packet.id(), idToTypeMap.get(packet.id()), packet.packedItems());
 		connection.send(new S2CSetEntityDataPacket(packet.id(), newValues));
 	}
 
@@ -400,7 +400,7 @@ public class PlayPipeline {
 	}
 
 	public void handleS2CTileUpdate(final ClientConnection connection, final TileUpdatePacket packet) {
-		connection.send(new S2CBlockUpdatePacket(new BlockPos(packet.x(), packet.y(), packet.z()), BrodernProxy.getBlockTranslator().translate(packet.block(), packet.data())));
+		connection.send(new S2CBlockUpdatePacket(new BlockPos(packet.x(), packet.y(), packet.z()), Asterial.getBlockTranslator().translate(packet.block(), packet.data())));
 	}
 
 	public void handleS2CSetCarriedItem(final ClientConnection connection, final SetCarriedItemPacket packet) {

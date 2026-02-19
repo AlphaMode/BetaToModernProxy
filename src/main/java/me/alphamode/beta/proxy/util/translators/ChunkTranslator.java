@@ -1,7 +1,7 @@
 package me.alphamode.beta.proxy.util.translators;
 
 import com.google.common.collect.Lists;
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.networking.ClientConnection;
 import me.alphamode.beta.proxy.networking.packet.modern.packets.s2c.play.S2CLevelChunkWithLightPacket;
 import me.alphamode.beta.proxy.util.ByteStream;
@@ -172,7 +172,7 @@ public class ChunkTranslator {
 	}
 
 	public static ModernChunk translate(BetaChunk chunk) {
-		final BlockTranslator translator = BrodernProxy.getBlockTranslator();
+		final BlockTranslator translator = Asterial.getBlockTranslator();
 		final ModernChunkSection[] sections = new ModernChunkSection[BETA_CHUNK_SECTION_SIZE];
 		for (int sectionY = 0; sectionY < BETA_CHUNK_SECTION_SIZE; sectionY++) {
 			PalettedContainer<BlockState> states = PalettedContainer.blockStates();

@@ -1,6 +1,6 @@
 package me.alphamode.beta.proxy.util;
 
-import me.alphamode.beta.proxy.BrodernProxy;
+import me.alphamode.beta.proxy.Asterial;
 import me.alphamode.beta.proxy.util.data.beta.item.BetaItemStack;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponentPatch;
 import me.alphamode.beta.proxy.util.data.modern.components.DataComponents;
@@ -72,7 +72,7 @@ public final class ItemTranslator {
 	}
 
 	private static Either<ItemTranslation, ItemTranslations> getTranslation(final BetaItemStack stack) {
-		final NbtTag tag = BrodernProxy.getBetaToModernItems().get(String.valueOf(stack.itemId()));
+		final NbtTag tag = Asterial.getBetaToModernItems().get(String.valueOf(stack.itemId()));
 		if (tag == null) {
 			throw new UnsupportedOperationException();
 		}
