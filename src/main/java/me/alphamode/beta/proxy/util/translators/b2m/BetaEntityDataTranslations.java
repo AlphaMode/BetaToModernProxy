@@ -9,7 +9,7 @@ import me.alphamode.beta.proxy.util.translators.EntityDataTranslator;
 
 import java.util.function.Consumer;
 
-public class BetaEntityDataTranslations {
+public final class BetaEntityDataTranslations {
 	public static final EntityDataTranslator.DataAccessor<Byte, BetaSynchedEntityData.DataValue<Byte>> SHARED_FLAG = new EntityDataTranslator.DataAccessor<>(0);
 
 	public static boolean getSharedFlag(final int flag, final byte data) {

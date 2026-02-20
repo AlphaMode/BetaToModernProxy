@@ -378,7 +378,7 @@ public interface ModernStreamCodecs {
 		};
 	}
 
-	static <T, S extends T> StreamCodec<ByteStream, Optional<S>> optional(final StreamCodec<ByteStream, T> codec) {
+	static <T, S extends T> StreamCodec<ByteStream, Optional<S>> optional(final StreamCodec<ByteStream, S> codec) {
 		return new StreamCodec<>() {
 			@Override
 			public void encode(final ByteStream stream, final Optional<S> value) {
@@ -392,7 +392,7 @@ public interface ModernStreamCodecs {
 
 			@Override
 			public Optional<S> decode(final ByteStream stream) {
-				return stream.readBoolean() ? Optional.of((S) codec.decode(stream)) : Optional.empty();
+				return stream.readBoolean() ? Optional.of(codec.decode(stream)) : Optional.empty();
 			}
 		};
 	}

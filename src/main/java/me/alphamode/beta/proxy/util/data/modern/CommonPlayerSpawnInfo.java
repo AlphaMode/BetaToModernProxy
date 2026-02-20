@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record CommonPlayerSpawnInfo(
-		Holder<DimensionType> dimensionType,
+		DimensionType dimensionType,
 		ResourceKey<Identifier> dimension,
 		long seed,
 		GameMode gameMode,
