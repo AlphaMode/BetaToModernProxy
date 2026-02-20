@@ -127,7 +127,7 @@ public class PlayPipeline {
 				false,
 				false,
 				new CommonPlayerSpawnInfo(
-						null, // TODO (Holder<DimensionType>)
+						new DimensionType(0/*BetaDimension.OVERWORLD*/),
 						BetaDimension.byLegacyId(this.player.getDimension()),
 						this.seed,
 						GameMode.SURVIVAL,
