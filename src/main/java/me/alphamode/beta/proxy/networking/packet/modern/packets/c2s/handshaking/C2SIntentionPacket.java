@@ -28,31 +28,28 @@ public record C2SIntentionPacket(int protocolVersion, String hostName, short por
 	}
 
 	public enum ClientIntent {
-		STATUS,
-		LOGIN,
-		TRANSFER;
+		STATUS(1),
+		LOGIN(2),
+		TRANSFER(3);
 
-		private static final int STATUS_ID = 1;
-		private static final int LOGIN_ID = 2;
-		private static final int TRANSFER_ID = 3;
+        public static final StreamCodec<ByteStream, ClientIntent> CODEC = StreamCodec.of((output, value) -> ModernStreamCodecs.VAR_INT.encode(output, value.id()), input -> byId(ModernStreamCodecs.VAR_INT.decode(input)));
+        private int id;
 
-		public static final StreamCodec<ByteStream, ClientIntent> CODEC = StreamCodec.of((output, value) -> ModernStreamCodecs.VAR_INT.encode(output, value.id()), input -> byId(ModernStreamCodecs.VAR_INT.decode(input)));
-
-		public static ClientIntent byId(final int id) {
-			return switch (id) {
-				case STATUS_ID -> STATUS;
-				case LOGIN_ID -> LOGIN;
-				case TRANSFER_ID -> TRANSFER;
-				default -> throw new IllegalArgumentException("Unknown connection intent: " + id);
-			};
-		}
+        ClientIntent(final int id) {
+            this.id = id;
+        }
 
 		public int id() {
-			return switch (this) {
-				case STATUS -> STATUS_ID;
-				case LOGIN -> LOGIN_ID;
-				case TRANSFER -> TRANSFER_ID;
-			};
+			return this.id;
 		}
+
+        public static ClientIntent byId(final int id) {
+            return switch (id) {
+                case 1 -> STATUS;
+                case 2 -> LOGIN;
+                case 3 -> TRANSFER;
+                default -> throw new IllegalArgumentException("Unknown connection intent: " + id);
+            };
+        }
 	}
 }
